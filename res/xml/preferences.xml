@@ -1,0 +1,8 @@
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	<PreferenceCategory
+		android:title="OpenVPN Settings"
+		android:key="parent">
+	</PreferenceCategory>
+
+</PreferenceScreen>

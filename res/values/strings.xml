@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, OpenVPN</string>
+    <string name="app_name">OpenVPN</string>
+    <string name="activity_configs">OpenVPNConfigs</string>
+
+	<string name="text">text</string>
+	<string name="start">Start</string>
+	<string name="restart">Restart</string>
+	<string name="restartall">Restart All</string>
+	<string name="stop">Stop</string>
+
+	<string name="options_import">Import</string>
+	<string name="options_refresh">Refresh</string>
+	<string name="options_startall">Start All</string>
+	<string name="options_restartall">Restart All</string>
+	<string name="options_stopall">Stop All</string>
+	<string name="options_settings">Settings</string>
+
+	<string name="context_start">Start</string>
+	<string name="context_restart">Restart</string>
+	<string name="context_stop">Stop</string>
+	<string name="context_monitor">Monitor</string>
+	<string name="context_edit">Edit</string>
+
+	<string name="monitor_title">OpenVPN Monitor %s</string>
+		
+</resources>

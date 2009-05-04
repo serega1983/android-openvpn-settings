@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item android:id="@+id/configs_contex_start" android:title="@string/context_start"></item>
+	<item android:id="@+id/configs_contex_restart" android:title="@string/context_restart"></item>
+	<item android:id="@+id/configs_contex_stop" android:title="@string/context_stop"></item>
+	<item android:id="@+id/configs_contex_monitor" android:title="@string/context_monitor"></item>
+	<item android:id="@+id/configs_contex_edit" android:title="@string/context_edit"></item>
+</menu>
