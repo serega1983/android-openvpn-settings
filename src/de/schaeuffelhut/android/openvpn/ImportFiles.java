@@ -129,6 +129,13 @@ public class ImportFiles extends Activity
 		switch ( requestCode ) {
 		case FIND_IMPORT_DIR:
 			Log.i( "OpenVPN", String.format("onActivityResult( FIND_IMPORT_DIR, %d, <data> )", resultCode ) );
+
+			// FIX for a strange NullPointerException
+			if ( data == null )
+			{
+				Log.i( "OpenVPN", "data == null, what does this mean?" );
+				return;
+			}
 			
 			final File selectedDir = data.getData() == null ? null : new File( data.getData().getPath() );
 			Log.i( "OpenVPN", "data.getData().getPath(): " + selectedDir );
