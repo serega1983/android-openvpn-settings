@@ -19,7 +19,7 @@ import android.widget.Toast;
  * @author M.Sc. Friedrich Schäuffelhut
  *
  */
-final class ControlShell extends Service
+public final class ControlShell extends Service
 {
 	final static String TAG = "OpenVPN-ControlShell";
 	
@@ -99,13 +99,14 @@ final class ControlShell extends Service
 			mComDir.mkdirs();
 		Log.d( TAG, "mComDir=" + mComDir );
 
-		mBinDir = new File( getApplicationContext().getFilesDir(), "bin" );
-		if ( !mBinDir.exists() )
-			mBinDir.mkdirs();
-		Log.d( TAG, "mBinDir=" + mBinDir );
+		mBinDir = new File( "/system/bin" );
+//		mBinDir = new File( getApplicationContext().getFilesDir(), "bin" );
+//		if ( !mBinDir.exists() )
+//			mBinDir.mkdirs();
+//		Log.d( TAG, "mBinDir=" + mBinDir );
 
 		Log.d( TAG, "installing binaries" );
-		binOpenvpn = new File( mBinDir, "openvpn2.1");
+		binOpenvpn = new File( mBinDir, "openvpn");
 		binLiblzo = new File( mBinDir, "liblzo.so");
 		binLibcrypto = new File( mBinDir, "libcrypto.so");
 
@@ -113,7 +114,7 @@ final class ControlShell extends Service
 			@Override
 			protected void onLooperPrepared()
 			{
-				new Installer( getAssets(), binOpenvpn, binLibcrypto, binLiblzo ).installOpenVPN();
+//				new Installer( getAssets(), binOpenvpn, binLibcrypto, binLiblzo ).installOpenVPN();
 				
 				daemonAttach();
 
@@ -151,10 +152,14 @@ final class ControlShell extends Service
 		File[] configFiles = new File(
 				getApplicationContext().getFilesDir(),
 				"config.d"
-		).listFiles(new Util.FileExtensionFilter(".conf"));
-		String[] configFileName = new String[configFiles.length];
-		for (int i = 0; configFiles != null && i < configFiles.length; i++)
+		).listFiles( new Util.FileExtensionFilter(".conf") );
+		
+		final int length = configFiles == null ? 0 : configFiles.length;
+		
+		String[] configFileName = new String[length];
+		for (int i = 0; configFiles != null && i < length; i++)
 			configFileName[i] = configFiles[i].getName();
+		
 		return configFileName;
 	}
 	
