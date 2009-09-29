@@ -1,5 +1,6 @@
 package de.schaeuffelhut.android.openvpn;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
@@ -9,6 +10,8 @@ import android.util.Log;
 abstract class Shell extends Thread
 {
 	private final static boolean LOCAL_LOGD = true;
+	
+	private final String mSu;
 	
 	private final String mTag;
 	private Process mShellProcess;
@@ -20,6 +23,17 @@ abstract class Shell extends Thread
 	{
 		super( tag + "-stdin" );
 		mTag = tag;
+		
+		mSu = findBinary( "su" );
+	}
+
+	private static String findBinary(String executable) {
+		for (String bin : new String[]{"/system/bin/", "/system/xbin/"}) {
+			String path = bin+executable;
+			if ( new File( path ).exists() )
+				return path;
+		}
+		throw new RuntimeException( "executable not found: " + executable );
 	}
 
 	public final void run()
@@ -74,15 +88,16 @@ abstract class Shell extends Thread
 
 	private void initEnvironment()
 	{
-		stdout.println( "export ANDROID_ASSETS='/system/app'" );
-		stdout.println( "export ANDROID_BOOTLOGO='1'"  );
-		stdout.println( "export ANDROID_DATA='/data'" );
-		stdout.println( "export ANDROID_PROPERTY_WORKSPACE='9,32768'" );
-		stdout.println( "export ANDROID_ROOT='/system'" );
-		stdout.println( "export BOOTCLASSPATH='/system/framework/core.jar:/system/framework/ext.jar:/system/framework/framework.jar:/system/framework/android.policy.jar:/system/framework/services.jar'" );
-		stdout.println( "export EXTERNAL_STORAGE='/sdcard'" );
-		stdout.println( "export PATH='/usr/bin:/usr/sbin:/bin:/sbin:/system/sbin:/system/bin:/system/xbin:/system/xbin/bb:/data/local/bin'" );
-		stdout.println( "export ANDROID_ROOT='/system'" );
+		// not needed in Androi 1.5 anymore?
+//		stdout.println( "export ANDROID_ASSETS='/system/app'" );
+//		stdout.println( "export ANDROID_BOOTLOGO='1'"  );
+//		stdout.println( "export ANDROID_DATA='/data'" );
+//		stdout.println( "export ANDROID_PROPERTY_WORKSPACE='10,32768'" );
+//		stdout.println( "export ANDROID_ROOT='/system'" );
+//		stdout.println( "export BOOTCLASSPATH='/system/framework/core.jar:/system/framework/ext.jar:/system/framework/framework.jar:/system/framework/android.policy.jar:/system/framework/services.jar:/system/framework/com.htc.framework.jar'" );
+//		stdout.println( "export EXTERNAL_STORAGE='/sdcard'" );
+//		stdout.println( "export PATH='/usr/bin:/usr/sbin:/bin:/sbin:/system/sbin:/system/bin:/system/xbin:/system/xbin/bb:/data/local/bin'" );
+//		stdout.println( "export TERMINFO='/system/etc/terminfo'" );
 	}
 
 	void exec(String cmd)
@@ -94,7 +109,9 @@ abstract class Shell extends Thread
 
 	void su()
 	{
-		exec( "/system/bin/su -s -x" );
+//		exec( "/system/bin/su -s -x" );
+//		exec( "/system/bin/su" );
+		exec( mSu );
 	}
 
 	void cmd(String cmd)
