@@ -25,7 +25,7 @@ import android.os.IBinder;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class Monitor extends Activity
+public class XXMonitor extends Activity
 {
 	
 	OpenVpnService mControlShell = null;
@@ -34,7 +34,7 @@ public class Monitor extends Activity
 		private Thread lt;
 		public void onServiceConnected(ComponentName name, IBinder serviceBinder) {
 			mControlShell = ((OpenVpnService.ServiceBinder)serviceBinder).getService();
-			Toast.makeText(Monitor.this, "Connected to ControlShell", Toast.LENGTH_SHORT).show();
+			Toast.makeText(XXMonitor.this, "Connected to ControlShell", Toast.LENGTH_SHORT).show();
 
 //			final LoggerThread daemonLogger = mControlShell.getDaemonLogger(config);
 //			if (daemonLogger != null)
@@ -59,7 +59,7 @@ public class Monitor extends Activity
 		}
 		public void onServiceDisconnected(ComponentName name) {
 			mControlShell = null;
-			Toast.makeText(Monitor.this, "Execpectedly disconnected from ControlShell", Toast.LENGTH_SHORT).show();
+			Toast.makeText(XXMonitor.this, "Execpectedly disconnected from ControlShell", Toast.LENGTH_SHORT).show();
 		}
 	};
 
@@ -81,7 +81,7 @@ public class Monitor extends Activity
 
 		if ( !bindService(
         		new Intent(
-        				Monitor.this,
+        				XXMonitor.this,
         				OpenVpnService.class
         		),
         		mControlShellConnection,

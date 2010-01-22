@@ -37,6 +37,7 @@ import android.widget.CheckedTextView;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import de.schaeuffelhut.android.openvpn.util.Util;
 
 public class OpenVpn extends ListActivity
 {
@@ -106,7 +107,7 @@ public class OpenVpn extends ListActivity
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id)
 	{
-		Intent intent = new Intent( getApplicationContext(), Monitor.class );
+		Intent intent = new Intent( getApplicationContext(), XXMonitor.class );
 		intent.setData( Uri.parse( "content://de.schaeuffelhut.openvpn/"+ (String)l.getItemAtPosition(position) ) );
 		startActivity( intent );
 	}

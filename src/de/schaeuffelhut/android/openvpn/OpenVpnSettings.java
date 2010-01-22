@@ -31,6 +31,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
+import de.schaeuffelhut.android.openvpn.util.Util;
 
 public class OpenVpnSettings extends PreferenceActivity implements ServiceConnection
 {

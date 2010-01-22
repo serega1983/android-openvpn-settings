@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package de.schaeuffelhut.android.openvpn;
+package de.schaeuffelhut.android.openvpn.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +22,7 @@ import java.io.PrintStream;
 import android.util.Log;
 
 
-abstract class Shell extends Thread
+public abstract class Shell extends Thread
 {
 	private final static boolean LOCAL_LOGD = true;
 	
@@ -115,7 +115,7 @@ abstract class Shell extends Thread
 //		stdout.println( "export TERMINFO='/system/etc/terminfo'" );
 	}
 
-	void exec(String cmd)
+	public final void exec(String cmd)
 	{
 		if ( LOCAL_LOGD )
 			Log.d( mTag, "exec " + cmd );
@@ -125,14 +125,14 @@ abstract class Shell extends Thread
 		stdout.flush();
 	}
 
-	void su()
+	public final void su()
 	{
 //		exec( "/system/bin/su -s -x" );
 //		exec( "/system/bin/su" );
 		exec( mSu );
 	}
 
-	void cmd(String cmd)
+	public final void cmd(String cmd)
 	{
 		if ( LOCAL_LOGD )
 			Log.d( mTag, cmd );
@@ -141,12 +141,12 @@ abstract class Shell extends Thread
 		stdout.flush();
 	}
 
-	void exit()
+	public final void exit()
 	{
 		cmd( "exit" );
 	}
 	
-	abstract void onShellPrepared();
+	protected abstract void onShellPrepared();
 
 	protected void onStdout(String line) {
 		//overwrite if desired
@@ -156,9 +156,9 @@ abstract class Shell extends Thread
 		//overwrite if desired
 	}
 
-	void onShellTerminated(){}
+	protected void onShellTerminated(){}
 
-	int waitForQuietly()
+	public final int waitForQuietly()
 	{
 		return Util.waitForQuietly( mShellProcess );
 	}

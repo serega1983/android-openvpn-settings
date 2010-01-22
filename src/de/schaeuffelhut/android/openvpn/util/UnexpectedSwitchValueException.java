@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package de.schaeuffelhut.android.openvpn;
+package de.schaeuffelhut.android.openvpn.util;
 
-public class UnexpectedSwitchValueException extends RuntimeException
+public final class UnexpectedSwitchValueException extends RuntimeException
 {
 	private static final long serialVersionUID = 1L;
 
-	UnexpectedSwitchValueException(int v)
+	public UnexpectedSwitchValueException(int v)
 	{
 		super( Integer.toString( v ) );
 	}

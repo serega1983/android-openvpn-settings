@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package de.schaeuffelhut.android.openvpn;
+package de.schaeuffelhut.android.openvpn.util;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -21,7 +21,7 @@ import java.io.LineNumberReader;
 
 import android.util.Log;
 
-class LoggerThread extends Thread
+public class LoggerThread extends Thread
 {
 	final String tag;
 	final InputStream is;
@@ -36,7 +36,7 @@ class LoggerThread extends Thread
 	}
 
 	@Override
-	public void run()
+	public final void run()
 	{
 		try
 		{

@@ -28,6 +28,9 @@ import java.util.Stack;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import de.schaeuffelhut.android.openvpn.util.Shell;
+import de.schaeuffelhut.android.openvpn.util.UnexpectedSwitchValueException;
+import de.schaeuffelhut.android.openvpn.util.Util;
 
 /**
  * Starts an OpenVPN process and monitors it until its death;
@@ -99,7 +102,7 @@ public class DaemonMonitor
 		mOpenVPNShell = new Shell( mTAG_DM + "-daemon" )
 		{
 			@Override
-			void onShellPrepared()
+			protected void onShellPrepared()
 			{
 				mContext.sendStickyBroadcast( 
 						Intents.daemonStateChanged(
@@ -131,7 +134,7 @@ public class DaemonMonitor
 				}
 			}
 
-			void onShellTerminated()
+			protected void onShellTerminated()
 			{
 				// while mManagementThread == null, system is in startup
 				// and a DAEMON_STATE_DISABLED message is expected

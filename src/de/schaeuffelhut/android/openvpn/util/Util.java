@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package de.schaeuffelhut.android.openvpn;
+package de.schaeuffelhut.android.openvpn.util;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -34,13 +34,13 @@ import android.util.Log;
 
 public class Util 
 {
-	final static class IsFileFilter implements FileFilter {
+	public final static class IsFileFilter implements FileFilter {
 		public boolean accept(File pathname) {
 			return pathname.isFile();
 		}
 	}
 
-	final static class FileExtensionFilter implements FileFilter {
+	public final static class FileExtensionFilter implements FileFilter {
 		final String suffix;
 		public FileExtensionFilter(String suffix) {
 			this.suffix = suffix;
@@ -52,19 +52,19 @@ public class Util
 
 	private Util(){}
 	
-	static boolean isShellFriendly(CharSequence s)
+	public final static boolean isShellFriendly(CharSequence s)
 	{
 		String str = s instanceof String ? (String)s : s.toString();
 		return str.matches( "^[a-zA-Z0-9_]+$" );
 	}
 
-	static boolean isShellFriendlyPath(CharSequence s)
+	public final static boolean isShellFriendlyPath(CharSequence s)
 	{
 		String str = s instanceof String ? (String)s : s.toString();
 		return str.matches( "^[/a-zA-Z0-9_.]+$" );
 	}
 	
-	static void copy(File source, File target)
+	public final static void copy(File source, File target)
 	{
 		InputStream is = null;
 		OutputStream os = null;
@@ -88,7 +88,7 @@ public class Util
 		}
 	}
 
-	static void closeQuietly(InputStream is)
+	public final static void closeQuietly(InputStream is)
 	{
 		try{
 			if ( is !=null )
@@ -98,7 +98,7 @@ public class Util
 		}
 	}
 
-	static void closeQuietly(AssetFileDescriptor afd)
+	public final static void closeQuietly(AssetFileDescriptor afd)
 	{
 		try{
 			if ( afd != null)
@@ -108,7 +108,7 @@ public class Util
 		}
 	}
 
-	static void closeQuietly(Reader r)
+	public final static void closeQuietly(Reader r)
 	{
 		try{
 			if ( r != null)
@@ -118,7 +118,7 @@ public class Util
 		}
 	}
 
-	static void closeQuietly(OutputStream os)
+	public final static void closeQuietly(OutputStream os)
 	{
 		try{
 			if ( os != null )
@@ -128,7 +128,7 @@ public class Util
 		}
 	}
 
-	static void closeQuietly(Writer writer)
+	public final static void closeQuietly(Writer writer)
 	{
 		try{
 			if ( writer != null )
@@ -138,7 +138,7 @@ public class Util
 		}
 	}
 
-	static void closeQuietly(Socket s)
+	public final static void closeQuietly(Socket s)
 	{
 		try{
 			if ( s != null )
@@ -148,7 +148,7 @@ public class Util
 		}
 	}
 
-	static String join(List<String> command, char c) {
+	public final static String join(List<String> command, char c) {
 		StringBuilder sb = new StringBuilder();
 		for(Iterator<String> it=command.iterator(); it.hasNext();)
 		{
@@ -159,12 +159,12 @@ public class Util
 		return sb.toString();
 	}
 
-	static String makeShellCompatible(String name)
+	public final static String makeShellCompatible(String name)
 	{
 		return name.replaceAll( "[^a-zA-Z0-9_]", "_" ); 
 	}
 
-	public static int waitForQuietly(Process p)
+	public final static int waitForQuietly(Process p)
 	{
 		int exitCode = Integer.MAX_VALUE;
 		if ( p != null )
@@ -183,7 +183,7 @@ public class Util
 		return exitCode;
 	}
 
-	public static void joinQuietly(Thread t)
+	public final static void joinQuietly(Thread t)
 	{
 		join: do
 		{
@@ -197,7 +197,7 @@ public class Util
 		} while ( false );
 	}
 
-	static void copyAsset(String tag, AssetManager assets, String assetName,
+	public final static void copyAsset(String tag, AssetManager assets, String assetName,
 			File target) {
 		if ( target.exists() )
 		{
@@ -229,7 +229,7 @@ public class Util
 		}
 	}
 
-	public static void waitQuietly(Thread t)
+	public final static void waitQuietly(Thread t)
 	{
 		wait: do {
 			try {
