@@ -18,7 +18,7 @@ package de.schaeuffelhut.android.openvpn;
 import android.content.Intent;
 import android.net.Uri;
 
-public class Intents
+public final class Intents
 {
 	public final static String NS = Intents.class.getName();
 	public final static String DEAMON_STATE_CHANGED = NS + ".DAEMON_STATE_CHANGED";
@@ -51,13 +51,13 @@ public class Intents
 	public static final int NETWORK_STATE_ADD_ROUTES = 9;		
 	public final static int NETWORK_STATE_EXITING = 10;
 
-	static Intent daemonStateChanged(String config, int state){
+	public final static Intent daemonStateChanged(String config, int state){
 		return new Intent(DEAMON_STATE_CHANGED)
 		.putExtra(EXTRA_CONFIG, config)
 		.putExtra(EXTRA_DAEMON_STATE, state);
 	}
 
-	static Intent networkStateChanged(String config, int state, int previousState, long time){
+	public final static Intent networkStateChanged(String config, int state, int previousState, long time){
 		Intent intent = new Intent(NETWORK_STATE_CHANGED)
 		.putExtra(EXTRA_CONFIG, config)
 		.putExtra(EXTRA_NETWORK_STATE, state)
@@ -71,11 +71,11 @@ public class Intents
 	
 	private Intents() {}
 
-	public static Uri config2Uri(String config) {
+	public final static Uri config2Uri(String config) {
 		return Uri.parse("content://de.schaeuffelhut.openvpn/"
 				+ (config == null ? "" : config));
 	}
-	public static String URI2config(Uri uri) {
+	public final static String URI2config(Uri uri) {
 		return uri.getLastPathSegment();
 	}
 }

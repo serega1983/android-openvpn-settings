@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package de.schaeuffelhut.android.openvpn;
+package de.schaeuffelhut.android.openvpn.service;
 
 import java.io.File;
 import java.util.HashMap;
@@ -27,12 +27,15 @@ import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import de.schaeuffelhut.android.openvpn.NetworkConnectivityListener;
+import de.schaeuffelhut.android.openvpn.OpenVpnSettings;
 import de.schaeuffelhut.android.openvpn.util.Util;
 
 /**
  * @author M.Sc. Friedrich Schäuffelhut
  *
  */
+//TODO: expose interface through aidl
 public final class OpenVpnService extends Service
 {
 	final static String TAG = "OpenVPN-ControlShell";
@@ -44,8 +47,9 @@ public final class OpenVpnService extends Service
 	public OpenVpnService() {
 	}
 	
-	final class ServiceBinder extends Binder {
-		OpenVpnService getService() {
+	@Deprecated //TODO: aidl?
+	public final class ServiceBinder extends Binder {
+		public final OpenVpnService getService() {
             return OpenVpnService.this;
         }
 	}
@@ -217,7 +221,7 @@ public final class OpenVpnService extends Service
 	 * Try to attach to already running OpenVPN daemons, starting them if they
 	 * are enabled.
 	 */
-	void daemonAttach()
+	private final void daemonAttach()
 	{
 		Log.d( TAG, "trying to attach to already running daemons" );
 		for (String config : configs() )
@@ -229,7 +233,7 @@ public final class OpenVpnService extends Service
 			);
 	}
 
-	synchronized void daemonStart(String config)
+	public final synchronized void daemonStart(String config)
 	{
 		if ( isDaemonStarted(config) )
 		{
@@ -248,7 +252,7 @@ public final class OpenVpnService extends Service
 		}
 	}
 
-	synchronized void daemonRestart(String config)
+	public final synchronized void daemonRestart(String config)
 	{
 		if ( !isDaemonStarted(config) )
 		{
@@ -262,14 +266,14 @@ public final class OpenVpnService extends Service
 		}
 	}
 
-	synchronized void daemonRestart()
+	public final synchronized void daemonRestart()
 	{
 		for (String config : configs() )
 			if ( isDaemonStarted( config ) )
 				daemonRestart( config );
 	}
 	
-	synchronized void daemonStop(String config)
+	public final synchronized void daemonStop(String config)
 	{
 		if ( !isDaemonStarted(config) )
 		{
@@ -282,12 +286,12 @@ public final class OpenVpnService extends Service
 		}
 	}
 
-	synchronized boolean isDaemonStarted(String config)
+	public final synchronized boolean isDaemonStarted(String config)
 	{
 		return registry.containsKey( config ) && registry.get( config ).isAlive();
 	}
 	
-	synchronized boolean hasDaemonsStarted()
+	public final synchronized boolean hasDaemonsStarted()
 	{
 		for( DaemonMonitor monitor : registry.values() )
 			if ( monitor.isAlive() )

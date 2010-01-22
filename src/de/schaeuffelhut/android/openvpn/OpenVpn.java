@@ -37,6 +37,7 @@ import android.widget.CheckedTextView;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
 import de.schaeuffelhut.android.openvpn.util.Util;
 
 public class OpenVpn extends ListActivity

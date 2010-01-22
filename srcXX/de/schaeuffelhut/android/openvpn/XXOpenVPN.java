@@ -15,6 +15,7 @@
  */
 package de.schaeuffelhut.android.openvpn;
 
+import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -34,11 +35,11 @@ import android.widget.Toast;
 
 public class XXOpenVPN extends Activity {
 	
-	ControlShell mControlShell = null;
+	OpenVpnService mControlShell = null;
 	
 	ServiceConnection mControlShellConnection = new ServiceConnection(){
 		public void onServiceConnected(ComponentName name, IBinder serviceBinder) {
-			mControlShell = ((ControlShell.ServiceBinder)serviceBinder).getService();
+			mControlShell = ((OpenVpnService.ServiceBinder)serviceBinder).getService();
 			Toast.makeText(XXOpenVPN.this, "Connected to ControlShell", Toast.LENGTH_SHORT).show();
 		}
 		public void onServiceDisconnected(ComponentName name) {
@@ -56,7 +57,7 @@ public class XXOpenVPN extends Activity {
         if ( !bindService(
         		new Intent(
         				XXOpenVPN.this,
-        				ControlShell.class
+        				OpenVpnService.class
         		),
         		mControlShellConnection,
         		Context.BIND_AUTO_CREATE

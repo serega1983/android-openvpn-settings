@@ -17,6 +17,8 @@ package de.schaeuffelhut.android.openvpn;
 
 import java.io.File;
 
+import de.schaeuffelhut.android.openvpn.util.Util;
+
 
 import android.app.Activity;
 import android.app.Dialog;

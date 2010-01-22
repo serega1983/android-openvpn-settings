@@ -18,6 +18,10 @@ package de.schaeuffelhut.android.openvpn;
 import java.io.File;
 import java.io.PrintStream;
 
+import de.schaeuffelhut.android.openvpn.util.LoggerThread;
+import de.schaeuffelhut.android.openvpn.util.Util;
+
+
 import android.content.res.AssetManager;
 import android.util.Log;
 

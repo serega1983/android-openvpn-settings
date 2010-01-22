@@ -15,6 +15,7 @@
  */
 package de.schaeuffelhut.android.openvpn;
 
+import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package de.schaeuffelhut.android.openvpn;
+package de.schaeuffelhut.android.openvpn.service;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +28,7 @@ import java.util.Stack;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.util.Shell;
 import de.schaeuffelhut.android.openvpn.util.UnexpectedSwitchValueException;
 import de.schaeuffelhut.android.openvpn.util.Util;
@@ -38,7 +39,7 @@ import de.schaeuffelhut.android.openvpn.util.Util;
  * @author fries
  *
  */
-public class DaemonMonitor
+public final class DaemonMonitor
 {
 //	private final boolean LOCAL_LOGD = true;
 	private final String mTAG_DM;

@@ -31,6 +31,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
+import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
 import de.schaeuffelhut.android.openvpn.util.Util;
 
 public class OpenVpnSettings extends PreferenceActivity implements ServiceConnection
@@ -38,10 +39,10 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 	private static final int IMPORT_FILES = 1;
     private static final String KEY_PARENT = "parent";
 
-    static String KEY_CONFIG(String config){
+    public final static String KEY_CONFIG(String config){
     	return String.format("config[%s]", config);
     }
-    static String KEY_CONFIG_ENABLED(String config){
+    public final static String KEY_CONFIG_ENABLED(String config){
     	return KEY_CONFIG(config)+".enabled";
     }
     
