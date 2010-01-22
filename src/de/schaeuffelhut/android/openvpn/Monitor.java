@@ -28,12 +28,12 @@ import android.widget.Toast;
 public class Monitor extends Activity
 {
 	
-	ControlShell mControlShell = null;
+	OpenVpnService mControlShell = null;
 	
 	ServiceConnection mControlShellConnection = new ServiceConnection(){
 		private Thread lt;
 		public void onServiceConnected(ComponentName name, IBinder serviceBinder) {
-			mControlShell = ((ControlShell.ServiceBinder)serviceBinder).getService();
+			mControlShell = ((OpenVpnService.ServiceBinder)serviceBinder).getService();
 			Toast.makeText(Monitor.this, "Connected to ControlShell", Toast.LENGTH_SHORT).show();
 
 //			final LoggerThread daemonLogger = mControlShell.getDaemonLogger(config);
@@ -82,7 +82,7 @@ public class Monitor extends Activity
 		if ( !bindService(
         		new Intent(
         				Monitor.this,
-        				ControlShell.class
+        				OpenVpnService.class
         		),
         		mControlShellConnection,
         		Context.BIND_AUTO_CREATE

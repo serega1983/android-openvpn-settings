@@ -45,7 +45,7 @@ public class OpenVPNSettings extends PreferenceActivity implements ServiceConnec
     }
     
     ArrayList<DaemonEnabler> mDaemonEnablers = new ArrayList<DaemonEnabler>(4);
-	ControlShell mControlShell = null;
+	OpenVpnService mControlShell = null;
     
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -56,7 +56,7 @@ public class OpenVPNSettings extends PreferenceActivity implements ServiceConnec
         initToggles();
         
 		if ( !bindService(
-        		new Intent( this, ControlShell.class ),
+        		new Intent( this, OpenVpnService.class ),
         		this,
         		Context.BIND_AUTO_CREATE
         ) )
@@ -98,7 +98,7 @@ public class OpenVPNSettings extends PreferenceActivity implements ServiceConnec
 
 
 	public void onServiceConnected(ComponentName name, IBinder serviceBinder) {
-		mControlShell = ((ControlShell.ServiceBinder)serviceBinder).getService();
+		mControlShell = ((OpenVpnService.ServiceBinder)serviceBinder).getService();
 		Toast.makeText(this, "Connected to ControlShell", Toast.LENGTH_SHORT).show();
 
 		for(DaemonEnabler daemonEnabler : mDaemonEnablers )

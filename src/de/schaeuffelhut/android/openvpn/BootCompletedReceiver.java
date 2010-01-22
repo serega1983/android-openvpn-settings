@@ -33,7 +33,7 @@ public class BootCompletedReceiver extends BroadcastReceiver
 		  {
 			  ComponentName comp = new ComponentName(
 					  context.getPackageName(),
-					  ControlShell.class.getName()
+					  OpenVpnService.class.getName()
 			  );
 			  ComponentName service = context.startService(
 					  new Intent().setComponent( comp )

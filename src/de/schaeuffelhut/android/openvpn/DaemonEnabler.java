@@ -30,7 +30,7 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 	private static final String TAG = "OpenVPNDaemonEnabler";
 
 	private final Context mContext; 
-	private ControlShell mControlShell;
+	private OpenVpnService mControlShell;
 	private final CheckBoxPreference mDaemonCheckBoxPref;
 	private final String mConfigFileName;
 	private final CharSequence mOriginalSummary;
@@ -55,7 +55,7 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 		}
 	};
 
-	public DaemonEnabler(Context contex, ControlShell controlShell, CheckBoxPreference daemonCheckBoxPreference, String configFileName)
+	public DaemonEnabler(Context contex, OpenVpnService controlShell, CheckBoxPreference daemonCheckBoxPreference, String configFileName)
 	{
 		mContext = contex;
 		mDaemonCheckBoxPref = daemonCheckBoxPreference;
@@ -70,7 +70,7 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 		setControlShell( controlShell );
 	}
 
-	public void setControlShell(ControlShell controlShell)
+	public void setControlShell(OpenVpnService controlShell)
 	{
 		mControlShell = controlShell;
 		mDaemonCheckBoxPref.setEnabled( mControlShell != null );

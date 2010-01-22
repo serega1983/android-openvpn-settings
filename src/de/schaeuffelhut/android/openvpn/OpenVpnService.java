@@ -32,7 +32,7 @@ import android.util.Log;
  * @author M.Sc. Friedrich Schäuffelhut
  *
  */
-public final class ControlShell extends Service
+public final class OpenVpnService extends Service
 {
 	final static String TAG = "OpenVPN-ControlShell";
 	
@@ -40,12 +40,12 @@ public final class ControlShell extends Service
 	 * Service API
 	 */
 	
-	public ControlShell() {
+	public OpenVpnService() {
 	}
 	
 	final class ServiceBinder extends Binder {
-		ControlShell getService() {
-            return ControlShell.this;
+		OpenVpnService getService() {
+            return OpenVpnService.this;
         }
 	}
 

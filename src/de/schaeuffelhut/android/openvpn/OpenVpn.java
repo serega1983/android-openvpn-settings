@@ -42,22 +42,22 @@ import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
-public class OpenVPN extends ListActivity
+public class OpenVpn extends ListActivity
 {
 	private static final int IMPORT_FILES = 1;
 
 	private String[] configs;
 
-	ControlShell mControlShell = null;
+	OpenVpnService mControlShell = null;
 	
 	ServiceConnection mControlShellConnection = new ServiceConnection(){
 		public void onServiceConnected(ComponentName name, IBinder serviceBinder) {
-			mControlShell = ((ControlShell.ServiceBinder)serviceBinder).getService();
-			Toast.makeText(OpenVPN.this, "Connected to ControlShell", Toast.LENGTH_SHORT).show();
+			mControlShell = ((OpenVpnService.ServiceBinder)serviceBinder).getService();
+			Toast.makeText(OpenVpn.this, "Connected to ControlShell", Toast.LENGTH_SHORT).show();
 		}
 		public void onServiceDisconnected(ComponentName name) {
 			mControlShell = null;
-			Toast.makeText(OpenVPN.this, "Execpectedly disconnected from ControlShell", Toast.LENGTH_SHORT).show();
+			Toast.makeText(OpenVpn.this, "Execpectedly disconnected from ControlShell", Toast.LENGTH_SHORT).show();
 		}
 	};
 
@@ -68,8 +68,8 @@ public class OpenVPN extends ListActivity
 
 		if ( !bindService(
         		new Intent(
-        				OpenVPN.this,
-        				ControlShell.class
+        				OpenVpn.this,
+        				OpenVpnService.class
         		),
         		mControlShellConnection,
         		Context.BIND_AUTO_CREATE
