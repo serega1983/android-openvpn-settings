@@ -117,6 +117,9 @@ abstract class Shell extends Thread
 
 	void exec(String cmd)
 	{
+		if ( LOCAL_LOGD )
+			Log.d( mTag, "exec " + cmd );
+
 		stdout.print( "exec " );
 		stdout.println( cmd );
 		stdout.flush();
@@ -131,6 +134,9 @@ abstract class Shell extends Thread
 
 	void cmd(String cmd)
 	{
+		if ( LOCAL_LOGD )
+			Log.d( mTag, cmd );
+
 		stdout.println( cmd );
 		stdout.flush();
 	}
