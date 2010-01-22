@@ -25,12 +25,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Stack;
 
-import de.schaeuffelhut.android.openvpn.DaemonMonitor.ManagementThread.ReplyHandler;
-
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.util.Log;
 
 /**

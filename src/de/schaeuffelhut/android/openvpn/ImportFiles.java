@@ -25,21 +25,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 public class ImportFiles extends Activity
 {
@@ -233,7 +227,7 @@ public class ImportFiles extends Activity
 			Log.v("OpenVPN", "add="+add );
 			
 			File configDir = new File( getApplicationContext().getFilesDir(), "config.d" );
-			boolean created = configDir.mkdirs();
+			configDir.mkdirs();
 			
 			File[] deleteFiles = replace ? configDir.listFiles( new Util.IsFileFilter() ) : new File[0];
 			progressMax += deleteFiles.length;
