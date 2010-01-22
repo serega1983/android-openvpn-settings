@@ -20,7 +20,6 @@ import java.util.HashMap;
 
 import android.app.Service;
 import android.content.Intent;
-import android.net.NetworkInfo;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -28,7 +27,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.Toast;
 
 /**
  * @author M.Sc. Friedrich Schäuffelhut
@@ -80,12 +78,8 @@ public final class ControlShell extends Service
 	private NetworkConnectivityListener mConnectivity;
 	
 	private File mConfigDir;
-	private File mComDir;
-	private File mBinDir;
-	
+	private File mComDir;	
 	private File binOpenvpn;
-	private File binLibcrypto;
-	private File binLiblzo;
 
 	private final HashMap<String, DaemonMonitor> registry = new HashMap<String, DaemonMonitor>(4);
 	
@@ -114,28 +108,24 @@ public final class ControlShell extends Service
 			mComDir.mkdirs();
 		Log.d( TAG, "mComDir=" + mComDir );
 
-		mBinDir = new File( "/system/bin" );
-//		mBinDir = new File( getApplicationContext().getFilesDir(), "bin" );
-//		if ( !mBinDir.exists() )
-//			mBinDir.mkdirs();
-//		Log.d( TAG, "mBinDir=" + mBinDir );
+		//TODO: make path a config value
+		for( File f : new File[]{ new File( "/system/xbin/openvpn" ), new File( "/system/bin/openvpn" ), new File( "/sbin" ) } )
+		{
+			if ( f.exists() )
+			{
+				binOpenvpn = f;
+				break;
+			}
+		}
+		if ( binOpenvpn == null )
+			throw new RuntimeException( "openvpn binary not found!" );
 
-		Log.d( TAG, "installing binaries" );
-		binOpenvpn = new File( mBinDir, "openvpn");
-		binLiblzo = new File( mBinDir, "liblzo.so");
-		binLibcrypto = new File( mBinDir, "libcrypto.so");
-
-		new HandlerThread( "OpenVPN-Installer" ) {
+		new HandlerThread( "OpenVPN-Attach" ) {
 			@Override
 			protected void onLooperPrepared()
 			{
-//				new Installer( getAssets(), binOpenvpn, binLibcrypto, binLiblzo ).installOpenVPN();
-				
 				daemonAttach();
-
 				mConnectivity.startListening( getApplicationContext() );
-
-				Toast.makeText(getApplicationContext(), "Installer finished", Toast.LENGTH_SHORT).show();
 			}
 		}.start();
 	}
