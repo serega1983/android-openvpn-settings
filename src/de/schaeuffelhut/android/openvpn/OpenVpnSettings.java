@@ -152,7 +152,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 //	    menu.findItem( R.id.configs_options_startall ).setVisible( configs.length > 0 );
-	    menu.findItem( R.id.configs_options_restartall ).setVisible( mControlShell.hasDaemonsStarted() );
+//	    menu.findItem( R.id.configs_options_restartall ).setVisible( mControlShell.hasDaemonsStarted() );
 	    menu.findItem( R.id.configs_options_stopall ).setVisible( mControlShell.hasDaemonsStarted() );
 		return super.onPrepareOptionsMenu(menu);
 	}
@@ -164,13 +164,13 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 			Intent intent = new Intent( getApplicationContext(), ImportFiles.class );
 			startActivityForResult(intent, IMPORT_FILES);
 			return true;
-		case R.id.configs_options_refresh:
-			initToggles();
-			return true;
-		case R.id.configs_options_startall:
-			return true;
-		case R.id.configs_options_restartall:
-			return true;
+//		case R.id.configs_options_refresh:
+//			initToggles();
+//			return true;
+//		case R.id.configs_options_startall:
+//			return true;
+//		case R.id.configs_options_restartall:
+//			return true;
 		case R.id.configs_options_stopall:
 			return true;
 		case R.id.configs_options_settings:
