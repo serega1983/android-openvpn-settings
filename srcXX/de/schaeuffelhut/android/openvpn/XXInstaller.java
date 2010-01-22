@@ -25,7 +25,7 @@ import de.schaeuffelhut.android.openvpn.util.Util;
 import android.content.res.AssetManager;
 import android.util.Log;
 
-class Installer
+class XXInstaller
 {
 	private final static String TAG = "OpenVPN-Installer";
 
@@ -35,7 +35,7 @@ class Installer
 	final File binLiblzo;
 
 
-	Installer(AssetManager assetManager, File binOpenvpn, File binLibcrypto, File binLiblzo) {
+	XXInstaller(AssetManager assetManager, File binOpenvpn, File binLibcrypto, File binLiblzo) {
 		this.assetManager = assetManager;
 		this.binOpenvpn = binOpenvpn;
 		this.binLibcrypto = binLibcrypto;
