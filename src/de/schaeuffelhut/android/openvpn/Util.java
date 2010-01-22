@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.Writer;
+import java.net.Socket;
 import java.util.Iterator;
 import java.util.List;
 
@@ -123,6 +125,26 @@ public class Util
 				os.close();
 		}catch (Exception e) {
 			Log.e( "OpenVPN", "closing OutputStream", e );
+		}
+	}
+
+	static void closeQuietly(Writer writer)
+	{
+		try{
+			if ( writer != null )
+				writer.close();
+		}catch (Exception e) {
+			Log.e( "OpenVPN", "closing Writer", e );
+		}
+	}
+
+	static void closeQuietly(Socket s)
+	{
+		try{
+			if ( s != null )
+				s.close();
+		}catch (Exception e) {
+			Log.e( "OpenVPN", "closing Socket", e );
 		}
 	}
 
