@@ -100,22 +100,41 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 	}
 
 	public boolean onPreferenceChange(Preference preference, Object value) {
+		final boolean updateGui;
+		
 		// Turn on/off OpenVPN daemon
 		if ( mControlShell == null )
+		{
 			mDaemonCheckBoxPref.setSummary( "Error: not bound to control shell!" );
+			updateGui = false; // Don't update UI to opposite
+		}
 		else
 		{
-			mDaemonCheckBoxPref.setEnabled(false);
 
+			boolean currentState = mControlShell.isDaemonStarted( mConfigFileName );
 			boolean newState = (Boolean) value;
-			if (newState)
-				mControlShell.daemonStart(mConfigFileName);
+			
+			if ( currentState == newState )
+			{
+				if (LOCAL_LOGD)
+					Log.d(TAG, String.format( 
+							"Daemon for config %s was already %s ",
+							mConfigFileName,
+							currentState ? "started" : "stopped" ) );
+				updateGui = true; // Update GUI to refelect current state
+			}
 			else
-				mControlShell.daemonStop(mConfigFileName);
+			{
+				mDaemonCheckBoxPref.setEnabled(false);
+				if (newState)
+					mControlShell.daemonStart(mConfigFileName);
+				else
+					mControlShell.daemonStop(mConfigFileName);
+				updateGui = false; // Don't update UI to opposite state until we're sure
+			}
 		}        
-
-		// Don't update UI to opposite state until we're sure
-		return false;
+		
+		return updateGui;
 	}
 
 
@@ -135,6 +154,10 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 		case Intents.DAEMON_STATE_DISABLED:
 			mDaemonCheckBoxPref.setChecked( false );
 			mDaemonCheckBoxPref.setSummary( mOriginalSummary );
+			break;
+		case Intents.DAEMON_STATE_STARTUP:
+			mDaemonCheckBoxPref.setChecked(false);
+			mDaemonCheckBoxPref.setSummary( "Startup..." );
 			break;
 		case Intents.DAEMON_STATE_UNKNOWN:
 			mDaemonCheckBoxPref.setChecked(false);

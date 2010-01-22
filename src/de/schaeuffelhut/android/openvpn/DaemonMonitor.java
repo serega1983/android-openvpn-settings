@@ -75,7 +75,7 @@ public class DaemonMonitor
 		reattach();
 	}
 	
-	private void reattach()
+	private boolean reattach()
 	{
 		mOpenVPNShell = null;
 
@@ -84,6 +84,8 @@ public class DaemonMonitor
 			mManagementThread.start();
 		else
 			mManagementThread = null;
+		
+		return mManagementThread != null && mManagementThread.isAlive();
 	}
 
 	void start()
@@ -103,6 +105,13 @@ public class DaemonMonitor
 			@Override
 			void onShellPrepared()
 			{
+				mContext.sendStickyBroadcast( 
+						Intents.daemonStateChanged(
+								mConfig,
+								Intents.DAEMON_STATE_STARTUP
+						)
+				);
+
 				cmd( "cd " + mOpenvpnBinary.getParentFile().getAbsolutePath() );
 				su();
 				exec( String.format( 
@@ -128,8 +137,17 @@ public class DaemonMonitor
 
 			void onShellTerminated()
 			{
+				// while mManagementThread == null, system is in startup
+				// and a DAEMON_STATE_DISABLED message is expected
+				if ( mManagementThread == null )
+					mContext.sendStickyBroadcast( 
+							Intents.daemonStateChanged(
+									mConfig,
+									Intents.DAEMON_STATE_DISABLED
+							)
+					);
+				
 				waitForQuietly();
-				//TODO: set null, but synchronize
 //				mOpenVPNShell = null;
 			}
 		};
@@ -191,7 +209,7 @@ public class DaemonMonitor
 			{
 				if ( success )
 				{
-					Log.v(mTAG_MT, "attached to OpenVPN monitor port");
+					Log.v(mTAG_MT, "Successfully attached to OpenVPN monitor port");
 					mContext.sendStickyBroadcast( 
 							Intents.daemonStateChanged(
 									mConfig,
@@ -203,7 +221,7 @@ public class DaemonMonitor
 				}
 				else
 				{
-					Log.v(mTAG_MT, "not attached to OpenVPN monitor port");
+					Log.v(mTAG_MT, "Could not attach to OpenVPN monitor port");
 				}
 			}
 			finally
@@ -242,33 +260,42 @@ public class DaemonMonitor
 		}
 
 		private Stack<ReplyHandler> mReplyHandlers = new Stack<ReplyHandler>();
+		private boolean mMonitorLoopStarted = false; // set to true, when in final monitoring loop
+
 		abstract class ReplyHandler {
 			abstract void onReply(String line);
 		}
 		
 		private void monitor()
 		{
+			LineNumberReader lnr = null;
 			try {
 				out = new PrintWriter( socket.getOutputStream() );
 
-				LineNumberReader lnr = new LineNumberReader(
+				lnr = new LineNumberReader(
 						new InputStreamReader( socket.getInputStream() ),
 						128
 				);
 
-				synchronized ( this ) {
-					Log.v(mTAG_MT, "Socket IO established, notifying waiting threads");
-					notifyAll();
-				}
-				
+				Log.v(mTAG_MT, "Socket IO established");
+
 				networkStateChanged( Intents.NETWORK_STATE_CONNECTING );
 
 				state();
 				state( true );
-
+				
 				String line;
 				while ( (line = lnr.readLine() ) != null )
 				{
+					if ( !mMonitorLoopStarted )
+					{
+						mMonitorLoopStarted = true;
+						synchronized ( this ) {
+							Log.v(mTAG_MT, "Monitor loop is ready, notifying waiting threads");
+							notifyAll();
+						}
+					}
+					
 					Log.v( mTAG_MT, line );
 					if ( line.startsWith( ">" ) ) // async realtime notifications start with ">"
 					{
@@ -300,7 +327,23 @@ public class DaemonMonitor
 			}
 			catch(IOException e)
 			{
-				Log.e(mTAG_MT, "lost connection to OpenVPN daemon", e );
+				Log.e(mTAG_MT, "Lost connection to OpenVPN daemon", e );
+				Util.closeQuietly( lnr );
+				networkStateChanged( Intents.NETWORK_STATE_UNKNOWN );
+			}
+			finally
+			{
+				Util.closeQuietly( lnr );
+				Util.closeQuietly( out );
+				Util.closeQuietly( socket );
+				
+				if ( !mMonitorLoopStarted )
+				{
+					synchronized ( this ) {
+						Log.v(mTAG_MT, "Monitor loop never run, notifying any remainig waiting threads");
+						notifyAll();
+					}
+				}
 			}
 		}
 
@@ -397,6 +440,13 @@ public class DaemonMonitor
 		
 		private synchronized void sendCommand( String cmd, ReplyHandler reply )
 		{
+			// if monitor loop has not been started and this is not the monitor thread it self, then wait
+			if ( !mMonitorLoopStarted && Thread.currentThread() != this )
+			{
+				Log.v(mTAG_MT, String.format("sendCommand(\"%s\"): waiting for monitor loop to come ready", cmd) );
+				try {wait();} catch (InterruptedException e) {}
+			}
+			
 			Log.v(mTAG_MT, String.format("sendCommand(\"%s\")", cmd) );
 			if ( out == null )
 			{

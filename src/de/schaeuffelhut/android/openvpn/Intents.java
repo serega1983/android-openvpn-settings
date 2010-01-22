@@ -35,8 +35,9 @@ public class Intents
 	public final static String EXTRA_NETWORK_CAUSE = "network-cause";
 	
 	public final static int DAEMON_STATE_UNKNOWN = 0;
-	public final static int DAEMON_STATE_ENABLED = 1;
-	public final static int DAEMON_STATE_DISABLED = 2;
+	public final static int DAEMON_STATE_STARTUP = 1;
+	public final static int DAEMON_STATE_ENABLED = 2;
+	public final static int DAEMON_STATE_DISABLED = 3;
 
 	public final static int NETWORK_STATE_UNKNOWN = 0;
 	public final static int NETWORK_STATE_CONNECTING = 1;
