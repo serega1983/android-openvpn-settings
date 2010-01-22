@@ -223,7 +223,7 @@ public final class OpenVpnService extends Service
 			daemonAttach(
 					config,
 					PreferenceManager.getDefaultSharedPreferences( getApplicationContext() ).getBoolean(
-							OpenVPNSettings.KEY_CONFIG_ENABLED(config), false
+							OpenVpnSettings.KEY_CONFIG_ENABLED(config), false
 					)
 			);
 	}
