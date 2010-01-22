@@ -25,6 +25,7 @@ import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -40,9 +41,16 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
 import de.schaeuffelhut.android.openvpn.util.Util;
 
-public class OpenVpn extends ListActivity
+public class XXOpenVpn extends ListActivity
 {
+	public XXOpenVpn() {
+		throw new RuntimeException( "unexpected instantiation" );
+	}
+	
+	final static String TAG = "OpenVpn";
+	
 	private static final int IMPORT_FILES = 1;
+	private static final int OPENVPN_SETTINGS = 2;
 
 	private String[] configs;
 
@@ -51,11 +59,11 @@ public class OpenVpn extends ListActivity
 	ServiceConnection mControlShellConnection = new ServiceConnection(){
 		public void onServiceConnected(ComponentName name, IBinder serviceBinder) {
 			mControlShell = ((OpenVpnService.ServiceBinder)serviceBinder).getService();
-			Toast.makeText(OpenVpn.this, "Connected to ControlShell", Toast.LENGTH_SHORT).show();
+			Toast.makeText(XXOpenVpn.this, "Connected to ControlShell", Toast.LENGTH_SHORT).show();
 		}
 		public void onServiceDisconnected(ComponentName name) {
 			mControlShell = null;
-			Toast.makeText(OpenVpn.this, "Execpectedly disconnected from ControlShell", Toast.LENGTH_SHORT).show();
+			Toast.makeText(XXOpenVpn.this, "Execpectedly disconnected from ControlShell", Toast.LENGTH_SHORT).show();
 		}
 	};
 
@@ -65,19 +73,12 @@ public class OpenVpn extends ListActivity
 		super.onCreate(savedInstanceState);
 
 		if ( !bindService(
-        		new Intent(
-        				OpenVpn.this,
-        				OpenVpnService.class
-        		),
+        		new Intent( XXOpenVpn.this, OpenVpnService.class ),
         		mControlShellConnection,
         		Context.BIND_AUTO_CREATE
         ) )
         {
-        	Toast.makeText(
-        			getApplicationContext(), 
-        			"Could not bind to ControlShell",
-        			Toast.LENGTH_SHORT
-        	).show();
+			Log.w(TAG, "Could not bind to ControlShell!" );
         }
 		refreshFileList();
 		getListView().setTextFilterEnabled(false);
@@ -118,16 +119,16 @@ public class OpenVpn extends ListActivity
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 	    inflater.inflate(R.menu.configs_options_menu, menu);
-	    menu.findItem( R.id.configs_options_startall ).setVisible( configs.length > 0 );
-	    menu.findItem( R.id.configs_options_restartall ).setVisible( mControlShell.hasDaemonsStarted() );
+//	    menu.findItem( R.id.configs_options_startall ).setVisible( configs.length > 0 );
+//	    menu.findItem( R.id.configs_options_restartall ).setVisible( mControlShell.hasDaemonsStarted() );
 	    menu.findItem( R.id.configs_options_stopall ).setVisible( mControlShell.hasDaemonsStarted() );
 	    return true;
 	}
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-	    menu.findItem( R.id.configs_options_startall ).setVisible( configs.length > 0 );
-	    menu.findItem( R.id.configs_options_restartall ).setVisible( mControlShell.hasDaemonsStarted() );
+//	    menu.findItem( R.id.configs_options_startall ).setVisible( configs.length > 0 );
+//	    menu.findItem( R.id.configs_options_restartall ).setVisible( mControlShell.hasDaemonsStarted() );
 	    menu.findItem( R.id.configs_options_stopall ).setVisible( mControlShell.hasDaemonsStarted() );
 		return super.onPrepareOptionsMenu(menu);
 	}
@@ -135,21 +136,23 @@ public class OpenVpn extends ListActivity
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch ( item.getItemId() ) {
-		case R.id.configs_options_import:
+		case R.id.configs_options_import: {
 			Intent intent = new Intent( getApplicationContext(), ImportFiles.class );
 			startActivityForResult(intent, IMPORT_FILES);
-			return true;
-		case R.id.configs_options_refresh:
-			refreshFileList();
-			return true;
-		case R.id.configs_options_startall:
-			return true;
-		case R.id.configs_options_restartall:
-			return true;
+			return true; }
+//		case R.id.configs_options_refresh:
+//			refreshFileList();
+//			return true;
+//		case R.id.configs_options_startall:
+//			return true;
+//		case R.id.configs_options_restartall:
+//			return true;
 		case R.id.configs_options_stopall:
 			return true;
-		case R.id.configs_options_settings:
-			return true;
+		case R.id.configs_options_settings: {
+			Intent intent = new Intent( getApplicationContext(), OpenVpnSettings.class );
+			startActivityForResult(intent, OPENVPN_SETTINGS);
+			return true; }
 		default:
 			return super.onOptionsItemSelected(item);
 		}
