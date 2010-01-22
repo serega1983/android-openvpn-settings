@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.schaeuffelhut.android.openvpn;
+package de.schaeuffelhut.android.openvpn.util;
 
 import java.util.HashMap;
 import java.util.Iterator;

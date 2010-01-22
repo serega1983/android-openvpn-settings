@@ -24,11 +24,11 @@
 		android:label="@string/app_name">
 
 		<activity
-			android:name=".OpenVPN"
+			android:name=".OpenVpn"
 			android:label="@string/app_name">
 		</activity>
 		<activity
-			android:name="OpenVPNSettings"
+			android:name="OpenVpnSettings"
 			android:label="OpenVPN Preferences">
 			<intent-filter>
 				<action
@@ -39,13 +39,13 @@
 		</activity>
 
 		<service
-			android:name="ControlShell"
-			android:label="ControlShell"
+			android:name="de.schaeuffelhut.android.openvpn.service.OpenVpnService"
+			android:label="OpenVPN Service"
 			android:exported="false"
 			android:enabled="true" />
 
 		<receiver
-			android:name="BootCompletedReceiver"
+			android:name="de.schaeuffelhut.android.openvpn.util.BootCompletedReceiver"
 			android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
 			<intent-filter>
 				<action
@@ -57,9 +57,6 @@
 			android:label="Import Files"
 			android:name="ImportFiles" />
 
-		<activity
-			android:name="Monitor"
-			android:label="OpenVPN Monitor" />
 </application>
 
 <uses-permission android:name="android.permission.INTERNET"></uses-permission>

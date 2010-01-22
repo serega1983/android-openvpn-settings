@@ -27,8 +27,8 @@ import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import de.schaeuffelhut.android.openvpn.NetworkConnectivityListener;
 import de.schaeuffelhut.android.openvpn.OpenVpnSettings;
+import de.schaeuffelhut.android.openvpn.util.NetworkConnectivityListener;
 import de.schaeuffelhut.android.openvpn.util.Util;
 
 /**

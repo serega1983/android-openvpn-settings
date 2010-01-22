@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. 
  */
-package de.schaeuffelhut.android.openvpn;
+package de.schaeuffelhut.android.openvpn.util;
 
 import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
 import android.content.BroadcastReceiver;
