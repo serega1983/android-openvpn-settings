@@ -15,7 +15,6 @@
  */
 package de.schaeuffelhut.android.openvpn;
 
-import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -24,6 +23,7 @@ import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.text.TextUtils;
 import android.util.Log;
+import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
 
 public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 {
