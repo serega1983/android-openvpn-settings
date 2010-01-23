@@ -17,6 +17,7 @@ public final class Preferences {
 	public static final String KEY_OPENVPN_PATH_TO_BINARY = "openvpn_path_to_binary";
 	public static final String KEY_OPENVPN_PATH_TO_SU = "openvpn_path_to_su";
 	public static final String KEY_OPENVPN_SU_ARGUMENTS = "openvpn_su_arguments";
+	public static final String KEY_OPENVPN_DO_MODPROBE_TUN = "openvpn_do_modprobe_tun";
 
 	public final static String KEY_CONFIG(String config){
 		return String.format( "%s[%s]", KEY_OPENVPN_CONFIGURATIONS, config );
@@ -138,5 +139,9 @@ public final class Preferences {
 	{
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		return sharedPreferences.getInt( Preferences.KEY_CONFIG_MGMT_PORT(configFile), -1 );
+	}
+
+	public final static boolean getDoModprobeTun(SharedPreferences sharedPreferences) {
+		return sharedPreferences.getBoolean( Preferences.KEY_OPENVPN_DO_MODPROBE_TUN, false);
 	}
 }

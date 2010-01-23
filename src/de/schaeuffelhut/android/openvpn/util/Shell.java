@@ -127,8 +127,6 @@ public abstract class Shell extends Thread
 
 	public final void su()
 	{
-//		exec( "/system/bin/su -s -x" );
-//		exec( "/system/bin/su" );
 		exec( mSu );
 	}
 

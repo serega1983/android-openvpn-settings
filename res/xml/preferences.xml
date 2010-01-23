@@ -20,6 +20,13 @@
 		/>
 	 -->
 
+	<CheckBoxPreference
+		android:key="openvpn_do_modprobe_tun"
+		android:title="Load tun kernel module"
+		android:summary="Issue 'modprobe tun' before starting openvpn."
+		android:defaultValue="false"
+		/>
+
 	<EditTextPreference
 		android:key="openvpn_external_storage"
 		android:title="Path to configuration"

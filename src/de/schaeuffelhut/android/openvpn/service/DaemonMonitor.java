@@ -120,6 +120,10 @@ public final class DaemonMonitor
 
 				cmd( "cd " + openvpnBinary.getParentFile().getAbsolutePath() );
 				su();
+				
+				if ( Preferences.getDoModprobeTun( PreferenceManager.getDefaultSharedPreferences(mContext) ) )
+					cmd( "modprobe tun" );
+				
 				exec( String.format( 
 						"%s --cd %s --config %s --writepid %s --management 127.0.0.1 %d",
 						openvpnBinary.getAbsolutePath(),				
