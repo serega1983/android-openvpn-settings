@@ -28,6 +28,8 @@ import java.net.Socket;
 import java.util.Iterator;
 import java.util.List;
 
+import android.content.Context;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.util.Log;
@@ -238,6 +240,16 @@ public class Util
 				continue wait;
 			}
 		} while (false); 
+	}
+
+	public final static String applicationVersionName(Context context) {
+		String versionName = "unknown";
+		try {
+			versionName = context.getPackageManager().getPackageInfo( context.getPackageName(), 0).versionName;
+		} catch (NameNotFoundException e) {
+			e.printStackTrace();
+		}
+		return versionName;
 	}
 
 }
