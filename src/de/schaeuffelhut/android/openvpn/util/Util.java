@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
@@ -250,6 +251,24 @@ public class Util
 			e.printStackTrace();
 		}
 		return versionName;
+	}
+
+	public final static String getAssetAsString(Context context, String asset) {
+		Reader reader = null;
+		StringBuilder sb = new StringBuilder(1024);
+		try {
+			reader = new InputStreamReader( context.getAssets().open(asset) );
+			char[] buf = new char[1024];
+			int length;
+			while( ( length = reader.read(buf) ) >= 0 )
+				sb.append( buf, 0, length );
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			closeQuietly(reader);
+		}
+		String string = sb.toString();
+		return string;
 	}
 
 }

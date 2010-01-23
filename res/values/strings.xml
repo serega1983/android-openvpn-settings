@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">OpenVPN Settings</string>
 
-	<string name="openvpn_settings_category">OpenVPNssettings</string>
+	<string name="openvpn_settings_category">OpenVPN settings</string>
 	<string name="openvpn">OpenVPN</string>
 	<string name="openvpn_quick_toggle_summary">Turn on OpenVPN</string>
 	<string name="openvpn_configurations">OpenVPN configurations</string>
@@ -14,27 +14,6 @@
 	<string name="settings_menu_refresh">Refresh</string>
 
 	<string name="help_dialog_title">OpenVPN Help</string>
-	<string name="help_dialog_msg"><u><b>Disclaimer:</b></u>
-\n<i>OpenVPN Settings</i> comes without any warranty and is beta software. It might drain your battery quickly or otherwise influence the performance of your phone. Use it at your own risk.
-\n\n<u><b>Prerequisites:</b></u>
-\n- installed openvpn binary
-\n- <i>tun</i> in kernel or <i>tun.ko</i>
-\n\n<i>OpenVPN Settings</i> is being developed on current releases of CyanogenMod (4.2.13 or greater), which includes the <i>openvpn</i> binary and <i>tun</i>.
-\n\n<u><b>Debugging:</b></u>
-\nUse <i>adb logcat</i> on your host. <i>OpenVPN Settings</i> currently relies heavily on <i>adb logcat</i> to give you all information about what is going on. This comes in handy especially when setting up a new tunnel.
-\n\n<u><b>Setup:</b></u>
-\n1. Connect your phone via USB to your computer.
-\n2. Create a directory named <i>openvpn</i> at the root of your sdcard.
-\n3. Copy your certificates and <i>*.config</i> files into that directory (The config files need to end in <i>.config</i> ).
-\n4. You might need to hit refresh from the menu.
-\n5. Start <i>adb logcat</i> on your computer.
-\n6. Open activity <i>OpenVPN Settings</i> and enable your tunnel.
-\n\n<u><b>About</b></u>
-\n<i>OpenVPN Settings</i> 0.2beta
-\n&#xA9; 2010 Friedrich Schäuffelhut
-\n\n<u><b>Contact</b></u>
-\nandroid.openvpn@schaeuffelhut.de
-	</string>
 
 	<string name="monitor_title">OpenVPN Monitor %s</string>
 	<!-- 

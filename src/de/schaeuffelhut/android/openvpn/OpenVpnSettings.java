@@ -18,14 +18,11 @@ package de.schaeuffelhut.android.openvpn;
 import java.io.File;
 import java.util.ArrayList;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.CheckBoxPreference;
@@ -277,14 +274,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 		final Dialog dialog;
 		switch(id) {
 		case DIALOG_HELP:
-			dialog = new AlertDialog.Builder(this).
-			setTitle( R.string.help_dialog_title ).
-			setMessage( getResources().getString( R.string.help_dialog_msg ).replaceAll( "$version", Util.applicationVersionName(this) ) ).
-			setPositiveButton("OK", null).
-			setCancelable(true).
-			setIcon( android.R.drawable.ic_dialog_info).
-			create();
-			
+			dialog = HelpDialog.makeDialog(this);
 			break;
 		default:
 			throw new UnexpectedSwitchValueException(id);
