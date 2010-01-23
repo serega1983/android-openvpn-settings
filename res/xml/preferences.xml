@@ -29,7 +29,7 @@
 
 	<EditTextPreference
 		android:key="openvpn_external_storage"
-		android:title="Path to configuration"
+		android:title="Path to configurations"
         android:dependency="openvpn_enabled"
 		android:defaultValue="/sdcard/openvpn"
 		android:persistent="true"
