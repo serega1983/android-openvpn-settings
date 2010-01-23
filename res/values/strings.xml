@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">OpenVPN settings</string>
+    <string name="app_name">OpenVPN Settings</string>
 
-	<string name="openvpn_settings_category">OpenVPN settings</string>
+	<string name="openvpn_settings_category">OpenVPNssettings</string>
 	<string name="openvpn">OpenVPN</string>
 	<string name="openvpn_quick_toggle_summary">Turn on OpenVPN</string>
 	<string name="openvpn_configurations">OpenVPN configurations</string>
