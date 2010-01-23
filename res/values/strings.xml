@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">OpenVPN Settings</string>
 
-	<string name="openvpn_settings_category">OpenVPN settings</string>
+	<string name="openvpn_settings_category">OpenVPN Settings</string>
 	<string name="openvpn">OpenVPN</string>
 	<string name="openvpn_quick_toggle_summary">Turn on OpenVPN</string>
 	<string name="openvpn_configurations">OpenVPN configurations</string>
