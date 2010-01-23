@@ -27,8 +27,10 @@ import java.util.Stack;
 
 import android.content.Context;
 import android.content.Intent;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import de.schaeuffelhut.android.openvpn.Intents;
+import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.util.Shell;
 import de.schaeuffelhut.android.openvpn.util.UnexpectedSwitchValueException;
 import de.schaeuffelhut.android.openvpn.util.Util;
@@ -42,42 +44,32 @@ import de.schaeuffelhut.android.openvpn.util.Util;
 public final class DaemonMonitor
 {
 //	private final boolean LOCAL_LOGD = true;
-	private final String mTAG_DM;
+	private final String mTagDaemonMonitor;
 
 	private final Context mContext;
-	
-	private final File mOpenvpnBinary;
-	
+		
 	private final File mConfigFile;
 	private final File mPidFile;
 	private final File mMgmgPwFile;
 	private final File mMgmgPortFile;
 	
-	private final String mConfig;
-	
-	private Shell mOpenVPNShell;
+	private Shell mShell;
 	private ManagementThread mManagementThread;
 	
-	public DaemonMonitor(Context context, File openvpnBinary, File configFile, File comDir )
+	public DaemonMonitor(Context context, File configFile, File comDir )
 	{
 		mContext = context;
-
-		mOpenvpnBinary = openvpnBinary;
-		
 		mConfigFile = configFile;
 		mPidFile = new File( comDir, configFile.getName() + "-pid" );
 		mMgmgPwFile = new File( comDir, configFile.getName() + "-pw" );
 		mMgmgPortFile = new File( comDir, configFile.getName() + "-port" );
-		
-		mConfig = configFile.getName();
-		mTAG_DM = String.format("OpenVPN-DaemonMonitor[%s]", mConfig);
-		
+		mTagDaemonMonitor = String.format("OpenVPN-DaemonMonitor[%s]", mConfigFile);
 		reattach();
 	}
 	
 	private boolean reattach()
 	{
-		mOpenVPNShell = null;
+		mShell = null;
 
 		mManagementThread = new ManagementThread();
 		if ( mManagementThread.attach() )
@@ -90,36 +82,51 @@ public final class DaemonMonitor
 
 	void start()
 	{
-		if ( isAlive() )
-		{
-			Log.w( mTAG_DM, "Can't start, daemon is already running!" );
+		if ( isAlive() ) {
+			Log.w( mTagDaemonMonitor, "start(): ManagementThread is already alive!" );
 			return;
 		}
 
-		mPidFile.delete();
-		mMgmgPwFile.delete();
-		mMgmgPortFile.delete();
+		final File openvpnBinary = Preferences.getPathToBinaryAsFile( PreferenceManager.getDefaultSharedPreferences( mContext ) );
+		if ( !openvpnBinary.exists() ) {
+			Log.w( mTagDaemonMonitor, "start(): file not found: " + openvpnBinary );
+			return;
+		}
+		
+		if ( !mConfigFile.exists() ) {
+			Log.w( mTagDaemonMonitor, "start(): file not found: " + mConfigFile );
+			return;
+		}
+		
+		final int mgmtPort = 10000 + (int)(Math.random() * 50000); 
+		Log.w( mTagDaemonMonitor, "start(): choosing random port for management interface: " + mgmtPort );
+		Preferences.setMgmtPort( mContext, mConfigFile, mgmtPort );
+		
+		if ( mPidFile.exists() )      mPidFile.delete();
+		if ( mMgmgPwFile.exists() )   mMgmgPwFile.delete();
+		if ( mMgmgPortFile.exists() ) mMgmgPortFile.delete();
 
-		mOpenVPNShell = new Shell( mTAG_DM + "-daemon" )
+		mShell = new Shell( mTagDaemonMonitor + "-daemon" )
 		{
 			@Override
 			protected void onShellPrepared()
 			{
 				mContext.sendStickyBroadcast( 
 						Intents.daemonStateChanged(
-								mConfig,
+								mConfigFile.getAbsolutePath(),
 								Intents.DAEMON_STATE_STARTUP
 						)
 				);
 
-				cmd( "cd " + mOpenvpnBinary.getParentFile().getAbsolutePath() );
+				cmd( "cd " + openvpnBinary.getParentFile().getAbsolutePath() );
 				su();
 				exec( String.format( 
-						"%s --cd %s --config %s --writepid %s --management 127.0.0.1 30000",
-						mOpenvpnBinary.getAbsolutePath(),				
+						"%s --cd %s --config %s --writepid %s --management 127.0.0.1 %d",
+						openvpnBinary.getAbsolutePath(),				
 						mConfigFile.getParentFile().getAbsolutePath(),
 						mConfigFile.getName(),
-						mPidFile.getAbsolutePath()					
+						mPidFile.getAbsolutePath(),
+						mgmtPort
 				));
 			}
 
@@ -137,28 +144,28 @@ public final class DaemonMonitor
 
 			protected void onShellTerminated()
 			{
-				// while mManagementThread == null, system is in startup
+				// while mManagementThread == null, system is in startup phase
 				// and a DAEMON_STATE_DISABLED message is expected
 				if ( mManagementThread == null )
 					mContext.sendStickyBroadcast( 
 							Intents.daemonStateChanged(
-									mConfig,
+									mConfigFile.getAbsolutePath(),
 									Intents.DAEMON_STATE_DISABLED
 							)
 					);
 				
 				waitForQuietly();
-//				mOpenVPNShell = null;
+				mShell = null;
 			}
 		};
-		mOpenVPNShell.start();
+		mShell.start();
 	}
 
 	void restart()
 	{
 		if ( !isAlive() )
 		{
-			Log.w( mTAG_DM, "Can't restart, daemon is not running!" );
+			Log.w( mTagDaemonMonitor, "Can't restart, daemon is not running!" );
 		}
 		else
 		{
@@ -170,11 +177,23 @@ public final class DaemonMonitor
 	{
 		if ( !isAlive() )
 		{
-			Log.w( mTAG_DM, "Can't stop, daemon is not running!" );
+			Log.w( mTagDaemonMonitor, "Can't stop, daemon is not running!" );
 		}
 		else
 		{
 			mManagementThread.signal( ManagementThread.SIGTERM );
+		}
+	}
+
+	void queryState()
+	{
+		if ( !isAlive() )
+		{
+			Log.w( mTagDaemonMonitor, "Can't query state, daemon is not running!" );
+		}
+		else
+		{
+			mManagementThread.state();
 		}
 	}
 
@@ -187,7 +206,7 @@ public final class DaemonMonitor
 	{
 		private static final String MGMG_MSG_STATE = ">STATE:";
 		
-		private final String mTAG_MT = DaemonMonitor.this.mTAG_DM + "-mgmt";
+		private final String mTAG_MT = DaemonMonitor.this.mTagDaemonMonitor + "-mgmt";
 		private Socket socket;
 		private PrintWriter out;
 		private int mCurrentState = Intents.NETWORK_STATE_UNKNOWN;
@@ -200,7 +219,7 @@ public final class DaemonMonitor
 			// try to attach to OpenVPN monitor port, as long as 
 			// the startup shell is alive 
 			boolean success;
-			while( !(success = attach()) && mOpenVPNShell != null && mOpenVPNShell.isAlive() )
+			while( !(success = attach()) && mShell != null && mShell.isAlive() )
 			{
 				try {sleep(1000);} catch (InterruptedException e) {}
 			}
@@ -212,7 +231,7 @@ public final class DaemonMonitor
 					Log.v(mTAG_MT, "Successfully attached to OpenVPN monitor port");
 					mContext.sendStickyBroadcast( 
 							Intents.daemonStateChanged(
-									mConfig,
+									mConfigFile.getAbsolutePath(),
 									Intents.DAEMON_STATE_ENABLED
 							)
 					);
@@ -228,7 +247,7 @@ public final class DaemonMonitor
 			{
 				mContext.sendStickyBroadcast( 
 						Intents.daemonStateChanged(
-								mConfig,
+								mConfigFile.getAbsolutePath(),
 								Intents.DAEMON_STATE_DISABLED
 						)
 				);
@@ -239,11 +258,18 @@ public final class DaemonMonitor
 		
 		boolean attach()
 		{
-			if ( socket == null || !socket.isConnected() )
+			int mgmtPort = Preferences.getMgmtPort(mContext, mConfigFile);
+			Log.d( mTAG_MT, "attach(): using management port at " + mgmtPort );
+			
+			if ( mgmtPort == -1 )
+			{
+				Log.d( mTAG_MT, "attach(): unspecified management port, not attaching" );
+			}
+			else if ( socket == null || !socket.isConnected() )
 			{
 				try
 				{
-					socket = new Socket( InetAddress.getLocalHost(), 30000 );
+					socket = new Socket( InetAddress.getLocalHost(), mgmtPort );
 				}
 				catch (UnknownHostException e)
 				{
@@ -352,7 +378,7 @@ public final class DaemonMonitor
 			int oldState = mCurrentState;
 			mCurrentState = newState;
 			mContext.sendStickyBroadcast( Intents.networkStateChanged(
-					mConfig,
+					mConfigFile.getAbsolutePath(),
 					newState,
 					oldState,
 					System.currentTimeMillis()
@@ -417,7 +443,7 @@ public final class DaemonMonitor
 			}
 			
 			Intent intent = Intents.networkStateChanged(
-					mConfig,
+					mConfigFile.getAbsolutePath(),
 					newState,
 					mCurrentState,
 					Long.parseLong( stateFields[STATE_FIELD_TIME] ) * 1000

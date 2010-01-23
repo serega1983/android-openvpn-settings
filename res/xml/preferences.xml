@@ -1,8 +1,54 @@
 <PreferenceScreen
-	xmlns:android="http://schemas.android.com/apk/res/android">
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:title="@string/openvpn_settings_category">
+	
+	<CheckBoxPreference
+		android:key="openvpn_enabled"
+		android:title="@string/openvpn"
+		android:summary="@string/openvpn_quick_toggle_summary"
+		android:enabled="true"
+		android:defaultValue="true"
+		android:selectable="false"
+		/>
+
+	<!-- 
+	<CheckBoxPreference
+		android:key="openvpn_use_internal_storage"
+		android:title="Use private storage"
+        android:dependency="openvpn_enabled"
+		android:defaultValue="true"
+		/>
+	 -->
+
+	<EditTextPreference
+		android:key="openvpn_external_storage"
+		android:title="Path to configuration"
+        android:dependency="openvpn_enabled"
+		android:defaultValue="/sdcard/openvpn"
+		android:persistent="true"
+		/>
+
+	<EditTextPreference
+		android:key="openvpn_path_to_binary"
+		android:title="Path to openvpn binary"
+        android:dependency="openvpn_enabled"
+		android:persistent="true"
+		/>
+
+	<!-- 
+	<EditTextPreference
+		android:key="openvpn_path_to_su"
+		android:title="Path to su binary"
+        android:dependency="openvpn_enabled"
+		android:persistent="true"
+		/>
+	 -->
+	
 	<PreferenceCategory
-		android:title="OpenVPN Settings"
-		android:key="parent">
+		android:key="openvpn_configurations"
+		android:title="@string/openvpn_configurations"
+        android:dependency="openvpn_enabled"
+	>
 	</PreferenceCategory>
 
 </PreferenceScreen>

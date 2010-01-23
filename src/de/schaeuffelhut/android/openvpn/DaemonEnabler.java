@@ -15,12 +15,15 @@
  */
 package de.schaeuffelhut.android.openvpn;
 
+import java.io.File;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
@@ -31,9 +34,9 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 	private static final String TAG = "OpenVPNDaemonEnabler";
 
 	private final Context mContext; 
-	private OpenVpnService mControlShell;
+	private OpenVpnService mOpenVpnService;
 	private final CheckBoxPreference mDaemonCheckBoxPref;
-	private final String mConfigFileName;
+	private final File mConfigFile;
 	private final CharSequence mOriginalSummary;
 
 	private final IntentFilter mDaemonStateFilter;
@@ -42,7 +45,7 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 		public void onReceive(Context context, Intent intent)
 		{
 			//TODO: move into IntentFilter, or dispatch from OpenVPNSettings to DaemonEnabler.receive()
-			if ( mConfigFileName.equals( intent.getStringExtra( Intents.EXTRA_CONFIG ) ) )
+			if ( mConfigFile.getAbsolutePath().equals( intent.getStringExtra( Intents.EXTRA_CONFIG ) ) )
 			{
 				if ( Intents.DEAMON_STATE_CHANGED.equals( intent.getAction() ) ) {
 					handleDaemonStateChanged(
@@ -56,11 +59,11 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 		}
 	};
 
-	public DaemonEnabler(Context contex, OpenVpnService controlShell, CheckBoxPreference daemonCheckBoxPreference, String configFileName)
+	public DaemonEnabler(Context contex, OpenVpnService openVpnServiceShell, CheckBoxPreference daemonCheckBoxPreference, File configFile)
 	{
 		mContext = contex;
 		mDaemonCheckBoxPref = daemonCheckBoxPreference;
-		mConfigFileName = configFileName;
+		mConfigFile = configFile;
 
 		mOriginalSummary = mDaemonCheckBoxPref.getSummary();
 		mDaemonCheckBoxPref.setPersistent( false );
@@ -68,13 +71,15 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 		mDaemonStateFilter = new IntentFilter(Intents.DEAMON_STATE_CHANGED);
 		mDaemonStateFilter.addAction(Intents.NETWORK_STATE_CHANGED);
 
-		setControlShell( controlShell );
+		setOpenVpnService( openVpnServiceShell );
 	}
 
-	public void setControlShell(OpenVpnService controlShell)
+	public void setOpenVpnService(OpenVpnService openVpnService)
 	{
-		mControlShell = controlShell;
-		mDaemonCheckBoxPref.setEnabled( mControlShell != null );
+		mOpenVpnService = openVpnService;
+		mDaemonCheckBoxPref.setEnabled( mOpenVpnService != null );
+		if ( mOpenVpnService != null )
+			mOpenVpnService.daemonQueryState(mConfigFile);
 	}
 
 	public void resume()
@@ -104,15 +109,15 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 		final boolean updateGui;
 		
 		// Turn on/off OpenVPN daemon
-		if ( mControlShell == null )
+		if ( mOpenVpnService == null )
 		{
-			mDaemonCheckBoxPref.setSummary( "Error: not bound to control shell!" );
+			mDaemonCheckBoxPref.setSummary( "Error: not bound to OpenVPN service!" );
 			updateGui = false; // Don't update UI to opposite
 		}
 		else
 		{
 
-			boolean currentState = mControlShell.isDaemonStarted( mConfigFileName );
+			boolean currentState = mOpenVpnService.isDaemonStarted( mConfigFile );
 			boolean newState = (Boolean) value;
 			
 			if ( currentState == newState )
@@ -120,21 +125,26 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 				if (LOCAL_LOGD)
 					Log.d(TAG, String.format( 
 							"Daemon for config %s was already %s ",
-							mConfigFileName,
+							mConfigFile,
 							currentState ? "started" : "stopped" ) );
 				updateGui = true; // Update GUI to refelect current state
 			}
 			else
 			{
 				mDaemonCheckBoxPref.setEnabled(false);
+				
 				if (newState)
-					mControlShell.daemonStart(mConfigFileName);
+					mOpenVpnService.daemonStart(mConfigFile);
 				else
-					mControlShell.daemonStop(mConfigFileName);
+					mOpenVpnService.daemonStop(mConfigFile);
 				updateGui = false; // Don't update UI to opposite state until we're sure
 			}
+			
+			PreferenceManager.getDefaultSharedPreferences(mContext).edit().putBoolean(
+					Preferences.KEY_CONFIG_INTENDED_STATE( mConfigFile ), newState
+			).commit();
 		}        
-		
+
 		return updateGui;
 	}
 
@@ -181,7 +191,7 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 					+ getHumanReadableNetworkState(previousNetworkState) + " to "
 					+ getHumanReadableNetworkState(networkState));
 
-		if ( mControlShell != null && mControlShell.isDaemonStarted( mConfigFileName ) )
+		if ( mOpenVpnService != null && mOpenVpnService.isDaemonStarted( mConfigFile ) )
 		{
 			final String summary;
 			switch (networkState) {

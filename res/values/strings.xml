@@ -24,5 +24,13 @@
 	<string name="context_edit">Edit</string>
 
 	<string name="monitor_title">OpenVPN Monitor %s</string>
-		
+	
+	
+	<string name="openvpn_settings_category">OpenVPN settings</string>
+	<string name="openvpn">OpenVPN</string>
+	<string name="openvpn_quick_toggle_summary">Turn on OpenVPN</string>
+	<string name="openvpn_configurations">OpenVPN configurations</string>
+	<string name="openvpn_"></string>
+	
+	
 </resources>

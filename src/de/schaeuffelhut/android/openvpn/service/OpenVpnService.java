@@ -20,6 +20,7 @@ import java.util.HashMap;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -27,7 +28,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import de.schaeuffelhut.android.openvpn.OpenVpnSettings;
+import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.util.NetworkConnectivityListener;
 import de.schaeuffelhut.android.openvpn.util.Util;
 
@@ -84,14 +85,29 @@ public final class OpenVpnService extends Service
 	
 	private File mConfigDir;
 	private File mComDir;	
-	private File binOpenvpn;
 
-	private final HashMap<String, DaemonMonitor> registry = new HashMap<String, DaemonMonitor>(4);
+	private final HashMap<File, DaemonMonitor> registry = new HashMap<File, DaemonMonitor>(4);
 	
 	private synchronized void startup()
 	{
 		Log.i(TAG, "starting");
 
+		{
+			SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+			mConfigDir = Preferences.getConfigDir(this, sharedPreferences);
+			Log.d( TAG, "mConfigDir=" + mConfigDir );
+			if ( mConfigDir == null )
+				Log.w( TAG, "Missing path to configuration directory!" );
+			if ( !mConfigDir.exists() )
+				Log.w( TAG, "configuration directory not found: " + mConfigDir );
+		}
+
+		mComDir = new File( getFilesDir(), "com.d" );
+		if ( !mComDir.exists() )
+			mComDir.mkdirs();
+		Log.d( TAG, "mComDir=" + mComDir );
+		
 		mConnectivity = new NetworkConnectivityListener();
 		mConnectivity.registerHandler(new Handler(){
 			boolean isFirstMessage = true;
@@ -104,26 +120,6 @@ public final class OpenVpnService extends Service
 			}
 		}, 0);
 		//mConnectivity.startListening() is called after installer is done.
-		
-		mConfigDir = new File( getApplicationContext().getFilesDir(), "config.d" );
-		Log.d( TAG, "mConfigDir=" + mConfigDir );
-		 
-		mComDir = new File( getApplicationContext().getFilesDir(), "com.d" );
-		if ( !mComDir.exists() )
-			mComDir.mkdirs();
-		Log.d( TAG, "mComDir=" + mComDir );
-
-		//TODO: make path a config value
-		for( File f : new File[]{ new File( "/system/xbin/openvpn" ), new File( "/system/bin/openvpn" ), new File( "/sbin" ) } )
-		{
-			if ( f.exists() )
-			{
-				binOpenvpn = f;
-				break;
-			}
-		}
-		if ( binOpenvpn == null )
-			throw new RuntimeException( "openvpn binary not found!" );
 
 		new HandlerThread( "OpenVPN-Attach" ) {
 			@Override
@@ -157,23 +153,27 @@ public final class OpenVpnService extends Service
 //		wait for proceses we are still parents of 
 	}
 
-	final String[] configs()
+	final File[] configs()
 	{
-		File[] configFiles = new File(
-				getApplicationContext().getFilesDir(),
-				"config.d"
-		).listFiles( new Util.FileExtensionFilter(".conf") );
+		File[] configFiles;
+		File configDir = Preferences.getConfigDir( this, PreferenceManager.getDefaultSharedPreferences(this) );
+		if ( configDir == null )
+			configFiles = new File[0];
+		else
+			configFiles = configDir.listFiles( new Util.FileExtensionFilter(".conf") );
+	
+		return configFiles == null ? new File[0] : configFiles;
 		
-		final int length = configFiles == null ? 0 : configFiles.length;
+//		final int length = configFiles == null ? 0 : configFiles.length;
 		
-		String[] configFileName = new String[length];
-		for (int i = 0; configFiles != null && i < length; i++)
-			configFileName[i] = configFiles[i].getName();
-		
-		return configFileName;
+//		String[] configFileName = new String[length];
+//		for (int i = 0; configFiles != null && i < length; i++)
+//			configFileName[i] = configFiles[i].getName();
+//		
+//		return configFileName;
 	}
 	
-	synchronized void daemonAttach(String config, boolean start)
+	synchronized void daemonAttach(File config, boolean start)
 	{
 		if ( isDaemonStarted(config) )
 		{
@@ -185,8 +185,7 @@ public final class OpenVpnService extends Service
 
 			DaemonMonitor daemonMonitor = new DaemonMonitor(
 					getApplicationContext(),
-					binOpenvpn,
-					new File( mConfigDir, config ),
+					config,
 					mComDir
 			);
 			
@@ -224,16 +223,16 @@ public final class OpenVpnService extends Service
 	private final void daemonAttach()
 	{
 		Log.d( TAG, "trying to attach to already running daemons" );
-		for (String config : configs() )
+		for ( File config : configs() )
 			daemonAttach(
 					config,
 					PreferenceManager.getDefaultSharedPreferences( getApplicationContext() ).getBoolean(
-							OpenVpnSettings.KEY_CONFIG_ENABLED(config), false
+							Preferences.KEY_CONFIG_INTENDED_STATE( config ), false
 					)
 			);
 	}
 
-	public final synchronized void daemonStart(String config)
+	public final synchronized void daemonStart(File config)
 	{
 		if ( isDaemonStarted(config) )
 		{
@@ -243,8 +242,7 @@ public final class OpenVpnService extends Service
 		{
 			DaemonMonitor daemonMonitor = new DaemonMonitor(
 					getApplicationContext(),
-					binOpenvpn,
-					new File( mConfigDir, config ),
+					config,
 					mComDir
 			);
 			daemonMonitor.start();
@@ -252,7 +250,7 @@ public final class OpenVpnService extends Service
 		}
 	}
 
-	public final synchronized void daemonRestart(String config)
+	public final synchronized void daemonRestart(File config)
 	{
 		if ( !isDaemonStarted(config) )
 		{
@@ -268,12 +266,12 @@ public final class OpenVpnService extends Service
 
 	public final synchronized void daemonRestart()
 	{
-		for (String config : configs() )
+		for ( File config : configs() )
 			if ( isDaemonStarted( config ) )
 				daemonRestart( config );
 	}
 	
-	public final synchronized void daemonStop(String config)
+	public final synchronized void daemonStop(File config)
 	{
 		if ( !isDaemonStarted(config) )
 		{
@@ -286,7 +284,20 @@ public final class OpenVpnService extends Service
 		}
 	}
 
-	public final synchronized boolean isDaemonStarted(String config)
+	public final synchronized void daemonQueryState(File config)
+	{
+		if ( !isDaemonStarted(config) )
+		{
+			Log.i( TAG, config + " is not running" );
+		}
+		else 
+		{
+			DaemonMonitor monitor = registry.get( config );
+			monitor.queryState();
+		}
+	}
+
+	public final synchronized boolean isDaemonStarted(File config)
 	{
 		return registry.containsKey( config ) && registry.get( config ).isAlive();
 	}
