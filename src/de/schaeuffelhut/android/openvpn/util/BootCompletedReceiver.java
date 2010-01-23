@@ -15,12 +15,12 @@
  */
 package de.schaeuffelhut.android.openvpn.util;
 
-import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
 
 public class BootCompletedReceiver extends BroadcastReceiver
 {
