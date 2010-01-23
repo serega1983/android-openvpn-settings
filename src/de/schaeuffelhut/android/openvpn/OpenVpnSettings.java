@@ -18,10 +18,14 @@ package de.schaeuffelhut.android.openvpn;
 import java.io.File;
 import java.util.ArrayList;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.CheckBoxPreference;
@@ -43,6 +47,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 	final static String TAG = "OpenVPN-Settings";
 	
 	private static final int REQUEST_CODE_IMPORT_FILES = 1;
+	private static final int DIALOG_HELP = 1;
 	
 	ArrayList<DaemonEnabler> mDaemonEnablers = new ArrayList<DaemonEnabler>(4);
 	OpenVpnService mOpenVpnService = null;
@@ -217,12 +222,12 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
     }
 
 	/*
-	 * options menu
+	 * Menu
 	 */
 	
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.configs_options_menu, menu);
+	    inflater.inflate(R.menu.settings_menu, menu);
 	    return true;
 	}
 
@@ -230,17 +235,23 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 	public boolean onPrepareOptionsMenu(Menu menu) {
 //	    menu.findItem( R.id.configs_options_startall ).setVisible( configs.length > 0 );
 //	    menu.findItem( R.id.configs_options_restartall ).setVisible( mControlShell.hasDaemonsStarted() );
-	    menu.findItem( R.id.configs_options_stopall ).setVisible( mOpenVpnService != null && mOpenVpnService.hasDaemonsStarted() );
+//	    menu.findItem( R.id.configs_options_stopall ).setVisible( mOpenVpnService != null && mOpenVpnService.hasDaemonsStarted() );
 		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch ( item.getItemId() ) {
-		case R.id.configs_options_import:
-			Intent intent = new Intent( getApplicationContext(), ImportFiles.class );
-			startActivityForResult(intent, REQUEST_CODE_IMPORT_FILES);
+		case R.id.settings_menu_refresh:
+			initToggles();
 			return true;
+		case R.id.settings_menu_help:
+			showDialog( DIALOG_HELP );
+			return true;
+//		case R.id.configs_options_import:
+//			Intent intent = new Intent( getApplicationContext(), ImportFiles.class );
+//			startActivityForResult(intent, REQUEST_CODE_IMPORT_FILES);
+//			return true;
 //		case R.id.configs_options_refresh:
 //			initToggles();
 //			return true;
@@ -248,18 +259,40 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 //			return true;
 //		case R.id.configs_options_restartall:
 //			return true;
-		case R.id.configs_options_stopall:
-			return true;
-		case R.id.configs_options_settings:
-			return true;
+//		case R.id.configs_options_stopall:
+//			return true;
+//		case R.id.configs_options_settings:
+//			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
 	}
-	
-    /*
-     *  Interface 'ServiceConnection'
-     */
+
+	/*
+	 * Dialogs
+	 */
+
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		final Dialog dialog;
+		switch(id) {
+		case DIALOG_HELP:
+			dialog = new AlertDialog.Builder(this).
+			setTitle( R.string.help_dialog_title ).
+			setMessage( getResources().getString( R.string.help_dialog_msg ).replaceAll( "$version", Util.applicationVersionName(this) ) ).
+			setPositiveButton("OK", null).
+			setCancelable(true).
+			setIcon( android.R.drawable.ic_dialog_info).
+			create();
+			
+			break;
+		default:
+			throw new UnexpectedSwitchValueException(id);
+		}
+		return dialog;
+
+	}
+
 
 	public void onServiceConnected(ComponentName name, IBinder serviceBinder) {
 		mOpenVpnService = ((OpenVpnService.ServiceBinder)serviceBinder).getService();
