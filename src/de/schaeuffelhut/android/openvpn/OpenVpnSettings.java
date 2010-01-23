@@ -112,7 +112,10 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 						}
 					});
 			File path = Preferences.getPathToBinaryAsFile( pref.getSharedPreferences() );
-			pref.setSummary( ( !path.exists() ? "Not found: " : "" ) + path.getAbsolutePath() );
+			if ( path == null )
+				pref.setSummary( "Please set path to openvpn binary." );
+			else
+				pref.setSummary( ( !path.exists() ? "Not found: " : "" ) + path.getAbsolutePath() );
 		}
 
 //		{
