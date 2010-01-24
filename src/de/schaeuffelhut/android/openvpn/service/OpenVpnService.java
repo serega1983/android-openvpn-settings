@@ -30,7 +30,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.util.NetworkConnectivityListener;
-import de.schaeuffelhut.android.openvpn.util.Util;
 
 /**
  * @author M.Sc. Friedrich Schäuffelhut
@@ -153,26 +152,6 @@ public final class OpenVpnService extends Service
 //		wait for proceses we are still parents of 
 	}
 
-	final File[] configs()
-	{
-		File[] configFiles;
-		File configDir = Preferences.getConfigDir( this, PreferenceManager.getDefaultSharedPreferences(this) );
-		if ( configDir == null )
-			configFiles = new File[0];
-		else
-			configFiles = configDir.listFiles( new Util.FileExtensionFilter(".conf") );
-	
-		return configFiles == null ? new File[0] : configFiles;
-		
-//		final int length = configFiles == null ? 0 : configFiles.length;
-		
-//		String[] configFileName = new String[length];
-//		for (int i = 0; configFiles != null && i < length; i++)
-//			configFileName[i] = configFiles[i].getName();
-//		
-//		return configFileName;
-	}
-	
 	synchronized void daemonAttach(File config, boolean start)
 	{
 		if ( isDaemonStarted(config) )
@@ -223,7 +202,7 @@ public final class OpenVpnService extends Service
 	private final void daemonAttach()
 	{
 		Log.d( TAG, "trying to attach to already running daemons" );
-		for ( File config : configs() )
+		for ( File config : Preferences.configs(this) )
 			daemonAttach(
 					config,
 					PreferenceManager.getDefaultSharedPreferences( getApplicationContext() ).getBoolean(
@@ -266,7 +245,7 @@ public final class OpenVpnService extends Service
 
 	public final synchronized void daemonRestart()
 	{
-		for ( File config : configs() )
+		for ( File config : Preferences.configs(this) )
 			if ( isDaemonStarted( config ) )
 				daemonRestart( config );
 	}

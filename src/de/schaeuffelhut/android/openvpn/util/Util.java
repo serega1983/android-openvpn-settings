@@ -45,12 +45,15 @@ public class Util
 	}
 
 	public final static class FileExtensionFilter implements FileFilter {
-		final String suffix;
-		public FileExtensionFilter(String suffix) {
+		final String[] suffix;
+		public FileExtensionFilter(String... suffix) {
 			this.suffix = suffix;
 		}
 		public boolean accept(File pathname) {
-			return pathname.getPath().endsWith(suffix);
+			for(String s : suffix)
+				if ( pathname.getPath().endsWith(s) )
+					return true;
+			return false;
 		}
 	}
 

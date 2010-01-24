@@ -179,9 +179,11 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 	{
 		PreferenceCategory configurations = (PreferenceCategory) findPreference(Preferences.KEY_OPENVPN_CONFIGURATIONS);
 		configurations.removeAll();
+		for(DaemonEnabler daemonEnabler : mDaemonEnablers )
+			daemonEnabler.pause();
 		mDaemonEnablers.clear();
 		
-		for ( File config : configs(configDir) )
+		for ( File config : Preferences.configs(configDir) )
 		{
 //			CheckBoxPreference pref = new CheckBoxPreference( getApplicationContext() );
 //			pref.setKey( Preferences.KEY_CONFIG_ENABLED( config ) );
@@ -207,16 +209,6 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 		}
 	}
 
-	final File[] configs(File configDir)
-	{
-		File[] configFiles;
-		if ( configDir == null )
-			configFiles = new File[0];
-		else
-			configFiles = configDir.listFiles( new Util.FileExtensionFilter(".conf") );
-	
-		return configFiles == null ? new File[0] : configFiles;
-	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -288,6 +280,8 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 		switch ( item.getItemId() ) {
 		case R.id.settings_menu_refresh:
 			initToggles();
+			for(DaemonEnabler daemonEnabler : mDaemonEnablers )
+				daemonEnabler.resume();
 			return true;
 		case R.id.settings_menu_help:
 			showDialog( DIALOG_HELP );

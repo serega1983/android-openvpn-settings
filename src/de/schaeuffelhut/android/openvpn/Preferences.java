@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
+import de.schaeuffelhut.android.openvpn.util.Util;
 
 public final class Preferences {
 	
@@ -144,4 +145,21 @@ public final class Preferences {
 	public final static boolean getDoModprobeTun(SharedPreferences sharedPreferences) {
 		return sharedPreferences.getBoolean( Preferences.KEY_OPENVPN_DO_MODPROBE_TUN, false);
 	}
+
+	public final static File[] configs(Context context)
+	{
+		return configs(getConfigDir( context, PreferenceManager.getDefaultSharedPreferences(context) ));
+	}
+	
+	public final static File[] configs(File configDir)
+	{
+		File[] configFiles;
+		if ( configDir == null )
+			configFiles = new File[0];
+		else
+			configFiles = configDir.listFiles( new Util.FileExtensionFilter(".conf",".ovpn") );
+	
+		return configFiles == null ? new File[0] : configFiles;
+	}
+
 }
