@@ -185,15 +185,6 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 		
 		for ( File config : Preferences.configs(configDir) )
 		{
-//			CheckBoxPreference pref = new CheckBoxPreference( getApplicationContext() );
-//			pref.setKey( Preferences.KEY_CONFIG_ENABLED( config ) );
-//			pref.setTitle( config.getName() );
-//			pref.setSummary( "Select to turn on OpenVPN tunel");
-//
-//			configurations.addPreference(pref);
-//			mDaemonEnablers.add( new DaemonEnabler( 
-//					getApplicationContext(), mOpenVpnService, pref, config ) );			
-
 			ConfigFilePreference pref = new ConfigFilePreference( this, mOpenVpnService, config );
 			configurations.addPreference(pref);
 			mDaemonEnablers.add( pref.mDaemonEnabler );			
