@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.Socket;
+import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.List;
 
@@ -258,6 +259,24 @@ public class Util
 		StringBuilder sb = new StringBuilder(1024);
 		try {
 			reader = new InputStreamReader( context.getAssets().open(asset) );
+			char[] buf = new char[1024];
+			int length;
+			while( ( length = reader.read(buf) ) >= 0 )
+				sb.append( buf, 0, length );
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			closeQuietly(reader);
+		}
+		String string = sb.toString();
+		return string;
+	}
+
+	public static CharSequence getFileAsString(File file) {
+		Reader reader = null;
+		StringBuilder sb = new StringBuilder(1024);
+		try {
+			reader = new InputStreamReader( new FileInputStream(file), Charset.forName( "ISO-8859-1" )  );
 			char[] buf = new char[1024];
 			int length;
 			while( ( length = reader.read(buf) ) >= 0 )

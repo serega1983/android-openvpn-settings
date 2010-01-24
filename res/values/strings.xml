@@ -15,6 +15,10 @@
 
 	<string name="help_dialog_title">OpenVPN Help</string>
 
+	<string name="edit_config_category">Edit OpenVPN Configuration</string>
+	<string name="edit_config_name">Configuration name</string>
+	<string name="edit_config_content">Write your configuration here.</string>
+
 	<string name="monitor_title">OpenVPN Monitor %s</string>
 	<!-- 
 	<string name="start">Start</string>

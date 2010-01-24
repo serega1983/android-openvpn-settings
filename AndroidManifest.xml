@@ -36,6 +36,11 @@
 		</activity>
 
 		<activity
+			android:name="EditConfig" 
+			android:label="@string/edit_config_category"
+			/>
+
+		<activity
 			android:name="ImportFiles" 
 			android:label="Import Files"
 			/>
