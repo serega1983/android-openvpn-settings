@@ -113,6 +113,8 @@ public final class OpenVpnService extends Service
 			@Override
 			public void handleMessage(Message msg) {
 				super.handleMessage(msg);
+				//TODO: only restart if IP-address changed
+				//TODO: optional, put on hold when on slow network, e.g. GPRs, make it a config option
 				if ( !isFirstMessage ) // last message sticks around and causes an unnecessary restart
 					daemonRestart();
 				isFirstMessage = false;
