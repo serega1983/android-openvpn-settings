@@ -39,6 +39,14 @@
 			android:name="EditConfig" 
 			android:label="@string/edit_config_category"
 			/>
+		<activity
+			android:name="EnterPassphrase" 
+			android:label="@string/enter_passphrase_category"
+			/>
+		<activity
+			android:name="EnterUserPassword" 
+			android:label="@string/enter_user_password_category"
+			/>
 
 		<activity
 			android:name="ImportFiles" 

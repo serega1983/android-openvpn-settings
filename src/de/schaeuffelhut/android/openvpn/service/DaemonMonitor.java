@@ -25,11 +25,13 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Stack;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import de.schaeuffelhut.android.openvpn.Intents;
+import de.schaeuffelhut.android.openvpn.Notifications;
 import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.util.Shell;
 import de.schaeuffelhut.android.openvpn.util.UnexpectedSwitchValueException;
@@ -47,6 +49,7 @@ public final class DaemonMonitor
 	private final String mTagDaemonMonitor;
 
 	private final Context mContext;
+	private final NotificationManager mNotificationManager;
 		
 	private final File mConfigFile;
 	private final File mPidFile;
@@ -55,11 +58,14 @@ public final class DaemonMonitor
 	
 	private Shell mShell;
 	private ManagementThread mManagementThread;
+
 	
 	public DaemonMonitor(Context context, File configFile, File comDir )
 	{
 		mContext = context;
 		mConfigFile = configFile;
+		mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+
 		mPidFile = new File( comDir, configFile.getName() + "-pid" );
 		mMgmgPwFile = new File( comDir, configFile.getName() + "-pw" );
 		mMgmgPortFile = new File( comDir, configFile.getName() + "-port" );
@@ -125,7 +131,7 @@ public final class DaemonMonitor
 					cmd( "modprobe tun" );
 				
 				exec( String.format( 
-						"%s --cd %s --config %s --writepid %s --management 127.0.0.1 %d",
+						"%s --cd %s --config %s --writepid %s --management 127.0.0.1 %d --management-query-passwords",
 						openvpnBinary.getAbsolutePath(),				
 						mConfigFile.getParentFile().getAbsolutePath(),
 						mConfigFile.getName(),
@@ -198,6 +204,30 @@ public final class DaemonMonitor
 		else
 		{
 			mManagementThread.state();
+		}
+	}
+
+	public void supplyPassphrase(String passphrase)
+	{
+		if ( !isAlive() )
+		{
+			Log.w( mTagDaemonMonitor, "Can't supply passphrase, daemon is not running!" );
+		}
+		else
+		{
+			mManagementThread.sendPassphrase( passphrase );
+		}
+	}
+
+	public void supplyUsernamePassword(String username, String password)
+	{
+		if ( !isAlive() )
+		{
+			Log.w( mTagDaemonMonitor, "Can't supply username/password, daemon is not running!" );
+		}
+		else
+		{
+			mManagementThread.sendPassword(username, password);
 		}
 	}
 
@@ -292,6 +322,9 @@ public final class DaemonMonitor
 		private Stack<ReplyHandler> mReplyHandlers = new Stack<ReplyHandler>();
 		private boolean mMonitorLoopStarted = false; // set to true, when in final monitoring loop
 
+		private boolean mWaitingForPassphrase = false;
+		private boolean mWaitingForUserPassword = false;
+
 		abstract class ReplyHandler {
 			abstract void onReply(String line);
 		}
@@ -316,44 +349,7 @@ public final class DaemonMonitor
 				
 				String line;
 				while ( (line = lnr.readLine() ) != null )
-				{
-					if ( !mMonitorLoopStarted )
-					{
-						mMonitorLoopStarted = true;
-						synchronized ( this ) {
-							Log.v(mTAG_MT, "Monitor loop is ready, notifying waiting threads");
-							notifyAll();
-						}
-					}
-					
-					Log.v( mTAG_MT, line );
-					if ( line.startsWith( ">" ) ) // async realtime notifications start with ">"
-					{
-						if ( line.startsWith( MGMG_MSG_STATE ) )
-							onState( line );
-						// read log msgs via mgmt interface
-					}
-					else if ( line.startsWith( "SUCCESS:" ) )
-					{
-						// ignore
-					}
-					else // synchronous reply to command 
-					{
-						if ( mReplyHandlers.isEmpty() )
-						{
-							Log.w( mTAG_MT, "unexpected reply" );
-						}
-						else if ( "END".equals( line ) )
-						{
-							ReplyHandler replyHandler = mReplyHandlers.pop();
-							Log.w( mTAG_MT, "removed ReplyHandler: " + replyHandler );
-						}
-						else
-						{
-							mReplyHandlers.peek().onReply( line );
-						}
-					}
-				}
+					handleLine(line);
 			}
 			catch(IOException e)
 			{
@@ -376,6 +372,80 @@ public final class DaemonMonitor
 				}
 			}
 		}
+
+		private synchronized void handleLine(String line)
+		{
+			if ( !mMonitorLoopStarted )
+			{
+				mMonitorLoopStarted = true;
+				synchronized ( this ) {
+					Log.v(mTAG_MT, "Monitor loop is ready, notifying waiting threads");
+					notifyAll();
+				}
+			}
+			
+			Log.v( mTAG_MT, line );
+			if ( line.startsWith( ">" ) ) // async realtime notifications start with ">"
+			{
+				if ( line.startsWith( MGMG_MSG_STATE ) )
+				{
+					onState( line );
+				}
+				else if ( line.startsWith( ">PASSWORD:" ) )
+				{
+					if ( line.equals( ">PASSWORD:Need 'Private Key' password" ) )
+					{
+						mWaitingForPassphrase = true;
+						Notifications.sendPassphraseRequired(mContext, mNotificationManager, mConfigFile);
+					}
+					else if ( line.equals( ">PASSWORD:Need 'Auth' username/password" ) )
+					{
+						mWaitingForUserPassword = true;
+						Notifications.sendUsernamePasswordRequired(mContext, mConfigFile, mNotificationManager);
+					}
+					else if ( line.equals( ">PASSWORD:Verification Failed: 'Private Key'" ) )
+					{
+						mWaitingForPassphrase = true;
+						Notifications.sendPassphraseRequired(mContext, mNotificationManager, mConfigFile);
+					}
+					else if ( line.equals( ">PASSWORD:Verification Failed: 'Auth'" ) )
+					{
+						mWaitingForUserPassword = true;
+						Notifications.sendUsernamePasswordRequired(mContext, mConfigFile, mNotificationManager);
+					}
+					else
+					{
+						Log.w(mTAG_MT, "unexpected 'PASSWORD:' notification" + line );
+					}
+				}
+				// read log msgs via mgmt interface
+				else
+				{
+					Log.d(mTAG_MT, "unexpected realtime notification: " + line );
+				}
+			}
+			else if ( line.startsWith( "SUCCESS:" ) )
+			{
+				// ignore
+			}
+			else // synchronous reply to command 
+			{
+				if ( mReplyHandlers.isEmpty() )
+				{
+					Log.w( mTAG_MT, "unexpected reply" );
+				}
+				else if ( "END".equals( line ) )
+				{
+					ReplyHandler replyHandler = mReplyHandlers.pop();
+					Log.w( mTAG_MT, "removed ReplyHandler: " + replyHandler );
+				}
+				else
+				{
+					mReplyHandlers.peek().onReply( line );
+				}
+			}
+		}
+
 
 		private void networkStateChanged(int newState)
 		{
@@ -534,5 +604,45 @@ public final class DaemonMonitor
 				throw new UnexpectedSwitchValueException( s );
 			}
 		}
+		
+		/**
+		 * Respond to a password request
+		 * 
+		 * @param password
+		 */
+		final synchronized void sendPassphrase(String password)
+		{
+			if ( password == null )
+				Log.w(mTAG_MT, "Won't send <null> as passphrase to openvpn daemon!");
+			else if ( !mWaitingForPassphrase )
+				Log.w(mTAG_MT, "Won't send unexpected passphrase to openvpn daemon!");
+			else
+			{
+				mWaitingForPassphrase = false;
+				sendCommand( String.format("password 'Private Key' '%s'", escape( password ) ), null );
+			}
+		}
+
+		final synchronized void sendPassword(String user, String password)
+		{
+			if ( user == null )
+				Log.w(mTAG_MT, "Won't send <null> as user to openvpn daemon!");
+			else if ( password == null )
+				Log.w(mTAG_MT, "Won't send <null> as password to openvpn daemon!");
+			else if ( !mWaitingForPassphrase )
+				Log.w(mTAG_MT, "Won't send unexpected user/password to openvpn daemon!");
+			else
+			{
+				mWaitingForUserPassword = false;
+				sendCommand( String.format( "username 'Auth' '%s'", escape( user ) ), null );
+				sendCommand( String.format( "password 'Auth' '%s'", escape(password) ), null );
+			}
+		}
+
+		private String escape(String s) {
+			return s.replace( "\\", "\\\\" ).replace("'", "\\'" );
+		}
+
 	}
+
 }

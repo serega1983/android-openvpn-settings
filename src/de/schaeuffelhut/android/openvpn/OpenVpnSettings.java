@@ -39,12 +39,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
 import de.schaeuffelhut.android.openvpn.util.UnexpectedSwitchValueException;
-import de.schaeuffelhut.android.openvpn.util.Util;
 
 public class OpenVpnSettings extends PreferenceActivity implements ServiceConnection
 {
@@ -63,6 +60,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+    	Log.d(TAG, "onCreate()" );
         
         addPreferencesFromResource( R.xml.preferences );
 
@@ -146,6 +144,9 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 		registerForContextMenu( getListView() );
 		initToggles();
 
+		ComponentName componentName = startService( new Intent( this, OpenVpnService.class ) );
+		Log.w(TAG, "OpenVPNService componentName: " + componentName );
+		
 		if ( !bindService(
         		new Intent( this, OpenVpnService.class ),
         		this,
@@ -179,8 +180,10 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 	{
 		PreferenceCategory configurations = (PreferenceCategory) findPreference(Preferences.KEY_OPENVPN_CONFIGURATIONS);
 		configurations.removeAll();
-		for(DaemonEnabler daemonEnabler : mDaemonEnablers )
+		for(DaemonEnabler daemonEnabler : mDaemonEnablers ) {
 			daemonEnabler.pause();
+			daemonEnabler.setOpenVpnService( null );
+		}
 		mDaemonEnablers.clear();
 		
 		for ( File config : Preferences.configs(configDir) )
@@ -235,7 +238,8 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
     @Override
     protected void onResume() {
 		super.onResume();
-		
+    	Log.d(TAG, "onResume()" );
+
 		for(DaemonEnabler daemonEnabler : mDaemonEnablers )
 			daemonEnabler.resume();
 	}
@@ -243,11 +247,20 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
     @Override
     protected void onPause() {
     	super.onPause();
+    	Log.d(TAG, "onPause()" );
     	
 		for(DaemonEnabler daemonEnabler : mDaemonEnablers )
 			daemonEnabler.pause();
     }
 
+    @Override
+    protected void onDestroy() {
+    	super.onDestroy();
+    	Log.d(TAG, "onDestroy()" );
+    	if ( mOpenVpnService != null )
+    		unbindService( this );
+    }
+    
 	/*
 	 * Menu
 	 */
@@ -305,7 +318,6 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 	final static int CONTEXT_CONFIG_ENABLE = 2;
 	final static int CONTEXT_CONFIG_EDIT = 3;
 
-	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
@@ -391,8 +403,9 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 
 
 	public void onServiceConnected(ComponentName name, IBinder serviceBinder) {
-		mOpenVpnService = ((OpenVpnService.ServiceBinder)serviceBinder).getService();
 		Log.d( TAG, "Connected to OpenVpnService" );
+
+		mOpenVpnService = ((OpenVpnService.ServiceBinder)serviceBinder).getService();
 
 		for(DaemonEnabler daemonEnabler : mDaemonEnablers )
 			daemonEnabler.setOpenVpnService( mOpenVpnService );
@@ -403,8 +416,9 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 	}
 	
 	public void onServiceDisconnected(ComponentName name) {
-		mOpenVpnService = null;
 		Log.d( TAG, "Disconnected from OpenVpnService" );
+
+		mOpenVpnService = null;
 
 		for(DaemonEnabler daemonEnabler : mDaemonEnablers )
 			daemonEnabler.setOpenVpnService( null );

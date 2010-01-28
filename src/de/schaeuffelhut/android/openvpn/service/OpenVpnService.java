@@ -276,6 +276,32 @@ public final class OpenVpnService extends Service
 		}
 	}
 
+	public void daemonPassphrase(File config, String passphrase)
+	{
+		if ( !isDaemonStarted(config) )
+		{
+			Log.i( TAG, config + " is not running" );
+		}
+		else 
+		{
+			DaemonMonitor monitor = registry.get( config );
+			monitor.supplyPassphrase( passphrase );
+		}
+	}
+
+	public void daemonUsernamePassword(File config, String username, String password)
+	{
+		if ( !isDaemonStarted(config) )
+		{
+			Log.i( TAG, config + " is not running" );
+		}
+		else 
+		{
+			DaemonMonitor monitor = registry.get( config );
+			monitor.supplyUsernamePassword( username, password );
+		}
+	}
+
 	public final synchronized boolean isDaemonStarted(File config)
 	{
 		return registry.containsKey( config ) && registry.get( config ).isAlive();
@@ -288,4 +314,5 @@ public final class OpenVpnService extends Service
 				return true;
 		return false;
 	}
+
 }

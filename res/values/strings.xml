@@ -19,6 +19,9 @@
 	<string name="edit_config_name">Configuration name</string>
 	<string name="edit_config_content">Write your configuration here.</string>
 
+	<string name="enter_passphrase_category">Enter Passphrase</string>
+	<string name="enter_user_password_category">Enter Username/Password</string>
+
 	<string name="monitor_title">OpenVPN Monitor %s</string>
 	<!-- 
 	<string name="start">Start</string>
