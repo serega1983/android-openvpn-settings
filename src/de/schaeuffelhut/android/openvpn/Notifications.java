@@ -16,7 +16,7 @@ public final class Notifications {
 	
 	public static void sendPassphraseRequired(Context context, NotificationManager notificationManager, File configFile) {
 		Notification notification = new Notification(
-				android.R.drawable.ic_dialog_alert,
+				R.drawable.vpn_disconnected_attention,
 				"Passphrase required",
 				System.currentTimeMillis()
 		);
@@ -48,7 +48,7 @@ public final class Notifications {
 	
 	public static void sendUsernamePasswordRequired(Context context, File configFile, NotificationManager notificationManager) {
 		Notification notification = new Notification(
-				android.R.drawable.ic_dialog_alert,
+				R.drawable.vpn_disconnected_attention,
 				"Username/Password required",
 				System.currentTimeMillis()
 		);
