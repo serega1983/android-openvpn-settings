@@ -2,8 +2,6 @@ package de.schaeuffelhut.android.openvpn;
 
 import java.io.File;
 
-import org.apache.http.auth.UsernamePasswordCredentials;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
