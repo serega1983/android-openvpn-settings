@@ -227,7 +227,7 @@ public final class DaemonMonitor
 		}
 		else
 		{
-			mManagementThread.sendPassword(username, password);
+			mManagementThread.sendUserPassword(username, password);
 		}
 	}
 
@@ -465,6 +465,7 @@ public final class DaemonMonitor
 		private final static int STATE_FIELD_INFO1 = 3;
 		private final static int STATE_FIELD_INFO2 = 4;
 		
+		private final static String STATE_CONNECTING = "CONNECTING";
 		private final static String STATE_RECONNECTING = "RECONNECTING";
 		private final static String STATE_RESOLVE = "RESOLVE";
 		private final static String STATE_WAIT = "WAIT";
@@ -488,7 +489,9 @@ public final class DaemonMonitor
 			String info1Extra = null;
 			String info2Extra = null;
 			
-			if (STATE_RECONNECTING.equals(state)) {
+			if (STATE_CONNECTING.equals(state)) {
+				newState = Intents.NETWORK_STATE_CONNECTING;
+			} else if (STATE_RECONNECTING.equals(state)) {
 				newState = Intents.NETWORK_STATE_RECONNECTING;
 				info0Extra = Intents.EXTRA_NETWORK_CAUSE;
 			} else if (STATE_RESOLVE.equals(state)) {
@@ -623,13 +626,13 @@ public final class DaemonMonitor
 			}
 		}
 
-		final synchronized void sendPassword(String user, String password)
+		final synchronized void sendUserPassword(String user, String password)
 		{
 			if ( user == null )
 				Log.w(mTAG_MT, "Won't send <null> as user to openvpn daemon!");
 			else if ( password == null )
 				Log.w(mTAG_MT, "Won't send <null> as password to openvpn daemon!");
-			else if ( !mWaitingForPassphrase )
+			else if ( !mWaitingForUserPassword )
 				Log.w(mTAG_MT, "Won't send unexpected user/password to openvpn daemon!");
 			else
 			{
