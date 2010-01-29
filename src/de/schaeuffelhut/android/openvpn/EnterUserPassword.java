@@ -36,7 +36,7 @@ public class EnterUserPassword extends Activity implements ServiceConnection {
 		super.onCreate(savedInstanceState);
 		mConfigFile = new File( getIntent().getStringExtra( EXTRA_FILENAME ) );
 		showDialog( 1 );
-		
+
 		if ( !bindService(
         		new Intent( this, OpenVpnService.class ),
         		this,
@@ -45,8 +45,15 @@ public class EnterUserPassword extends Activity implements ServiceConnection {
         {
 			Log.w(TAG, "Could not bind to ControlShell" );
         }
+	}	
+
+	@Override
+	protected void onDestroy() {
+		super.onStop();
+		if ( mOpenVpnService != null )
+			unbindService( this );
 	}
-	
+		
 	@Override
 	protected Dialog onCreateDialog(int id) {
 
