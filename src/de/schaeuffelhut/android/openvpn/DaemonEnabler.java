@@ -77,7 +77,7 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 	public void setOpenVpnService(OpenVpnService openVpnService)
 	{
 		mOpenVpnService = openVpnService;
-		mDaemonCheckBoxPref.setEnabled( mOpenVpnService != null );
+		mDaemonCheckBoxPref.setEnabled( isEnabledByDependency() && mOpenVpnService != null );
 		if ( mOpenVpnService != null )
 			mOpenVpnService.daemonQueryState(mConfigFile);
 	}
@@ -184,7 +184,7 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 		default:
 			mDaemonCheckBoxPref.setSummary( "unkwnown daemon state: " + daemonState );
 		}		
-		mDaemonCheckBoxPref.setEnabled(isEnabledByDependency());
+		mDaemonCheckBoxPref.setEnabled( isEnabledByDependency() && mOpenVpnService != null );
 	}
 
 	protected void handleNetworkStateChanged(Intent intent)

@@ -20,9 +20,11 @@ import java.util.ArrayList;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -70,77 +72,19 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
         	CheckBoxPreference pref = (CheckBoxPreference) findPreference( Preferences.KEY_OPENVPN_ENABLED );
         	pref.setSummary( "" );
         	pref.setChecked( mOpenVpnService != null );
+//        	pref.setSelectable( false );
+        	pref.setOnPreferenceChangeListener( new Preference.OnPreferenceChangeListener() {
+				public boolean onPreferenceChange(Preference preference, Object newValue) {
+					if ( newValue == null )
+						/*noop*/;
+					else if ( (Boolean)newValue )
+						startService( new Intent(OpenVpnSettings.this, OpenVpnService.class) );
+					else
+						stopService( new Intent(OpenVpnSettings.this, OpenVpnService.class) );
+					return false;
+				}
+			});
         }
-
-//		{
-//	        CheckBoxPreference pref = (CheckBoxPreference) findPreference( Preferences.KEY_OPENVPN_USE_INTERNAL_STORAGE );
-//			pref.setOnPreferenceChangeListener(
-//					new Preference.OnPreferenceChangeListener() {
-//						public boolean onPreferenceChange(
-//								Preference pref, Object newValue) {
-//							if ( (Boolean) newValue )
-//							{
-//								// when turning on internal storage, defer to ImportFiles
-//								Intent intent = new Intent( getApplicationContext(), ImportFiles.class );
-//								startActivityForResult(intent, REQUEST_CODE_IMPORT_FILES);
-//								return false; // let ImportFiles decide if option was turned on
-//							}
-//							else
-//							{
-//								return true;
-//							}
-//						}
-//					});
-//		}
-
-		{
-			EditTextPreference pref = (EditTextPreference) findPreference( Preferences.KEY_OPENVPN_EXTERNAL_STORAGE );
-			pref.setOnPreferenceChangeListener(
-					new Preference.OnPreferenceChangeListener() {
-						public boolean onPreferenceChange(
-								Preference pref, Object newValue) {
-							File path = new File( (String)newValue );
-							pref.setSummary( ( !path.exists() ? "Not found: " : "" ) + path.getAbsolutePath() );
-							initToggles( path );
-							return true;
-						}
-					});
-			File path = Preferences.getExternalStorageAsFile( pref.getSharedPreferences() );
-			pref.setSummary( ( !path.exists() ? "Not found: " : "" ) + path.getAbsolutePath() );
-		}
-
-		{
-			EditTextPreference pref = (EditTextPreference) findPreference( Preferences.KEY_OPENVPN_PATH_TO_BINARY );
-			pref.setOnPreferenceChangeListener(
-					new Preference.OnPreferenceChangeListener() {
-						public boolean onPreferenceChange(
-								Preference pref, Object newValue) {
-							File path = new File( (String)newValue );
-							pref.setSummary( ( !path.exists() ? "Not found: " : "" ) + path.getAbsolutePath() );
-							return true;
-						}
-					});
-			File path = Preferences.getPathToBinaryAsFile( pref.getSharedPreferences() );
-			if ( path == null )
-				pref.setSummary( "Please set path to openvpn binary." );
-			else
-				pref.setSummary( ( !path.exists() ? "Not found: " : "" ) + path.getAbsolutePath() );
-		}
-
-//		{
-//			EditTextPreference pref = (EditTextPreference) findPreference( Preferences.KEY_OPENVPN_PATH_TO_SU );
-//			pref.setOnPreferenceChangeListener(
-//					new Preference.OnPreferenceChangeListener() {
-//						public boolean onPreferenceChange(
-//								Preference pref, Object newValue) {
-//							File path = new File( (String)newValue );
-//							pref.setSummary( ( !path.exists() ? "Not found: " : "" ) + path.getAbsolutePath() );
-//							return true;
-//						}
-//					});
-//			File path = Preferences.getPathToSuAsFile( pref.getSharedPreferences() );
-//			pref.setSummary( ( !path.exists() ? "Not found: " : "" ) + path.getAbsolutePath() );
-//		}
 
 		registerForContextMenu( getListView() );
 		initToggles();
@@ -148,14 +92,23 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 		ComponentName componentName = startService( new Intent( this, OpenVpnService.class ) );
 		Log.w(TAG, "OpenVPNService componentName: " + componentName );
 		
-		if ( !bindService(
-        		new Intent( this, OpenVpnService.class ),
-        		this,
-        		Context.BIND_AUTO_CREATE
-        ) )
+		if ( !bindService( new Intent( this, OpenVpnService.class ), this, 0 ) )
         {
 			Log.w(TAG, "Could not bind to ControlShell" );
         }
+		
+		registerReceiver( 
+				new BroadcastReceiver() {
+					@Override public void onReceive(Context context, Intent intent) 
+					{
+						if ( !OpenVpnSettings.this.bindService( new Intent( OpenVpnSettings.this, OpenVpnService.class ), OpenVpnSettings.this, 0 ) )
+				        {
+							Log.w(TAG, "Could not bind to ControlShell" );
+				        }
+					}
+				},
+				new IntentFilter( Intents.OPEN_VPN_SERVICE_STARTED )
+		);
     }
 
 

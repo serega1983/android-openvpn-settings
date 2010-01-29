@@ -8,48 +8,7 @@
 		android:summary="@string/openvpn_quick_toggle_summary"
 		android:enabled="true"
 		android:defaultValue="true"
-		android:selectable="false"
 		/>
-
-	<!-- 
-	<CheckBoxPreference
-		android:key="openvpn_use_internal_storage"
-		android:title="Use private storage"
-        android:dependency="openvpn_enabled"
-		android:defaultValue="true"
-		/>
-	 -->
-
-	<CheckBoxPreference
-		android:key="openvpn_do_modprobe_tun"
-		android:title="Load tun kernel module"
-		android:summary="Issue 'modprobe tun' before starting openvpn."
-		android:defaultValue="false"
-		/>
-
-	<EditTextPreference
-		android:key="openvpn_external_storage"
-		android:title="Path to configurations"
-        android:dependency="openvpn_enabled"
-		android:defaultValue="/sdcard/openvpn"
-		android:persistent="true"
-		/>
-
-	<EditTextPreference
-		android:key="openvpn_path_to_binary"
-		android:title="Path to openvpn binary"
-        android:dependency="openvpn_enabled"
-		android:persistent="true"
-		/>
-
-	<!-- 
-	<EditTextPreference
-		android:key="openvpn_path_to_su"
-		android:title="Path to su binary"
-        android:dependency="openvpn_enabled"
-		android:persistent="true"
-		/>
-	 -->
 	
 	<PreferenceCategory
 		android:key="openvpn_configurations"

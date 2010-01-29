@@ -195,6 +195,29 @@ public final class DaemonMonitor
 		}
 	}
 
+	void stopAndWaitForTermination() throws InterruptedException
+	{
+		if ( !isAlive() )
+		{
+			Log.w( mTagDaemonMonitor, "Can't stop, daemon is not running!" );
+		}
+		else
+		{
+			mManagementThread.stopAndWaitForTermination();
+		}
+	}
+
+	void waitForTermination() throws InterruptedException {
+		if ( !isAlive() )
+		{
+			Log.w( mTagDaemonMonitor, "Can't wait for termination, daemon is already dead!" );
+		}
+		else
+		{
+			mManagementThread.waitForTermination();
+		}
+	}
+	
 	void queryState()
 	{
 		if ( !isAlive() )
@@ -244,6 +267,7 @@ public final class DaemonMonitor
 		private Socket socket;
 		private PrintWriter out;
 		private int mCurrentState = Intents.NETWORK_STATE_UNKNOWN;
+		private boolean ms_isTerminated = false; // access only synchronized
 		
 		@Override
 		public void run()
@@ -286,6 +310,11 @@ public final class DaemonMonitor
 						)
 				);
 
+				synchronized (this) {
+					ms_isTerminated = true;
+					notifyAll(); // Notify anyone waiting for this thread, e.g. with waitForTermination
+				}
+				
 				Log.d( mTAG_MT, "terminated");
 			}
 		}
@@ -608,6 +637,17 @@ public final class DaemonMonitor
 			}
 		}
 		
+		synchronized void stopAndWaitForTermination() throws InterruptedException {
+			signal( ManagementThread.SIGTERM );
+			while( !ms_isTerminated )
+				wait();
+		}
+
+		synchronized void waitForTermination() throws InterruptedException {
+			while( !ms_isTerminated )
+				wait();
+		}
+
 		/**
 		 * Respond to a password request
 		 * 

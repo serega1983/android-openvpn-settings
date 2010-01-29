@@ -21,6 +21,9 @@ import android.net.Uri;
 public final class Intents
 {
 	public final static String NS = Intents.class.getName();
+	
+	public final static String OPEN_VPN_SERVICE_STARTED = NS + ".OPEN_VPN_SERVICE_STARTED";
+	
 	public final static String DEAMON_STATE_CHANGED = NS + ".DAEMON_STATE_CHANGED";
 	public final static String NETWORK_STATE_CHANGED = NS + ".NETWORK_STATE_CHANGED";
 	
@@ -71,11 +74,11 @@ public final class Intents
 	
 	private Intents() {}
 
-	public final static Uri config2Uri(String config) {
-		return Uri.parse("content://de.schaeuffelhut.openvpn/"
-				+ (config == null ? "" : config));
-	}
-	public final static String URI2config(Uri uri) {
-		return uri.getLastPathSegment();
-	}
+//	public final static Uri config2Uri(String config) {
+//		return Uri.parse("content://de.schaeuffelhut.openvpn/"
+//				+ (config == null ? "" : config));
+//	}
+//	public final static String URI2config(Uri uri) {
+//		return uri.getLastPathSegment();
+//	}
 }

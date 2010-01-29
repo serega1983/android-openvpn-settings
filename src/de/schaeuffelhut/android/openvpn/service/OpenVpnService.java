@@ -16,6 +16,7 @@
 package de.schaeuffelhut.android.openvpn.service;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.app.Service;
@@ -28,6 +29,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.util.NetworkConnectivityListener;
 
@@ -66,8 +68,8 @@ public final class OpenVpnService extends Service
 	{
 		super.onCreate();
 		startup();
+		sendBroadcast( new Intent( Intents.OPEN_VPN_SERVICE_STARTED ) );
 	}
-
 	
 	@Override
 	public void onDestroy() {
@@ -85,7 +87,7 @@ public final class OpenVpnService extends Service
 	private File mConfigDir;
 	private File mComDir;	
 
-	private final HashMap<File, DaemonMonitor> registry = new HashMap<File, DaemonMonitor>(4);
+	private final HashMap<File, DaemonMonitor> mRegistry = new HashMap<File, DaemonMonitor>(4);
 	
 	private synchronized void startup()
 	{
@@ -135,23 +137,34 @@ public final class OpenVpnService extends Service
 	private synchronized void shutdown()
 	{
 		Log.i(TAG, "shuting down");
+				
+		final ArrayList<DaemonMonitor> daemonMonitors= new ArrayList<DaemonMonitor>( mRegistry.values() );
 		
-		mConnectivity.stopListening();
-		mConnectivity = null;
-		
-//		// stop running configs
-//		File[] configFiles = new File(
-//				getApplicationContext().getFilesDir(),
-//				"config.d"
-//		).listFiles(new Util.FileExtensionFilter(".conf"));
-//		for (int i = 0; configFiles != null && i < configFiles.length; i++)
-//		{
-//			final String configFileName = configFiles[i].getName();
-//			if ( isDaemonStarted( configFileName ) )
-//				daemonStop( configFileName );
-//		}
+		// sending shutdown signal to all running daemons
+		for( DaemonMonitor daemonMonitor : daemonMonitors )
+		{
+			if( daemonMonitor.isAlive() )
+			{
+				daemonMonitor.stop();
+//				try {
+//					daemonMonitor.stopAndWaitForTermination();
+//				} catch (InterruptedException e) {
+//					Log.e(TAG, "shutdown", e);
+//				}
+			}
+		}
 
-//		wait for proceses we are still parents of 
+		// wait for shutdown to finish
+		for( DaemonMonitor daemonMonitor : daemonMonitors ){
+			try {
+				daemonMonitor.waitForTermination();
+			} catch (InterruptedException e) {
+				Log.e(TAG, "shutdown", e);
+			}
+		}
+
+		mConnectivity.stopListening();
+		mConnectivity = null;		
 	}
 
 	synchronized void daemonAttach(File config, boolean start)
@@ -173,7 +186,7 @@ public final class OpenVpnService extends Service
 			if ( daemonMonitor.isAlive() ) // daemon was already running
 			{
 				Log.v(TAG, config +": successfully attached");
-				registry.put( config, daemonMonitor );
+				mRegistry.put( config, daemonMonitor );
 				if ( !start )
 				{
 					Log.v(TAG, config +": daemon is disabled in settings, stopping");
@@ -187,7 +200,7 @@ public final class OpenVpnService extends Service
 				daemonMonitor.start();
 				// ManagementThread might not be alive yet,
 				// so daemonMonitor.isAlive() might return false here.
-				registry.put( config, daemonMonitor );
+				mRegistry.put( config, daemonMonitor );
 			}
 			else
 			{
@@ -227,7 +240,7 @@ public final class OpenVpnService extends Service
 					mComDir
 			);
 			daemonMonitor.start();
-			registry.put( config, daemonMonitor );
+			mRegistry.put( config, daemonMonitor );
 		}
 	}
 
@@ -240,7 +253,7 @@ public final class OpenVpnService extends Service
 		else 
 		{
 			Log.i( TAG, config + " restarting" );
-			DaemonMonitor monitor = registry.get( config );
+			DaemonMonitor monitor = mRegistry.get( config );
 			monitor.restart();
 		}
 	}
@@ -260,7 +273,7 @@ public final class OpenVpnService extends Service
 		}
 		else 
 		{
-			DaemonMonitor monitor = registry.get( config );
+			DaemonMonitor monitor = mRegistry.get( config );
 			monitor.stop();
 		}
 	}
@@ -273,7 +286,7 @@ public final class OpenVpnService extends Service
 		}
 		else 
 		{
-			DaemonMonitor monitor = registry.get( config );
+			DaemonMonitor monitor = mRegistry.get( config );
 			monitor.queryState();
 		}
 	}
@@ -286,7 +299,7 @@ public final class OpenVpnService extends Service
 		}
 		else 
 		{
-			DaemonMonitor monitor = registry.get( config );
+			DaemonMonitor monitor = mRegistry.get( config );
 			monitor.supplyPassphrase( passphrase );
 		}
 	}
@@ -299,19 +312,19 @@ public final class OpenVpnService extends Service
 		}
 		else 
 		{
-			DaemonMonitor monitor = registry.get( config );
+			DaemonMonitor monitor = mRegistry.get( config );
 			monitor.supplyUsernamePassword( username, password );
 		}
 	}
 
 	public final synchronized boolean isDaemonStarted(File config)
 	{
-		return registry.containsKey( config ) && registry.get( config ).isAlive();
+		return mRegistry.containsKey( config ) && mRegistry.get( config ).isAlive();
 	}
 	
 	public final synchronized boolean hasDaemonsStarted()
 	{
-		for( DaemonMonitor monitor : registry.values() )
+		for( DaemonMonitor monitor : mRegistry.values() )
 			if ( monitor.isAlive() )
 				return true;
 		return false;
