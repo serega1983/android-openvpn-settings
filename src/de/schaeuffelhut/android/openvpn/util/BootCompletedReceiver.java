@@ -19,7 +19,9 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.preference.PreferenceManager;
 import android.util.Log;
+import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
 
 public class BootCompletedReceiver extends BroadcastReceiver
@@ -32,21 +34,33 @@ public class BootCompletedReceiver extends BroadcastReceiver
 		// just make sure we are getting the right intent (better safe than sorry)
 		  if( Intent.ACTION_BOOT_COMPLETED.equals( intent.getAction() ) )
 		  {
-			  ComponentName comp = new ComponentName(
-					  context.getPackageName(),
-					  OpenVpnService.class.getName()
-			  );
-			  ComponentName service = context.startService(
-					  new Intent().setComponent( comp )
-			  );
-			  if ( service == null )
+			  if ( PreferenceManager.getDefaultSharedPreferences(context).getBoolean(Preferences.KEY_OPENVPN_ENABLED, false ) )
 			  {
-				  // something really wrong here
-				  Log.e(TAG, "Could not start service " + comp.toString() );
+				  Log.d(TAG, "OpenVPN-Service enabled in preferences, starting!" );
+
+				  ComponentName service = context.startService( new Intent( context, OpenVpnService.class ) );
+
+				  //Why so complicated?
+				  //			  ComponentName comp = new ComponentName(
+				  //					  context.getPackageName(),
+				  //					  OpenVpnService.class.getName()
+				  //			  );
+				  //			  ComponentName service = context.startService(
+				  //					  new Intent().setComponent( comp )
+				  //			  );
+				  if ( service == null )
+				  {
+					  // something really wrong here
+					  Log.e(TAG, "Could not start service " + service.toString() );
+				  }
+				  else
+				  {
+					  Log.i(TAG, service.toString() + "started" );
+				  }
 			  }
 			  else
 			  {
-				  Log.i(TAG, comp.toString() + "started" );
+				  Log.d(TAG, "OpenVPN-Service disabled in preferences, not starting!" );
 			  }
 		  }
 		  else

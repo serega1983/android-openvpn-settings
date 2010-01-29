@@ -18,6 +18,7 @@ package de.schaeuffelhut.android.openvpn.service;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Properties;
 
 import android.app.Service;
 import android.content.Intent;
@@ -69,11 +70,17 @@ public final class OpenVpnService extends Service
 		super.onCreate();
 		startup();
 		sendBroadcast( new Intent( Intents.OPEN_VPN_SERVICE_STARTED ) );
+		PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(
+				Preferences.KEY_OPENVPN_ENABLED, true
+		).commit();
 	}
 	
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(
+				Preferences.KEY_OPENVPN_ENABLED, false
+		).commit();
 		shutdown();
 	}
 
