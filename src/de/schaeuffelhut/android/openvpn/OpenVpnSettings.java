@@ -49,6 +49,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 	
 	private static final int REQUEST_CODE_IMPORT_FILES = 1;
 	private static final int REQUEST_CODE_EDIT_CONFIG = 2;
+	private static final int REQUEST_CODE_ADVANCED_SETTINGS = 3;
 
 	private static final int DIALOG_HELP = 1;
 	private static final int DIALOG_PLEASE_RESTART = 2;
@@ -62,7 +63,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
         super.onCreate(savedInstanceState);
     	Log.d(TAG, "onCreate()" );
         
-        addPreferencesFromResource( R.xml.preferences );
+        addPreferencesFromResource( R.xml.openvpn_settings );
 
         //TODO: write OpenVpnEnabled, see WifiEnabler => start stop OpenVpnService
         {
@@ -178,13 +179,13 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
     }
     private void initToggles(File configDir)
 	{
-		PreferenceCategory configurations = (PreferenceCategory) findPreference(Preferences.KEY_OPENVPN_CONFIGURATIONS);
-		configurations.removeAll();
 		for(DaemonEnabler daemonEnabler : mDaemonEnablers ) {
 			daemonEnabler.pause();
 			daemonEnabler.setOpenVpnService( null );
 		}
 		mDaemonEnablers.clear();
+		PreferenceCategory configurations = (PreferenceCategory) findPreference(Preferences.KEY_OPENVPN_CONFIGURATIONS);
+		configurations.removeAll();
 		
 		for ( File config : Preferences.configs(configDir) )
 		{
@@ -228,6 +229,12 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 				showDialog( DIALOG_PLEASE_RESTART );
 				
 		} break;
+		
+		case REQUEST_CODE_ADVANCED_SETTINGS: {
+			// path to config might only be changed if no tunnel is up
+			if ( !mOpenVpnService.hasDaemonsStarted() )
+				initToggles();
+		}
 		
 		default:
 			Log.w( TAG, String.format( "unexpected onActivityResult(%d, %d, %s) ", requestCode, resultCode, data ) );
@@ -287,6 +294,13 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 			for(DaemonEnabler daemonEnabler : mDaemonEnablers )
 				daemonEnabler.resume();
 			return true;
+			
+		case R.id.settings_menu_advanced: {
+			Intent intent = new Intent(this, AdvancedSettings.class );
+			intent.putExtra(AdvancedSettings.HAS_DAEMONS_STARTED, mOpenVpnService.hasDaemonsStarted() );
+			startActivityForResult( intent, REQUEST_CODE_ADVANCED_SETTINGS );
+			return true; }
+			
 		case R.id.settings_menu_help:
 			showDialog( DIALOG_HELP );
 			return true;

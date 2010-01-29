@@ -82,6 +82,7 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 			mOpenVpnService.daemonQueryState(mConfigFile);
 	}
 
+	boolean isRegistered = false;
 	public void resume()
 	{
 		//    	int state;
@@ -96,12 +97,17 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 		// This is the widget enabled state, not the preference toggled state
 
 		mContext.registerReceiver(mDaemonStateReceiver, mDaemonStateFilter);
+		isRegistered = true;
 		mDaemonCheckBoxPref.setOnPreferenceChangeListener(this);
 	}
 
 	public void pause()
 	{
-		mContext.unregisterReceiver(mDaemonStateReceiver);
+		if ( isRegistered )
+		{
+			mContext.unregisterReceiver(mDaemonStateReceiver);
+			isRegistered = false;
+		}
 		mDaemonCheckBoxPref.setOnPreferenceChangeListener(null);
 	}
 

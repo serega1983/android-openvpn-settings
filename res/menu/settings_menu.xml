@@ -2,9 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<item
+		android:id="@+id/settings_menu_add_config"
+		android:title="@string/settings_menu_add_config"
+		android:icon="@android:drawable/ic_menu_add"/>
+
+	<item
 		android:id="@+id/settings_menu_refresh"
 		android:title="@string/settings_menu_refresh"
 		android:icon="@drawable/ic_menu_refresh"/>
+
+	<item
+		android:id="@+id/settings_menu_advanced"
+		android:title="@string/settings_menu_advanced"
+		android:icon="@android:drawable/ic_menu_preferences"/>
 
 	<item
 		android:id="@+id/settings_menu_help"

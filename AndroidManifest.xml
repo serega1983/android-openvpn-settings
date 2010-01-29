@@ -36,6 +36,10 @@
 		</activity>
 
 		<activity
+			android:name="AdvancedSettings" 
+			android:label="@string/advanced_settings_category"
+			/>
+		<activity
 			android:name="EditConfig" 
 			android:label="@string/edit_config_category"
 			/>
