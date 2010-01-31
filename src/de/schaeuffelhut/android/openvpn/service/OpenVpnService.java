@@ -18,7 +18,6 @@ package de.schaeuffelhut.android.openvpn.service;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Properties;
 
 import android.app.Service;
 import android.content.Intent;

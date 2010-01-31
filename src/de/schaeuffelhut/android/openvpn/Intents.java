@@ -16,7 +16,6 @@
 package de.schaeuffelhut.android.openvpn;
 
 import android.content.Intent;
-import android.net.Uri;
 
 public final class Intents
 {
