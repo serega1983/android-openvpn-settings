@@ -12,8 +12,8 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.text.InputType;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.widget.EditText;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
 
@@ -57,22 +57,19 @@ public class EnterPassphrase extends Activity implements ServiceConnection {
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		
-		final EditText passphrase = new EditText(this);
-		passphrase.setInputType( InputType.TYPE_TEXT_VARIATION_PASSWORD );
-		passphrase.setHint( "Passphrase" );
-			
 		DialogInterface.OnClickListener ok = new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
+				EditText passphrase = (EditText)((AlertDialog)dialog).findViewById( R.id.enter_passphrase_passphrase );
 				mOpenVpnService.daemonPassphrase( mConfigFile, passphrase.getText().toString() );
 				Notifications.cancelPassphraseRequired(EnterPassphrase.this);
 				finish();
 			}
 		};
 		
-		//TODO: find out how to acces dialog without field 
+		//TODO: find out how to access dialog without field mDialog 
 		mDialog = new AlertDialog.Builder(this)
 		.setTitle( "Passphrase for " + mConfigFile.getName() )
-		.setView( passphrase )
+		.setView( LayoutInflater.from(this).inflate( R.layout.enter_passphrase, null) )
 		.setNeutralButton("OK", ok).create();
 		
 
