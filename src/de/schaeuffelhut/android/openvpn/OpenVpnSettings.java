@@ -89,9 +89,6 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 		registerForContextMenu( getListView() );
 		initToggles();
 
-		ComponentName componentName = startService( new Intent( this, OpenVpnService.class ) );
-		Log.w(TAG, "OpenVPNService componentName: " + componentName );
-		
 		if ( !bindService( new Intent( this, OpenVpnService.class ), this, 0 ) )
         {
 			Log.w(TAG, "Could not bind to ControlShell" );
