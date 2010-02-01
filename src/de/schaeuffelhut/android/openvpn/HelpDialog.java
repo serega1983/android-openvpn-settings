@@ -19,7 +19,7 @@ public final class HelpDialog {
 	public final static Dialog makeDialog(Context context) {
 		
 		String string = Util.getAssetAsString(context, "help.html");
-		string = string.replaceAll( "$version", Util.applicationVersionName(context) );
+		string = string.replace( "$version", Util.applicationVersionName(context) );
 		Spanned message = Html.fromHtml( string );
 
 		TextView textView = new TextView(context);
