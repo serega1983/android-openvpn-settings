@@ -185,7 +185,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 		
 		case REQUEST_CODE_ADVANCED_SETTINGS: {
 			// path to config might only be changed if no tunnel is up
-			if ( !mOpenVpnService.hasDaemonsStarted() )
+			if ( mOpenVpnService == null || !mOpenVpnService.hasDaemonsStarted() )
 				initToggles();
 		}
 		
@@ -250,7 +250,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 			
 		case R.id.settings_menu_advanced: {
 			Intent intent = new Intent(this, AdvancedSettings.class );
-			intent.putExtra(AdvancedSettings.HAS_DAEMONS_STARTED, mOpenVpnService.hasDaemonsStarted() );
+			intent.putExtra(AdvancedSettings.HAS_DAEMONS_STARTED, mOpenVpnService == null ? false : mOpenVpnService.hasDaemonsStarted() );
 			startActivityForResult( intent, REQUEST_CODE_ADVANCED_SETTINGS );
 			return true; }
 			
