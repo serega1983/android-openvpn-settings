@@ -19,6 +19,9 @@ public final class Notifications {
 				configFile.getName() +": " + msg,
 				System.currentTimeMillis()
 		);
+		notification.flags |= Notification.FLAG_NO_CLEAR;
+		notification.flags |= Notification.FLAG_ONGOING_EVENT;
+		
 		Intent intent = new Intent(context, OpenVpnSettings.class );
 //		intent.putExtra( EnterPassphrase.EXTRA_FILENAME, configFile.getAbsolutePath() );
 		
@@ -42,6 +45,9 @@ public final class Notifications {
 				configFile.getName() +": " + msg,
 				System.currentTimeMillis()
 		);
+		notification.flags |= Notification.FLAG_NO_CLEAR;
+		notification.flags |= Notification.FLAG_ONGOING_EVENT;
+		
 		Intent intent = new Intent(context, OpenVpnSettings.class );
 //		intent.putExtra( EnterPassphrase.EXTRA_FILENAME, configFile.getAbsolutePath() );
 		
@@ -67,6 +73,8 @@ public final class Notifications {
 				"Passphrase required",
 				System.currentTimeMillis()
 		);
+		notification.flags |= Notification.FLAG_NO_CLEAR;
+		notification.flags |= Notification.FLAG_ONGOING_EVENT;
 		
 		Intent intent = new Intent(context, EnterPassphrase.class );
 		intent.putExtra( EnterPassphrase.EXTRA_FILENAME, configFile.getAbsolutePath() );
@@ -85,13 +93,6 @@ public final class Notifications {
 	
 		notificationManager.notify( id, notification);
 	}
-
-	public static void cancel(int id, Context context)
-	{
-		getNotificationManager(context).cancel( id );
-	}
-
-	
 	
 	public static void sendUsernamePasswordRequired(int id, Context context, File configFile, NotificationManager notificationManager) {
 		Notification notification = new Notification(
@@ -99,6 +100,8 @@ public final class Notifications {
 				"Username/Password required",
 				System.currentTimeMillis()
 		);
+		notification.flags |= Notification.FLAG_NO_CLEAR;
+		notification.flags |= Notification.FLAG_ONGOING_EVENT;
 		
 		Intent intent = new Intent(context, EnterUserPassword.class );
 		intent.putExtra( EnterUserPassword.EXTRA_FILENAME, configFile.getAbsolutePath() );
@@ -117,8 +120,12 @@ public final class Notifications {
 	
 		notificationManager.notify( id, notification);
 	}
-
-
+	
+	public static void cancel(int id, Context context)
+	{
+		getNotificationManager(context).cancel( id );
+	}
+	
 	private static NotificationManager getNotificationManager(Context context) {
 		NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 		return notificationManager;
