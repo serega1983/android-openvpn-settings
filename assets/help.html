@@ -12,6 +12,22 @@ Use it at your own risk.
 <i>OpenVPN Settings</i> is being developed on current releases of CyanogenMod (4.2.13 or greater), which includes the <i>openvpn</i> binary and <i>tun</i>.
 <p/>
 
+<u><b>Features</b></u><br/>
+- Wi-Fi Settings like user interface
+- Restart tunnel when network connectivity changes (e.g. from wifi to 3g)
+- Start tunnel on boot, according to last state<br/>
+- Turn on/off openvpn service, saving individual tunnel state<br/> 
+- Passphrase support<br/>
+- Username/Password support (untested, please report any problems)<br/>
+- Supports multiple independent tunnels<br/>
+- Uses Management Interface<br/>
+- Edit config file in text editor<br/>
+<p/>
+
+<u><b>Missing Features</b></u><br/>
+- Setting the nameserver is not yet supported. (It is most likely that DNS will be messed up if it is not done properly, so please stay tuned)
+- Display tunnel status in notification area
+
 <u><b>Logging</b></u><br/>
 Use <i>adb logcat</i> on your host.
 <i>OpenVPN Settings</i> currently relies heavily on <i>adb logcat</i>
@@ -20,12 +36,15 @@ This comes in handy especially when setting up a new tunnel.
 <p/>
 
 <u><b>Setup</b></u><br/>
-1. Connect your phone via USB to your computer.<br/>
+1. Connect your phone via USB to your computer and mount the sdcard.<br/>
 2. Create a directory named <i>openvpn</i> at the root of your sdcard.<br/>
 3. Copy your certificates and <i>*.config</i> files into that directory (The config files need to end in <i>.config</i> ).<br/>
-4. You might need to hit refresh from the menu.<br/>
-5. Start <i>adb logcat</i> on your computer.<br/>
-6. Open activity <i>OpenVPN Settings</i> and enable your tunnel.<br/>
+4. Unmount the sdcard.
+5. You might need to hit refresh from the menu if you started <i>OpenVPN Settings</i> already.<br/>
+6. Start <i>adb logcat</i> on your computer to monitor activity.<br/>
+7. Open activity <i>OpenVPN Settings</i> and enable your tunnel.<br/>
+
+In general it would be best to get you config running from a shell, e.g. using <i>adb shell</i>.
 <p/>
 
 <u><b>Links</b></u><br/>
