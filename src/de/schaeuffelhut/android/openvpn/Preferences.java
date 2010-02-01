@@ -20,6 +20,8 @@ public final class Preferences {
 	public static final String KEY_OPENVPN_SU_ARGUMENTS = "openvpn_su_arguments";
 	public static final String KEY_OPENVPN_DO_MODPROBE_TUN = "openvpn_do_modprobe_tun";
 
+	public static final String KEY_NEXT_NOTIFICATION_ID = "openvpn_next_notification_id";
+
 	public final static String KEY_CONFIG(String config){
 		return String.format( "%s[%s]", KEY_OPENVPN_CONFIGURATIONS, config );
 	}
@@ -33,7 +35,12 @@ public final class Preferences {
 	public final static String KEY_CONFIG_MGMT_PORT(File config){
 		return KEY_CONFIG(config.getAbsolutePath())+".mgmt_port";
 	}
+	public final static String KEY_CONFIG_NOTIFICATION_ID(File config){
+		return KEY_CONFIG(config.getAbsolutePath())+".notification_id";
+	}
 
+	
+	
 	private Preferences() {
 	}
 
@@ -142,6 +149,23 @@ public final class Preferences {
 		return sharedPreferences.getInt( Preferences.KEY_CONFIG_MGMT_PORT(configFile), -1 );
 	}
 
+	public final static int getNotificationId(Context context, File configFile)
+	{
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		int id = sharedPreferences.getInt( Preferences.KEY_CONFIG_NOTIFICATION_ID(configFile), -1 );
+		if ( id == -1 ) {
+			synchronized ( KEY_NEXT_NOTIFICATION_ID ) {
+				id = sharedPreferences.getInt( KEY_NEXT_NOTIFICATION_ID, Notifications.FIRST_CONFIG_ID);
+				Editor edit = sharedPreferences.edit();
+				edit.putInt( Preferences.KEY_CONFIG_NOTIFICATION_ID(configFile), id );
+				edit.putInt( KEY_NEXT_NOTIFICATION_ID, id + 1);
+				edit.commit();
+			}
+		}
+		return id;
+	}
+	
+	
 	public final static boolean getDoModprobeTun(SharedPreferences sharedPreferences) {
 		return sharedPreferences.getBoolean( Preferences.KEY_OPENVPN_DO_MODPROBE_TUN, false);
 	}

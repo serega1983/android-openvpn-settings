@@ -55,9 +55,11 @@ public final class DaemonMonitor
 	private final File mPidFile;
 	private final File mMgmgPwFile;
 	private final File mMgmgPortFile;
+	private final int mNotificationId;
 	
 	private Shell mShell;
 	private ManagementThread mManagementThread;
+
 
 	
 	public DaemonMonitor(Context context, File configFile, File comDir )
@@ -70,6 +72,9 @@ public final class DaemonMonitor
 		mMgmgPwFile = new File( comDir, configFile.getName() + "-pw" );
 		mMgmgPortFile = new File( comDir, configFile.getName() + "-port" );
 		mTagDaemonMonitor = String.format("OpenVPN-DaemonMonitor[%s]", mConfigFile);
+			
+		mNotificationId = Preferences.getNotificationId( mContext, mConfigFile );
+		
 		reattach();
 	}
 	
@@ -310,6 +315,8 @@ public final class DaemonMonitor
 						)
 				);
 
+				Notifications.cancel( mNotificationId, mContext );
+
 				synchronized (this) {
 					ms_isTerminated = true;
 					notifyAll(); // Notify anyone waiting for this thread, e.g. with waitForTermination
@@ -425,22 +432,22 @@ public final class DaemonMonitor
 					if ( line.equals( ">PASSWORD:Need 'Private Key' password" ) )
 					{
 						mWaitingForPassphrase = true;
-						Notifications.sendPassphraseRequired(mContext, mNotificationManager, mConfigFile);
+						Notifications.sendPassphraseRequired(mNotificationId, mContext, mNotificationManager, mConfigFile);
 					}
 					else if ( line.equals( ">PASSWORD:Need 'Auth' username/password" ) )
 					{
 						mWaitingForUserPassword = true;
-						Notifications.sendUsernamePasswordRequired(mContext, mConfigFile, mNotificationManager);
+						Notifications.sendUsernamePasswordRequired(mNotificationId, mContext, mConfigFile, mNotificationManager);
 					}
 					else if ( line.equals( ">PASSWORD:Verification Failed: 'Private Key'" ) )
 					{
 						mWaitingForPassphrase = true;
-						Notifications.sendPassphraseRequired(mContext, mNotificationManager, mConfigFile);
+						Notifications.sendPassphraseRequired(mNotificationId, mContext, mNotificationManager, mConfigFile);
 					}
 					else if ( line.equals( ">PASSWORD:Verification Failed: 'Auth'" ) )
 					{
 						mWaitingForUserPassword = true;
-						Notifications.sendUsernamePasswordRequired(mContext, mConfigFile, mNotificationManager);
+						Notifications.sendUsernamePasswordRequired(mNotificationId, mContext, mConfigFile, mNotificationManager);
 					}
 					else
 					{
@@ -564,6 +571,42 @@ public final class DaemonMonitor
 			mContext.sendStickyBroadcast( intent );
 			
 			mCurrentState = newState;
+			
+			// notification
+			if ( mWaitingForPassphrase || mWaitingForUserPassword ) {
+				// noop,there is already a notification out there
+			} else if (STATE_CONNECTED.equals(state)) {
+				Notifications.notifyConnected( mNotificationId, mContext, mNotificationManager, mConfigFile, "Connected");
+			} else if (STATE_EXITING.equals(state)) {
+				Notifications.cancel( mNotificationId, mContext );
+			} else {
+				Notifications.notifyDisconnected( mNotificationId, mContext, mNotificationManager, mConfigFile, "Connecting");
+			}
+//			if ( mWaitingForPassphrase || mWaitingForUserPassword ) {
+//				// noop,there is already a notification out there
+//			} else if (STATE_CONNECTING.equals(state)) {
+//				Notifications.notifyDisconnected( mContext, mConfigFile, "Connecting");
+//			} else if (STATE_RECONNECTING.equals(state)) {
+//				Notifications.notifyDisconnected( mContext, mConfigFile, "Reconnecting");
+//			} else if (STATE_RESOLVE.equals(state)) {
+//				Notifications.notifyDisconnected( mContext, mConfigFile, "Resolve");
+//			} else if (STATE_WAIT.equals(state)) {
+//				Notifications.notifyDisconnected( mContext, mConfigFile, "Wait");
+//			} else if (STATE_AUTH.equals(state)) {
+//				Notifications.notifyDisconnected( mContext, mConfigFile, "Auth");
+//			} else if (STATE_GET_CONFIG.equals(state)) {
+//				Notifications.notifyDisconnected( mContext, mConfigFile, "Get Config");
+//			} else if (STATE_CONNECTED.equals(state)) {
+//				Notifications.notifyConnected( mContext, mConfigFile, "Connected");
+//			} else if (STATE_ASSIGN_IP.equals(state)) {
+//				Notifications.notifyDisconnected( mContext, mConfigFile, "Assign IP");
+//			} else if (STATE_ADD_ROUTES.equals(state)) {
+//				Notifications.notifyDisconnected( mContext, mConfigFile, "Add Routes");
+//			} else if (STATE_EXITING.equals(state)) {
+//				Notifications.notifyDisconnected( mContext, mConfigFile, "Exiting");
+//			} else {
+//				//..
+//			}
 		}
 
 		/*

@@ -11,10 +11,57 @@ import android.content.Intent;
 public final class Notifications {
 	private Notifications(){}
 	
-	public static final int PASSPHRASE_REQUIRED = 1;
-	public static final int USERNAME_PASSWORD_REQUIRED = 2;
+	public static final int FIRST_CONFIG_ID = 1000000;
 	
-	public static void sendPassphraseRequired(Context context, NotificationManager notificationManager, File configFile) {
+	public static void notifyConnected(int id, Context context, NotificationManager notificationManager, File configFile, String msg) {
+		Notification notification = new Notification(
+				R.drawable.vpn_connected,
+				configFile.getName() +": " + msg,
+				System.currentTimeMillis()
+		);
+		Intent intent = new Intent(context, OpenVpnSettings.class );
+//		intent.putExtra( EnterPassphrase.EXTRA_FILENAME, configFile.getAbsolutePath() );
+		
+		notification.setLatestEventInfo(
+				context,
+				"OpenVPN, " + configFile.getName(),
+				msg,
+				PendingIntent.getActivity(
+						context,
+						0,
+						intent,
+						0
+				)
+		);
+	
+		notificationManager.notify( id, notification);
+	}
+	public static void notifyDisconnected(int id, Context context, NotificationManager notificationManager, File configFile, String msg) {
+		Notification notification = new Notification(
+				R.drawable.vpn_disconnected,
+				configFile.getName() +": " + msg,
+				System.currentTimeMillis()
+		);
+		Intent intent = new Intent(context, OpenVpnSettings.class );
+//		intent.putExtra( EnterPassphrase.EXTRA_FILENAME, configFile.getAbsolutePath() );
+		
+		notification.setLatestEventInfo(
+				context,
+				"OpenVPN, " + configFile.getName(),
+				msg,
+				PendingIntent.getActivity(
+						context,
+						0,
+						intent,
+						0
+				)
+		);
+	
+		notificationManager.notify( id, notification);
+	}
+
+	
+	public static void sendPassphraseRequired(int id, Context context, NotificationManager notificationManager, File configFile) {
 		Notification notification = new Notification(
 				R.drawable.vpn_disconnected_attention,
 				"Passphrase required",
@@ -36,17 +83,17 @@ public final class Notifications {
 				)
 		);
 	
-		notificationManager.notify( PASSPHRASE_REQUIRED, notification);
+		notificationManager.notify( id, notification);
 	}
 
-	public static void cancelPassphraseRequired(Context context)
+	public static void cancel(int id, Context context)
 	{
-		getNotificationManager(context).cancel( PASSPHRASE_REQUIRED );
+		getNotificationManager(context).cancel( id );
 	}
 
 	
 	
-	public static void sendUsernamePasswordRequired(Context context, File configFile, NotificationManager notificationManager) {
+	public static void sendUsernamePasswordRequired(int id, Context context, File configFile, NotificationManager notificationManager) {
 		Notification notification = new Notification(
 				R.drawable.vpn_disconnected_attention,
 				"Username/Password required",
@@ -68,11 +115,7 @@ public final class Notifications {
 				)
 		);
 	
-		notificationManager.notify( USERNAME_PASSWORD_REQUIRED, notification);
-	}
-
-	public static void cancelUsernamePasswordRequired(Context context) {
-		getNotificationManager(context).cancel( USERNAME_PASSWORD_REQUIRED );
+		notificationManager.notify( id, notification);
 	}
 
 

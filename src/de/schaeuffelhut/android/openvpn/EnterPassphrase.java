@@ -61,7 +61,6 @@ public class EnterPassphrase extends Activity implements ServiceConnection {
 			public void onClick(DialogInterface dialog, int which) {
 				EditText passphrase = (EditText)((AlertDialog)dialog).findViewById( R.id.enter_passphrase_passphrase );
 				mOpenVpnService.daemonPassphrase( mConfigFile, passphrase.getText().toString() );
-				Notifications.cancelPassphraseRequired(EnterPassphrase.this);
 				finish();
 			}
 		};

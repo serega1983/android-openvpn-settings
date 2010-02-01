@@ -76,7 +76,6 @@ public class EnterUserPassword extends Activity implements ServiceConnection {
 						username.getText().toString(), 
 						password.getText().toString() 
 				);
-				Notifications.cancelUsernamePasswordRequired(EnterUserPassword.this);
 				finish();
 			}
 		};
