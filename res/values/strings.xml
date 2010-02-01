@@ -26,6 +26,8 @@
 	<string name="enter_passphrase_category">Enter Passphrase</string>
 	<string name="enter_passphrase_passphrase">Passphrase</string>
 	<string name="enter_user_password_category">Enter Username/Password</string>
+	<string name="enter_user_password_user">Username</string>
+	<string name="enter_user_password_password">Password</string>
 
 	<string name="monitor_title">OpenVPN Monitor %s</string>
 	<!-- 

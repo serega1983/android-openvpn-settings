@@ -12,10 +12,9 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.text.InputType;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
 
 public class EnterUserPassword extends Activity implements ServiceConnection {
@@ -57,19 +56,21 @@ public class EnterUserPassword extends Activity implements ServiceConnection {
 	@Override
 	protected Dialog onCreateDialog(int id) {
 
-		final EditText username = new EditText(this);
-		username.setHint( "Username" );
+//		final EditText username = new EditText(this);
+//		username.setHint( "Username" );
 
-		final EditText password = new EditText(this);
-		password.setInputType( InputType.TYPE_TEXT_VARIATION_PASSWORD );
-		password.setHint( "Passphrase" );
+//		final EditText password = new EditText(this);
+//		password.setInputType( InputType.TYPE_TEXT_VARIATION_PASSWORD );
+//		password.setHint( "Passphrase" );
 
-		LinearLayout linearLayout = new LinearLayout(this);
-		linearLayout.addView(username);
-		linearLayout.addView(password);
+//		LinearLayout linearLayout = new LinearLayout(this);
+//		linearLayout.addView(username);
+//		linearLayout.addView(password);
 		
 		DialogInterface.OnClickListener ok = new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
+				EditText username = (EditText)((AlertDialog)dialog).findViewById( R.id.enter_user_password_user);
+				EditText password = (EditText)((AlertDialog)dialog).findViewById( R.id.enter_user_password_password );
 				mOpenVpnService.daemonUsernamePassword( 
 						mConfigFile,
 						username.getText().toString(), 
@@ -83,7 +84,7 @@ public class EnterUserPassword extends Activity implements ServiceConnection {
 		//TODO: find out how to acces dialog without field 
 		mDialog = new AlertDialog.Builder(this)
 		.setTitle( "Passphrase for " + mConfigFile.getName() )
-		.setView( password )
+		.setView( LayoutInflater.from(this).inflate( R.layout.enter_user_password, null) )
 		.setNeutralButton("OK", ok).create();
 		
 
