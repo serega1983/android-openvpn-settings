@@ -375,7 +375,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 			daemonEnabler.setOpenVpnService( mOpenVpnService );
 		
 		CheckBoxPreference pref = (CheckBoxPreference) findPreference( Preferences.KEY_OPENVPN_ENABLED );
-		pref.setSummary( "OpenVpn service is running" );
+		pref.setSummary( "Turn off OpenVPN" );
 		pref.setChecked( mOpenVpnService != null );
 	}
 	
@@ -388,7 +388,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 			daemonEnabler.setOpenVpnService( null );
 		
 		CheckBoxPreference pref = (CheckBoxPreference) findPreference( Preferences.KEY_OPENVPN_ENABLED );
-		pref.setSummary( "OpenVpn service encountered a problem and is not running" );
+		pref.setSummary( "Turn on OpenVPN" );
 		pref.setChecked( mOpenVpnService != null );
 	}
 }
