@@ -1,5 +1,0 @@
-1. Make sure everything is checked in
-2. AndroidManifest.xml
-	* android:versionCode += 1
-	* android:versionName = find appropriate version '<major>.<minor>.<point>'
-3. export and sign using production.keystore
