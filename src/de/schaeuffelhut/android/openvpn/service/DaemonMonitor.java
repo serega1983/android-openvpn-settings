@@ -23,7 +23,10 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Stack;
+import java.util.concurrent.CountDownLatch;
 
 import android.app.NotificationManager;
 import android.content.Context;
@@ -46,18 +49,18 @@ import de.schaeuffelhut.android.openvpn.util.Util;
 public final class DaemonMonitor
 {
 //	private final boolean LOCAL_LOGD = true;
-	private final String mTagDaemonMonitor;
+	final String mTagDaemonMonitor;
 
-	private final Context mContext;
-	private final NotificationManager mNotificationManager;
+	final Context mContext;
+	final NotificationManager mNotificationManager;
 		
-	private final File mConfigFile;
-	private final File mPidFile;
-	private final File mMgmgPwFile;
-	private final File mMgmgPortFile;
-	private final int mNotificationId;
+	final File mConfigFile;
+	final File mPidFile;
+	final File mMgmgPwFile;
+	final File mMgmgPortFile;
+	final int mNotificationId;
 	
-	private Shell mShell;
+	Shell mShell;
 	private ManagementThread mManagementThread;
 
 
@@ -82,7 +85,7 @@ public final class DaemonMonitor
 	{
 		mShell = null;
 
-		mManagementThread = new ManagementThread();
+		mManagementThread = new ManagementThread( this );
 		if ( mManagementThread.attach() )
 			mManagementThread.start();
 		else
@@ -152,7 +155,7 @@ public final class DaemonMonitor
 				if ( waitForMgmt && line.indexOf( "MANAGEMENT: TCP Socket listening on" ) != -1 )
 				{
 					waitForMgmt = false;
-					mManagementThread = new ManagementThread();
+					mManagementThread = new ManagementThread( DaemonMonitor.this );
 					mManagementThread.start();
 				}
 			}
@@ -263,472 +266,603 @@ public final class DaemonMonitor
 	{
 		return mManagementThread != null && mManagementThread.isAlive();
 	}
-	
-	class ManagementThread extends Thread
-	{
-		private static final String MGMG_MSG_STATE = ">STATE:";
-		
-		private final String mTAG_MT = DaemonMonitor.this.mTagDaemonMonitor + "-mgmt";
-		private Socket socket;
-		private PrintWriter out;
-		private int mCurrentState = Intents.NETWORK_STATE_UNKNOWN;
-		private boolean ms_isTerminated = false; // access only synchronized
-		
-		@Override
-		public void run()
-		{
-			Log.d( mTAG_MT, "started");
+}
 
-			// try to attach to OpenVPN monitor port, as long as 
-			// the startup shell is alive 
-			boolean success;
-			while( !(success = attach()) && mShell != null && mShell.isAlive() )
+final class ManagementThread extends Thread
+{
+	private final DaemonMonitor mDaemonMonitor;
+	private final String mTAG_MT;
+//	private final String mTAG_MT = mDaemonMonitor.mTagDaemonMonitor + "-mgmt";
+	
+	ManagementThread(DaemonMonitor daemonMonitor)
+	{
+		mDaemonMonitor = daemonMonitor;
+		mTAG_MT = daemonMonitor.mTagDaemonMonitor + "-mgmt";
+	}
+	
+	private final CountDownLatch mReady = new CountDownLatch(1);
+	private final CountDownLatch mTerminated = new CountDownLatch(1);
+	
+	private Socket socket;
+	private PrintWriter out;
+	private int mCurrentState = Intents.NETWORK_STATE_UNKNOWN;
+	
+	@Override
+	public void run()
+	{
+		Log.d( mTAG_MT, "started");
+
+		// try to attach to OpenVPN monitor port, as long as 
+		// the startup shell is alive 
+		boolean success;
+		while( !(success = attach()) && mDaemonMonitor.mShell != null && mDaemonMonitor.mShell.isAlive() )
+		{
+			try {sleep(1000);} catch (InterruptedException e) {}
+		}
+		
+		try
+		{
+			if ( success )
 			{
-				try {sleep(1000);} catch (InterruptedException e) {}
-			}
-			
-			try
-			{
-				if ( success )
-				{
-					Log.v(mTAG_MT, "Successfully attached to OpenVPN monitor port");
-					mContext.sendStickyBroadcast( 
-							Intents.daemonStateChanged(
-									mConfigFile.getAbsolutePath(),
-									Intents.DAEMON_STATE_ENABLED
-							)
-					);
-					
-					monitor();
-				}
-				else
-				{
-					Log.v(mTAG_MT, "Could not attach to OpenVPN monitor port");
-				}
-			}
-			finally
-			{
-				mContext.sendStickyBroadcast( 
+				Log.v(mTAG_MT, "Successfully attached to OpenVPN monitor port");
+				mDaemonMonitor.mContext.sendStickyBroadcast( 
 						Intents.daemonStateChanged(
-								mConfigFile.getAbsolutePath(),
-								Intents.DAEMON_STATE_DISABLED
+								mDaemonMonitor.mConfigFile.getAbsolutePath(),
+								Intents.DAEMON_STATE_ENABLED
 						)
 				);
-
-				Notifications.cancel( mNotificationId, mContext );
-
-				synchronized (this) {
-					ms_isTerminated = true;
-					notifyAll(); // Notify anyone waiting for this thread, e.g. with waitForTermination
-				}
 				
-				Log.d( mTAG_MT, "terminated");
+				monitor();
+			}
+			else
+			{
+				Log.v(mTAG_MT, "Could not attach to OpenVPN monitor port");
 			}
 		}
-		
-		boolean attach()
+		finally
 		{
-			int mgmtPort = Preferences.getMgmtPort(mContext, mConfigFile);
-			Log.d( mTAG_MT, "attach(): using management port at " + mgmtPort );
+			mDaemonMonitor.mContext.sendStickyBroadcast( 
+					Intents.daemonStateChanged(
+							mDaemonMonitor.mConfigFile.getAbsolutePath(),
+							Intents.DAEMON_STATE_DISABLED
+					)
+			);
+
+			Notifications.cancel( mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext );
+
+			mTerminated.countDown();
 			
-			if ( mgmtPort == -1 )
-			{
-				Log.d( mTAG_MT, "attach(): unspecified management port, not attaching" );
-			}
-			else if ( socket == null || !socket.isConnected() )
-			{
-				try
-				{
-					socket = new Socket( InetAddress.getLocalHost(), mgmtPort );
-				}
-				catch (UnknownHostException e)
-				{
-					socket = null;
-					Log.e( mTAG_MT, "attaching to OpenVPN daemon", e );
-				}
-				catch (IOException e)
-				{
-					socket = null;
-					Log.e( mTAG_MT, "attaching to OpenVPN daemon: " + e.getMessage() );
-				}
-			}
-			return socket != null && socket.isConnected();
+			Log.d( mTAG_MT, "terminated");
 		}
-
-		private Stack<ReplyHandler> mReplyHandlers = new Stack<ReplyHandler>();
-		private boolean mMonitorLoopStarted = false; // set to true, when in final monitoring loop
-
-		private boolean mWaitingForPassphrase = false;
-		private boolean mWaitingForUserPassword = false;
-
-		abstract class ReplyHandler {
-			abstract void onReply(String line);
-		}
+	}
+	
+	boolean attach()
+	{
+		int mgmtPort = Preferences.getMgmtPort(mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile);
+		Log.d( mTAG_MT, "attach(): using management port at " + mgmtPort );
 		
-		private void monitor()
+		if ( mgmtPort == -1 )
 		{
-			LineNumberReader lnr = null;
-			try {
-				out = new PrintWriter( socket.getOutputStream() );
-
-				lnr = new LineNumberReader(
-						new InputStreamReader( socket.getInputStream() ),
-						128
-				);
-
-				Log.v(mTAG_MT, "Socket IO established");
-
-				networkStateChanged( Intents.NETWORK_STATE_CONNECTING );
-
-				state();
-				state( true );
-				
-				String line;
-				while ( (line = lnr.readLine() ) != null )
-					handleLine(line);
-			}
-			catch(IOException e)
+			Log.d( mTAG_MT, "attach(): unspecified management port, not attaching" );
+		}
+		else if ( socket == null || !socket.isConnected() )
+		{
+			try
 			{
-				Log.e(mTAG_MT, "Lost connection to OpenVPN daemon", e );
-				Util.closeQuietly( lnr );
-				networkStateChanged( Intents.NETWORK_STATE_UNKNOWN );
+				socket = new Socket( InetAddress.getLocalHost(), mgmtPort );
 			}
-			finally
+			catch (UnknownHostException e)
 			{
-				Util.closeQuietly( lnr );
-				Util.closeQuietly( out );
-				Util.closeQuietly( socket );
-				
-				if ( !mMonitorLoopStarted )
-				{
-					synchronized ( this ) {
-						Log.v(mTAG_MT, "Monitor loop never run, notifying any remainig waiting threads");
-						notifyAll();
-					}
-				}
+				socket = null;
+				Log.e( mTAG_MT, "attaching to OpenVPN daemon", e );
+			}
+			catch (IOException e)
+			{
+				socket = null;
+				Log.e( mTAG_MT, "attaching to OpenVPN daemon: " + e.getMessage() );
 			}
 		}
+		return socket != null && socket.isConnected();
+	}
 
-		private synchronized void handleLine(String line)
-		{
-			if ( !mMonitorLoopStarted )
-			{
-				mMonitorLoopStarted = true;
-				synchronized ( this ) {
-					Log.v(mTAG_MT, "Monitor loop is ready, notifying waiting threads");
-					notifyAll();
-				}
-			}
+	private LinkedList<Command> ms_PendingCommandFifo = new LinkedList<Command>();
+	
+	private void monitor()
+	{
+		LineNumberReader lnr = null;
+		try {
+			out = new PrintWriter( socket.getOutputStream() );
+
+			lnr = new LineNumberReader(
+					new InputStreamReader( socket.getInputStream() ),
+					128
+			);
+
+			Log.v(mTAG_MT, "Socket IO established");
+
+			networkStateChanged( Intents.NETWORK_STATE_CONNECTING );
+
+			sendCommandNoLock( new StateCommand() );
+			sendCommandNoLock( new SimpleCommand( "state on" ) );
 			
-			Log.v( mTAG_MT, line );
-			if ( line.startsWith( ">" ) ) // async realtime notifications start with ">"
+			// allow other threads to submit commands
+			mReady.countDown(); 
+			
+			//block until input is available
+			while( block(lnr) )
+				handleResponse(lnr);
+		}
+		catch(IOException e)
+		{
+			Log.e(mTAG_MT, "Lost connection to OpenVPN daemon", e );
+			Util.closeQuietly( lnr );
+			networkStateChanged( Intents.NETWORK_STATE_UNKNOWN );
+		}
+		finally
+		{
+			Util.closeQuietly( lnr );
+			Util.closeQuietly( out );
+			Util.closeQuietly( socket );
+			
+			// make sure nobody is waiting for us
+			mReady.countDown();
+		}
+	}
+	
+	/**
+	 * Block until data becomes available or EOF is reached.
+	 * 
+	 * @param lnr
+	 * @return true if data is available, false if EOF is reached.
+	 * @throws IOException
+	 */
+	private boolean block(LineNumberReader lnr) throws IOException
+	{
+		lnr.mark(1);
+		boolean eof = lnr.read() == -1;
+		if ( !eof )
+			lnr.reset();
+		return !eof;
+	}
+
+	private final synchronized void handleResponse(LineNumberReader lnr) throws IOException
+	{
+		Command command;
+		if ( ms_PendingCommandFifo.isEmpty() )
+			command = mDummyCommandInstance;
+		else
+			command = ms_PendingCommandFifo.remove();
+		command.handleResponse( lnr );
+	}
+
+	
+	abstract class Command
+	{
+		final boolean expectsMultilineResponse;
+		final boolean expectsSuccessOrError;
+		
+		public Command(boolean expectsSuccessOrError, boolean expectsMultilineResponse)
+		{
+			this.expectsMultilineResponse = expectsMultilineResponse;
+			this.expectsSuccessOrError = expectsSuccessOrError;
+		}
+
+		abstract String getCommand();
+
+		final void handleResponse(LineNumberReader lnr) throws IOException
+		{
+			ArrayList<String> multilineResponse = expectsMultilineResponse ? new ArrayList<String>() : null;
+			
+			String line;
+			while( (line = lnr.readLine()) != null )
 			{
-				if ( line.startsWith( MGMG_MSG_STATE ) )
+				final boolean responseFinished;
+				if ( line.startsWith( ">" ) )
 				{
-					onState( line );
+					// always handle asynchronous real-time messages
+					handleRealtimeMessage( line );
+
+					// go on reading command response, if expected
+					responseFinished = expectsSuccessOrError || expectsMultilineResponse ? false : true;
 				}
-				else if ( line.startsWith( ">PASSWORD:" ) )
+				else if ( line.startsWith( "SUCCESS:" ) )
 				{
-					if ( line.equals( ">PASSWORD:Need 'Private Key' password" ) )
+					if ( !expectsSuccessOrError )
+						throw new RuntimeException( "Unexpected message: " + line );
+					
+					handleSuccess( line );
+					
+					responseFinished = expectsMultilineResponse ? false : true;
+				}
+				else if ( line.startsWith( "ERROR:" ) )
+				{
+					if ( !expectsSuccessOrError )
+						throw new RuntimeException( "Unexpected message: " + line );
+					
+					handleError( line );
+					
+					responseFinished = expectsMultilineResponse ? false : true;
+				}
+				else if ( expectsMultilineResponse )
+				{
+					if ( line.equals( "END" ) )
 					{
-						mWaitingForPassphrase = true;
-						Notifications.sendPassphraseRequired(mNotificationId, mContext, mNotificationManager, mConfigFile);
-					}
-					else if ( line.equals( ">PASSWORD:Need 'Auth' username/password" ) )
-					{
-						mWaitingForUserPassword = true;
-						Notifications.sendUsernamePasswordRequired(mNotificationId, mContext, mConfigFile, mNotificationManager);
-					}
-					else if ( line.equals( ">PASSWORD:Verification Failed: 'Private Key'" ) )
-					{
-						mWaitingForPassphrase = true;
-						Notifications.sendPassphraseRequired(mNotificationId, mContext, mNotificationManager, mConfigFile);
-					}
-					else if ( line.equals( ">PASSWORD:Verification Failed: 'Auth'" ) )
-					{
-						mWaitingForUserPassword = true;
-						Notifications.sendUsernamePasswordRequired(mNotificationId, mContext, mConfigFile, mNotificationManager);
+						handleMultilineResponse( multilineResponse );
+						responseFinished = true;
 					}
 					else
 					{
-						Log.w(mTAG_MT, "unexpected 'PASSWORD:' notification" + line );
+						multilineResponse.add( line );
+						responseFinished = false;
 					}
 				}
-				// read log msgs via mgmt interface
 				else
 				{
-					Log.d(mTAG_MT, "unexpected realtime notification: " + line );
+					throw new RuntimeException( "Unexpected message: " + line );
 				}
-			}
-			else if ( line.startsWith( "SUCCESS:" ) )
-			{
-				// ignore
-			}
-			else // synchronous reply to command 
-			{
-				if ( mReplyHandlers.isEmpty() )
-				{
-					Log.w( mTAG_MT, "unexpected reply" );
-				}
-				else if ( "END".equals( line ) )
-				{
-					ReplyHandler replyHandler = mReplyHandlers.pop();
-					Log.w( mTAG_MT, "removed ReplyHandler: " + replyHandler );
-				}
-				else
-				{
-					mReplyHandlers.peek().onReply( line );
-				}
+				
+				if ( responseFinished )
+					break;
 			}
 		}
 
-
-		private void networkStateChanged(int newState)
+		protected void handleSuccess(String line)
 		{
-			int oldState = mCurrentState;
-			mCurrentState = newState;
-			mContext.sendStickyBroadcast( Intents.networkStateChanged(
-					mConfigFile.getAbsolutePath(),
-					newState,
-					oldState,
-					System.currentTimeMillis()
-			) );
+			Log.d( mTAG_MT, line );
 		}
-		
-		private final static int STATE_FIELD_TIME = 0;
-		private final static int STATE_FIELD_STATE = 1;
-		private final static int STATE_FIELD_INFO0 = 2;
-		private final static int STATE_FIELD_INFO1 = 3;
-		private final static int STATE_FIELD_INFO2 = 4;
-		
-		private final static String STATE_CONNECTING = "CONNECTING";
-		private final static String STATE_RECONNECTING = "RECONNECTING";
-		private final static String STATE_RESOLVE = "RESOLVE";
-		private final static String STATE_WAIT = "WAIT";
-		private final static String STATE_AUTH = "AUTH";
-		private final static String STATE_GET_CONFIG = "GET_CONFIG";
-		private final static String STATE_CONNECTED = "CONNECTED";
-		private final static String STATE_ASSIGN_IP = "ASSIGN_IP";
-		private final static String STATE_ADD_ROUTES = "ADD_ROUTES";
-		private final static String STATE_EXITING = "EXITING";
 
-		private void onState(String line)
+		protected void handleError(String line)
 		{
-			Log.v(mTAG_MT, String.format("onState(\"%s\")", line ) );
-			
-			String fieldString = line.startsWith(MGMG_MSG_STATE) ? line.substring( MGMG_MSG_STATE.length() ) : line;
-			String[] stateFields = fieldString.split( "," );
-			String state = stateFields[STATE_FIELD_STATE];
-			
-			final int newState;
-			String info0Extra = null;
-			String info1Extra = null;
-			String info2Extra = null;
-			
-			if (STATE_CONNECTING.equals(state)) {
-				newState = Intents.NETWORK_STATE_CONNECTING;
-			} else if (STATE_RECONNECTING.equals(state)) {
-				newState = Intents.NETWORK_STATE_RECONNECTING;
-				info0Extra = Intents.EXTRA_NETWORK_CAUSE;
-			} else if (STATE_RESOLVE.equals(state)) {
-				newState = Intents.NETWORK_STATE_RESOLVE;
-			} else if (STATE_WAIT.equals(state)) {
-				newState = Intents.NETWORK_STATE_WAIT;
-			} else if (STATE_AUTH.equals(state)) {
-				newState = Intents.NETWORK_STATE_AUTH;
-			} else if (STATE_GET_CONFIG.equals(state)) {
-				newState = Intents.NETWORK_STATE_GET_CONFIG;
-			} else if (STATE_CONNECTED.equals(state)) {
-				newState = Intents.NETWORK_STATE_CONNECTED;
-				info1Extra = Intents.EXTRA_NETWORK_LOCALIP;
-				info2Extra = Intents.EXTRA_NETWORK_REMOTEIP;
-			} else if (STATE_ASSIGN_IP.equals(state)) {
-				newState = Intents.NETWORK_STATE_ASSIGN_IP;
-				info1Extra = Intents.EXTRA_NETWORK_LOCALIP;
-			} else if (STATE_ADD_ROUTES.equals(state)) {
-				newState = Intents.NETWORK_STATE_ADD_ROUTES;
-			} else if (STATE_EXITING.equals(state)) {
-				newState = Intents.NETWORK_STATE_EXITING;
-				info0Extra = Intents.EXTRA_NETWORK_CAUSE;
-			} else {
-				Log.d(mTAG_MT, "unknown state: " + state);
-				newState = Intents.NETWORK_STATE_UNKNOWN;
-			}
-			
-			Intent intent = Intents.networkStateChanged(
-					mConfigFile.getAbsolutePath(),
-					newState,
-					mCurrentState,
-					Long.parseLong( stateFields[STATE_FIELD_TIME] ) * 1000
-			);
-			if ( info0Extra != null )
-				intent.putExtra( info0Extra, stateFields[STATE_FIELD_INFO0] );
-			if ( info1Extra != null )
-				intent.putExtra( info1Extra, stateFields[STATE_FIELD_INFO1] );
-			if ( info2Extra != null )
-				intent.putExtra( info2Extra, stateFields[STATE_FIELD_INFO2] );
-
-			mContext.sendStickyBroadcast( intent );
-			
-			mCurrentState = newState;
-			
-			// notification
-			if ( mWaitingForPassphrase || mWaitingForUserPassword ) {
-				// noop,there is already a notification out there
-			} else if (STATE_CONNECTED.equals(state)) {
-				Notifications.notifyConnected( mNotificationId, mContext, mNotificationManager, mConfigFile, "Connected");
-			} else if (STATE_EXITING.equals(state)) {
-				Notifications.cancel( mNotificationId, mContext );
-			} else {
-				Notifications.notifyDisconnected( mNotificationId, mContext, mNotificationManager, mConfigFile, "Connecting");
-			}
-//			if ( mWaitingForPassphrase || mWaitingForUserPassword ) {
-//				// noop,there is already a notification out there
-//			} else if (STATE_CONNECTING.equals(state)) {
-//				Notifications.notifyDisconnected( mContext, mConfigFile, "Connecting");
-//			} else if (STATE_RECONNECTING.equals(state)) {
-//				Notifications.notifyDisconnected( mContext, mConfigFile, "Reconnecting");
-//			} else if (STATE_RESOLVE.equals(state)) {
-//				Notifications.notifyDisconnected( mContext, mConfigFile, "Resolve");
-//			} else if (STATE_WAIT.equals(state)) {
-//				Notifications.notifyDisconnected( mContext, mConfigFile, "Wait");
-//			} else if (STATE_AUTH.equals(state)) {
-//				Notifications.notifyDisconnected( mContext, mConfigFile, "Auth");
-//			} else if (STATE_GET_CONFIG.equals(state)) {
-//				Notifications.notifyDisconnected( mContext, mConfigFile, "Get Config");
-//			} else if (STATE_CONNECTED.equals(state)) {
-//				Notifications.notifyConnected( mContext, mConfigFile, "Connected");
-//			} else if (STATE_ASSIGN_IP.equals(state)) {
-//				Notifications.notifyDisconnected( mContext, mConfigFile, "Assign IP");
-//			} else if (STATE_ADD_ROUTES.equals(state)) {
-//				Notifications.notifyDisconnected( mContext, mConfigFile, "Add Routes");
-//			} else if (STATE_EXITING.equals(state)) {
-//				Notifications.notifyDisconnected( mContext, mConfigFile, "Exiting");
-//			} else {
-//				//..
-//			}
+			Log.d( mTAG_MT, line );
 		}
 
-		/*
-		 * management commands, may be invoked by any thread.
-		 */
-		
-		private synchronized void sendCommand( String cmd, ReplyHandler reply )
+		protected void handleMultilineResponse(ArrayList<String> multilineResponse)
 		{
-			// if monitor loop has not been started and this is not the monitor thread it self, then wait
-			if ( !mMonitorLoopStarted && Thread.currentThread() != this )
-			{
-				Log.v(mTAG_MT, String.format("sendCommand(\"%s\"): waiting for monitor loop to come ready", cmd) );
-				try {wait();} catch (InterruptedException e) {}
-			}
-			
-			Log.v(mTAG_MT, String.format("sendCommand(\"%s\")", cmd) );
-			if ( out == null )
-			{
-				Log.d(mTAG_MT, "sendCommand(), Socket IO not yet established, waiting");
-				try {wait();} catch (InterruptedException e) {}
-				Log.d(mTAG_MT, "sendCommand(), Socket IO is now established");
-			}
-			if ( reply != null )
-				mReplyHandlers.push( reply );
-			out.println( cmd );
-			out.flush();
+			for( String line : multilineResponse )
+				Log.d( mTAG_MT, line );
 		}
-		
-		/**
-		 * Query current state
-		 */
-		void state()
-		{
-			sendCommand( "state", new ReplyHandler() {
-				void onReply(String line) {
-					Log.v(mTAG_MT, "received synchronous reply to state command");
-					onState(line);
-				}
-			});
-		}
-		
-		/**
-		 *  Turn on/off realtime state display;
-		 */
-		void state(boolean b){ sendCommand( ( b ? "state on" : "state off" ), null ); }
-		
-		final static int SIGHUP = 1;
-		final static int SIGTERM = 2;
-		final static int SIGUSR1 = 3;
-		final static int SIGUSR2 = 4;
-		/*
-		 * Send signal s to daemon,
-		 * s = SIGHUP|SIGTERM|SIGUSR1|SIGUSR2.
-		 */
-		public void signal(int s) {
-			switch (s) {
-			case SIGHUP:
-				sendCommand( "signal SIGHUP", null );
-				break;
-			case SIGTERM:
-				sendCommand( "signal SIGTERM", null );
-				break;
-			case SIGUSR1:
-				sendCommand( "signal SIGUSR1", null );
-				break;
-			case SIGUSR2:
-				sendCommand( "signal SIGUSR2", null );
-				break;
-			default:
-				throw new UnexpectedSwitchValueException( s );
-			}
-		}
-		
-		synchronized void stopAndWaitForTermination() throws InterruptedException {
-			signal( ManagementThread.SIGTERM );
-			while( !ms_isTerminated )
-				wait();
-		}
-
-		synchronized void waitForTermination() throws InterruptedException {
-			while( !ms_isTerminated )
-				wait();
-		}
-
-		/**
-		 * Respond to a password request
-		 * 
-		 * @param password
-		 */
-		final synchronized void sendPassphrase(String password)
-		{
-			if ( password == null )
-				Log.w(mTAG_MT, "Won't send <null> as passphrase to openvpn daemon!");
-			else if ( !mWaitingForPassphrase )
-				Log.w(mTAG_MT, "Won't send unexpected passphrase to openvpn daemon!");
-			else
-			{
-				mWaitingForPassphrase = false;
-				sendCommand( String.format("password 'Private Key' '%s'", escape( password ) ), null );
-			}
-		}
-
-		final synchronized void sendUserPassword(String user, String password)
-		{
-			if ( user == null )
-				Log.w(mTAG_MT, "Won't send <null> as user to openvpn daemon!");
-			else if ( password == null )
-				Log.w(mTAG_MT, "Won't send <null> as password to openvpn daemon!");
-			else if ( !mWaitingForUserPassword )
-				Log.w(mTAG_MT, "Won't send unexpected user/password to openvpn daemon!");
-			else
-			{
-				mWaitingForUserPassword = false;
-				sendCommand( String.format( "username 'Auth' '%s'", escape( user ) ), null );
-				sendCommand( String.format( "password 'Auth' '%s'", escape(password) ), null );
-			}
-		}
-
-		private String escape(String s) {
-			return s.replace( "\\", "\\\\" ).replace("'", "\\'" );
-		}
-
 	}
 
+	private final Command mDummyCommandInstance = new DummyCommand();
+
+	/**
+	 * {@link DummyCommand} will only handle asynchronous real-time messages
+	 * in case there is no pending command in the fifo.
+	 * 
+	 * @author Friedrich Schäuffelhut
+	 */
+	final class DummyCommand extends Command
+	{
+		public DummyCommand() {
+			super( false, false );
+		}
+		@Override final String getCommand() {
+			throw new UnsupportedOperationException();
+		}
+	}
+
+	/**
+	 * Simple command only returning SUCESS or ERROR. Response is ignored.
+	 * @author Friedrich Schäuffelhut
+	 */
+	final class SimpleCommand extends Command
+	{
+		final String command;
+		public SimpleCommand(String command) {
+			super(true, false);
+			this.command = command;
+		}
+		
+		@Override public String getCommand()
+		{
+			return command;
+		}
+	}
+
+	final class StateCommand extends Command
+	{
+		StateCommand() {
+			super(false, true);
+		}
+		
+		@Override public String getCommand()
+		{
+			return "state";
+		}
+		
+		@Override
+		protected void handleMultilineResponse(ArrayList<String> multilineResponse)
+		{
+			for( String line : multilineResponse )
+				onState( line );
+		}
+	}
+
+	
+	/*
+	 * SEND MANAGEMENT COMMANDS, may be invoked by any thread.
+	 */
+	
+	/**
+	 * Query current state
+	 */
+	void state()
+	{
+		sendCommand( new StateCommand() );
+	}
+		
+	final static int SIGHUP = 1;
+	final static int SIGTERM = 2;
+	final static int SIGUSR1 = 3;
+	final static int SIGUSR2 = 4;
+	/*
+	 * Send signal s to daemon,
+	 * s = SIGHUP|SIGTERM|SIGUSR1|SIGUSR2.
+	 */
+	public void signal(int s) {
+		switch (s) {
+		case SIGHUP:
+			sendCommand( new SimpleCommand( "signal SIGHUP" ) );
+			break;
+		case SIGTERM:
+			sendCommand( new SimpleCommand( "signal SIGTERM" ) );
+			break;
+		case SIGUSR1:
+			sendCommand( new SimpleCommand( "signal SIGUSR1" ) );
+			break;
+		case SIGUSR2:
+			sendCommand( new SimpleCommand( "signal SIGUSR2" ) );
+			break;
+		default:
+			throw new UnexpectedSwitchValueException( s );
+		}
+	}
+	
+	void stopAndWaitForTermination() throws InterruptedException {
+		signal( ManagementThread.SIGTERM );
+		mTerminated.await();
+	}
+
+	void waitForTermination() throws InterruptedException {
+		mTerminated.await();
+	}
+
+	/**
+	 * Respond to a password request
+	 * 
+	 * @param password
+	 */
+	final void sendPassphrase(String password)
+	{
+		if ( password == null )
+			Log.w(mTAG_MT, "Won't send <null> as passphrase to openvpn daemon!");
+		else if ( !mWaitingForPassphrase )
+			Log.w(mTAG_MT, "Won't send unexpected passphrase to openvpn daemon!");
+		else
+		{
+			mWaitingForPassphrase = false;
+			sendCommand( new SimpleCommand( String.format("password 'Private Key' '%s'", escape( password ) ) ) );
+		}
+	}
+
+	final void sendUserPassword(String user, String password)
+	{
+		if ( user == null )
+			Log.w(mTAG_MT, "Won't send <null> as user to openvpn daemon!");
+		else if ( password == null )
+			Log.w(mTAG_MT, "Won't send <null> as password to openvpn daemon!");
+		else if ( !mWaitingForUserPassword )
+			Log.w(mTAG_MT, "Won't send unexpected user/password to openvpn daemon!");
+		else
+		{
+			mWaitingForUserPassword = false;
+			sendCommand( new SimpleCommand( String.format( "username 'Auth' '%s'", escape( user ) ) ) );
+			sendCommand( new SimpleCommand( String.format( "password 'Auth' '%s'", escape(password) ) ) );
+		}
+	}
+
+	private String escape(String s) {
+		return s.replace( "\\", "\\\\" ).replace("'", "\\'" );
+	}
+
+	
+	private void sendCommand( Command command )
+	{
+		try
+		{
+			mReady.await();
+			sendCommandNoLock(command);
+		}
+		catch (InterruptedException e)
+		{
+			//TODO: make exception checked
+			throw new RuntimeException( e );
+		}
+	}
+
+	private synchronized void sendCommandNoLock(Command command)
+	{
+		ms_PendingCommandFifo.add( command );
+		out.println( command.getCommand() );
+		out.flush();
+	}
+	
+	
+	/*
+	 * ASYNCHRONOUS REAL-TIME MESSAGES
+	 */
+
+	private static final String MGMG_RTMSG_STATE = ">STATE:";
+	
+	private void handleRealtimeMessage(String line)
+	{
+		if ( !line.startsWith( ">" ) )
+			throw new RuntimeException( "Not an asynchronus real-time message: " + line );
+		else if ( line.startsWith( MGMG_RTMSG_STATE ) )
+			onState( line );
+		else if ( line.startsWith( ">PASSWORD:" ) )
+			onPassword(line);
+		else
+			Log.d(mTAG_MT, "Unexpected real-time message: " + line );
+	}
+	
+	private final static int STATE_FIELD_TIME = 0;
+	private final static int STATE_FIELD_STATE = 1;
+	private final static int STATE_FIELD_INFO0 = 2;
+	private final static int STATE_FIELD_INFO1 = 3;
+	private final static int STATE_FIELD_INFO2 = 4;
+	
+	private final static String STATE_CONNECTING = "CONNECTING";
+	private final static String STATE_RECONNECTING = "RECONNECTING";
+	private final static String STATE_RESOLVE = "RESOLVE";
+	private final static String STATE_WAIT = "WAIT";
+	private final static String STATE_AUTH = "AUTH";
+	private final static String STATE_GET_CONFIG = "GET_CONFIG";
+	private final static String STATE_CONNECTED = "CONNECTED";
+	private final static String STATE_ASSIGN_IP = "ASSIGN_IP";
+	private final static String STATE_ADD_ROUTES = "ADD_ROUTES";
+	private final static String STATE_EXITING = "EXITING";
+
+	private void onState(String line)
+	{
+		Log.v(mTAG_MT, String.format("onState(\"%s\")", line ) );
+		
+		String fieldString = line.startsWith(MGMG_RTMSG_STATE) ? line.substring( MGMG_RTMSG_STATE.length() ) : line;
+		String[] stateFields = fieldString.split( "," );
+		String state = stateFields[STATE_FIELD_STATE];
+		
+		final int newState;
+		String info0Extra = null;
+		String info1Extra = null;
+		String info2Extra = null;
+		
+		if (STATE_CONNECTING.equals(state)) {
+			newState = Intents.NETWORK_STATE_CONNECTING;
+		} else if (STATE_RECONNECTING.equals(state)) {
+			newState = Intents.NETWORK_STATE_RECONNECTING;
+			info0Extra = Intents.EXTRA_NETWORK_CAUSE;
+		} else if (STATE_RESOLVE.equals(state)) {
+			newState = Intents.NETWORK_STATE_RESOLVE;
+		} else if (STATE_WAIT.equals(state)) {
+			newState = Intents.NETWORK_STATE_WAIT;
+		} else if (STATE_AUTH.equals(state)) {
+			newState = Intents.NETWORK_STATE_AUTH;
+		} else if (STATE_GET_CONFIG.equals(state)) {
+			newState = Intents.NETWORK_STATE_GET_CONFIG;
+		} else if (STATE_CONNECTED.equals(state)) {
+			newState = Intents.NETWORK_STATE_CONNECTED;
+			info1Extra = Intents.EXTRA_NETWORK_LOCALIP;
+			info2Extra = Intents.EXTRA_NETWORK_REMOTEIP;
+		} else if (STATE_ASSIGN_IP.equals(state)) {
+			newState = Intents.NETWORK_STATE_ASSIGN_IP;
+			info1Extra = Intents.EXTRA_NETWORK_LOCALIP;
+		} else if (STATE_ADD_ROUTES.equals(state)) {
+			newState = Intents.NETWORK_STATE_ADD_ROUTES;
+		} else if (STATE_EXITING.equals(state)) {
+			newState = Intents.NETWORK_STATE_EXITING;
+			info0Extra = Intents.EXTRA_NETWORK_CAUSE;
+		} else {
+			Log.d(mTAG_MT, "unknown state: " + state);
+			newState = Intents.NETWORK_STATE_UNKNOWN;
+		}
+		
+		Intent intent = Intents.networkStateChanged(
+				mDaemonMonitor.mConfigFile.getAbsolutePath(),
+				newState,
+				mCurrentState,
+				Long.parseLong( stateFields[STATE_FIELD_TIME] ) * 1000
+		);
+		if ( info0Extra != null )
+			intent.putExtra( info0Extra, stateFields[STATE_FIELD_INFO0] );
+		if ( info1Extra != null )
+			intent.putExtra( info1Extra, stateFields[STATE_FIELD_INFO1] );
+		if ( info2Extra != null )
+			intent.putExtra( info2Extra, stateFields[STATE_FIELD_INFO2] );
+
+		mDaemonMonitor.mContext.sendStickyBroadcast( intent );
+		
+		mCurrentState = newState;
+		
+		// notification
+		if ( mWaitingForPassphrase || mWaitingForUserPassword ) {
+			// noop,there is already a notification out there
+		} else if (STATE_CONNECTED.equals(state)) {
+			Notifications.notifyConnected( mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mNotificationManager, mDaemonMonitor.mConfigFile, "Connected");
+		} else if (STATE_EXITING.equals(state)) {
+			Notifications.cancel( mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext );
+		} else {
+			Notifications.notifyDisconnected( mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mNotificationManager, mDaemonMonitor.mConfigFile, "Connecting");
+		}
+//		if ( mWaitingForPassphrase || mWaitingForUserPassword ) {
+//			// noop,there is already a notification out there
+//		} else if (STATE_CONNECTING.equals(state)) {
+//			Notifications.notifyDisconnected( mContext, mConfigFile, "Connecting");
+//		} else if (STATE_RECONNECTING.equals(state)) {
+//			Notifications.notifyDisconnected( mContext, mConfigFile, "Reconnecting");
+//		} else if (STATE_RESOLVE.equals(state)) {
+//			Notifications.notifyDisconnected( mContext, mConfigFile, "Resolve");
+//		} else if (STATE_WAIT.equals(state)) {
+//			Notifications.notifyDisconnected( mContext, mConfigFile, "Wait");
+//		} else if (STATE_AUTH.equals(state)) {
+//			Notifications.notifyDisconnected( mContext, mConfigFile, "Auth");
+//		} else if (STATE_GET_CONFIG.equals(state)) {
+//			Notifications.notifyDisconnected( mContext, mConfigFile, "Get Config");
+//		} else if (STATE_CONNECTED.equals(state)) {
+//			Notifications.notifyConnected( mContext, mConfigFile, "Connected");
+//		} else if (STATE_ASSIGN_IP.equals(state)) {
+//			Notifications.notifyDisconnected( mContext, mConfigFile, "Assign IP");
+//		} else if (STATE_ADD_ROUTES.equals(state)) {
+//			Notifications.notifyDisconnected( mContext, mConfigFile, "Add Routes");
+//		} else if (STATE_EXITING.equals(state)) {
+//			Notifications.notifyDisconnected( mContext, mConfigFile, "Exiting");
+//		} else {
+//			//..
+//		}
+	}
+
+	private boolean mWaitingForPassphrase = false;
+	private boolean mWaitingForUserPassword = false;
+
+	private void onPassword(String line) {
+		if ( line.equals( ">PASSWORD:Need 'Private Key' password" ) )
+		{
+			mWaitingForPassphrase = true;
+			Notifications.sendPassphraseRequired(mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mNotificationManager, mDaemonMonitor.mConfigFile);
+		}
+		else if ( line.equals( ">PASSWORD:Need 'Auth' username/password" ) )
+		{
+			mWaitingForUserPassword = true;
+			Notifications.sendUsernamePasswordRequired(mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile, mDaemonMonitor.mNotificationManager);
+		}
+		else if ( line.equals( ">PASSWORD:Verification Failed: 'Private Key'" ) )
+		{
+			mWaitingForPassphrase = true;
+			Notifications.sendPassphraseRequired(mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mNotificationManager, mDaemonMonitor.mConfigFile);
+		}
+		else if ( line.equals( ">PASSWORD:Verification Failed: 'Auth'" ) )
+		{
+			mWaitingForUserPassword = true;
+			Notifications.sendUsernamePasswordRequired(mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile, mDaemonMonitor.mNotificationManager);
+		}
+		else
+		{
+			Log.w(mTAG_MT, "unexpected 'PASSWORD:' notification" + line );
+		}
+	}
+
+	/*
+	 * broadcasting intents 
+	 */
+	
+	private void networkStateChanged(int newState)
+	{
+		int oldState = mCurrentState;
+		mCurrentState = newState;
+		mDaemonMonitor.mContext.sendStickyBroadcast( Intents.networkStateChanged(
+				mDaemonMonitor.mConfigFile.getAbsolutePath(),
+				newState,
+				oldState,
+				System.currentTimeMillis()
+		) );
+	}
 }
