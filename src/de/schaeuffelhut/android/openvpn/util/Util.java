@@ -1,5 +1,6 @@
 /**
  * Copyright 2009 Friedrich Schäuffelhut
+ * Copyright 2010 Christophe Vandeplas
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -291,6 +292,19 @@ public class Util
 		}
 		String string = sb.toString();
 		return string;
+	}
+	
+	/**
+	 * @author chri
+	 */
+	public static String roundDecimalsToString(double d) {
+		// using DecimalFormat we get i18n issues.
+		if ( d < 10 )
+	         return String.valueOf(Math.ceil(d * 100) / 100);
+		if ( d < 100 )
+	         return String.valueOf(Math.ceil(d * 10) / 10);
+		else
+	         return String.valueOf(Math.round(d));
 	}
 
 }

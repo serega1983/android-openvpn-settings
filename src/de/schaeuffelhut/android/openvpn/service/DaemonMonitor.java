@@ -36,6 +36,7 @@ import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.Notifications;
 import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.util.Shell;
+import de.schaeuffelhut.android.openvpn.util.TrafficStats;
 import de.schaeuffelhut.android.openvpn.util.UnexpectedSwitchValueException;
 import de.schaeuffelhut.android.openvpn.util.Util;
 
@@ -578,6 +579,31 @@ final class ManagementThread extends Thread
 		}
 	}
 
+	final StatusCommand mStatusCommand = new StatusCommand();
+	
+	private final class StatusCommand extends Command {
+
+		final TrafficStats trafficStats = new TrafficStats();
+		
+		StatusCommand()
+		{
+			super(false, true);
+		}
+		
+		@Override final String getCommand()
+		{
+			return "status";
+		}
+
+		@Override
+		protected void handleMultilineResponse(ArrayList<String> multilineResponse)
+		{
+			trafficStats.setStats( multilineResponse );
+			Notifications.notifyBytes( mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mNotificationManager, mDaemonMonitor.mConfigFile, trafficStats.toSmallInOutPerSecString() );
+		}
+	}
+
+
 	
 	/*
 	 * SEND MANAGEMENT COMMANDS, may be invoked by any thread.
@@ -898,13 +924,14 @@ final class ManagementThread extends Thread
 
 	private void onByteCount(String line) {
 		// TODO Auto-generated method stub
-		Log.d(mTAG_MT, line );
+//		Log.d(mTAG_MT, line );
 //		int startOfOut = line.indexOf(',');
 //		int startOfIn = RTMSG_BYTECOUNT.length();
 //		int in = Integer.parseInt( line.substring( startOfIn, startOfOut) );
 //		int out = Integer.parseInt( line.substring( startOfOut+1) );
 //		String msg = String.format( "in: %dytes - out: %dbytes", in, out );
-//		Notifications.notifyConnected( mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mNotificationManager, mDaemonMonitor.mConfigFile, msg );
+//		Notifications.notifyBytes( mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mNotificationManager, mDaemonMonitor.mConfigFile, msg );
+		sendCommandNoLock( mStatusCommand );
 	}
 
 	/*
