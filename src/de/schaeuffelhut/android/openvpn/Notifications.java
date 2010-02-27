@@ -51,9 +51,37 @@ public final class Notifications {
 						0
 				)
 		);
-	
+		
 		notificationManager.notify( id, notification);
 	}
+	
+	public static void notifyBytes(int id, Context context, NotificationManager notificationManager, File configFile, String msg) {
+		Notification notification = new Notification(
+				R.drawable.vpn_connected,
+				configFile.getName() +": " + msg,
+				System.currentTimeMillis()
+		);
+		notification.flags |= Notification.FLAG_NO_CLEAR;
+		notification.flags |= Notification.FLAG_ONGOING_EVENT;
+		
+		Intent intent = new Intent(context, OpenVpnSettings.class );
+//		intent.putExtra( EnterPassphrase.EXTRA_FILENAME, configFile.getAbsolutePath() );
+		
+		notification.setLatestEventInfo(
+				context,
+				"OpenVPN, " + configFile.getName(),
+				msg,
+				PendingIntent.getActivity(
+						context,
+						0,
+						intent,
+						0
+				)
+		);
+		
+		notificationManager.notify( id, notification);
+	}
+
 	public static void notifyDisconnected(int id, Context context, NotificationManager notificationManager, File configFile, String msg) {
 		Notification notification = new Notification(
 				R.drawable.vpn_disconnected,
@@ -80,7 +108,6 @@ public final class Notifications {
 	
 		notificationManager.notify( id, notification);
 	}
-
 	
 	public static void sendPassphraseRequired(int id, Context context, NotificationManager notificationManager, File configFile) {
 		Notification notification = new Notification(
