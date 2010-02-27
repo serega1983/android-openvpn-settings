@@ -283,26 +283,37 @@ final class ManagementThread extends Thread
 	private final CountDownLatch mReady = new CountDownLatch(1);
 	final CountDownLatch mTerminated = new CountDownLatch(1);
 	
-	private Socket socket;
-	private PrintWriter out;
-	private int mCurrentState = Intents.NETWORK_STATE_UNKNOWN;
+	private final LinkedList<Command> ms_PendingCommandFifo = new LinkedList<Command>();
 	
+	private Socket mSocket = null;
+	private PrintWriter mOut = null;
+	private int mCurrentState = Intents.NETWORK_STATE_UNKNOWN;
+
+	private final Command mRealtimeMessageHandler = new RealTimeMessageHandler();
+	private final StatusCommand mStatusCommand = new StatusCommand();
+
+	// TODO: access should be synchronized
+	private boolean mWaitingForPassphrase = false;
+	private boolean mWaitingForUserPassword = false;
+
+	
+
 	@Override
 	public void run()
 	{
 		Log.d( mTAG_MT, "started");
 
-		// try to attach to OpenVPN monitor port, as long as 
-		// the startup shell is alive 
-		boolean success;
-		while( !(success = attach()) && mDaemonMonitor.mShell != null && mDaemonMonitor.mShell.isAlive() )
+		// try to attach to OpenVPN management interface port,
+		// keep trying while startup shell is alive 
+		boolean attached;
+		while( !(attached = attach()) && mDaemonMonitor.mShell != null && mDaemonMonitor.mShell.isAlive() )
 		{
 			try {sleep(1000);} catch (InterruptedException e) {}
 		}
 		
 		try
 		{
-			if ( success )
+			if ( attached )
 			{
 				Log.v(mTAG_MT, "Successfully attached to OpenVPN monitor port");
 				mDaemonMonitor.mContext.sendStickyBroadcast( 
@@ -345,36 +356,34 @@ final class ManagementThread extends Thread
 		{
 			Log.d( mTAG_MT, "attach(): unspecified management port, not attaching" );
 		}
-		else if ( socket == null || !socket.isConnected() )
+		else if ( mSocket == null || !mSocket.isConnected() )
 		{
 			try
 			{
-				socket = new Socket( InetAddress.getLocalHost(), mgmtPort );
+				mSocket = new Socket( InetAddress.getLocalHost(), mgmtPort );
 			}
 			catch (UnknownHostException e)
 			{
-				socket = null;
+				mSocket = null;
 				Log.e( mTAG_MT, "attaching to OpenVPN daemon", e );
 			}
 			catch (IOException e)
 			{
-				socket = null;
+				mSocket = null;
 				Log.e( mTAG_MT, "attaching to OpenVPN daemon: " + e.getMessage() );
 			}
 		}
-		return socket != null && socket.isConnected();
+		return mSocket != null && mSocket.isConnected();
 	}
 
-	private LinkedList<Command> ms_PendingCommandFifo = new LinkedList<Command>();
-	
 	private void monitor()
 	{
 		LineNumberReader lnr = null;
 		try {
-			out = new PrintWriter( socket.getOutputStream() );
+			mOut = new PrintWriter( mSocket.getOutputStream() );
 
 			lnr = new LineNumberReader(
-					new InputStreamReader( socket.getInputStream() ),
+					new InputStreamReader( mSocket.getInputStream() ),
 					128
 			);
 
@@ -402,8 +411,8 @@ final class ManagementThread extends Thread
 		finally
 		{
 			Util.closeQuietly( lnr );
-			Util.closeQuietly( out );
-			Util.closeQuietly( socket );
+			Util.closeQuietly( mOut );
+			Util.closeQuietly( mSocket );
 			
 			// make sure nobody is waiting for us
 			mReady.countDown();
@@ -426,11 +435,19 @@ final class ManagementThread extends Thread
 		return !eof;
 	}
 
+	/**
+	 * Retrieve the next pending command and call its response handler. If no
+	 * command is available delegate to mRealTimeMessageHandler to just handle
+	 * asynchronous real-time message.
+	 * 
+	 * @param lnr The {@link LineNumberReader} to read the response from.
+	 * @throws IOException
+	 */
 	private final synchronized void handleResponse(LineNumberReader lnr) throws IOException
 	{
 		Command command;
 		if ( ms_PendingCommandFifo.isEmpty() )
-			command = mDummyCommandInstance;
+			command = mRealtimeMessageHandler;
 		else
 			command = ms_PendingCommandFifo.remove();
 		command.handleResponse( lnr );
@@ -524,32 +541,33 @@ final class ManagementThread extends Thread
 		}
 	}
 
-	private final Command mDummyCommandInstance = new DummyCommand();
-
 	/**
-	 * {@link DummyCommand} will only handle asynchronous real-time messages
-	 * in case there is no pending command in the fifo.
+	 * {@link RealTimeMessageHandler} is a no operation command only used to
+	 * handle asynchronous real-time messages in case there is no pending
+	 * command in the fifo.
 	 * 
 	 * @author Friedrich Schäuffelhut
 	 */
-	final class DummyCommand extends Command
+	private final class RealTimeMessageHandler extends Command
 	{
-		public DummyCommand() {
+		RealTimeMessageHandler() {
 			super( false, false );
 		}
 		@Override final String getCommand() {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException(); // could also send "" as this should not harm the protocol.
 		}
 	}
 
 	/**
-	 * Simple command only returning SUCESS or ERROR. Response is ignored.
+	 * SimpleCommand encapsulates all those commands only returning SUCESS or
+	 * ERROR. The response is ignored.
+	 * 
 	 * @author Friedrich Schäuffelhut
 	 */
-	final class SimpleCommand extends Command
+	private final class SimpleCommand extends Command
 	{
 		final String command;
-		public SimpleCommand(String command) {
+		SimpleCommand(String command) {
 			super(true, false);
 			this.command = command;
 		}
@@ -560,7 +578,7 @@ final class ManagementThread extends Thread
 		}
 	}
 
-	final class StateCommand extends Command
+	private final class StateCommand extends Command
 	{
 		StateCommand() {
 			super(false, true);
@@ -579,10 +597,9 @@ final class ManagementThread extends Thread
 		}
 	}
 
-	final StatusCommand mStatusCommand = new StatusCommand();
 	
-	private final class StatusCommand extends Command {
-
+	private final class StatusCommand extends Command
+	{
 		final TrafficStats trafficStats = new TrafficStats();
 		
 		StatusCommand()
@@ -602,15 +619,13 @@ final class ManagementThread extends Thread
 			Notifications.notifyBytes( mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mNotificationManager, mDaemonMonitor.mConfigFile, trafficStats.toSmallInOutPerSecString() );
 		}
 	}
-
-
 	
 	/*
-	 * SEND MANAGEMENT COMMANDS, may be invoked by any thread.
+	 * Send commands to management inetrface, may be invoked by any thread.
 	 */
-			
+
 	/**
-	 * Send 'state' command to OpenVPN daemon.
+	 * Send 'state' command to OpenVPN daemon. This method is thread safe.
 	 */
 	public void sendState()
 	{
@@ -621,10 +636,12 @@ final class ManagementThread extends Thread
 	final static int SIGTERM = 2;
 	final static int SIGUSR1 = 3;
 	final static int SIGUSR2 = 4;
- 
+
 	/**
-	 * Send signal s to OpenVPN daemon.
-	 * @param s SIGHUP|SIGTERM|SIGUSR1|SIGUSR2
+	 * Send signal s to OpenVPN daemon. This method is thread safe.
+	 * 
+	 * @param s
+	 *            SIGHUP|SIGTERM|SIGUSR1|SIGUSR2
 	 */
 	public void sendSignal(int s)
 	{
@@ -645,25 +662,33 @@ final class ManagementThread extends Thread
 			throw new UnexpectedSwitchValueException( s );
 		}
 	}
-	
+
 	/**
-	 * Respond to a password request
+	 * Send given passphrase in response to a passphrase request. This method is
+	 * thread safe.
 	 * 
-	 * @param password
+	 * @param passphrase
 	 */
-	final void sendPassphrase(String password)
+	final void sendPassphrase(String passphrase)
 	{
-		if ( password == null )
+		if ( passphrase == null )
 			Log.w(mTAG_MT, "Won't send <null> as passphrase to openvpn daemon!");
 		else if ( !mWaitingForPassphrase )
 			Log.w(mTAG_MT, "Won't send unexpected passphrase to openvpn daemon!");
 		else
 		{
 			mWaitingForPassphrase = false;
-			sendCommand( new SimpleCommand( String.format("password 'Private Key' '%s'", escape( password ) ) ) );
+			sendCommand( new SimpleCommand( String.format("password 'Private Key' '%s'", escape( passphrase ) ) ) );
 		}
 	}
 
+	/**
+	 * Send given user and password in response to a password request. This method is
+	 * thread safe.
+	 * 
+	 * @param user
+	 * @param password
+	 */
 	final void sendUserPassword(String user, String password)
 	{
 		if ( user == null )
@@ -687,7 +712,8 @@ final class ManagementThread extends Thread
 	/**
 	 * Waits for the management thread to come ready, then calls
 	 * senCommandImmediately to enqueue the given command. This method may be
-	 * invoked by any thread besides the management thread.
+	 * invoked by any thread besides the management thread. This method is
+	 * thread safe.
 	 * 
 	 * @param command
 	 *            The command to be issued.
@@ -710,7 +736,7 @@ final class ManagementThread extends Thread
 	 * Enqueues the given command in the fifo and prints it to the management
 	 * interface. The command is sent immediately, This method should only be
 	 * invoked from within the management thread itself or through
-	 * sendCommand().
+	 * sendCommand(). This method is thread safe.
 	 * 
 	 * @param command
 	 *            The command to be issued.
@@ -718,8 +744,8 @@ final class ManagementThread extends Thread
 	private synchronized void sendCommandImmediately(Command command)
 	{
 		ms_PendingCommandFifo.add( command );
-		out.println( command.getCommand() );
-		out.flush();
+		mOut.println( command.getCommand() );
+		mOut.flush();
 	}
 	
 
@@ -736,34 +762,40 @@ final class ManagementThread extends Thread
 	private static final String RTMSG_STATE = ">STATE:";
 	private static final String RTMSG_BYTECOUNT = ">BYTECOUNT:";
 
-	private void handleRealtimeMessage(String line)
+	/**
+	 * Dispatch given message to its message handler.
+	 * 
+	 * @param msg
+	 *            The real-time message to dispatch.
+	 */
+	private void handleRealtimeMessage(String msg)
 	{
-		if ( !line.startsWith( ">" ) )
-			throw new RuntimeException( "Not an asynchronus real-time message: " + line );
+		if ( !msg.startsWith( ">" ) )
+			throw new RuntimeException( "Not an asynchronus real-time message: " + msg );
 		
-		else if ( line.startsWith( RTMSG_ECHO ) )
-			onEcho(line);
-		else if ( line.startsWith( RTMSG_FATAL ) )
-			onFatal(line);
-		else if ( line.startsWith( RTMSG_HOLD ) )
-			onHold(line);
-		else if ( line.startsWith( RTMSG_INFO ) )
-			onInfo(line);
-		else if ( line.startsWith( RTMSG_LOG ) )
-			onLog(line);
-		else if ( line.startsWith( RTMSG_PASSWORD ) )
-			onPassword(line);
-		else if ( line.startsWith( RTMSG_STATE ) )
-			onState( line );
-		else if ( line.startsWith( RTMSG_BYTECOUNT ) )
-			onByteCount(line);
+		else if ( msg.startsWith( RTMSG_ECHO ) )
+			onEcho(msg);
+		else if ( msg.startsWith( RTMSG_FATAL ) )
+			onFatal(msg);
+		else if ( msg.startsWith( RTMSG_HOLD ) )
+			onHold(msg);
+		else if ( msg.startsWith( RTMSG_INFO ) )
+			onInfo(msg);
+		else if ( msg.startsWith( RTMSG_LOG ) )
+			onLog(msg);
+		else if ( msg.startsWith( RTMSG_PASSWORD ) )
+			onPassword(msg);
+		else if ( msg.startsWith( RTMSG_STATE ) )
+			onState( msg );
+		else if ( msg.startsWith( RTMSG_BYTECOUNT ) )
+			onByteCount(msg);
 		
 		else
-			Log.w(mTAG_MT, "Unexpected real-time message: " + line );
+			Log.w(mTAG_MT, "Unexpected real-time message: " + msg );
 	}
 
 	private void onEcho(String line) {
-		// TODO Auto-generated method stub		
+		// TODO: implement echo handling, e.g. reading DNS settings etc...		
 		Log.d(mTAG_MT, line );
 	}
 
@@ -773,22 +805,19 @@ final class ManagementThread extends Thread
 	}
 
 	private void onHold(String line) {
-		// TODO Auto-generated method stub
+		// TODO: implement on hold strategy
 		Log.d(mTAG_MT, line );
 	}
 
 	private void onInfo(String line) {
-		// TODO Auto-generated method stub
+		// TODO: read version of management interface if necessary
 		Log.d(mTAG_MT, line );
 	}
 
 	private void onLog(String line) {
-		// TODO Auto-generated method stub
+		// TODO: send log to GUI if requested
 		Log.d(mTAG_MT, line );
 	}
-
-	private boolean mWaitingForPassphrase = false;
-	private boolean mWaitingForUserPassword = false;
 
 	private void onPassword(String line) {
 		if ( line.equals( ">PASSWORD:Need 'Private Key' password" ) )
