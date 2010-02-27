@@ -25,7 +25,6 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Stack;
 import java.util.concurrent.CountDownLatch;
 
 import android.app.NotificationManager;
@@ -384,6 +383,7 @@ final class ManagementThread extends Thread
 
 			sendCommandNoLock( new StateCommand() );
 			sendCommandNoLock( new SimpleCommand( "state on" ) );
+			sendCommandNoLock( new SimpleCommand( "bytecount 5" ) );
 			
 			// allow other threads to submit commands
 			mReady.countDown(); 
@@ -692,20 +692,96 @@ final class ManagementThread extends Thread
 	 * ASYNCHRONOUS REAL-TIME MESSAGES
 	 */
 
-	private static final String MGMG_RTMSG_STATE = ">STATE:";
-	
+	private static final String RTMSG_ECHO = ">ECHO:";
+	private static final String RTMSG_FATAL = ">FATAL:";
+	private static final String RTMSG_HOLD = ">HOLD:";
+	private static final String RTMSG_INFO = ">INFO:";
+	private static final String RTMSG_LOG = ">LOG:";
+	private static final String RTMSG_PASSWORD = ">PASSWORD:";
+	private static final String RTMSG_STATE = ">STATE:";
+	private static final String RTMSG_BYTECOUNT = ">BYTECOUNT:";
+
 	private void handleRealtimeMessage(String line)
 	{
 		if ( !line.startsWith( ">" ) )
 			throw new RuntimeException( "Not an asynchronus real-time message: " + line );
-		else if ( line.startsWith( MGMG_RTMSG_STATE ) )
-			onState( line );
-		else if ( line.startsWith( ">PASSWORD:" ) )
+		
+		else if ( line.startsWith( RTMSG_ECHO ) )
+			onEcho(line);
+		else if ( line.startsWith( RTMSG_FATAL ) )
+			onFatal(line);
+		else if ( line.startsWith( RTMSG_HOLD ) )
+			onHold(line);
+		else if ( line.startsWith( RTMSG_INFO ) )
+			onInfo(line);
+		else if ( line.startsWith( RTMSG_LOG ) )
+			onLog(line);
+		else if ( line.startsWith( RTMSG_PASSWORD ) )
 			onPassword(line);
+		else if ( line.startsWith( RTMSG_STATE ) )
+			onState( line );
+		else if ( line.startsWith( RTMSG_BYTECOUNT ) )
+			onByteCount(line);
+		
 		else
-			Log.d(mTAG_MT, "Unexpected real-time message: " + line );
+			Log.w(mTAG_MT, "Unexpected real-time message: " + line );
 	}
-	
+
+	private void onEcho(String line) {
+		// TODO Auto-generated method stub		
+		Log.d(mTAG_MT, line );
+	}
+
+	private void onFatal(String line) {
+		// There is nothing we can do. OpenVPN will exit anyway. 
+		Log.d(mTAG_MT, line );
+	}
+
+	private void onHold(String line) {
+		// TODO Auto-generated method stub
+		Log.d(mTAG_MT, line );
+	}
+
+	private void onInfo(String line) {
+		// TODO Auto-generated method stub
+		Log.d(mTAG_MT, line );
+	}
+
+	private void onLog(String line) {
+		// TODO Auto-generated method stub
+		Log.d(mTAG_MT, line );
+	}
+
+	private boolean mWaitingForPassphrase = false;
+	private boolean mWaitingForUserPassword = false;
+
+	private void onPassword(String line) {
+		if ( line.equals( ">PASSWORD:Need 'Private Key' password" ) )
+		{
+			mWaitingForPassphrase = true;
+			Notifications.sendPassphraseRequired(mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mNotificationManager, mDaemonMonitor.mConfigFile);
+		}
+		else if ( line.equals( ">PASSWORD:Need 'Auth' username/password" ) )
+		{
+			mWaitingForUserPassword = true;
+			Notifications.sendUsernamePasswordRequired(mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile, mDaemonMonitor.mNotificationManager);
+		}
+		else if ( line.equals( ">PASSWORD:Verification Failed: 'Private Key'" ) )
+		{
+			mWaitingForPassphrase = true;
+			Notifications.sendPassphraseRequired(mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mNotificationManager, mDaemonMonitor.mConfigFile);
+		}
+		else if ( line.equals( ">PASSWORD:Verification Failed: 'Auth'" ) )
+		{
+			mWaitingForUserPassword = true;
+			Notifications.sendUsernamePasswordRequired(mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile, mDaemonMonitor.mNotificationManager);
+		}
+		else
+		{
+			Log.w(mTAG_MT, "unexpected 'PASSWORD:' notification" + line );
+		}
+	}
+
 	private final static int STATE_FIELD_TIME = 0;
 	private final static int STATE_FIELD_STATE = 1;
 	private final static int STATE_FIELD_INFO0 = 2;
@@ -727,7 +803,7 @@ final class ManagementThread extends Thread
 	{
 		Log.v(mTAG_MT, String.format("onState(\"%s\")", line ) );
 		
-		String fieldString = line.startsWith(MGMG_RTMSG_STATE) ? line.substring( MGMG_RTMSG_STATE.length() ) : line;
+		String fieldString = line.startsWith(RTMSG_STATE) ? line.substring( RTMSG_STATE.length() ) : line;
 		String[] stateFields = fieldString.split( "," );
 		String state = stateFields[STATE_FIELD_STATE];
 		
@@ -820,34 +896,15 @@ final class ManagementThread extends Thread
 //		}
 	}
 
-	private boolean mWaitingForPassphrase = false;
-	private boolean mWaitingForUserPassword = false;
-
-	private void onPassword(String line) {
-		if ( line.equals( ">PASSWORD:Need 'Private Key' password" ) )
-		{
-			mWaitingForPassphrase = true;
-			Notifications.sendPassphraseRequired(mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mNotificationManager, mDaemonMonitor.mConfigFile);
-		}
-		else if ( line.equals( ">PASSWORD:Need 'Auth' username/password" ) )
-		{
-			mWaitingForUserPassword = true;
-			Notifications.sendUsernamePasswordRequired(mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile, mDaemonMonitor.mNotificationManager);
-		}
-		else if ( line.equals( ">PASSWORD:Verification Failed: 'Private Key'" ) )
-		{
-			mWaitingForPassphrase = true;
-			Notifications.sendPassphraseRequired(mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mNotificationManager, mDaemonMonitor.mConfigFile);
-		}
-		else if ( line.equals( ">PASSWORD:Verification Failed: 'Auth'" ) )
-		{
-			mWaitingForUserPassword = true;
-			Notifications.sendUsernamePasswordRequired(mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile, mDaemonMonitor.mNotificationManager);
-		}
-		else
-		{
-			Log.w(mTAG_MT, "unexpected 'PASSWORD:' notification" + line );
-		}
+	private void onByteCount(String line) {
+		// TODO Auto-generated method stub
+		Log.d(mTAG_MT, line );
+//		int startOfOut = line.indexOf(',');
+//		int startOfIn = RTMSG_BYTECOUNT.length();
+//		int in = Integer.parseInt( line.substring( startOfIn, startOfOut) );
+//		int out = Integer.parseInt( line.substring( startOfOut+1) );
+//		String msg = String.format( "in: %dytes - out: %dbytes", in, out );
+//		Notifications.notifyConnected( mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mNotificationManager, mDaemonMonitor.mConfigFile, msg );
 	}
 
 	/*
