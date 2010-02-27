@@ -187,7 +187,7 @@ public final class DaemonMonitor
 		}
 		else
 		{
-			mManagementThread.signal( ManagementThread.SIGUSR1 );
+			mManagementThread.sendSignal( ManagementThread.SIGUSR1 );
 		}
 	}
 
@@ -199,21 +199,21 @@ public final class DaemonMonitor
 		}
 		else
 		{
-			mManagementThread.signal( ManagementThread.SIGTERM );
+			mManagementThread.sendSignal( ManagementThread.SIGTERM );
 		}
 	}
 
-	void stopAndWaitForTermination() throws InterruptedException
-	{
-		if ( !isAlive() )
-		{
-			Log.w( mTagDaemonMonitor, "Can't stop, daemon is not running!" );
-		}
-		else
-		{
-			mManagementThread.stopAndWaitForTermination();
-		}
-	}
+//	void stopAndWaitForTermination() throws InterruptedException
+//	{
+//		if ( !isAlive() )
+//		{
+//			Log.w( mTagDaemonMonitor, "Can't stop, daemon is not running!" );
+//		}
+//		else
+//		{
+//			mManagementThread.stopAndWaitForTermination();
+//		}
+//	}
 
 	void waitForTermination() throws InterruptedException {
 		if ( !isAlive() )
@@ -222,7 +222,7 @@ public final class DaemonMonitor
 		}
 		else
 		{
-			mManagementThread.waitForTermination();
+			mManagementThread.mTerminated.await();
 		}
 	}
 	
@@ -234,7 +234,7 @@ public final class DaemonMonitor
 		}
 		else
 		{
-			mManagementThread.state();
+			mManagementThread.sendState();
 		}
 	}
 
@@ -281,7 +281,7 @@ final class ManagementThread extends Thread
 	}
 	
 	private final CountDownLatch mReady = new CountDownLatch(1);
-	private final CountDownLatch mTerminated = new CountDownLatch(1);
+	final CountDownLatch mTerminated = new CountDownLatch(1);
 	
 	private Socket socket;
 	private PrintWriter out;
@@ -382,9 +382,9 @@ final class ManagementThread extends Thread
 
 			networkStateChanged( Intents.NETWORK_STATE_CONNECTING );
 
-			sendCommandNoLock( new StateCommand() );
-			sendCommandNoLock( new SimpleCommand( "state on" ) );
-			sendCommandNoLock( new SimpleCommand( "bytecount 5" ) );
+			sendCommandImmediately( new StateCommand() );
+			sendCommandImmediately( new SimpleCommand( "state on" ) );
+//			sendCommandNoWait( new SimpleCommand( "bytecount 5" ) );
 			
 			// allow other threads to submit commands
 			mReady.countDown(); 
@@ -608,24 +608,26 @@ final class ManagementThread extends Thread
 	/*
 	 * SEND MANAGEMENT COMMANDS, may be invoked by any thread.
 	 */
-	
+			
 	/**
-	 * Query current state
+	 * Send 'state' command to OpenVPN daemon.
 	 */
-	void state()
+	public void sendState()
 	{
 		sendCommand( new StateCommand() );
 	}
-		
+	
 	final static int SIGHUP = 1;
 	final static int SIGTERM = 2;
 	final static int SIGUSR1 = 3;
 	final static int SIGUSR2 = 4;
-	/*
-	 * Send signal s to daemon,
-	 * s = SIGHUP|SIGTERM|SIGUSR1|SIGUSR2.
+ 
+	/**
+	 * Send signal s to OpenVPN daemon.
+	 * @param s SIGHUP|SIGTERM|SIGUSR1|SIGUSR2
 	 */
-	public void signal(int s) {
+	public void sendSignal(int s)
+	{
 		switch (s) {
 		case SIGHUP:
 			sendCommand( new SimpleCommand( "signal SIGHUP" ) );
@@ -644,15 +646,6 @@ final class ManagementThread extends Thread
 		}
 	}
 	
-	void stopAndWaitForTermination() throws InterruptedException {
-		signal( ManagementThread.SIGTERM );
-		mTerminated.await();
-	}
-
-	void waitForTermination() throws InterruptedException {
-		mTerminated.await();
-	}
-
 	/**
 	 * Respond to a password request
 	 * 
@@ -691,13 +684,20 @@ final class ManagementThread extends Thread
 		return s.replace( "\\", "\\\\" ).replace("'", "\\'" );
 	}
 
-	
+	/**
+	 * Waits for the management thread to come ready, then calls
+	 * senCommandImmediately to enqueue the given command. This method may be
+	 * invoked by any thread besides the management thread.
+	 * 
+	 * @param command
+	 *            The command to be issued.
+	 */
 	private void sendCommand( Command command )
 	{
 		try
 		{
 			mReady.await();
-			sendCommandNoLock(command);
+			sendCommandImmediately(command);
 		}
 		catch (InterruptedException e)
 		{
@@ -706,14 +706,23 @@ final class ManagementThread extends Thread
 		}
 	}
 
-	private synchronized void sendCommandNoLock(Command command)
+	/**
+	 * Enqueues the given command in the fifo and prints it to the management
+	 * interface. The command is sent immediately, This method should only be
+	 * invoked from within the management thread itself or through
+	 * sendCommand().
+	 * 
+	 * @param command
+	 *            The command to be issued.
+	 */
+	private synchronized void sendCommandImmediately(Command command)
 	{
 		ms_PendingCommandFifo.add( command );
 		out.println( command.getCommand() );
 		out.flush();
 	}
 	
-	
+
 	/*
 	 * ASYNCHRONOUS REAL-TIME MESSAGES
 	 */
@@ -931,7 +940,7 @@ final class ManagementThread extends Thread
 //		int out = Integer.parseInt( line.substring( startOfOut+1) );
 //		String msg = String.format( "in: %dytes - out: %dbytes", in, out );
 //		Notifications.notifyBytes( mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mNotificationManager, mDaemonMonitor.mConfigFile, msg );
-		sendCommandNoLock( mStatusCommand );
+		sendCommandImmediately( mStatusCommand );
 	}
 
 	/*
