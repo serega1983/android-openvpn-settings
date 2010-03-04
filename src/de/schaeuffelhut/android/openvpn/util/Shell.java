@@ -156,6 +156,12 @@ public abstract class Shell extends Thread
 
 	protected void onShellTerminated(){}
 
+	public final void joinLoggers() throws InterruptedException
+	{
+		mStdoutLogger.join();
+		mStderrLogger.join();
+	}
+	
 	public final int waitForQuietly()
 	{
 		return Util.waitForQuietly( mShellProcess );
