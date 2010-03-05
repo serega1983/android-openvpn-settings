@@ -36,6 +36,7 @@ import android.util.Log;
 import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.Notifications;
 import de.schaeuffelhut.android.openvpn.Preferences;
+import de.schaeuffelhut.android.openvpn.util.DnsUtil;
 import de.schaeuffelhut.android.openvpn.util.Shell;
 import de.schaeuffelhut.android.openvpn.util.SystemPropertyUtil;
 import de.schaeuffelhut.android.openvpn.util.TrafficStats;
@@ -991,12 +992,12 @@ final class ManagementThread extends Thread
 			}
 			else
 			{
-				SystemPropertyUtil.setProperty( SystemPropertyUtil.NET_DNS1, vpnDns );
 				Log.d(mTAG_MT, "=============> applying new dns server" );
+				int newDnsChange = DnsUtil.setDns1( vpnDns );
 				Preferences.setDns1(
 						mDaemonMonitor.mContext,
 						mDaemonMonitor.mConfigFile,
-						bumpDns(),
+						newDnsChange,
 						properties.get( SystemPropertyUtil.NET_DNS1 )
 				);
 			}
@@ -1011,31 +1012,13 @@ final class ManagementThread extends Thread
 		if ( myDnsChange == systemDnsChange )
 		{
 			Log.d(mTAG_MT, "=============> " + myDnsChange  + " == " + systemDnsChange + " resetting dns" );
-			SystemPropertyUtil.setProperty( SystemPropertyUtil.NET_DNS1, Preferences.getDns1(mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile) );
-			bumpDns();
+			DnsUtil.setDns1(Preferences.getDns1(mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile));
 		}
 		else
 		{
 			Log.d(mTAG_MT, "=============> " + myDnsChange  + " == " + systemDnsChange + " resetting dns, leaving dns alone" );
 		}
 	}
-	
-    private int bumpDns() {
-        /*
-         * Bump the property that tells the name resolver library to reread
-         * the DNS server list from the properties.
-         */
-        String propVal = SystemPropertyUtil.getProperty( SystemPropertyUtil.NET_DNSCHANGE );
-        int n = 0;
-        if (propVal.length() != 0) {
-            try {
-                n = Integer.parseInt(propVal);
-            } catch (NumberFormatException e) {}
-        }
-        n++;
-        SystemPropertyUtil.setProperty( SystemPropertyUtil.NET_DNSCHANGE, "" + n );
-        return n;
-    }
 
 	private void onByteCount(String line) {
 		// TODO Auto-generated method stub

@@ -19,6 +19,11 @@
 		android:icon="@android:drawable/ic_menu_preferences"/>
 
 	<item
+		android:id="@+id/settings_fix_dns"
+		android:title="@string/settings_menu_fix_dns"
+		android:icon="@android:drawable/ic_menu_revert"/>
+		
+	<item
 		android:id="@+id/settings_menu_help"
 		android:title="@string/settings_menu_help"
 		android:icon="@android:drawable/ic_menu_help"/>

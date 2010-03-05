@@ -23,6 +23,7 @@ import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -43,6 +44,7 @@ import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
+import de.schaeuffelhut.android.openvpn.util.DnsUtil;
 import de.schaeuffelhut.android.openvpn.util.UnexpectedSwitchValueException;
 
 public class OpenVpnSettings extends PreferenceActivity implements ServiceConnection
@@ -56,6 +58,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 
 	private static final int DIALOG_HELP = 1;
 	private static final int DIALOG_PLEASE_RESTART = 2;
+	private static final int DIALOG_FIX_DNS = 3;
 	
 	ArrayList<DaemonEnabler> mDaemonEnablers = new ArrayList<DaemonEnabler>(4);
 	OpenVpnService mOpenVpnService = null;
@@ -256,7 +259,11 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 			intent.putExtra(AdvancedSettings.HAS_DAEMONS_STARTED, mOpenVpnService == null ? false : mOpenVpnService.hasDaemonsStarted() );
 			startActivityForResult( intent, REQUEST_CODE_ADVANCED_SETTINGS );
 			return true; }
-			
+
+		case R.id.settings_fix_dns: {
+			showDialog( DIALOG_FIX_DNS );
+			return true; }
+
 		case R.id.settings_menu_help:
 			showDialog( DIALOG_HELP );
 			return true;
@@ -372,6 +379,25 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 			dialog = new AlertDialog.Builder( this ).setIcon(android.R.drawable.ic_dialog_info).
 			setTitle( "Restart Required" ).setMessage( "The tunnel is currently active. For changes to take effect you must disable and then reenable the tunnel." ).setNeutralButton("OK", null).create();
 			break;
+		case DIALOG_FIX_DNS: {
+			String dns1 = "???";
+			try{ dns1 = DnsUtil.getDns1(); } catch(Exception e){};
+			dialog = new AlertDialog.Builder( this )
+			.setIcon(android.R.drawable.ic_dialog_info)
+			.setTitle( "Fix DNS Server" )
+			.setMessage( 
+					"Reset to public DNS server 8.8.8.8? " +
+					"The next network connectivity change will set the DNS server to the value provided by your ISP. " +
+					"If this doesn't fix you problem try to force a network connectivity change, e.g. by switching to airplaine mode and back." +
+					"Your DNS server is currently set to " + dns1 )
+			.setPositiveButton( "Reset DNS" , new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					DnsUtil.setDns1( "8.8.8.8" );
+				}
+			}).setNegativeButton( "Cancel", null )
+			.create();
+//			.setNeutralButton("OK", null).create();
+		} break;
 		default:
 			throw new UnexpectedSwitchValueException(id);
 		}
