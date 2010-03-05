@@ -8,7 +8,7 @@
 		android:summary="@string/openvpn_quick_toggle_summary"
 		android:enabled="true"
 		android:defaultValue="true"
-		/>
+		android:persistent="false"/>
 	
 	<PreferenceCategory
 		android:key="openvpn_configurations"

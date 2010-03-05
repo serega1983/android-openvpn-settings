@@ -96,6 +96,13 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 		registerForContextMenu( getListView() );
 		initToggles();
 
+		// hack, check if service should run, but is actually stopped.
+		// this happens if OpenVPN-Settings is killed (e.g. due to a tight memory situation).
+		// On next restart we will detect that the service should run but is actually stopped.
+		// There is no clean way to determine if the service has been started.
+		if ( Preferences.getOpenVpnEnabled(this) && !OpenVpnService.isServiceStarted() )
+			startService( new Intent( this, OpenVpnService.class ) );
+			
 		if ( !bindService( new Intent( this, OpenVpnService.class ), this, 0 ) )
         {
 			Log.w(TAG, "Could not bind to ControlShell" );

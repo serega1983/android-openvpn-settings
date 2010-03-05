@@ -71,6 +71,10 @@ public final class Preferences {
 	private Preferences() {
 	}
 
+	public static boolean getOpenVpnEnabled(Context context) {
+		return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(KEY_OPENVPN_ENABLED, false );
+	}
+
 	public final static boolean getUseInternalStorage(SharedPreferences sharedPreferences)
 	{
 		return sharedPreferences.getBoolean( KEY_OPENVPN_USE_INTERNAL_STORAGE, false );	

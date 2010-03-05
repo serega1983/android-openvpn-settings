@@ -16,6 +16,7 @@
 package de.schaeuffelhut.android.openvpn.service;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -41,6 +42,38 @@ import de.schaeuffelhut.android.openvpn.util.NetworkConnectivityListener;
 public final class OpenVpnService extends Service
 {
 	final static String TAG = "OpenVPN-ControlShell";
+	
+	/* This is a hack
+	 * see http://www.mail-archive.com/android-developers@googlegroups.com/msg18298.html
+	 * we are not really able to decide if the service was started.
+	 * So we remember a week reference to it. We set it if we are running and clear it
+	 * if we are stopped. If anything goes wrong, the reference will hopefully vanish
+	 */	
+	private static WeakReference<OpenVpnService> sRunningInstance = null;
+	public final static boolean isServiceStarted()
+	{
+		final boolean isServiceStarted;
+		if ( sRunningInstance == null )
+		{
+			isServiceStarted = false;
+		}
+		else if ( sRunningInstance.get() == null )
+		{
+			isServiceStarted = false;
+			sRunningInstance = null;
+		}
+		else
+		{
+			isServiceStarted = true;
+		}
+		return isServiceStarted;
+	}
+	private void markServiceStarted(){
+		sRunningInstance = new WeakReference<OpenVpnService>( this );
+	}
+	private void markServiceStopped(){
+		sRunningInstance = new WeakReference<OpenVpnService>( this );
+	}
 	
 	/*
 	 * Service API
@@ -72,11 +105,13 @@ public final class OpenVpnService extends Service
 		PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(
 				Preferences.KEY_OPENVPN_ENABLED, true
 		).commit();
+		markServiceStarted();
 	}
 	
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		markServiceStopped();
 		PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(
 				Preferences.KEY_OPENVPN_ENABLED, false
 		).commit();

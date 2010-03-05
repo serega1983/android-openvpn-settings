@@ -19,7 +19,6 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
@@ -34,7 +33,7 @@ public class BootCompletedReceiver extends BroadcastReceiver
 		// just make sure we are getting the right intent (better safe than sorry)
 		  if( Intent.ACTION_BOOT_COMPLETED.equals( intent.getAction() ) )
 		  {
-			  if ( PreferenceManager.getDefaultSharedPreferences(context).getBoolean(Preferences.KEY_OPENVPN_ENABLED, false ) )
+			  if ( Preferences.getOpenVpnEnabled(context) )
 			  {
 				  Log.d(TAG, "OpenVPN-Service enabled in preferences, starting!" );
 
