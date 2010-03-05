@@ -19,6 +19,7 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import android.app.Service;
 import android.content.Intent;
@@ -30,6 +31,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.util.NetworkConnectivityListener;
@@ -214,6 +216,10 @@ public final class OpenVpnService extends Service
 		{
 			Log.v( TAG, config + ": is running and already attached" );
 		}
+		else if ( start && Preferences.getVpnDnsEnabled(this, config) && isVpnDnsActive() )
+		{
+			Log.i( TAG, config + " only one VPN DNS may be active at a time, aborting" );
+		}
 		else
 		{
 			Log.v(TAG, config +": trying to attach");
@@ -272,6 +278,17 @@ public final class OpenVpnService extends Service
 		if ( isDaemonStarted(config) )
 		{
 			Log.i( TAG, config + " is already running" );
+		}
+		else if ( Preferences.getVpnDnsEnabled(this, config) && isVpnDnsActive() )
+		{
+			Log.i( TAG, config + " only one VPN DNS may be active at a time, aborting" );
+			Toast.makeText( this , "VPN DNS is only supported in one tunnel!", Toast.LENGTH_LONG).show();
+			sendStickyBroadcast( 
+					Intents.daemonStateChanged(
+							config.getAbsolutePath(),
+							Intents.DAEMON_STATE_DISABLED
+					)
+			);
 		}
 		else
 		{
@@ -371,4 +388,11 @@ public final class OpenVpnService extends Service
 		return false;
 	}
 
+	public final synchronized boolean isVpnDnsActive()
+	{
+		for( DaemonMonitor monitor : mRegistry.values() )
+			if ( monitor.isAlive() && Preferences.getVpnDnsEnabled(this, monitor.mConfigFile) )
+				return true;
+		return false;
+	}
 }
