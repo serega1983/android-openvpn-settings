@@ -59,6 +59,8 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 	private static final int DIALOG_HELP = 1;
 	private static final int DIALOG_PLEASE_RESTART = 2;
 	private static final int DIALOG_FIX_DNS = 3;
+	private static final int DIALOG_CONTACT_AUTHOR = 4;
+
 	
 	ArrayList<DaemonEnabler> mDaemonEnablers = new ArrayList<DaemonEnabler>(4);
 	OpenVpnService mOpenVpnService = null;
@@ -260,8 +262,12 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 			startActivityForResult( intent, REQUEST_CODE_ADVANCED_SETTINGS );
 			return true; }
 
-		case R.id.settings_fix_dns: {
+		case R.id.settings_menu_fix_dns: {
 			showDialog( DIALOG_FIX_DNS );
+			return true; }
+
+		case R.id.settings_meun_contact_author: {
+			showDialog( DIALOG_CONTACT_AUTHOR );
 			return true; }
 
 		case R.id.settings_menu_help:
@@ -397,6 +403,28 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 			}).setNegativeButton( "Cancel", null )
 			.create();
 //			.setNeutralButton("OK", null).create();
+		} break;
+		case DIALOG_CONTACT_AUTHOR:{
+			final String[] subjects = new String[]{ "Feature Request", "Bug report", "Feedback" };
+			dialog = new AlertDialog.Builder(this)
+			.setTitle( "Send Mail to Author" )
+			.setSingleChoiceItems(
+					subjects,
+					-1,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+							emailIntent .setType("plain/text");
+							emailIntent .putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"android.openvpn@schaeuffelhut.de"});
+							emailIntent .putExtra(android.content.Intent.EXTRA_SUBJECT, subjects[which]);
+//							emailIntent .putExtra(android.content.Intent.EXTRA_TEXT, "Dear Friedrich,\n");
+							startActivity(Intent.createChooser(emailIntent, "Send mail..." ));
+							dialog.dismiss();
+						}
+					}
+			)
+			.setNegativeButton("Cancel", null)
+			.create();
 		} break;
 		default:
 			throw new UnexpectedSwitchValueException(id);
