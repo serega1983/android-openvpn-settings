@@ -10,7 +10,7 @@ public class SystemPropertyUtil
 {
 	public final static String NET_DNS1 = "net.dns1";
 	public final static String NET_DNS2 = "net.dns2";
-	public final static String NET_CHANGE = "net.change";
+	public final static String NET_DNSCHANGE = "net.dnschange";
 	
 	private final static class GetProp extends Shell {
 		private final String key;
@@ -34,6 +34,7 @@ public class SystemPropertyUtil
 		
 		@Override
 		protected void onShellTerminated() {
+			try { joinLoggers(); } catch (InterruptedException e) {};
 			waitForQuietly();
 		}
 	}
@@ -74,7 +75,7 @@ public class SystemPropertyUtil
 		private final String key;
 		private final String value;
 
-		private SetProp(String tag, String key, String value) {
+		private SetProp(String key, String value) {
 			super( "OpenVPN-Settings-setprop" );
 			this.key = key;
 			this.value = value;
@@ -82,13 +83,23 @@ public class SystemPropertyUtil
 
 		@Override
 		protected void onShellPrepared() {
-			exec( "setprop " + key + "'" + value +"'" );
+			su();
+			//TODO: understand this necessary delay
+			try { sleep(500); } catch (InterruptedException e) {}
+			exec( "setprop " + key + " " + value );
 		}
 
 		@Override
 		protected void onShellTerminated() {
+			try { joinLoggers(); } catch (InterruptedException e) {}
 			waitForQuietly();
 		}
+	}
+
+	public final static void setProperty(final String key, String value)
+	{
+		SetProp setProp = new SetProp(key, value);
+		setProp.run();
 	}
 
 	public final static String getProperty(final String key)
@@ -98,7 +109,18 @@ public class SystemPropertyUtil
 		return getProp.value;
 	}
 
-	public final static HashMap<String, String> getProperty()
+	public final static int getIntProperty(String key)
+	{
+		final int result;
+		String value = getProperty(key);
+		if ( value == null )
+			result = 0;
+		else
+			result = Integer.parseInt( value );
+		return result;
+	}
+	
+	public final static HashMap<String, String> getProperties()
 	{
 		GetAllProp getProp = new GetAllProp();
 		getProp.run();
