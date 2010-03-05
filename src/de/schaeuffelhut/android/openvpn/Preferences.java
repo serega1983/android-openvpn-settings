@@ -59,6 +59,9 @@ public final class Preferences {
 	public final static String KEY_CONFIG_DNS1(File config){
 		return KEY_CONFIG(config.getAbsolutePath())+".dns1";
 	}
+	public final static String KEY_VPN_DNS(File config){
+		return KEY_CONFIG(config.getAbsolutePath())+".vpndns1";
+	}
 
 	
 	
@@ -204,6 +207,12 @@ public final class Preferences {
 		return sharedPreferences.getString( Preferences.KEY_CONFIG_DNS1(configFile), "" );
 	}
 
+	public static String getVpnDns(Context context, File configFile) 
+	{
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		return sharedPreferences.getString( Preferences.KEY_VPN_DNS(configFile), null );
+	}
+
 	
 	public final static boolean getDoModprobeTun(SharedPreferences sharedPreferences) {
 		return sharedPreferences.getBoolean( Preferences.KEY_OPENVPN_DO_MODPROBE_TUN, false);
@@ -224,5 +233,4 @@ public final class Preferences {
 	
 		return configFiles == null ? new File[0] : configFiles;
 	}
-
 }

@@ -24,6 +24,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.CountDownLatch;
 
@@ -36,6 +37,7 @@ import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.Notifications;
 import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.util.Shell;
+import de.schaeuffelhut.android.openvpn.util.SystemPropertyUtil;
 import de.schaeuffelhut.android.openvpn.util.TrafficStats;
 import de.schaeuffelhut.android.openvpn.util.UnexpectedSwitchValueException;
 import de.schaeuffelhut.android.openvpn.util.Util;
@@ -111,7 +113,10 @@ public final class DaemonMonitor
 			Log.w( mTagDaemonMonitor, "start(): file not found: " + mConfigFile );
 			return;
 		}
-		
+
+		// reset saved dns state
+		Preferences.setDns1( mContext, mConfigFile, 0, "" );
+
 		final int mgmtPort = 10000 + (int)(Math.random() * 50000); 
 		Log.w( mTagDaemonMonitor, "start(): choosing random port for management interface: " + mgmtPort );
 		Preferences.setMgmtPort( mContext, mConfigFile, mgmtPort );
@@ -870,7 +875,14 @@ final class ManagementThread extends Thread
 		String fieldString = line.startsWith(RTMSG_STATE) ? line.substring( RTMSG_STATE.length() ) : line;
 		String[] stateFields = fieldString.split( "," );
 		String state = stateFields[STATE_FIELD_STATE];
-		
+
+		if (STATE_CONNECTED.equals(state)) {
+			onConnected();
+		} else {
+			onDisconnected();
+		}
+			
+
 		final int newState;
 		String info0Extra = null;
 		String info1Extra = null;
@@ -958,6 +970,52 @@ final class ManagementThread extends Thread
 //		} else {
 //			//..
 //		}
+	}
+
+	// invoked through onState
+	private void onConnected()
+	{
+		String vpnDns = Preferences.getVpnDns(mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile);
+
+		if ( vpnDns != null && !"".equals(vpnDns))
+		{
+			HashMap<String, String> properties = SystemPropertyUtil.getProperties();
+
+			int systemDnsChange = SystemPropertyUtil.getIntProperty( SystemPropertyUtil.NET_DNSCHANGE );
+			int myDnsChange = Preferences.getDnsChange(mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile);
+			Log.d(mTAG_MT, "=============> " + myDnsChange  + " == " + systemDnsChange );
+			if ( myDnsChange == systemDnsChange )
+			{
+				Log.d(mTAG_MT, "=============> applying new dns server, already set" );
+			}
+			else
+			{
+				SystemPropertyUtil.setProperty( SystemPropertyUtil.NET_DNS1, vpnDns );
+				Log.d(mTAG_MT, "=============> applying new dns server" );
+				Preferences.setDns1(
+						mDaemonMonitor.mContext,
+						mDaemonMonitor.mConfigFile,
+						SystemPropertyUtil.getInt(properties, SystemPropertyUtil.NET_DNSCHANGE),
+						properties.get( SystemPropertyUtil.NET_DNS1 )
+				);
+			}
+		}
+	}
+
+	// invoked through onState
+	private void onDisconnected()
+	{
+		int systemDnsChange = SystemPropertyUtil.getIntProperty( SystemPropertyUtil.NET_DNSCHANGE );
+		int myDnsChange = Preferences.getDnsChange(mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile);
+		if ( myDnsChange == systemDnsChange )
+		{
+			Log.d(mTAG_MT, "=============> " + myDnsChange  + " == " + systemDnsChange + " resetting dns" );
+			SystemPropertyUtil.setProperty( SystemPropertyUtil.NET_DNS1, Preferences.getDns1(mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile) );
+		}
+		else
+		{
+			Log.d(mTAG_MT, "=============> " + myDnsChange  + " == " + systemDnsChange + " resetting dns, leaving dns alone" );
+		}
 	}
 
 	private void onByteCount(String line) {
