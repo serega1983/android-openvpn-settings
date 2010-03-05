@@ -53,6 +53,12 @@ public final class Preferences {
 	public final static String KEY_CONFIG_NOTIFICATION_ID(File config){
 		return KEY_CONFIG(config.getAbsolutePath())+".notification_id";
 	}
+	public final static String KEY_CONFIG_DNSCHANGE(File config){
+		return KEY_CONFIG(config.getAbsolutePath())+".dnschange";
+	}
+	public final static String KEY_CONFIG_DNS1(File config){
+		return KEY_CONFIG(config.getAbsolutePath())+".dns1";
+	}
 
 	
 	
@@ -180,6 +186,24 @@ public final class Preferences {
 		return id;
 	}
 	
+	public final static void setDns1(Context context, File configFile, int dnsChange, String dns)
+	{
+		Editor edit = PreferenceManager.getDefaultSharedPreferences(context).edit();
+		edit.putInt( Preferences.KEY_CONFIG_DNSCHANGE(configFile), dnsChange );
+		edit.putString( Preferences.KEY_CONFIG_DNS1(configFile), dns );
+		edit.commit();
+	}
+	public final static int getDnsChange(Context context, File configFile)
+	{
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		return sharedPreferences.getInt( Preferences.KEY_CONFIG_DNSCHANGE(configFile), -1 );
+	}
+	public final static String getDns1(Context context, File configFile)
+	{
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		return sharedPreferences.getString( Preferences.KEY_CONFIG_DNS1(configFile), "" );
+	}
+
 	
 	public final static boolean getDoModprobeTun(SharedPreferences sharedPreferences) {
 		return sharedPreferences.getBoolean( Preferences.KEY_OPENVPN_DO_MODPROBE_TUN, false);
