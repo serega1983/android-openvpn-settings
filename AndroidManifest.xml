@@ -44,6 +44,10 @@
 			android:label="@string/edit_config_category"
 			/>
 		<activity
+			android:name="EditConfigPreferences" 
+			android:label="@string/edit_config_preferences_category"
+			/>
+		<activity
 			android:name="EnterPassphrase" 
 			android:label="@string/enter_passphrase_category"
 			/>

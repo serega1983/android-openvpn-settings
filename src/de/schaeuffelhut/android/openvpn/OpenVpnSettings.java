@@ -51,7 +51,8 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 	
 	private static final int REQUEST_CODE_IMPORT_FILES = 1;
 	private static final int REQUEST_CODE_EDIT_CONFIG = 2;
-	private static final int REQUEST_CODE_ADVANCED_SETTINGS = 3;
+	private static final int REQUEST_CODE_EDIT_CONFIG_PREFERENCES = 3;
+	private static final int REQUEST_CODE_ADVANCED_SETTINGS = 4;
 
 	private static final int DIALOG_HELP = 1;
 	private static final int DIALOG_PLEASE_RESTART = 2;
@@ -177,9 +178,14 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 			String filename = data == null ? null : data.getStringExtra( EditConfig.EXTRA_FILENAME );
 			if ( filename != null && mOpenVpnService.isDaemonStarted( new File(filename)) )
 				showDialog( DIALOG_PLEASE_RESTART );
-				
 		} break;
-		
+
+		case REQUEST_CODE_EDIT_CONFIG_PREFERENCES: {
+			String filename = data == null ? null : data.getStringExtra( EditConfig.EXTRA_FILENAME );
+			if ( filename != null && mOpenVpnService.isDaemonStarted( new File(filename)) )
+				showDialog( DIALOG_PLEASE_RESTART );
+		} break;
+
 		case REQUEST_CODE_ADVANCED_SETTINGS: {
 			// path to config might only be changed if no tunnel is up
 			if ( mOpenVpnService == null || !mOpenVpnService.hasDaemonsStarted() )
@@ -281,6 +287,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 	final static int CONTEXT_CONFIG_DISABLE = 1;
 	final static int CONTEXT_CONFIG_ENABLE = 2;
 	final static int CONTEXT_CONFIG_EDIT = 3;
+	final static int CONTEXT_CONFIG_EDIT_PREFERENCES = 4;
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
@@ -297,7 +304,8 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 //			}
 			
 			//Edit
-			menu.add( ContextMenu.NONE, CONTEXT_CONFIG_EDIT, 2, "Edit" );
+			menu.add( ContextMenu.NONE, CONTEXT_CONFIG_EDIT, 2, "Edit Config File" );
+			menu.add( ContextMenu.NONE, CONTEXT_CONFIG_EDIT_PREFERENCES, 2, "Preferences" );
 			
 			//Delete
 		}
@@ -323,7 +331,12 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 			i.putExtra( EditConfig.EXTRA_FILENAME, configFilePref.mConfig.getAbsolutePath() );
 	        startActivityForResult(i, REQUEST_CODE_EDIT_CONFIG ); 
 		} return true;
-		
+		case CONTEXT_CONFIG_EDIT_PREFERENCES: {
+			Intent i = new Intent(this, EditConfigPreferences.class);
+			i.putExtra( EditConfigPreferences.EXTRA_FILENAME, configFilePref.mConfig.getAbsolutePath() );
+	        startActivityForResult(i, REQUEST_CODE_EDIT_CONFIG_PREFERENCES ); 
+		} return true;
+				
 		default:
 			return false;
 //			throw new UnexpectedSwitchValueException( item.getItemId() );

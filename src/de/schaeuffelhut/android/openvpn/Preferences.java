@@ -62,6 +62,9 @@ public final class Preferences {
 	public final static String KEY_VPN_DNS(File config){
 		return KEY_CONFIG(config.getAbsolutePath())+".vpndns1";
 	}
+	public final static String KEY_VPN_DNS_ENABLE(File config){
+		return KEY_CONFIG(config.getAbsolutePath())+".vpndns.enable";
+	}
 
 	
 	
@@ -210,7 +213,12 @@ public final class Preferences {
 	public static String getVpnDns(Context context, File configFile) 
 	{
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getString( Preferences.KEY_VPN_DNS(configFile), null );
+		return sharedPreferences.getString( Preferences.KEY_VPN_DNS(configFile), "172.24.2.1" );
+	}
+	public static boolean getVpnDnsEnabled(Context context, File configFile) 
+	{
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		return sharedPreferences.getBoolean( Preferences.KEY_VPN_DNS_ENABLE(configFile), false );
 	}
 
 	

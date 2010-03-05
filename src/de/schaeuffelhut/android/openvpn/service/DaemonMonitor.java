@@ -976,8 +976,9 @@ final class ManagementThread extends Thread
 	private void onConnected()
 	{
 		String vpnDns = Preferences.getVpnDns(mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile);
-
-		if ( vpnDns != null && !"".equals(vpnDns))
+		boolean enabled = Preferences.getVpnDnsEnabled(mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile);
+		
+		if ( enabled && vpnDns != null && !"".equals(vpnDns))
 		{
 			HashMap<String, String> properties = SystemPropertyUtil.getProperties();
 
