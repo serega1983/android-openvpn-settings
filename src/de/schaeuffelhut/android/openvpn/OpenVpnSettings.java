@@ -35,6 +35,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -386,16 +387,10 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 			setTitle( "Restart Required" ).setMessage( "The tunnel is currently active. For changes to take effect you must disable and then reenable the tunnel." ).setNeutralButton("OK", null).create();
 			break;
 		case DIALOG_FIX_DNS: {
-			String dns1 = "???";
-			try{ dns1 = DnsUtil.getDns1(); } catch(Exception e){};
 			dialog = new AlertDialog.Builder( this )
 			.setIcon(android.R.drawable.ic_dialog_info)
-			.setTitle( "Fix DNS Server" )
-			.setMessage( 
-					"Reset to public DNS server 8.8.8.8? " +
-					"The next network connectivity change will set the DNS server to the value provided by your ISP. " +
-					"If this doesn't fix you problem try to force a network connectivity change, e.g. by switching to airplaine mode and back." +
-					"Your DNS server is currently set to " + dns1 )
+			.setTitle( R.string.fix_dns_dialog_title )
+			.setMessage( R.string.fix_dns_dialog_message )
 			.setPositiveButton( "Reset DNS" , new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					DnsUtil.setDns1( "8.8.8.8" );
@@ -430,6 +425,20 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 			throw new UnexpectedSwitchValueException(id);
 		}
 		return dialog;
+	}
+
+	@Override
+	protected void onPrepareDialog(int id, Dialog dialog) {
+		super.onPrepareDialog(id, dialog);
+		switch(id) {
+		case DIALOG_FIX_DNS: {
+			String dns1 = "???";
+			try{ dns1 = DnsUtil.getDns1(); } catch(Exception e){};
+			((AlertDialog)dialog).setMessage( 
+					String.format( getResources().getString( R.string.fix_dns_dialog_message, dns1 ) )
+			);
+		} break;
+		}		
 	}
 
 
