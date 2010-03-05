@@ -402,7 +402,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 		case DIALOG_CONTACT_AUTHOR:{
 			final String[] subjects = new String[]{ "Feature Request", "Bug report", "Feedback" };
 			dialog = new AlertDialog.Builder(this)
-			.setTitle( "Send Mail to Author" )
+			.setTitle( "Write Mail to Author" )
 			.setSingleChoiceItems(
 					subjects,
 					-1,
@@ -414,6 +414,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 							emailIntent .putExtra(android.content.Intent.EXTRA_SUBJECT, subjects[which]);
 //							emailIntent .putExtra(android.content.Intent.EXTRA_TEXT, "Dear Friedrich,\n");
 							startActivity(Intent.createChooser(emailIntent, "Send mail..." ));
+							((AlertDialog)dialog).getListView().clearChoices();
 							dialog.dismiss();
 						}
 					}
