@@ -38,8 +38,6 @@ public class EnterUserPassword extends Activity implements ServiceConnection {
 	
 	public static String EXTRA_FILENAME = "extra_filename";
 
-	private File mConfigFile;
-
 	private OpenVpnService mOpenVpnService;
 
 	private AlertDialog mDialog;
@@ -48,7 +46,6 @@ public class EnterUserPassword extends Activity implements ServiceConnection {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mConfigFile = new File( getIntent().getStringExtra( EXTRA_FILENAME ) );
 		showDialog( 1 );
 
 		if ( !bindService(
@@ -87,7 +84,7 @@ public class EnterUserPassword extends Activity implements ServiceConnection {
 				EditText username = (EditText)((AlertDialog)dialog).findViewById( R.id.enter_user_password_user);
 				EditText password = (EditText)((AlertDialog)dialog).findViewById( R.id.enter_user_password_password );
 				mOpenVpnService.daemonUsernamePassword( 
-						mConfigFile,
+						getConfigFile(),
 						username.getText().toString(), 
 						password.getText().toString() 
 				);
@@ -97,7 +94,7 @@ public class EnterUserPassword extends Activity implements ServiceConnection {
 		
 		//TODO: find out how to acces dialog without field 
 		mDialog = new AlertDialog.Builder(this)
-		.setTitle( "Passphrase for " + mConfigFile.getName() )
+		.setTitle( "Passphrase for " + getConfigFile().getName() )
 		.setView( LayoutInflater.from(this).inflate( R.layout.enter_user_password, null) )
 		.setNeutralButton("OK", ok).create();
 		
@@ -108,8 +105,9 @@ public class EnterUserPassword extends Activity implements ServiceConnection {
 	@Override
 	protected synchronized void onPrepareDialog(int id, Dialog dialog) {
 		super.onPrepareDialog(id, dialog);
-		
-		((AlertDialog)dialog).getButton( AlertDialog.BUTTON_NEUTRAL ).setEnabled( mOpenVpnService != null );
+		AlertDialog alertDialog = (AlertDialog)dialog;
+		alertDialog.setTitle( "Passphrase for " + getConfigFile().getName() );
+		alertDialog.getButton( AlertDialog.BUTTON_NEUTRAL ).setEnabled( mOpenVpnService != null );
 	}
 	
 	public synchronized void onServiceConnected(ComponentName name, IBinder serviceBinder) {
@@ -125,5 +123,9 @@ public class EnterUserPassword extends Activity implements ServiceConnection {
 		if ( mDialog != null && mDialog.getButton( AlertDialog.BUTTON_NEUTRAL ) != null )
 			mDialog.getButton( AlertDialog.BUTTON_NEUTRAL ).setEnabled( false );
 	}
-	
+
+	private File getConfigFile()
+	{
+		return new File( getIntent().getStringExtra( EXTRA_FILENAME ) );
+	}	
 }
