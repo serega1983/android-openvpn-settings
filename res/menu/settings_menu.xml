@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<!-- 
+	<item
+		android:id="@+id/settings_menu_add_config"
+		android:title="@string/settings_menu_add_config"
+		android:icon="@android:drawable/ic_menu_add"/>
+	 -->
+
+	<item
+		android:id="@+id/settings_menu_refresh"
+		android:title="@string/settings_menu_refresh"
+		android:icon="@drawable/ic_menu_refresh"/>
+
+	<item
+		android:id="@+id/settings_menu_advanced"
+		android:title="@string/settings_menu_advanced"
+		android:icon="@android:drawable/ic_menu_preferences"/>
+
+	<item
+		android:id="@+id/settings_menu_fix_dns"
+		android:title="@string/settings_menu_fix_dns"
+		android:icon="@android:drawable/ic_menu_revert"/>
+
+	<item
+		android:id="@+id/settings_meun_contact_author"
+		android:title="@string/settings_menu_contact_author"
+		android:icon="@android:drawable/ic_menu_send"/>
+		
+	<item
+		android:id="@+id/settings_menu_help"
+		android:title="@string/settings_menu_help"
+		android:icon="@android:drawable/ic_menu_help"/>
+		
+	<!-- 
+	<item android:id="@+id/configs_options_import" android:title="@string/options_import"></item>	
+	<item android:id="@+id/configs_options_stopall" android:title="@string/options_stopall"></item>
+	<item android:id="@+id/configs_options_settings" android:title="@string/options_settings"></item>
+	 -->
+	
+</menu>

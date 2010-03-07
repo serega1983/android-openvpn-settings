@@ -1,0 +1,41 @@
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:title="@string/openvpn_settings_category">
+	
+	<!-- 
+	<CheckBoxPreference
+		android:key="openvpn_use_internal_storage"
+		android:title="Use private storage"
+		android:defaultValue="true"
+		/>
+	 -->
+
+	<CheckBoxPreference
+		android:key="openvpn_do_modprobe_tun"
+		android:title="Load tun kernel module"
+		android:summary="Issue 'modprobe tun' before starting openvpn."
+		android:defaultValue="false"
+		/>
+
+	<EditTextPreference
+		android:key="openvpn_external_storage"
+		android:title="Path to configurations"
+		android:defaultValue="/sdcard/openvpn"
+		android:persistent="true"
+		/>
+
+	<EditTextPreference
+		android:key="openvpn_path_to_binary"
+		android:title="Path to openvpn binary"
+		android:persistent="true"
+		/>
+
+	<!-- 
+	<EditTextPreference
+		android:key="openvpn_path_to_su"
+		android:title="Path to su binary"
+		android:persistent="true"
+		/>
+	 -->
+	
+</PreferenceScreen>

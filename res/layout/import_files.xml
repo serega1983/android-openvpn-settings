@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+	android:layout_weight="1"
+	>
+
+	<TextView
+		android:text="Import configuration files from"
+    	android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		/>
+	<LinearLayout
+    	android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		>
+		<EditText
+			android:id="@+id/import_files_import_dir"
+	    	android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			/>
+		<Button
+			android:id="@+id/import_files_find_import_dir"
+			android:text="Find..."
+	    	android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="0"
+			/>
+	</LinearLayout>
+	
+	<RadioGroup
+		android:id="@+id/import_files_replace_or_merge"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:checkedButton="@+id/import_files_replace"
+		>
+		<RadioButton
+			android:id="@id/import_files_replace"
+			android:text="Replace"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			/>
+		<RadioButton
+			android:id="@+id/import_files_merge"
+			android:text="Merge"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			/>
+		<RadioButton
+			android:id="@+id/import_files_add"
+			android:text="Add"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			/>
+	</RadioGroup>
+	
+	<LinearLayout
+    	android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:orientation="horizontal"
+		>
+		<Button
+			android:id="@+id/import_files_ok"
+			android:text="Save"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:layout_gravity="bottom"
+			/>
+		<Button
+			android:id="@+id/import_files_cancel"
+			android:text="Cancel"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:layout_gravity="bottom"
+			/>
+	</LinearLayout>
+		
+</LinearLayout>
+		
