@@ -147,9 +147,9 @@ public final class DaemonMonitor
 				exec( String.format( 
 						"%s --cd %s --config %s --writepid %s --management 127.0.0.1 %d --management-query-passwords",
 						openvpnBinary.getAbsolutePath(),				
-						mConfigFile.getParentFile().getAbsolutePath(),
-						mConfigFile.getName(),
-						mPidFile.getAbsolutePath(),
+						Util.shellEscape(mConfigFile.getParentFile().getAbsolutePath()),
+						Util.shellEscape(mConfigFile.getName()),
+						Util.shellEscape(mPidFile.getAbsolutePath()),
 						mgmtPort
 				));
 			}
@@ -399,7 +399,7 @@ final class ManagementThread extends Thread
 
 			sendCommandImmediately( new StateCommand() );
 			sendCommandImmediately( new SimpleCommand( "state on" ) );
-//			sendCommandNoWait( new SimpleCommand( "bytecount 5" ) );
+//			sendCommandNoWait( new SimpleCommand( "bytecount 5" ) ); TODO chri - check the notif issues
 			
 			// allow other threads to submit commands
 			mReady.countDown(); 
