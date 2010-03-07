@@ -44,13 +44,13 @@ This comes in handy especially when setting up a new tunnel.
 <u><b>Setup</b></u><br/>
 1. Connect your phone via USB to your computer and mount the sdcard.<br/>
 2. Create a directory named <i>openvpn</i> at the root of your sdcard.<br/>
-3. Copy your certificates and <i>*.config</i> files into that directory (The config files need to end in <i>.config</i> ).<br/>
+3. Copy your certificates and <i>*.conf</i> files into that directory (The config files need to end in <i>.conf</i> or <i>.ovpn</i> ).<br/>
 4. Unmount the sdcard.
 5. You might need to hit refresh from the menu if you started <i>OpenVPN Settings</i> already.<br/>
 6. Start <i>adb logcat</i> on your computer to monitor activity.<br/>
 7. Open activity <i>OpenVPN Settings</i> and enable your tunnel.<br/>
 
-In general it would be best to get you config running from a shell, e.g. using <i>adb shell</i>.
+In general it would be best to get your config running from a shell, e.g. using <i>adb shell</i>.
 <p/>
 
 <u><b>DNS Support</b></u><br/>
