@@ -306,5 +306,19 @@ public class Util
 		else
 	         return String.valueOf(Math.round(d));
 	}
+	
+	/**
+	 * Prepare and sanitize a string to be used as parameter for a command
+	 * @param s
+	 * @return A string safe to use as parameter for a command
+	 */
+	public static String shellEscape(String s) {
+		StringBuilder sb = new StringBuilder( s.length()+200);
+		sb.append("'");
+		sb.append(s.replace("'", "\\'"));
+		sb.append("'");
+		return sb.toString();
+	}
+
 
 }
