@@ -944,7 +944,7 @@ final class ManagementThread extends Thread
 		if ( mWaitingForPassphrase || mWaitingForUserPassword ) {
 			// noop,there is already a notification out there
 		} else if (STATE_CONNECTED.equals(state)) {
-			Notifications.notifyConnected( mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mNotificationManager, mDaemonMonitor.mConfigFile, "Connected");
+			Notifications.notifyConnected( mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mNotificationManager, mDaemonMonitor.mConfigFile );
 		} else if (STATE_EXITING.equals(state)) {
 			Notifications.cancel( mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext );
 		} else {

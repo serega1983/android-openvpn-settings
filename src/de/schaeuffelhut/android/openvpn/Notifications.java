@@ -23,16 +23,22 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
 
 public final class Notifications {
 	private Notifications(){}
 	
 	public static final int FIRST_CONFIG_ID = 1000000;
+
+	public static void notifyConnected(int id, Context context, NotificationManager notificationManager, File configFile) 
+	{
+		notifyConnected(id, context, notificationManager, configFile, null);
+	}
 	
 	public static void notifyConnected(int id, Context context, NotificationManager notificationManager, File configFile, String msg) {
 		Notification notification = new Notification(
 				R.drawable.vpn_connected,
-				configFile.getName(),
+				configFile.getName() + ": Connected",
 				System.currentTimeMillis()
 		);
 		notification.flags |= Notification.FLAG_NO_CLEAR;
@@ -44,7 +50,7 @@ public final class Notifications {
 		notification.setLatestEventInfo(
 				context,
 				"OpenVPN, " + configFile.getName(),
-				msg,
+				TextUtils.isEmpty( msg ) ? "Connected" : msg,
 				PendingIntent.getActivity(
 						context,
 						0,
@@ -57,7 +63,7 @@ public final class Notifications {
 	}
 	
 	public static void notifyBytes(int id, Context context, NotificationManager notificationManager, File configFile, String msg) {
-		// Exactly the same notification type must be used. 
+		// To update latestEventInfo only, exactly the same notification type must be used. 
 		// Otherwise the user will get permanent notifications in his title-bar
 		notifyConnected(id, context, notificationManager, configFile, msg);
 	}
