@@ -31,8 +31,11 @@ import java.util.concurrent.CountDownLatch;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.Notifications;
 import de.schaeuffelhut.android.openvpn.Preferences;
@@ -54,7 +57,7 @@ public final class DaemonMonitor
 //	private final boolean LOCAL_LOGD = true;
 	final String mTagDaemonMonitor;
 
-	final Context mContext;
+	final OpenVpnService mContext;
 	final NotificationManager mNotificationManager;
 		
 	final File mConfigFile;
@@ -68,7 +71,7 @@ public final class DaemonMonitor
 
 
 	
-	public DaemonMonitor(Context context, File configFile, File comDir )
+	public DaemonMonitor(OpenVpnService context, File configFile, File comDir )
 	{
 		mContext = context;
 		mConfigFile = configFile;
@@ -312,7 +315,7 @@ final class ManagementThread extends Thread
 		// try to attach to OpenVPN management interface port,
 		// keep trying while startup shell is alive 
 		boolean attached;
-		while( !(attached = attach()) && mDaemonMonitor.mShell != null && mDaemonMonitor.mShell.isAlive() )
+		for(int i=0; !(attached = attach()) && mDaemonMonitor.mShell != null && mDaemonMonitor.mShell.isAlive()  && i < 10 ; i++ )
 		{
 			try {sleep(1000);} catch (InterruptedException e) {}
 		}
@@ -808,6 +811,8 @@ final class ManagementThread extends Thread
 	private void onFatal(String line) {
 		// There is nothing we can do. OpenVPN will exit anyway. 
 		Log.d(mTAG_MT, line );
+		mDaemonMonitor.mContext.mToastHandler.obtainMessage(0, line.substring(1)).sendToTarget();
+		//TODO: use handler to communicate back to context
 	}
 
 	private void onHold(String line) {
