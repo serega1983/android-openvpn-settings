@@ -402,7 +402,6 @@ final class ManagementThread extends Thread
 
 			sendCommandImmediately( new StateCommand() );
 			sendCommandImmediately( new SimpleCommand( "state on" ) );
-//			sendCommandNoWait( new SimpleCommand( "bytecount 5" ) ); TODO chri - check the notif issues
 			
 			// allow other threads to submit commands
 			mReady.countDown(); 
@@ -981,6 +980,10 @@ final class ManagementThread extends Thread
 	// invoked through onState
 	private void onConnected()
 	{
+		// activate traffic statistics  TODO chri - option in settings to activate/deactivate traffic stats 
+		sendCommandImmediately( new SimpleCommand( String.format("bytecount %d", TrafficStats.mPollInterval )) ); //TODO chri - check the notif issues
+		
+		// change the DNS server if necessary
 		String vpnDns = Preferences.getVpnDns(mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile);
 		boolean enabled = Preferences.getVpnDnsEnabled(mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile);
 		
@@ -1025,16 +1028,17 @@ final class ManagementThread extends Thread
 		}
 	}
 
+	TrafficStats mTrafficStats; 
 	private void onByteCount(String line) {
-		// TODO Auto-generated method stub
-//		Log.d(mTAG_MT, line );
-//		int startOfOut = line.indexOf(',');
-//		int startOfIn = RTMSG_BYTECOUNT.length();
-//		int in = Integer.parseInt( line.substring( startOfIn, startOfOut) );
-//		int out = Integer.parseInt( line.substring( startOfOut+1) );
-//		String msg = String.format( "in: %dytes - out: %dbytes", in, out );
-//		Notifications.notifyBytes( mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mNotificationManager, mDaemonMonitor.mConfigFile, msg );
-		sendCommandImmediately( mStatusCommand );
+		int startOfOut = line.indexOf(',');
+		int startOfIn = RTMSG_BYTECOUNT.length();
+		int in = Integer.parseInt( line.substring( startOfIn, startOfOut) ); // in the tunnel
+		int out = Integer.parseInt( line.substring( startOfOut+1) ); // out of the tunnel
+		if (mTrafficStats==null) mTrafficStats = new TrafficStats();
+		mTrafficStats.setStats(out, in);
+		String msg = mTrafficStats.toSmallInOutPerSecString();
+		Log.d(mTAG_MT, msg );
+		Notifications.notifyBytes( mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mNotificationManager, mDaemonMonitor.mConfigFile, msg );
 	}
 
 	/*

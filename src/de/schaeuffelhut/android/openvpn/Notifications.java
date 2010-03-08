@@ -1,5 +1,6 @@
 /**
  * Copyright 2009 Friedrich Schäuffelhut
+ * Copyright 2010 Christophe Vandeplas
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +32,7 @@ public final class Notifications {
 	public static void notifyConnected(int id, Context context, NotificationManager notificationManager, File configFile, String msg) {
 		Notification notification = new Notification(
 				R.drawable.vpn_connected,
-				configFile.getName() +": " + msg,
+				configFile.getName(),
 				System.currentTimeMillis()
 		);
 		notification.flags |= Notification.FLAG_NO_CLEAR;
@@ -56,30 +57,9 @@ public final class Notifications {
 	}
 	
 	public static void notifyBytes(int id, Context context, NotificationManager notificationManager, File configFile, String msg) {
-		Notification notification = new Notification(
-				R.drawable.vpn_connected,
-				configFile.getName() +": " + msg,
-				System.currentTimeMillis()
-		);
-		notification.flags |= Notification.FLAG_NO_CLEAR;
-		notification.flags |= Notification.FLAG_ONGOING_EVENT;
-		
-		Intent intent = new Intent(context, OpenVpnSettings.class );
-//		intent.putExtra( EnterPassphrase.EXTRA_FILENAME, configFile.getAbsolutePath() );
-		
-		notification.setLatestEventInfo(
-				context,
-				"OpenVPN, " + configFile.getName(),
-				msg,
-				PendingIntent.getActivity(
-						context,
-						0,
-						intent,
-						0
-				)
-		);
-		
-		notificationManager.notify( id, notification);
+		// Exactly the same notification type must be used. 
+		// Otherwise the user will get permanent notifications in his title-bar
+		notifyConnected(id, context, notificationManager, configFile, msg);
 	}
 
 	public static void notifyDisconnected(int id, Context context, NotificationManager notificationManager, File configFile, String msg) {

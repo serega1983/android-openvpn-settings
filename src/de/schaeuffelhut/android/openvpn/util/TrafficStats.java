@@ -34,7 +34,7 @@ import android.util.Log;
 public class TrafficStats {
 
 	private final static String LOG_TAG = "TrafficStats";
-	public static final int mPollInterval = 2000;
+	public static final int mPollInterval = 3;
 	
 	private Date updated = new Date();
 	DateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
@@ -62,11 +62,24 @@ public class TrafficStats {
 	public TrafficStats() {
 		
 	}
+	
+	public void setStats(final int newReadBytes, final int newWriteBytes) {
+		tuntapReadBytesPerSec = deltaPerSecond(tuntapReadBytes, newReadBytes);
+		tuntapReadBytes = newReadBytes;
+		
+		tuntapWriteBytesPerSec = deltaPerSecond(tuntapWriteBytes, newWriteBytes);
+		tuntapWriteBytes = newWriteBytes;
+	}
 
+	private int deltaPerSecond(int oldBytes, int newBytes) {
+		return ((newBytes - oldBytes)/ mPollInterval);
+	}
+	
 	/**
 	 * Fill in the statistics based on the OpenVPN MultiLine status output
-	 * @param multiLineHistory
+	 * @param multiLineHistory and ArrayList containing the output from openvpn
 	 */
+	@Deprecated
 	public void setStats(ArrayList<String> multiLineHistory) {
 //		OpenVPN STATISTICS
 //		Updated,Sun Nov 15 15:49:24 2009
@@ -160,15 +173,13 @@ public class TrafficStats {
 
 	}
 	
+	@Deprecated
 	private int getDivideFactor() {
-		return mPollInterval / 1000;
-	}
-	
-	public String toSmallInOutString() {
-		return "up: " + tuntapReadBytes + " B - down: " + tuntapWriteBytes + " B";
+		return mPollInterval ;
 	}
 	
 	public String toSmallInOutPerSecString() {
+		// TODO chri - use stringbuilder
 		return "up: " 
 				+ Util.roundDecimalsToString((double) tuntapReadBytesPerSec / 1000) 
 				+ " kBps - down: "
