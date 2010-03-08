@@ -437,7 +437,7 @@ final class ManagementThread extends Thread
 	 */
 	private boolean block(LineNumberReader lnr) throws IOException
 	{
-		lnr.mark(1);
+		lnr.mark(2);
 		boolean eof = lnr.read() == -1;
 		if ( !eof )
 			lnr.reset();
@@ -630,7 +630,7 @@ final class ManagementThread extends Thread
 	}
 	
 	/*
-	 * Send commands to management inetrface, may be invoked by any thread.
+	 * Send commands to management interface, may be invoked by any thread.
 	 */
 
 	/**
