@@ -80,7 +80,16 @@ public final class OpenVpnService extends Service
 	/*
 	 * Service API
 	 */
+
+	final Handler mToastHandler = new Handler(){
+		@Override
+		public void handleMessage(Message msg) {
+			Toast.makeText(OpenVpnService.this, (String)msg.obj, Toast.LENGTH_LONG).show();
+		}
+	};
+
 	
+
 	public OpenVpnService() {
 	}
 	
@@ -225,7 +234,7 @@ public final class OpenVpnService extends Service
 			Log.v(TAG, config +": trying to attach");
 
 			DaemonMonitor daemonMonitor = new DaemonMonitor(
-					getApplicationContext(),
+					this,
 					config,
 					mComDir
 			);
@@ -293,7 +302,7 @@ public final class OpenVpnService extends Service
 		else
 		{
 			DaemonMonitor daemonMonitor = new DaemonMonitor(
-					getApplicationContext(),
+					this,
 					config,
 					mComDir
 			);
