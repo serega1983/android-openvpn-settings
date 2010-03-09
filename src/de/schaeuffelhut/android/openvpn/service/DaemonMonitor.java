@@ -979,7 +979,7 @@ final class ManagementThread extends Thread
 	private void onConnected()
 	{
 		// activate traffic statistics  TODO chri - option in settings to activate/deactivate traffic stats 
-		sendCommandImmediately( new SimpleCommand( String.format("bytecount %d", TrafficStats.mPollInterval )) ); //TODO chri - check the notif issues
+		sendCommandImmediately( new SimpleCommand( String.format("bytecount %d", TrafficStats.mPollInterval )) );
 		
 		// change the DNS server if necessary
 		String vpnDns = Preferences.getVpnDns(mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile);
@@ -1013,6 +1013,9 @@ final class ManagementThread extends Thread
 	// invoked through onState
 	private void onDisconnected()
 	{
+		// stop traffic statistics  TODO chri - option in settings to activate/deactivate traffic stats 
+		sendCommandImmediately( new SimpleCommand( "bytecount 0") );
+		
 		int systemDnsChange = SystemPropertyUtil.getIntProperty( SystemPropertyUtil.NET_DNSCHANGE );
 		int myDnsChange = Preferences.getDnsChange(mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile);
 		if ( myDnsChange == systemDnsChange )
