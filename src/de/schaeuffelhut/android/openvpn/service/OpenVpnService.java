@@ -19,7 +19,6 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import android.app.Service;
 import android.content.Intent;
