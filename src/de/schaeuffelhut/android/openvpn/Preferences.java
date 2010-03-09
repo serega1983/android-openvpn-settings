@@ -65,7 +65,9 @@ public final class Preferences {
 	public final static String KEY_VPN_DNS_ENABLE(File config){
 		return KEY_CONFIG(config.getAbsolutePath())+".vpndns.enable";
 	}
-
+	public final static String KEY_SCRIPT_SECURITY_LEVEL(File config){
+		return KEY_CONFIG(config.getAbsolutePath())+".script_security.level";
+	}
 	
 	
 	private Preferences() {
@@ -223,6 +225,12 @@ public final class Preferences {
 	{
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		return sharedPreferences.getBoolean( Preferences.KEY_VPN_DNS_ENABLE(configFile), false );
+	}
+
+	public static int getScriptSecurityLevel(Context context, File configFile) 
+	{
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		return Integer.parseInt( sharedPreferences.getString( Preferences.KEY_SCRIPT_SECURITY_LEVEL(configFile), "1" ) );
 	}
 
 	

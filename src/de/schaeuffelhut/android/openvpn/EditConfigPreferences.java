@@ -1,9 +1,11 @@
 package de.schaeuffelhut.android.openvpn;
 
 import java.io.File;
+import java.util.Arrays;
 
 import android.os.Bundle;
 import android.preference.EditTextPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.text.TextUtils;
@@ -21,8 +23,8 @@ public class EditConfigPreferences extends PreferenceActivity
 		addPreferencesFromResource( R.xml.config_settings );
 		
 		renamePreference("openvpn_config_use_vpn_dns", Preferences.KEY_VPN_DNS_ENABLE(config));
-		renamePreference("openvpn_config_dns1", Preferences.KEY_VPN_DNS(config));
 		
+		renamePreference("openvpn_config_dns1", Preferences.KEY_VPN_DNS(config));
 		{
 			EditTextPreference pref = (EditTextPreference)findPreference( Preferences.KEY_VPN_DNS(config) );
 			pref.setOnPreferenceChangeListener( new Preference.OnPreferenceChangeListener() {
@@ -39,6 +41,20 @@ public class EditConfigPreferences extends PreferenceActivity
 				pref.setSummary( "Enter VPN DNS server" );
 			else
 				pref.setSummary( value );
+		}
+		
+		renamePreference("openvpn_config_script_security_level", Preferences.KEY_SCRIPT_SECURITY_LEVEL(config));
+		{
+			ListPreference pref = (ListPreference)findPreference( Preferences.KEY_SCRIPT_SECURITY_LEVEL(config) );
+			pref.setOnPreferenceChangeListener( new Preference.OnPreferenceChangeListener() {
+				public boolean onPreferenceChange(Preference preference, Object newValue) {
+					ListPreference pref = (ListPreference)preference;
+					int index = Arrays.binarySearch( pref.getEntryValues(), newValue );
+					pref.setSummary( pref.getEntries()[index] );
+					return true;
+				}
+			});
+			pref.setSummary( pref.getEntry() );
 		}
 	}
 

@@ -31,11 +31,8 @@ import java.util.concurrent.CountDownLatch;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.Toast;
 import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.Notifications;
 import de.schaeuffelhut.android.openvpn.Preferences;
@@ -148,11 +145,12 @@ public final class DaemonMonitor
 					cmd( "modprobe tun" );
 				
 				exec( String.format( 
-						"%s --cd %s --config %s --writepid %s --management 127.0.0.1 %d --management-query-passwords",
+						"%s --cd %s --config %s --writepid %s --script-security %d --management 127.0.0.1 %d --management-query-passwords",
 						openvpnBinary.getAbsolutePath(),				
 						Util.shellEscape(mConfigFile.getParentFile().getAbsolutePath()),
 						Util.shellEscape(mConfigFile.getName()),
 						Util.shellEscape(mPidFile.getAbsolutePath()),
+						Preferences.getScriptSecurityLevel( mContext, mConfigFile ),
 						mgmtPort
 				));
 			}
