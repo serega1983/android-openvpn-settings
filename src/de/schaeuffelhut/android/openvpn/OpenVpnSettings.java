@@ -188,13 +188,13 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 
 		case REQUEST_CODE_EDIT_CONFIG: {
 			String filename = data == null ? null : data.getStringExtra( EditConfig.EXTRA_FILENAME );
-			if ( filename != null && mOpenVpnService.isDaemonStarted( new File(filename)) )
+			if ( filename != null && mOpenVpnService != null && mOpenVpnService.isDaemonStarted( new File(filename)) )
 				showDialog( DIALOG_PLEASE_RESTART );
 		} break;
 
 		case REQUEST_CODE_EDIT_CONFIG_PREFERENCES: {
 			String filename = data == null ? null : data.getStringExtra( EditConfig.EXTRA_FILENAME );
-			if ( filename != null && mOpenVpnService.isDaemonStarted( new File(filename)) )
+			if ( filename != null && mOpenVpnService != null && mOpenVpnService.isDaemonStarted( new File(filename)) )
 				showDialog( DIALOG_PLEASE_RESTART );
 		} break;
 
