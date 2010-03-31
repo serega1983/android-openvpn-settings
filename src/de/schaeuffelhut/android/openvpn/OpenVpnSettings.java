@@ -46,6 +46,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
 import de.schaeuffelhut.android.openvpn.util.DnsUtil;
 import de.schaeuffelhut.android.openvpn.util.UnexpectedSwitchValueException;
+import de.schaeuffelhut.android.openvpn.util.Util;
 
 public class OpenVpnSettings extends PreferenceActivity implements ServiceConnection
 {
@@ -60,6 +61,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 	private static final int DIALOG_PLEASE_RESTART = 2;
 	private static final int DIALOG_FIX_DNS = 3;
 	private static final int DIALOG_CONTACT_AUTHOR = 4;
+	private static final int DIALOG_CHANGELOG = 5;
 
 	
 	ArrayList<DaemonEnabler> mDaemonEnablers = new ArrayList<DaemonEnabler>(4);
@@ -119,6 +121,9 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 				},
 				new IntentFilter( Intents.OPEN_VPN_SERVICE_STARTED )
 		);
+		
+		if ( Util.applicationWasUpdated( this ) )
+			showDialog( DIALOG_CHANGELOG );
     }
 
 
@@ -386,7 +391,10 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 		final Dialog dialog;
 		switch(id) {
 		case DIALOG_HELP:
-			dialog = HelpDialog.makeDialog(this);
+			dialog = HtmlDialog.makeHelpDialog(this);
+			break;
+		case DIALOG_CHANGELOG:
+			dialog = HtmlDialog.makeChangeLogDialog(this);
 			break;
 		case DIALOG_PLEASE_RESTART:
 			dialog = new AlertDialog.Builder( this ).setIcon(android.R.drawable.ic_dialog_info).

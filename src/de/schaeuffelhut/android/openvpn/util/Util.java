@@ -32,10 +32,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
+import android.preference.PreferenceManager;
 import android.util.Log;
+import de.schaeuffelhut.android.openvpn.Preferences;
 
 public class Util 
 {
@@ -258,6 +261,27 @@ public class Util
 		return versionName;
 	}
 
+	public final static int applicationVersionCode(Context context) {
+		int versionCode = 0;
+		try {
+			versionCode = context.getPackageManager().getPackageInfo( context.getPackageName(), 0).versionCode;
+		} catch (NameNotFoundException e) {
+			e.printStackTrace();
+		}
+		return versionCode;
+	}
+
+	public final static boolean applicationWasUpdated(Context context)
+	{
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		int applicationVersionCode = applicationVersionCode( context );
+		int storedVersionCode = sharedPreferences.getInt( Preferences.KEY_OPENVPN_VERSION_CODE, -1 );
+		final boolean wasUpdated = applicationVersionCode > storedVersionCode;
+		if ( wasUpdated )
+			sharedPreferences.edit().putInt( Preferences.KEY_OPENVPN_VERSION_CODE, applicationVersionCode ).commit();
+		return wasUpdated;
+	}
+	
 	public final static String getAssetAsString(Context context, String asset) {
 		Reader reader = null;
 		StringBuilder sb = new StringBuilder(1024);

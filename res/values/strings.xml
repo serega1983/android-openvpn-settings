@@ -21,6 +21,8 @@
 	<string name="fix_dns_dialog_message">Setup DNS to use Googles public DNS server (8.8.8.8). The next network connectivity change will reset the DNS to your ISPs server. If this does not fix your problem try to force a network connectivity change, e.g. by switching to airplane mode and back. Your current DNS server is %1$s.</string>
 
 	<string name="help_dialog_title">OpenVPN Help</string>
+	
+	<string name="changelog_dialog_title">OpenVPN Change Log</string>
 
 	<string name="advanced_settings_category">Advanced</string>
 

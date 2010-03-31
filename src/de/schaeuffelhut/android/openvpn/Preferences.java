@@ -25,6 +25,11 @@ import de.schaeuffelhut.android.openvpn.util.Util;
 
 public final class Preferences {
 	
+	/**
+	 * Stores applications current version code. Used to detect upgrades.
+	 */
+	public static final String KEY_OPENVPN_VERSION_CODE = "openvpn_version_code";
+	
 	public static final String KEY_OPENVPN_SETTINGS_CATEGORY = "openvpn_settings_category";
 	public static final String KEY_OPENVPN_ENABLED = "openvpn_enabled";
 	public static final String KEY_OPENVPN_CONFIGURATIONS = "openvpn_configurations";
