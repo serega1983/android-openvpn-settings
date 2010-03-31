@@ -339,7 +339,7 @@ public class Util
 	public static String shellEscape(String s) {
 		StringBuilder sb = new StringBuilder( s.length()+200);
 		sb.append("'");
-		sb.append(s.replace("'", "\\'"));
+		sb.append(s.replace("'", "\\'").replace("\n", "\\\n"));
 		sb.append("'");
 		return sb.toString();
 	}

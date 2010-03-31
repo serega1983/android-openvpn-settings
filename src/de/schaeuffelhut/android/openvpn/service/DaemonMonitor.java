@@ -143,7 +143,7 @@ public final class DaemonMonitor
 				su();
 				
 				if ( Preferences.getDoModprobeTun( PreferenceManager.getDefaultSharedPreferences(mContext) ) )
-					cmd( "modprobe tun" );
+					cmd( Preferences.getLoadTunModuleCommand( PreferenceManager.getDefaultSharedPreferences(mContext) ) );
 				
 				exec( String.format( 
 						"%s --cd %s --config %s --writepid %s --script-security %d --management 127.0.0.1 %d --management-query-passwords",

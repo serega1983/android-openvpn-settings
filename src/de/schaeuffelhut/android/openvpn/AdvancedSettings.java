@@ -61,7 +61,7 @@ public class AdvancedSettings extends PreferenceActivity
 
 		{
 			CheckBoxPreference pref = (CheckBoxPreference) findPreference( Preferences.KEY_OPENVPN_DO_MODPROBE_TUN );
-			pref.setSummary( getString( R.string.advanced_settings_do_modprobe_tun, Preferences.getLoadTunModuleCommand( pref.getSharedPreferences() )) );
+			pref.setSummary( getString( R.string.advanced_settings_do_modprobe_tun, Preferences.getLoadTunModuleCommand( pref.getSharedPreferences()) ) );
 		}
 		
 		{
