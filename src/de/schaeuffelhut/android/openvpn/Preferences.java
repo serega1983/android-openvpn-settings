@@ -219,7 +219,7 @@ public final class Preferences {
 	public static String getVpnDns(Context context, File configFile) 
 	{
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getString( Preferences.KEY_VPN_DNS(configFile), "172.24.2.1" );
+		return sharedPreferences.getString( Preferences.KEY_VPN_DNS(configFile), "" );
 	}
 	public static boolean getVpnDnsEnabled(Context context, File configFile) 
 	{

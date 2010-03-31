@@ -32,6 +32,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.Notifications;
@@ -984,8 +985,12 @@ final class ManagementThread extends Thread
 		// change the DNS server if necessary
 		String vpnDns = Preferences.getVpnDns(mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile);
 		boolean enabled = Preferences.getVpnDnsEnabled(mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile);
-		
-		if ( enabled && vpnDns != null && !"".equals(vpnDns))
+
+		if ( enabled && TextUtils.isEmpty( vpnDns ) )
+		{
+			Log.i(mTAG_MT, "Can not set VPN DNS: No DNS Server configured!" );
+		}
+		else if ( enabled && !TextUtils.isEmpty( vpnDns ) )
 		{
 			HashMap<String, String> properties = SystemPropertyUtil.getProperties();
 
