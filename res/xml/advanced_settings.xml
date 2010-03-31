@@ -17,6 +17,26 @@
 		android:defaultValue="false"
 		/>
 
+	<PreferenceScreen
+		android:key="openvpn_tun_settings"
+		android:title="TUN module settings"
+		android:summary="Setup module loading method and location of tun module"
+		>
+		<ListPreference
+			android:key="openvpn_modprobe_alternative"
+			android:title="Load module using"
+			android:entries="@array/openvpn_modprobe_alternative_text"
+			android:entryValues="@array/openvpn_modprobe_alternative_value"
+			android:defaultValue="modprobe"
+			/>
+		<EditTextPreference
+			android:key="openvpn_path_to_tun"
+			android:title="Path to tun module"
+			android:persistent="true"
+			android:defaultValue="tun"
+			/>
+	</PreferenceScreen>
+
 	<EditTextPreference
 		android:key="openvpn_external_storage"
 		android:title="Path to configurations"
