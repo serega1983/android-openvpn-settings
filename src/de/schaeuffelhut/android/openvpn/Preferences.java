@@ -110,7 +110,7 @@ public final class Preferences {
 
 	public final static String getLoadTunModuleCommand(SharedPreferences sharedPreferences)
 	{
-		return getModprobeAlternative(sharedPreferences) + " " + getPathToTun(sharedPreferences);
+		return getModprobeAlternative(sharedPreferences) + " " + Util.shellEscape( getPathToTun(sharedPreferences) );
 	}
 
 	
