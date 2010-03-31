@@ -34,6 +34,9 @@ public final class Preferences {
 	public static final String KEY_OPENVPN_ENABLED = "openvpn_enabled";
 	public static final String KEY_OPENVPN_CONFIGURATIONS = "openvpn_configurations";
 	public static final String KEY_OPENVPN_USE_INTERNAL_STORAGE = "openvpn_use_internal_storage";
+	public static final String KEY_OPENVPN_TUN_SETTINGS = "openvpn_tun_settings";
+	public static final String KEY_OPENVPN_MODPROBE_ALTERNATIVE = "openvpn_modprobe_alternative";
+	public static final String KEY_OPENVPN_PATH_TO_TUN = "openvpn_path_to_tun";
 	public static final String KEY_OPENVPN_EXTERNAL_STORAGE = "openvpn_external_storage";
 	public static final String KEY_OPENVPN_PATH_TO_BINARY = "openvpn_path_to_binary";
 	public static final String KEY_OPENVPN_PATH_TO_SU = "openvpn_path_to_su";
@@ -94,6 +97,23 @@ public final class Preferences {
 		edit.putBoolean( KEY_OPENVPN_USE_INTERNAL_STORAGE, true );
 		edit.commit();
 	}
+
+	public final static String getModprobeAlternative(SharedPreferences sharedPreferences)
+	{
+		return sharedPreferences.getString( Preferences.KEY_OPENVPN_MODPROBE_ALTERNATIVE, "modprobe" );
+	}
+
+	public final static String getPathToTun(SharedPreferences sharedPreferences)
+	{
+		return sharedPreferences.getString( Preferences.KEY_OPENVPN_PATH_TO_TUN, "tun" );
+	}
+
+	public final static String getLoadTunModuleCommand(SharedPreferences sharedPreferences)
+	{
+		return getModprobeAlternative(sharedPreferences) + " " + getPathToTun(sharedPreferences);
+	}
+
+	
 
 	public final static String getExternalStorage(SharedPreferences sharedPreferences)
 	{

@@ -25,6 +25,7 @@
 	<string name="changelog_dialog_title">OpenVPN Change Log</string>
 
 	<string name="advanced_settings_category">Advanced</string>
+	<string name="advanced_settings_do_modprobe_tun">Issue %s before starting openvpn.</string>
 
 	<string name="edit_config_category">Edit OpenVPN Configuration</string>
 	<string name="edit_config_name">Configuration name</string>
