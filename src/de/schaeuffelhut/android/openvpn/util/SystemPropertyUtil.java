@@ -34,7 +34,7 @@ public class SystemPropertyUtil
 		
 		@Override
 		protected void onShellTerminated() {
-			try { joinLoggers(); } catch (InterruptedException e) {};
+			try { joinLoggers(); } catch (InterruptedException e) {Log.e("OpenVPN-Settings-getprop", "joining loggers", e);};
 			waitForQuietly();
 		}
 	}
@@ -45,7 +45,7 @@ public class SystemPropertyUtil
 		Matcher m = p.matcher("");
 		
 		private GetAllProp() {
-			super( "OpenVPN-Settings-getprop" );
+			super( "OpenVPN-Settings-getallprop" );
 		}
 
 		@Override
@@ -66,7 +66,7 @@ public class SystemPropertyUtil
 		
 		@Override
 		protected void onShellTerminated() {
-			try { joinLoggers(); } catch (InterruptedException e) {}
+			try { joinLoggers(); } catch (InterruptedException e) {Log.e("OpenVPN-Settings-getallprop", "joining loggers", e);}
 			waitForQuietly();
 		}
 	}
@@ -91,7 +91,7 @@ public class SystemPropertyUtil
 
 		@Override
 		protected void onShellTerminated() {
-			try { joinLoggers(); } catch (InterruptedException e) {}
+			try { joinLoggers(); } catch (InterruptedException e) {Log.e("OpenVPN-Settings-setprop", "joining loggers", e);}
 			waitForQuietly();
 		}
 	}
