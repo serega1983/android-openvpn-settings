@@ -18,12 +18,16 @@ package de.schaeuffelhut.android.openvpn.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 
 import android.util.Log;
 
 
 public abstract class Shell extends Thread
 {
+	private static final String PROMPT = "SHELL-PROMPT-READY";
+
 	private final static boolean LOCAL_LOGD = true;
 	
 	private final String mSu;
@@ -32,8 +36,9 @@ public abstract class Shell extends Thread
 	private Process mShellProcess;
 	private LoggerThread mStdoutLogger;
 	private LoggerThread mStderrLogger;
-	private PrintStream stdout;
-
+	private PrintStream stdin;
+	private CyclicBarrier promptReady = new CyclicBarrier( 2 );
+	
 	public Shell(String tag)
 	{
 		super( tag + "-stdin" );
@@ -53,7 +58,7 @@ public abstract class Shell extends Thread
 
 	public final void run()
 	{
-		final ProcessBuilder pb = new ProcessBuilder( "/system/bin/sh", "-s", "-x" );
+		final ProcessBuilder pb = new ProcessBuilder( "/system/bin/sh", "-s", "-x", "-i" );
 
 		if ( LOCAL_LOGD )
 			Log.d( mTag, String.format( 
@@ -63,7 +68,7 @@ public abstract class Shell extends Thread
 
 		try {
 			mShellProcess = pb.start();
-			
+
 			mStdoutLogger = new LoggerThread( mTag+"-stdout", mShellProcess.getInputStream(), true ){
 				@Override
 				protected void onLogLine(String line) {
@@ -75,12 +80,25 @@ public abstract class Shell extends Thread
 			mStderrLogger = new LoggerThread( mTag+"-stderr", mShellProcess.getErrorStream(), true ){
 				@Override
 				protected void onLogLine(String line) {
-					onStderr(line);
+					if ( PROMPT.equals( line ) )
+					{
+						try {
+							promptReady.await();
+						} catch (InterruptedException e) {
+							Log.e(mTag, "waiting for prompt", e );
+						} catch (BrokenBarrierException e) {
+							Log.e(mTag, "waiting for prompt", e );
+						}
+					}
+					else
+					{
+						onStderr(line);
+					}
 				}
 			};
 			mStderrLogger.start();
 			
-			stdout = new PrintStream( mShellProcess.getOutputStream() );
+			stdin = new PrintStream( mShellProcess.getOutputStream() );
 
 			initEnvironment();
 			
@@ -96,13 +114,15 @@ public abstract class Shell extends Thread
 		}
 		finally
 		{
-			Util.closeQuietly( stdout );
+			Util.closeQuietly( stdin );
 			onShellTerminated();
 		}
 	}
 
 	private void initEnvironment()
 	{
+		stdin.println( "export PS1='"+PROMPT+"\n'" );
+		stdin.flush();
 		// not needed in Androi 1.5 anymore?
 //		stdout.println( "export ANDROID_ASSETS='/system/app'" );
 //		stdout.println( "export ANDROID_BOOTLOGO='1'"  );
@@ -120,14 +140,22 @@ public abstract class Shell extends Thread
 		if ( LOCAL_LOGD )
 			Log.d( mTag, "exec " + cmd );
 
-		stdout.print( "exec " );
-		stdout.println( cmd );
-		stdout.flush();
+		try {
+			promptReady.await();
+			stdin.print( "exec " );
+			stdin.println( cmd );
+			stdin.flush();
+		} catch (InterruptedException e) {
+			Log.e(mTag, "waiting for prompt", e );
+		} catch (BrokenBarrierException e) {
+			Log.e(mTag, "waiting for prompt", e );
+		}
 	}
 
 	public final void su()
 	{
-		exec( mSu );
+		exec( mSu + " -c 'exec /system/bin/sh -s -x -i'" );
+//		initEnvironment();
 	}
 
 	public final void cmd(String cmd)
@@ -135,8 +163,15 @@ public abstract class Shell extends Thread
 		if ( LOCAL_LOGD )
 			Log.d( mTag, cmd );
 
-		stdout.println( cmd );
-		stdout.flush();
+		try {
+			promptReady.await();
+			stdin.println( cmd );
+			stdin.flush();
+		} catch (InterruptedException e) {
+			Log.e(mTag, "waiting for prompt", e );
+		} catch (BrokenBarrierException e) {
+			Log.e(mTag, "waiting for prompt", e );
+		}
 	}
 
 	public final void exit()

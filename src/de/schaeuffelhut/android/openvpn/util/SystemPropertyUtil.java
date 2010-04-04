@@ -85,7 +85,7 @@ public class SystemPropertyUtil
 		protected void onShellPrepared() {
 			su();
 			//TODO: understand this necessary delay
-			try { sleep(500); } catch (InterruptedException e) {}
+			//try { sleep(500); } catch (InterruptedException e) {}
 			exec( "setprop " + key + " " + value );
 		}
 
