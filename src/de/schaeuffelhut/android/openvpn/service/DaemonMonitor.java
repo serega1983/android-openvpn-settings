@@ -142,8 +142,9 @@ public final class DaemonMonitor
 				cmd( "cd " + openvpnBinary.getParentFile().getAbsolutePath() );
 				su();
 				
-				if ( Preferences.getDoModprobeTun( PreferenceManager.getDefaultSharedPreferences(mContext) ) )
-					cmd( Preferences.getLoadTunModuleCommand( PreferenceManager.getDefaultSharedPreferences(mContext) ) );
+				if( !(new File("/dev/tun").exists() || new File("/dev/net/tun").exists()) ) // only load the driver if it's not yet available
+					if (Preferences.getDoModprobeTun( PreferenceManager.getDefaultSharedPreferences(mContext) ) )  // LATER remove the preferences setting
+							cmd( Preferences.getLoadTunModuleCommand( PreferenceManager.getDefaultSharedPreferences(mContext) ) );
 				
 				exec( String.format( 
 						"%s --cd %s --config %s --writepid %s --script-security %d --management 127.0.0.1 %d --management-query-passwords",
