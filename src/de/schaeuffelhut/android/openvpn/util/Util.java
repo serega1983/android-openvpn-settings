@@ -16,6 +16,7 @@
  */
 package de.schaeuffelhut.android.openvpn.util;
 
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -344,5 +345,31 @@ public class Util
 		return sb.toString();
 	}
 
+	/**
+	 * Locte the tun.ko driver on the filesystem  
+	 * @return a String with the path of the tun.ko driver
+	 */
+	public static String findTunDriverPath() {
+		String tunDriverPath = "";
+		String find_str; 
+		try {
+			Process find_proc = Runtime.getRuntime().exec("find /sdcard /system /data -name tun.ko");
+			DataInputStream find_in = new DataInputStream(find_proc.getInputStream());
+			try {
+				while ((find_str = find_in.readLine()) != null) {
+					tunDriverPath = find_str;
+				}
+			} catch (IOException e) {
+				System.exit(0);
+			}
+		} catch (IOException e1) {
+			Log.e("OpenVpnSettings_Util",e1.toString());
+		}
+		
+//		if (new File(tunDriverPath).exists())
+//			System.out.println(tunDriverPath);
+//		else System.out.println("ERROR file does not exist: " + tunDriverPath);
+		return tunDriverPath;
+	}
 
 }
