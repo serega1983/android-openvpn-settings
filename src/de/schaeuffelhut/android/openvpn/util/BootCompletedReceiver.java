@@ -50,7 +50,7 @@ public class BootCompletedReceiver extends BroadcastReceiver
 				  if ( service == null )
 				  {
 					  // something really wrong here
-					  Log.e(TAG, "Could not start service " + service.toString() );
+					  Log.e(TAG, "Could not start service. Service object NULL ");
 				  }
 				  else
 				  {
