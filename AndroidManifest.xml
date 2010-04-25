@@ -17,8 +17,8 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="de.schaeuffelhut.android.openvpn"
-	android:versionCode="12"
-	android:versionName="0.4.4">
+	android:versionCode="13"
+	android:versionName="0.4.5test1">
 
 	<application
 		android:icon="@drawable/logo"

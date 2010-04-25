@@ -23,6 +23,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.text.TextUtils;
 
 public final class Notifications {
@@ -104,8 +105,7 @@ public final class Notifications {
 		notification.flags |= Notification.FLAG_NO_CLEAR;
 		notification.flags |= Notification.FLAG_ONGOING_EVENT;
 		
-		Intent intent = new Intent(context, EnterPassphrase.class );
-		intent.putExtra( EnterPassphrase.EXTRA_FILENAME, configFile.getAbsolutePath() );
+		Intent intent = new Intent(null, Uri.fromFile(configFile), context, EnterPassphrase.class );
 		
 		notification.setLatestEventInfo(
 				context,
@@ -131,8 +131,7 @@ public final class Notifications {
 		notification.flags |= Notification.FLAG_NO_CLEAR;
 		notification.flags |= Notification.FLAG_ONGOING_EVENT;
 		
-		Intent intent = new Intent(context, EnterUserPassword.class );
-		intent.putExtra( EnterUserPassword.EXTRA_FILENAME, configFile.getAbsolutePath() );
+		Intent intent = new Intent(null, Uri.fromFile(configFile), context, EnterUserPassword.class );
 		
 		notification.setLatestEventInfo(
 				context,
