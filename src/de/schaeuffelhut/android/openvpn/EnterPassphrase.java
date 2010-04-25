@@ -36,19 +36,13 @@ public class EnterPassphrase extends Activity implements ServiceConnection {
 
 	private static final String TAG = "OpenVPN-EnterPassphrase";
 	
-	public static String EXTRA_FILENAME = "extra_filename";
-
-	private File mConfigFile;
-
 	private OpenVpnService mOpenVpnService;
 
 	private AlertDialog mDialog;
-	
-	
+		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mConfigFile = new File( getIntent().getStringExtra( EXTRA_FILENAME ) );
 		showDialog( 1 );
 
 		if ( !bindService(
@@ -75,14 +69,14 @@ public class EnterPassphrase extends Activity implements ServiceConnection {
 		DialogInterface.OnClickListener ok = new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				EditText passphrase = (EditText)((AlertDialog)dialog).findViewById( R.id.enter_passphrase_passphrase );
-				mOpenVpnService.daemonPassphrase( mConfigFile, passphrase.getText().toString() );
+				mOpenVpnService.daemonPassphrase( getConfigFile(), passphrase.getText().toString() );
 				finish();
 			}
 		};
 		
 		//TODO: find out how to access dialog without field mDialog 
 		mDialog = new AlertDialog.Builder(this)
-		.setTitle( "Passphrase for " + mConfigFile.getName() )
+		.setTitle( "Passphrase for " + getConfigFile().getName() )
 		.setView( LayoutInflater.from(this).inflate( R.layout.enter_passphrase, null) )
 		.setNeutralButton("OK", ok).create();
 		
@@ -110,5 +104,9 @@ public class EnterPassphrase extends Activity implements ServiceConnection {
 		if ( mDialog != null && mDialog.getButton( AlertDialog.BUTTON_NEUTRAL ) != null )
 			mDialog.getButton( AlertDialog.BUTTON_NEUTRAL ).setEnabled( false );
 	}
-	
+
+	private File getConfigFile()
+	{
+		return new File( getIntent().getData().getPath() );
+	}
 }

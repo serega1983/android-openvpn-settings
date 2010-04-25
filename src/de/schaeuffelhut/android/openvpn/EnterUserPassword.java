@@ -36,8 +36,6 @@ public class EnterUserPassword extends Activity implements ServiceConnection {
 
 	private static final String TAG = "OpenVPN-EnterPassphrase";
 	
-	public static String EXTRA_FILENAME = "extra_filename";
-
 	private OpenVpnService mOpenVpnService;
 
 	private AlertDialog mDialog;
@@ -126,6 +124,6 @@ public class EnterUserPassword extends Activity implements ServiceConnection {
 
 	private File getConfigFile()
 	{
-		return new File( getIntent().getStringExtra( EXTRA_FILENAME ) );
+		return new File( getIntent().getData().getPath() );
 	}	
 }
