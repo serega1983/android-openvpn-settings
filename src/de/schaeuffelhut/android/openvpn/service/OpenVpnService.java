@@ -73,7 +73,7 @@ public final class OpenVpnService extends Service
 		sRunningInstance = new WeakReference<OpenVpnService>( this );
 	}
 	private void markServiceStopped(){
-		sRunningInstance = new WeakReference<OpenVpnService>( this );
+		sRunningInstance = null;
 	}
 	
 	/*
