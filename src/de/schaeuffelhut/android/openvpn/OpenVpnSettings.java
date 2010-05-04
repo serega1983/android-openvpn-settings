@@ -84,11 +84,21 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
         	pref.setOnPreferenceChangeListener( new Preference.OnPreferenceChangeListener() {
 				public boolean onPreferenceChange(Preference preference, Object newValue) {
 					if ( newValue == null )
+					{
 						/*noop*/;
+					}
 					else if ( (Boolean)newValue )
+					{
 						startService( new Intent(OpenVpnSettings.this, OpenVpnService.class) );
+						if ( !bindService( new Intent( OpenVpnSettings.this, OpenVpnService.class ), OpenVpnSettings.this, 0 ) )
+				        {
+							Log.w(TAG, "Could not bind to ControlShell" );
+				        }
+					}
 					else
+					{
 						stopService( new Intent(OpenVpnSettings.this, OpenVpnService.class) );
+					}
 					return false;
 				}
 			});
@@ -108,19 +118,21 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
         {
 			Log.w(TAG, "Could not bind to ControlShell" );
         }
-		
-		registerReceiver( 
-				new BroadcastReceiver() {
-					@Override public void onReceive(Context context, Intent intent) 
-					{
-						if ( !OpenVpnSettings.this.bindService( new Intent( OpenVpnSettings.this, OpenVpnService.class ), OpenVpnSettings.this, 0 ) )
-				        {
-							Log.w(TAG, "Could not bind to ControlShell" );
-				        }
-					}
-				},
-				new IntentFilter( Intents.OPEN_VPN_SERVICE_STARTED )
-		);
+
+// was never unregistered and leaked a reference
+// is it really necessary?
+//		registerReceiver( 
+//				new BroadcastReceiver() {
+//					@Override public void onReceive(Context context, Intent intent) 
+//					{
+//						if ( !OpenVpnSettings.this.bindService( new Intent( OpenVpnSettings.this, OpenVpnService.class ), OpenVpnSettings.this, 0 ) )
+//				        {
+//							Log.w(TAG, "Could not bind to ControlShell" );
+//				        }
+//					}
+//				},
+//				new IntentFilter( Intents.OPEN_VPN_SERVICE_STARTED )
+//		);
 		
 		if ( Util.applicationWasUpdated( this ) )
 			showDialog( DIALOG_CHANGELOG );
