@@ -160,6 +160,8 @@ public final class OpenVpnService extends Service
 			mComDir.mkdirs();
 		Log.d( TAG, "mComDir=" + mComDir );
 		
+		daemonAttach();
+		
 		mConnectivity = new NetworkConnectivityListener();
 		mConnectivity.registerHandler(new Handler(){
 			boolean isFirstMessage = true;
@@ -173,23 +175,16 @@ public final class OpenVpnService extends Service
 				isFirstMessage = false;
 			}
 		}, 0);
-		//mConnectivity.startListening() is called after installer is done.
 
-		new HandlerThread( "OpenVPN-Attach" ) {
-			@Override
-			protected void onLooperPrepared()
-			{
-				daemonAttach();
-				mConnectivity.startListening( getApplicationContext() );
-			}
-		}.start();
+		//TODO: introduce preference setting
+		mConnectivity.startListening( getApplicationContext() );
 	}
 	
 	private synchronized void shutdown()
 	{
 		Log.i(TAG, "shuting down");
 				
-		final ArrayList<DaemonMonitor> daemonMonitors= new ArrayList<DaemonMonitor>( mRegistry.values() );
+		final ArrayList<DaemonMonitor> daemonMonitors = new ArrayList<DaemonMonitor>( mRegistry.values() );
 		
 		// sending shutdown signal to all running daemons
 		for( DaemonMonitor daemonMonitor : daemonMonitors )
@@ -215,7 +210,7 @@ public final class OpenVpnService extends Service
 		}
 
 		mConnectivity.stopListening();
-		mConnectivity = null;		
+		mConnectivity = null;
 	}
 
 	synchronized void daemonAttach(File config, boolean start)
