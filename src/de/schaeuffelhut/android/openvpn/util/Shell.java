@@ -47,13 +47,15 @@ public abstract class Shell extends Thread
 		mSu = findBinary( "su" );
 	}
 
-	private static String findBinary(String executable) {
+	static String findBinary(String executable) {
 		for (String bin : new String[]{"/system/bin/", "/system/xbin/"}) {
 			String path = bin+executable;
 			if ( new File( path ).exists() )
 				return path;
 		}
-		throw new RuntimeException( "executable not found: " + executable );
+		return executable;
+		// causes Force Close on unrooted phones
+//		throw new RuntimeException( "executable not found: " + executable );
 	}
 
 	public final void run()
