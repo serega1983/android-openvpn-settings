@@ -118,14 +118,18 @@ public final class DaemonMonitor
 		}
 		
 		final File openvpnBinary = Preferences.getPathToBinaryAsFile( PreferenceManager.getDefaultSharedPreferences( mContext ) );
+		if ( openvpnBinary == null ) {
+			Log.w( mTagDaemonMonitor, "start(): openvpn binary not found" );
+			return;//TODO: send Intents.DAEMON_STATE_DISABLED
+		}
 		if ( !openvpnBinary.exists() ) {
 			Log.w( mTagDaemonMonitor, "start(): file not found: " + openvpnBinary );
-			return;
+			return; //TODO: send Intents.DAEMON_STATE_DISABLED 
 		}
 		
 		if ( !mConfigFile.exists() ) {
 			Log.w( mTagDaemonMonitor, "start(): file not found: " + mConfigFile );
-			return;
+			return; //TODO: send Intents.DAEMON_STATE_DISABLED
 		}
 
 		// reset saved dns state
