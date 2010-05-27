@@ -34,10 +34,12 @@ import android.content.Intent;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.Notifications;
 import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.util.DnsUtil;
+import de.schaeuffelhut.android.openvpn.util.Preconditions;
 import de.schaeuffelhut.android.openvpn.util.Shell;
 import de.schaeuffelhut.android.openvpn.util.SystemPropertyUtil;
 import de.schaeuffelhut.android.openvpn.util.TrafficStats;
@@ -105,6 +107,16 @@ public final class DaemonMonitor
 			return;
 		}
 
+		if ( !Preconditions.check( mContext ) ){
+			mContext.sendStickyBroadcast( 
+					Intents.daemonStateChanged(
+							mConfigFile.getAbsolutePath(),
+							Intents.DAEMON_STATE_DISABLED
+					)
+			);
+			return;
+		}
+		
 		final File openvpnBinary = Preferences.getPathToBinaryAsFile( PreferenceManager.getDefaultSharedPreferences( mContext ) );
 		if ( !openvpnBinary.exists() ) {
 			Log.w( mTagDaemonMonitor, "start(): file not found: " + openvpnBinary );

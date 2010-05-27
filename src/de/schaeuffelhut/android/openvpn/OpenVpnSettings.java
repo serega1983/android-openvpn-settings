@@ -43,6 +43,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
 import de.schaeuffelhut.android.openvpn.util.DnsUtil;
+import de.schaeuffelhut.android.openvpn.util.Preconditions;
 import de.schaeuffelhut.android.openvpn.util.UnexpectedSwitchValueException;
 import de.schaeuffelhut.android.openvpn.util.Util;
 
@@ -417,7 +418,8 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 			.setMessage( R.string.fix_dns_dialog_message )
 			.setPositiveButton( "Reset DNS" , new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
-					DnsUtil.setDns1( "8.8.8.8" );
+					if ( Preconditions.check(OpenVpnSettings.this) )
+						DnsUtil.setDns1( "8.8.8.8" );
 				}
 			}).setNegativeButton( "Cancel", null )
 			.create();
