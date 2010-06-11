@@ -34,7 +34,6 @@ import android.content.Intent;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.Notifications;
 import de.schaeuffelhut.android.openvpn.Preferences;
@@ -66,7 +65,7 @@ public final class DaemonMonitor
 	final File mMgmgPortFile;
 	final int mNotificationId;
 	
-	Shell mShell;
+	Shell mDaemonProcess;
 	private ManagementThread mManagementThread;
 
 
@@ -89,7 +88,7 @@ public final class DaemonMonitor
 	
 	private boolean reattach()
 	{
-		mShell = null;
+		mDaemonProcess = null;
 
 		mManagementThread = new ManagementThread( this );
 		if ( mManagementThread.attach() )
@@ -143,26 +142,38 @@ public final class DaemonMonitor
 		if ( mMgmgPwFile.exists() )   mMgmgPwFile.delete();
 		if ( mMgmgPortFile.exists() ) mMgmgPortFile.delete();
 
-		mShell = new Shell( mTagDaemonMonitor + "-daemon" )
+		mContext.sendStickyBroadcast( 
+				Intents.daemonStateChanged(
+						mConfigFile.getAbsolutePath(),
+						Intents.DAEMON_STATE_STARTUP
+				)
+		);
+		if( !(new File("/dev/tun").exists() || new File("/dev/net/tun").exists()) ) // only load the driver if it's not yet available
 		{
-			@Override
-			protected void onShellPrepared()
+			if (Preferences.getDoModprobeTun( PreferenceManager.getDefaultSharedPreferences(mContext) ) )  // LATER remove the preferences setting
 			{
-				mContext.sendStickyBroadcast( 
-						Intents.daemonStateChanged(
-								mConfigFile.getAbsolutePath(),
-								Intents.DAEMON_STATE_STARTUP
-						)
-				);
-
-				cmd( "cd " + openvpnBinary.getParentFile().getAbsolutePath() );
-				su();
-				
-				if( !(new File("/dev/tun").exists() || new File("/dev/net/tun").exists()) ) // only load the driver if it's not yet available
-					if (Preferences.getDoModprobeTun( PreferenceManager.getDefaultSharedPreferences(mContext) ) )  // LATER remove the preferences setting
-							cmd( Preferences.getLoadTunModuleCommand( PreferenceManager.getDefaultSharedPreferences(mContext) ) );
-				
-				exec( String.format( 
+				Shell insmod = new Shell( 
+						mTagDaemonMonitor + "-daemon",
+						Preferences.getLoadTunModuleCommand( PreferenceManager.getDefaultSharedPreferences(mContext) ),
+						Shell.SU
+				){
+					@Override
+					protected void onCmdTerminated() {
+						waitForQuietly();
+						try {joinLoggers();} catch (InterruptedException e) {}
+					}
+				};
+				insmod.start();
+				try {
+					insmod.join();
+				} catch (InterruptedException e) {
+					throw new RuntimeException( "waiting for insmod to finish", e );
+				}
+			}
+		}
+		mDaemonProcess = new Shell( 
+				mTagDaemonMonitor + "-daemon",
+				String.format( 
 						"%s --cd %s --config %s --writepid %s --script-security %d --management 127.0.0.1 %d --management-query-passwords",
 						openvpnBinary.getAbsolutePath(),				
 						Util.shellEscape(mConfigFile.getParentFile().getAbsolutePath()),
@@ -170,8 +181,9 @@ public final class DaemonMonitor
 						Util.shellEscape(mPidFile.getAbsolutePath()),
 						Preferences.getScriptSecurityLevel( mContext, mConfigFile ),
 						mgmtPort
-				));
-			}
+				),
+				Shell.SU
+		){
 
 			boolean waitForMgmt = true;
 			@Override
@@ -185,7 +197,8 @@ public final class DaemonMonitor
 				}
 			}
 
-			protected void onShellTerminated()
+			@Override
+			protected void onCmdTerminated()
 			{
 				// while mManagementThread == null, system is in startup phase
 				// and a DAEMON_STATE_DISABLED message is expected
@@ -198,10 +211,11 @@ public final class DaemonMonitor
 					);
 				
 				waitForQuietly();
-				mShell = null;
+				try {joinLoggers();} catch (InterruptedException e) {}
+				mDaemonProcess = null;
 			}
 		};
-		mShell.start();
+		mDaemonProcess.start();
 	}
 
 	void restart()
@@ -331,7 +345,7 @@ final class ManagementThread extends Thread
 		// try to attach to OpenVPN management interface port,
 		// keep trying while startup shell is alive 
 		boolean attached;
-		for(int i=0; !(attached = attach()) && mDaemonMonitor.mShell != null && mDaemonMonitor.mShell.isAlive()  && i < 10 ; i++ )
+		for(int i=0; !(attached = attach()) && mDaemonMonitor.mDaemonProcess != null && mDaemonMonitor.mDaemonProcess.isAlive()  && i < 10 ; i++ )
 		{
 			try {sleep(1000);} catch (InterruptedException e) {}
 		}
