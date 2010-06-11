@@ -13,17 +13,10 @@ public class SystemPropertyUtil
 	public final static String NET_DNSCHANGE = "net.dnschange";
 	
 	private final static class GetProp extends Shell {
-		private final String key;
 		String value;
 
 		private GetProp(String key) {
-			super( "OpenVPN-Settings-getprop" );
-			this.key = key;
-		}
-
-		@Override
-		protected void onShellPrepared() {
-			exec( "getprop " + key );
+			super( "OpenVPN-Settings-getprop", "getprop " + key, Shell.SH );
 		}
 
 		@Override
@@ -33,7 +26,7 @@ public class SystemPropertyUtil
 		}
 		
 		@Override
-		protected void onShellTerminated() {
+		protected void onCmdTerminated() {
 			try { joinLoggers(); } catch (InterruptedException e) {Log.e("OpenVPN-Settings-getprop", "joining loggers", e);};
 			waitForQuietly();
 		}
@@ -45,12 +38,7 @@ public class SystemPropertyUtil
 		Matcher m = p.matcher("");
 		
 		private GetAllProp() {
-			super( "OpenVPN-Settings-getallprop" );
-		}
-
-		@Override
-		protected void onShellPrepared() {
-			exec( "getprop"  );
+			super( "OpenVPN-Settings-getallprop", "getprop", Shell.SH );
 		}
 
 		@Override
@@ -65,32 +53,20 @@ public class SystemPropertyUtil
 		}
 		
 		@Override
-		protected void onShellTerminated() {
+		protected void onCmdTerminated() {
 			try { joinLoggers(); } catch (InterruptedException e) {Log.e("OpenVPN-Settings-getallprop", "joining loggers", e);}
 			waitForQuietly();
 		}
 	}
 
 	private final static class SetProp extends Shell {
-		private final String key;
-		private final String value;
 
 		private SetProp(String key, String value) {
-			super( "OpenVPN-Settings-setprop" );
-			this.key = key;
-			this.value = value;
+			super( "OpenVPN-Settings-setprop", "setprop " + key + " " + value, Shell.SU );
 		}
 
 		@Override
-		protected void onShellPrepared() {
-			su();
-			//TODO: understand this necessary delay
-			//try { sleep(500); } catch (InterruptedException e) {}
-			exec( "setprop " + key + " " + value );
-		}
-
-		@Override
-		protected void onShellTerminated() {
+		protected void onCmdTerminated() {
 			try { joinLoggers(); } catch (InterruptedException e) {Log.e("OpenVPN-Settings-setprop", "joining loggers", e);}
 			waitForQuietly();
 		}
