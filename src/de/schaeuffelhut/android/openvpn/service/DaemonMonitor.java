@@ -148,6 +148,8 @@ public final class DaemonMonitor
 						Intents.DAEMON_STATE_STARTUP
 				)
 		);
+		
+		// TODO: is /dev/tun a reliable indicator for tun capability being installed? 
 		if( !(new File("/dev/tun").exists() || new File("/dev/net/tun").exists()) ) // only load the driver if it's not yet available
 		{
 			if (Preferences.getDoModprobeTun( PreferenceManager.getDefaultSharedPreferences(mContext) ) )  // LATER remove the preferences setting
@@ -171,6 +173,7 @@ public final class DaemonMonitor
 				}
 			}
 		}
+		
 		mDaemonProcess = new Shell( 
 				mTagDaemonMonitor + "-daemon",
 				String.format( 
