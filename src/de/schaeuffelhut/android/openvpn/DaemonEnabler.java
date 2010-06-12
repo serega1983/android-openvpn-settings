@@ -280,6 +280,8 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 
 	private String getHumanReadableDaemonState(int daemonState) {
 		switch (daemonState) {
+		case Intents.DAEMON_STATE_STARTUP:
+			return "Startup";
 		case Intents.DAEMON_STATE_ENABLED:
 			return "Enabled";
 		case Intents.DAEMON_STATE_DISABLED:
