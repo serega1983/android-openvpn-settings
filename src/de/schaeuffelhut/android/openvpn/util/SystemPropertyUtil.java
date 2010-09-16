@@ -85,14 +85,23 @@ public class SystemPropertyUtil
 		return getProp.value;
 	}
 
-	public final static int getIntProperty(String key)
+	public final static Integer getIntProperty(String key)
 	{
-		final int result;
+		Integer result;
 		String value = getProperty(key);
 		if ( value == null )
-			result = 0;
+			result = null;
+		else if ( "".equals( value ) )
+			result = null;
 		else
-			result = Integer.parseInt( value );
+		{
+			try {
+				result = Integer.parseInt( value );
+			} catch (NumberFormatException e) {
+				Log.e( "OpenVPN-Settings", String.format( "getIntProperty(\"%s\")", value ), e );
+				result = null;
+			}
+		}
 		return result;
 	}
 	
