@@ -3,24 +3,20 @@ package de.schaeuffelhut.android.openvpn.util;
 public class DnsUtil {
 	private DnsUtil(){}
 
-	public static int bumpDns() {
+	public static Integer bumpDns() {
 	    /*
 	     * Bump the property that tells the name resolver library to reread
 	     * the DNS server list from the properties.
 	     */
-	    String propVal = SystemPropertyUtil.getProperty( SystemPropertyUtil.NET_DNSCHANGE );
-	    int n = 0;
-	    if (propVal.length() != 0) {
-	        try {
-	            n = Integer.parseInt(propVal);
-	        } catch (NumberFormatException e) {}
-	    }
-	    n++;
-	    SystemPropertyUtil.setProperty( SystemPropertyUtil.NET_DNSCHANGE, "" + n );
+		Integer n = SystemPropertyUtil.getIntProperty( SystemPropertyUtil.NET_DNSCHANGE );
+		if ( n != null ) {
+			n++;
+		    SystemPropertyUtil.setProperty( SystemPropertyUtil.NET_DNSCHANGE, Integer.toString( n ) );			
+		}
 	    return n;
 	}
 
-	public static int setDns1(String dns1) {
+	public static Integer setDns1(String dns1) {
 		SystemPropertyUtil.setProperty( SystemPropertyUtil.NET_DNS1, dns1 );
 		return bumpDns();
 	}

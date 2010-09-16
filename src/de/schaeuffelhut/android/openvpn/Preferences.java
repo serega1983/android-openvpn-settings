@@ -223,10 +223,10 @@ public final class Preferences {
 		return id;
 	}
 	
-	public final static void setDns1(Context context, File configFile, int dnsChange, String dns)
+	public final static void setDns1(Context context, File configFile, Integer dnsChange, String dns)
 	{
-		Editor edit = PreferenceManager.getDefaultSharedPreferences(context).edit();
-		edit.putInt( Preferences.KEY_CONFIG_DNSCHANGE(configFile), dnsChange );
+		Editor edit = PreferenceManager.getDefaultSharedPreferences(context).edit();		
+		edit.putInt( Preferences.KEY_CONFIG_DNSCHANGE(configFile), dnsChange == null ? -1 : dnsChange.intValue() );
 		edit.putString( Preferences.KEY_CONFIG_DNS1(configFile), dns );
 		edit.commit();
 	}

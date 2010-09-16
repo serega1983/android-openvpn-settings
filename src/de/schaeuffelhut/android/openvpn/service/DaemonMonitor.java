@@ -1028,17 +1028,24 @@ final class ManagementThread extends Thread
 		{
 			HashMap<String, String> properties = SystemPropertyUtil.getProperties();
 
-			int systemDnsChange = SystemPropertyUtil.getIntProperty( SystemPropertyUtil.NET_DNSCHANGE );
+			Integer systemDnsChange = SystemPropertyUtil.getIntProperty( SystemPropertyUtil.NET_DNSCHANGE );
 			int myDnsChange = Preferences.getDnsChange(mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile);
 			Log.d(mTAG_MT, "=============> " + myDnsChange  + " == " + systemDnsChange );
-			if ( myDnsChange == systemDnsChange )
+			if ( systemDnsChange == null )
 			{
+				// DNS is not yet setup, leave it alone
+				Log.d(mTAG_MT, "=============> applying new dns server, dns subsystem was not yet activated" );
+			}
+			else if ( systemDnsChange.intValue() == myDnsChange  )
+			{
+				// Our DNS is already active, leave it alone
 				Log.d(mTAG_MT, "=============> applying new dns server, already set" );
 			}
 			else
 			{
+				// Apply our DNS settings
 				Log.d(mTAG_MT, "=============> applying new dns server" );
-				int newDnsChange = DnsUtil.setDns1( vpnDns );
+				Integer newDnsChange = DnsUtil.setDns1( vpnDns );
 				Preferences.setDns1(
 						mDaemonMonitor.mContext,
 						mDaemonMonitor.mConfigFile,
@@ -1055,15 +1062,22 @@ final class ManagementThread extends Thread
 		// stop traffic statistics  TODO chri - option in settings to activate/deactivate traffic stats 
 		sendCommandImmediately( new SimpleCommand( "bytecount 0") );
 		
-		int systemDnsChange = SystemPropertyUtil.getIntProperty( SystemPropertyUtil.NET_DNSCHANGE );
+		Integer systemDnsChange = SystemPropertyUtil.getIntProperty( SystemPropertyUtil.NET_DNSCHANGE );
 		int myDnsChange = Preferences.getDnsChange(mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile);
-		if ( myDnsChange == systemDnsChange )
+		if ( systemDnsChange == null )
 		{
+			// DNS is not yet setup, leave it alone
+			Log.d(mTAG_MT, "=============> applying new dns server, dns subsystem was not yet activated" );
+		}
+		else if ( systemDnsChange.intValue() == myDnsChange )
+		{
+			// This is our change, revert it.
 			Log.d(mTAG_MT, "=============> " + myDnsChange  + " == " + systemDnsChange + " resetting dns" );
 			DnsUtil.setDns1(Preferences.getDns1(mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile));
 		}
 		else
 		{
+			// Someone else has already changed the DNS, leave it alone.
 			Log.d(mTAG_MT, "=============> " + myDnsChange  + " == " + systemDnsChange + " resetting dns, leaving dns alone" );
 		}
 	}
