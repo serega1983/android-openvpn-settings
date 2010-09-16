@@ -178,7 +178,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 			pref.setEnabled(false);
 			pref.setPersistent(false);
 			pref.setTitle( "No configuration found." );
-			pref.setSummary( "Please copy your *.config, certificates, etc to\n" + Preferences.getExternalStorage(PreferenceManager.getDefaultSharedPreferences(this)) );
+			pref.setSummary( "Please copy your *.conf, *.ovpn, certificates, etc to\n" + Preferences.getExternalStorage(PreferenceManager.getDefaultSharedPreferences(this)) );
 			configurations.addPreference( pref );
 		}
 	}
