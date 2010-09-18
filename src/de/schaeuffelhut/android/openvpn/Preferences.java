@@ -44,6 +44,7 @@ public final class Preferences {
 	public static final String KEY_OPENVPN_DO_MODPROBE_TUN = "openvpn_do_modprobe_tun";
 
 	public static final String KEY_NEXT_NOTIFICATION_ID = "openvpn_next_notification_id";
+	public static final String KEY_FIX_HTC_ROUTES = "fix_htc_routes"; 	// see issue #35: http://code.google.com/p/android-openvpn-settings/issues/detail?id=35
 
 	public final static String KEY_CONFIG(String config){
 		return String.format( "%s[%s]", KEY_OPENVPN_CONFIGURATIONS, config );
@@ -277,5 +278,11 @@ public final class Preferences {
 			configFiles = configDir.listFiles( new Util.FileExtensionFilter(".conf",".ovpn") );
 	
 		return configFiles == null ? new File[0] : configFiles;
+	}
+	
+	public static boolean getFixHtcRoutes(Context context) 
+	{
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);	
+		return sharedPreferences.getBoolean( Preferences.KEY_FIX_HTC_ROUTES, false );
 	}
 }
