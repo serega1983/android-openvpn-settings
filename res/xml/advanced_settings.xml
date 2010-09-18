@@ -50,6 +50,12 @@
 		android:persistent="true"
 		/>
 
+	<!-- see issue #35: http://code.google.com/p/android-openvpn-settings/issues/detail?id=35 -->
+	<CheckBoxPreference
+		android:key="fix_htc_routes"
+		android:title="Fix HTC Routes"
+		android:summary="Fix HTC routes with Froyo ROMs"/>
+		
 	<!-- 
 	<EditTextPreference
 		android:key="openvpn_path_to_su"
