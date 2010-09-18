@@ -24,10 +24,4 @@
 		android:entries="@array/openvpn_param_script_security_level_text"
 		android:entryValues="@array/openvpn_param_script_security_level_value" android:defaultValue="1"/>
 
-	<!-- see issue #35: http://code.google.com/p/android-openvpn-settings/issues/detail?id=35 -->
-	<CheckBoxPreference
-		android:key="fix_htc_routes"
-		android:title="Fix HTC Routes"
-		android:summary="Fix HTC routes with Froyo ROMs"/>
-		
 </PreferenceScreen>
