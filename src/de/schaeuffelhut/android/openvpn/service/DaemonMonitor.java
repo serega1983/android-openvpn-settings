@@ -1054,6 +1054,10 @@ final class ManagementThread extends Thread
 				);
 			}
 		}
+		//Fix HTC routes if needed
+		if(Preferences.getFixHtcRoutes(mDaemonMonitor.mContext))
+			updateHTCRoutes();
+		
 	}
 
 	// invoked through onState
@@ -1109,5 +1113,21 @@ final class ManagementThread extends Thread
 				oldState,
 				System.currentTimeMillis()
 		) );
+	}
+	
+	// see issue #35: http://code.google.com/p/android-openvpn-settings/issues/detail?id=35
+	protected void updateHTCRoutes()
+	{
+		new Shell( 
+				"OpenVPN-Settings-ip-route",
+				"ip ru del table wifi",
+				Shell.SU
+		).run();
+		
+		new Shell( 
+				"OpenVPN-Settings-ip-route",
+				"ip ru del table gprs",
+				Shell.SU
+		).run();
 	}
 }
