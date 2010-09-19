@@ -39,7 +39,7 @@ public final class Notifications {
 	public static void notifyConnected(int id, Context context, NotificationManager notificationManager, File configFile, String msg) {
 		Notification notification = new Notification(
 				R.drawable.vpn_connected,
-				configFile.getName() + ": Connected",
+				Preferences.getConfigName(context, configFile) + ": Connected",
 				System.currentTimeMillis()
 		);
 		notification.flags |= Notification.FLAG_NO_CLEAR;
@@ -50,7 +50,7 @@ public final class Notifications {
 		
 		notification.setLatestEventInfo(
 				context,
-				"OpenVPN, " + configFile.getName(),
+				"OpenVPN, " + Preferences.getConfigName(context, configFile),
 				TextUtils.isEmpty( msg ) ? "Connected" : msg,
 				PendingIntent.getActivity(
 						context,
@@ -72,7 +72,7 @@ public final class Notifications {
 	public static void notifyDisconnected(int id, Context context, NotificationManager notificationManager, File configFile, String msg) {
 		Notification notification = new Notification(
 				R.drawable.vpn_disconnected,
-				configFile.getName() +": " + msg,
+				Preferences.getConfigName(context, configFile) +": " + msg,
 				System.currentTimeMillis()
 		);
 		notification.flags |= Notification.FLAG_NO_CLEAR;
@@ -83,7 +83,7 @@ public final class Notifications {
 		
 		notification.setLatestEventInfo(
 				context,
-				"OpenVPN, " + configFile.getName(),
+				"OpenVPN, " + Preferences.getConfigName(context, configFile),
 				msg,
 				PendingIntent.getActivity(
 						context,
@@ -110,7 +110,7 @@ public final class Notifications {
 		notification.setLatestEventInfo(
 				context,
 				"Passphrase required",
-				String.format( "for configuration %s", configFile.getName() ),
+				String.format( "for configuration %s", Preferences.getConfigName(context, configFile) ),
 				PendingIntent.getActivity(
 						context,
 						0,
@@ -136,7 +136,7 @@ public final class Notifications {
 		notification.setLatestEventInfo(
 				context,
 				"Username/Password required",
-				String.format( "for configuration %s", configFile.getName() ),
+				String.format( "for configuration %s", Preferences.getConfigName(context, configFile) ),
 				PendingIntent.getActivity(
 						context,
 						0,

@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import android.util.Log;
-import android.widget.Toast;
 
 
 public class Shell extends Thread

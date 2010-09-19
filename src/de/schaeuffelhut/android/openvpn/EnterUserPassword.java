@@ -30,6 +30,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.EditText;
+import android.widget.TextView;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
 
 public class EnterUserPassword extends Activity implements ServiceConnection {
@@ -39,22 +40,21 @@ public class EnterUserPassword extends Activity implements ServiceConnection {
 	private OpenVpnService mOpenVpnService;
 
 	private AlertDialog mDialog;
-	
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		showDialog( 1 );
 
 		if ( !bindService(
-        		new Intent( this, OpenVpnService.class ),
-        		this,
-        		Context.BIND_AUTO_CREATE
-        ) )
-        {
+				new Intent( this, OpenVpnService.class ),
+				this,
+				Context.BIND_AUTO_CREATE
+			) )
+		{
 			Log.w(TAG, "Could not bind to ControlShell" );
-        }
-	}	
+		}
+	}
 
 	@Override
 	protected void onDestroy() {
@@ -62,21 +62,9 @@ public class EnterUserPassword extends Activity implements ServiceConnection {
 		if ( mOpenVpnService != null )
 			unbindService( this );
 	}
-		
+
 	@Override
 	protected Dialog onCreateDialog(int id) {
-
-//		final EditText username = new EditText(this);
-//		username.setHint( "Username" );
-
-//		final EditText password = new EditText(this);
-//		password.setInputType( InputType.TYPE_TEXT_VARIATION_PASSWORD );
-//		password.setHint( "Passphrase" );
-
-//		LinearLayout linearLayout = new LinearLayout(this);
-//		linearLayout.addView(username);
-//		linearLayout.addView(password);
-		
 		DialogInterface.OnClickListener ok = new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				EditText username = (EditText)((AlertDialog)dialog).findViewById( R.id.enter_user_password_user);
@@ -90,9 +78,9 @@ public class EnterUserPassword extends Activity implements ServiceConnection {
 			}
 		};
 		
-		//TODO: find out how to acces dialog without field 
+		//TODO: find out how to access dialog without field 
 		mDialog = new AlertDialog.Builder(this)
-		.setTitle( "Passphrase for " + getConfigFile().getName() )
+		.setTitle( "Password required" )
 		.setView( LayoutInflater.from(this).inflate( R.layout.enter_user_password, null) )
 		.setNeutralButton("OK", ok).create();
 		
@@ -104,7 +92,8 @@ public class EnterUserPassword extends Activity implements ServiceConnection {
 	protected synchronized void onPrepareDialog(int id, Dialog dialog) {
 		super.onPrepareDialog(id, dialog);
 		AlertDialog alertDialog = (AlertDialog)dialog;
-		alertDialog.setTitle( "Passphrase for " + getConfigFile().getName() );
+		alertDialog.setTitle( "Password required" );
+		((TextView)alertDialog.findViewById( R.id.enter_user_password_config_name )).setText( Preferences.getConfigName( this, getConfigFile() ) );
 		alertDialog.getButton( AlertDialog.BUTTON_NEUTRAL ).setEnabled( mOpenVpnService != null );
 	}
 	
@@ -125,5 +114,5 @@ public class EnterUserPassword extends Activity implements ServiceConnection {
 	private File getConfigFile()
 	{
 		return new File( getIntent().getData().getPath() );
-	}	
+	}
 }

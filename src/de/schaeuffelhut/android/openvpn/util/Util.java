@@ -49,6 +49,12 @@ public class Util
 		}
 	}
 
+	public final static class IsDirectoryFilter implements FileFilter {
+		public boolean accept(File pathname) {
+			return pathname.isDirectory();
+		}
+	}
+
 	public final static class FileExtensionFilter implements FileFilter {
 		final String[] suffix;
 		public FileExtensionFilter(String... suffix) {
@@ -372,4 +378,18 @@ public class Util
 		return tunDriverPath;
 	}
 
+	/**
+	 * List files in a null pointer safe way.
+	 * @param configDir the directory to list, may be null
+	 * @param filter the filter to match names against, may be null.
+	 * @return an array of files if no files match the filters the empty array is returned.
+	 */
+	public static File[] listFiles(File configDir, FileFilter filter) {
+		final File[] files;
+		if ( configDir == null )
+			files = null;
+		else
+			files = configDir.listFiles( filter );
+		return files == null ? new File[0] : files;
+	}
 }

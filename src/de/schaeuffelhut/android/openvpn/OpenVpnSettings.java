@@ -149,7 +149,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 		public ConfigFilePreference(Context context, OpenVpnService openVpnService, File config) {
 			super(context);
 			setKey( Preferences.KEY_CONFIG_ENABLED( config ) );
-			setTitle( config.getName() );
+			setTitle( Preferences.getConfigName(context, config) );
 			setSummary( "Select to turn on OpenVPN tunel");
 			mConfig = config;
 			mDaemonEnabler = new DaemonEnabler( context, openVpnService, this, config );
@@ -210,8 +210,17 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 
 		case REQUEST_CODE_EDIT_CONFIG_PREFERENCES: {
 			String filename = data == null ? null : data.getStringExtra( EditConfig.EXTRA_FILENAME );
-			if ( filename != null && mOpenVpnService != null && mOpenVpnService.isDaemonStarted( new File(filename)) )
-				showDialog( DIALOG_PLEASE_RESTART );
+			if ( filename != null )
+			{
+				File config = new File(filename);
+				if ( mOpenVpnService != null && mOpenVpnService.isDaemonStarted(config) )
+					showDialog( DIALOG_PLEASE_RESTART );
+				
+				// refresh ConfigFilePreference
+				PreferenceCategory configurations = (PreferenceCategory) findPreference(Preferences.KEY_OPENVPN_CONFIGURATIONS);
+				ConfigFilePreference pref = (ConfigFilePreference)configurations.findPreference( Preferences.KEY_CONFIG_ENABLED( config ) );
+				pref.setTitle( Preferences.getConfigName(getApplicationContext(), config) );
+			}
 		} break;
 
 		case REQUEST_CODE_ADVANCED_SETTINGS: {
