@@ -2,6 +2,12 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:title="@string/openvpn_settings_category">
 	
+	<EditTextPreference
+		android:key="openvpn_config_name"
+		android:title="Custom Name"
+		android:persistent="true"
+		android:singleLine="true"
+		/>
 
 	<CheckBoxPreference
 		android:key="openvpn_config_use_vpn_dns"
@@ -15,7 +21,7 @@
 		android:persistent="true"
 		android:singleLine="true"
 		android:inputType="phone"
-		 />
+		/>
 
 	<ListPreference
 		android:key="openvpn_config_script_security_level"

@@ -43,6 +43,10 @@ public class EditConfig extends Activity
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		// always return config name to caller
+		setResult( 0, new Intent().putExtra(EXTRA_FILENAME, getIntent().getStringExtra( EXTRA_FILENAME ) ) );
+
 		setContentView(R.layout.edit_config);
 
 		mConfigName = (EditText) findViewById(R.id.edit_config_name);

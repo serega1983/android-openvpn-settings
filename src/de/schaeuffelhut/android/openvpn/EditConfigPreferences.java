@@ -3,6 +3,7 @@ package de.schaeuffelhut.android.openvpn;
 import java.io.File;
 import java.util.Arrays;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
@@ -18,10 +19,32 @@ public class EditConfigPreferences extends PreferenceActivity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		// always return config name to caller
+		setResult( 0, new Intent().putExtra(EXTRA_FILENAME, getIntent().getStringExtra( EXTRA_FILENAME ) ) );
+		
 		File config = new File( getIntent().getStringExtra( EXTRA_FILENAME ) );
 		
 		addPreferencesFromResource( R.xml.config_settings );
 		
+		renamePreference("openvpn_config_name", Preferences.KEY_CONFIG_NAME(config));
+		{
+			EditTextPreference pref = (EditTextPreference)findPreference( Preferences.KEY_CONFIG_NAME(config) );
+			pref.setOnPreferenceChangeListener( new Preference.OnPreferenceChangeListener() {
+				public boolean onPreferenceChange(Preference preference, Object newValue) {
+					if ( TextUtils.isEmpty( (CharSequence)newValue ) )
+						preference.setSummary( "Enter custom name" );
+					else
+						preference.setSummary( (CharSequence)newValue );
+					return true;
+				}
+			});
+			String value = pref.getText();
+			if ( TextUtils.isEmpty( (value ) ) )
+				pref.setSummary( "Enter custom name" );
+			else
+				pref.setSummary( value );
+		}
+
 		renamePreference("openvpn_config_use_vpn_dns", Preferences.KEY_VPN_DNS_ENABLE(config));
 		
 		renamePreference("openvpn_config_dns1", Preferences.KEY_VPN_DNS(config));

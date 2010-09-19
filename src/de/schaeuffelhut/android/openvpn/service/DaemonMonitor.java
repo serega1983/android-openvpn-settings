@@ -61,8 +61,6 @@ public final class DaemonMonitor
 		
 	final File mConfigFile;
 	final File mPidFile;
-	final File mMgmgPwFile;
-	final File mMgmgPortFile;
 	final int mNotificationId;
 	
 	Shell mDaemonProcess;
@@ -76,9 +74,8 @@ public final class DaemonMonitor
 		mConfigFile = configFile;
 		mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
-		mPidFile = new File( comDir, configFile.getName() + "-pid" );
-		mMgmgPwFile = new File( comDir, configFile.getName() + "-pw" );
-		mMgmgPortFile = new File( comDir, configFile.getName() + "-port" );
+		//TODO: need a unique config identifie, or remove pid writing fetaure
+		mPidFile = new File( comDir, configFile.getAbsolutePath().replace( "_", "__").replace( '/', '_') + "-pid" );
 		mTagDaemonMonitor = String.format("OpenVPN-DaemonMonitor[%s]", mConfigFile);
 			
 		mNotificationId = Preferences.getNotificationId( mContext, mConfigFile );
@@ -139,8 +136,6 @@ public final class DaemonMonitor
 		Preferences.setMgmtPort( mContext, mConfigFile, mgmtPort );
 		
 		if ( mPidFile.exists() )      mPidFile.delete();
-		if ( mMgmgPwFile.exists() )   mMgmgPwFile.delete();
-		if ( mMgmgPortFile.exists() ) mMgmgPortFile.delete();
 
 		mContext.sendStickyBroadcast( 
 				Intents.daemonStateChanged(

@@ -30,6 +30,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.EditText;
+import android.widget.TextView;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
 
 public class EnterPassphrase extends Activity implements ServiceConnection {
@@ -39,7 +40,7 @@ public class EnterPassphrase extends Activity implements ServiceConnection {
 	private OpenVpnService mOpenVpnService;
 
 	private AlertDialog mDialog;
-		
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -49,7 +50,7 @@ public class EnterPassphrase extends Activity implements ServiceConnection {
 				new Intent( this, OpenVpnService.class ),
 				this,
 				Context.BIND_AUTO_CREATE
-		) )
+			) )
 		{
 			Log.w(TAG, "Could not bind to ControlShell" );
 		}
@@ -61,11 +62,9 @@ public class EnterPassphrase extends Activity implements ServiceConnection {
 		if ( mOpenVpnService != null )
 			unbindService( this );
 	}
-	
-	
+
 	@Override
 	protected Dialog onCreateDialog(int id) {
-		
 		DialogInterface.OnClickListener ok = new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				EditText passphrase = (EditText)((AlertDialog)dialog).findViewById( R.id.enter_passphrase_passphrase );
@@ -76,7 +75,7 @@ public class EnterPassphrase extends Activity implements ServiceConnection {
 		
 		//TODO: find out how to access dialog without field mDialog 
 		mDialog = new AlertDialog.Builder(this)
-		.setTitle( "Passphrase for " + getConfigFile().getName() )
+		.setTitle( "Passphrase required" )
 		.setView( LayoutInflater.from(this).inflate( R.layout.enter_passphrase, null) )
 		.setNeutralButton("OK", ok).create();
 		
@@ -87,8 +86,10 @@ public class EnterPassphrase extends Activity implements ServiceConnection {
 	@Override
 	protected synchronized void onPrepareDialog(int id, Dialog dialog) {
 		super.onPrepareDialog(id, dialog);
-		
-		((AlertDialog)dialog).getButton( AlertDialog.BUTTON_NEUTRAL ).setEnabled( mOpenVpnService != null );
+		AlertDialog alertDialog = (AlertDialog)dialog;
+		alertDialog.setTitle( "Passphrase required" );
+		((TextView)alertDialog.findViewById( R.id.enter_passphrase_config_name )).setText( Preferences.getConfigName( this, getConfigFile() ) );
+		alertDialog.getButton( AlertDialog.BUTTON_NEUTRAL ).setEnabled( mOpenVpnService != null );
 	}
 	
 	public synchronized void onServiceConnected(ComponentName name, IBinder serviceBinder) {

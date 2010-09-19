@@ -16,6 +16,8 @@
 package de.schaeuffelhut.android.openvpn;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -50,6 +52,9 @@ public final class Preferences {
 		return String.format( "%s[%s]", KEY_OPENVPN_CONFIGURATIONS, config );
 	}
 
+	public final static String KEY_CONFIG_NAME(File config){
+		return KEY_CONFIG(config.getAbsolutePath())+".name";
+	}
 	public final static String KEY_CONFIG_ENABLED(File config){
 		return KEY_CONFIG(config.getAbsolutePath())+".enabled";
 	}
@@ -264,25 +269,63 @@ public final class Preferences {
 		return sharedPreferences.getBoolean( Preferences.KEY_OPENVPN_DO_MODPROBE_TUN, false);
 	}
 
-	public final static File[] configs(Context context)
+	public final static ArrayList<File> configs(Context context)
 	{
 		return configs(getConfigDir( context, PreferenceManager.getDefaultSharedPreferences(context) ));
 	}
 	
-	public final static File[] configs(File configDir)
+	public final static ArrayList<File> configs(File configDir)
 	{
-		File[] configFiles;
-		if ( configDir == null )
-			configFiles = new File[0];
-		else
-			configFiles = configDir.listFiles( new Util.FileExtensionFilter(".conf",".ovpn") );
-	
-		return configFiles == null ? new File[0] : configFiles;
+		ArrayList<File> configFiles = new ArrayList<File>();
+		if ( configDir != null )
+		{
+			ArrayList<File> configDirs = new ArrayList<File>();
+			configDirs.add( configDir );
+			configDirs.addAll( Arrays.asList( Util.listFiles( configDir, new Util.IsDirectoryFilter() ) ) );
+			
+			for ( File dir : configDirs )
+				configFiles.addAll( Arrays.asList( Util.listFiles( dir, new Util.FileExtensionFilter(".conf",".ovpn") ) ) );
+		}
+		
+		return configFiles;
 	}
 	
 	public static boolean getFixHtcRoutes(Context context) 
 	{
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);	
 		return sharedPreferences.getBoolean( Preferences.KEY_FIX_HTC_ROUTES, false );
+	}
+
+	public static String getConfigName( Context context, File configFile)
+	{
+		if ( configFile == null )
+			return "null";
+
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+		{
+			String name = sharedPreferences.getString( Preferences.KEY_CONFIG_NAME( configFile ), null );
+			if ( name != null && !"".equals( name ) )
+				return name;
+		}
+		
+		File configDir = getConfigDir( context, sharedPreferences );
+		if ( configDir == null )
+			return configFile.getAbsolutePath();
+
+		String name;
+		String configDirName = configDir.getAbsolutePath();
+		String configFileName = configFile.getAbsolutePath();
+		if ( configFileName.startsWith( configDirName ) )
+		{
+			name = configFileName.substring( configDirName.length() );
+			if ( name.startsWith( "/" ) )
+				name = name.substring( 1 );
+		}
+		else
+		{
+			name = configFileName;
+		}
+		return name;
 	}
 }

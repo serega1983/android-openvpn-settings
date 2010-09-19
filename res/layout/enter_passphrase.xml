@@ -1,10 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<EditText 
+<LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/enter_passphrase_passphrase" 
 	android:layout_width="fill_parent"
-	android:layout_height="wrap_content" 
-	android:hint="@string/enter_passphrase_passphrase"
-	android:layout_weight="0"
-	android:password="true"/>
+	android:layout_height="wrap_content"
+	android:orientation="vertical">
+
+	<TextView
+		android:id="@+id/enter_passphrase_config_name"
+		android:text="the_config.ovpn"
+		android:textSize="16sp"
+		android:textStyle="bold"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:layout_marginBottom="4sp"
+		/>
+
+	<EditText 
+		android:id="@+id/enter_passphrase_passphrase" 
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content" 
+		android:hint="@string/enter_passphrase_passphrase"
+		android:password="true"/>
+
+</LinearLayout>
