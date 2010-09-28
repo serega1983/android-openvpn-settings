@@ -397,7 +397,7 @@ final class ManagementThread extends Thread
 		{
 			try
 			{
-				mSocket = new Socket( InetAddress.getLocalHost(), mgmtPort );
+				mSocket = new Socket( InetAddress.getByAddress( new byte[]{ 0x7F, 0x0, 0x0, 0x1 } ), mgmtPort );
 			}
 			catch (UnknownHostException e)
 			{
