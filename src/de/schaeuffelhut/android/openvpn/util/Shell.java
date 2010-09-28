@@ -95,6 +95,8 @@ public class Shell extends Thread
 
 			stdin = new PrintStream( mProcess.getOutputStream() );
 
+			if ( LOCAL_LOGD )
+				Log.d( mTag, String.format( "invoking command line: %s", mCmd ) );
 			stdin.println( mCmd );
 			stdin.flush();
 			onCmdStarted();
