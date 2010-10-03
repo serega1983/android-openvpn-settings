@@ -17,17 +17,13 @@ package de.schaeuffelhut.android.openvpn;
 
 import java.io.File;
 
-import com.admob.android.ads.AdView;
-import com.admob.android.ads.view.AdMobWebView;
-
-import de.schaeuffelhut.android.openvpn.util.AdUtil;
-
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import de.schaeuffelhut.android.openvpn.util.AdUtil;
 
 public class AdvancedSettings extends PreferenceActivity
 {
