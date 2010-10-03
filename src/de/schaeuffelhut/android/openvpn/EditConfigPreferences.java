@@ -3,6 +3,8 @@ package de.schaeuffelhut.android.openvpn;
 import java.io.File;
 import java.util.Arrays;
 
+import de.schaeuffelhut.android.openvpn.util.AdUtil;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -24,6 +26,7 @@ public class EditConfigPreferences extends PreferenceActivity
 		
 		File config = new File( getIntent().getStringExtra( EXTRA_FILENAME ) );
 		
+    	setContentView( AdUtil.getAdSupportedListView( getApplicationContext() ) );
 		addPreferencesFromResource( R.xml.config_settings );
 		
 		renamePreference("openvpn_config_name", Preferences.KEY_CONFIG_NAME(config));
