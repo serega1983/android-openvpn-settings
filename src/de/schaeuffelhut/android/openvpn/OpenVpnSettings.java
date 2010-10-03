@@ -67,13 +67,15 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 	ArrayList<DaemonEnabler> mDaemonEnablers = new ArrayList<DaemonEnabler>(4);
 	OpenVpnService mOpenVpnService = null;
 
+	private int mCurrentContentView;
+
 	@Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
     	Log.d(TAG, "onCreate()" );
         
-    	setContentView( AdUtil.getAdSupportedListView( getApplicationContext() ) );
+    	setContentView( mCurrentContentView = AdUtil.getAdSupportedListView( getApplicationContext() ) );
         addPreferencesFromResource( R.xml.openvpn_settings );
 
         //TODO: write OpenVpnEnabled, see WifiEnabler => start stop OpenVpnService
@@ -227,6 +229,8 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 
 		case REQUEST_CODE_ADVANCED_SETTINGS: {
 			// path to config might only be changed if no tunnel is up
+			if ( mCurrentContentView != AdUtil.getAdSupportedListView( getApplicationContext() ) )
+				setContentView( mCurrentContentView = AdUtil.getAdSupportedListView( getApplicationContext() ) );
 			if ( mOpenVpnService == null || !mOpenVpnService.hasDaemonsStarted() )
 				initToggles();
 		}
