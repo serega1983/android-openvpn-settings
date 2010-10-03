@@ -44,6 +44,7 @@ public final class Preferences {
 	public static final String KEY_OPENVPN_PATH_TO_SU = "openvpn_path_to_su";
 	public static final String KEY_OPENVPN_SU_ARGUMENTS = "openvpn_su_arguments";
 	public static final String KEY_OPENVPN_DO_MODPROBE_TUN = "openvpn_do_modprobe_tun";
+	public static final String KEY_OPENVPN_SHOW_ADS = "show_ads";
 
 	public static final String KEY_NEXT_NOTIFICATION_ID = "openvpn_next_notification_id";
 	public static final String KEY_FIX_HTC_ROUTES = "fix_htc_routes"; 	// see issue #35: http://code.google.com/p/android-openvpn-settings/issues/detail?id=35
@@ -119,6 +120,10 @@ public final class Preferences {
 		return getModprobeAlternative(sharedPreferences) + " " + Util.shellEscape( getPathToTun(sharedPreferences) );
 	}
 
+	public static boolean getShowAds(Context context) {
+		return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(KEY_OPENVPN_SHOW_ADS, true );
+	}
+	
 	
 
 	public final static String getExternalStorage(SharedPreferences sharedPreferences)

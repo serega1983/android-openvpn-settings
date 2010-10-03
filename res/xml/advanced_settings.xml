@@ -55,6 +55,12 @@
 		android:key="fix_htc_routes"
 		android:title="Fix HTC Routes"
 		android:summary="Fix HTC routes with Froyo ROMs"/>
+
+	<CheckBoxPreference
+		android:key="show_ads"
+		android:title="Show Ads"
+		android:summary="Thank you for your support"
+		android:defaultValue="true"/>
 		
 	<!-- 
 	<EditTextPreference

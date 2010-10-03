@@ -42,6 +42,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
+import de.schaeuffelhut.android.openvpn.util.AdUtil;
 import de.schaeuffelhut.android.openvpn.util.DnsUtil;
 import de.schaeuffelhut.android.openvpn.util.Preconditions;
 import de.schaeuffelhut.android.openvpn.util.UnexpectedSwitchValueException;
@@ -72,6 +73,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
         super.onCreate(savedInstanceState);
     	Log.d(TAG, "onCreate()" );
         
+    	setContentView( AdUtil.getAdSupportedListView( getApplicationContext() ) );
         addPreferencesFromResource( R.xml.openvpn_settings );
 
         //TODO: write OpenVpnEnabled, see WifiEnabler => start stop OpenVpnService

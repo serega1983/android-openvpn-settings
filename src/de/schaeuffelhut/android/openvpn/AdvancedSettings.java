@@ -17,6 +17,11 @@ package de.schaeuffelhut.android.openvpn;
 
 import java.io.File;
 
+import com.admob.android.ads.AdView;
+import com.admob.android.ads.view.AdMobWebView;
+
+import de.schaeuffelhut.android.openvpn.util.AdUtil;
+
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -32,6 +37,7 @@ public class AdvancedSettings extends PreferenceActivity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+    	setContentView( AdUtil.getAdSupportedListView( getApplicationContext() ) );
 		addPreferencesFromResource( R.xml.advanced_settings );
 
 		//		{
@@ -127,6 +133,29 @@ public class AdvancedSettings extends PreferenceActivity
 				pref.setSummary( "Please set path to openvpn binary." );
 			else
 				pref.setSummary( ( !path.exists() ? "Not found: " : "" ) + path.getAbsolutePath() );
+		}
+
+		{
+			CheckBoxPreference pref = (CheckBoxPreference) findPreference( Preferences.KEY_OPENVPN_SHOW_ADS );
+			pref.setOnPreferenceChangeListener(
+					new Preference.OnPreferenceChangeListener() {
+						public boolean onPreferenceChange(Preference pref, Object newValue) {
+							if ( (Boolean)newValue )
+								pref.setSummary( "Thank you for your support!" );
+							else
+								pref.setSummary( "Please consider supporting development." );
+							return true;
+						}
+					});
+			if ( Preferences.getShowAds(this) )
+				pref.setSummary( "Thank you for your support!" );
+			else
+				pref.setSummary( "Please consider your support." );
+			if ( !AdUtil.hasAdSupport() )
+			{
+				pref.setSummary( "AdMob library is missing!" );
+				pref.setEnabled( false );
+			}
 		}
 
 		//	{
