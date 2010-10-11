@@ -17,6 +17,12 @@ package de.schaeuffelhut.android.openvpn;
 
 import java.io.File;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.ContentUris;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -28,6 +34,7 @@ import de.schaeuffelhut.android.openvpn.util.AdUtil;
 public class AdvancedSettings extends PreferenceActivity
 {
 	static final String HAS_DAEMONS_STARTED = "hasDaemonsStarted";
+	protected static final int INFO_DIALOG_ISSUE_35 = 1;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -132,6 +139,20 @@ public class AdvancedSettings extends PreferenceActivity
 		}
 
 		{
+			CheckBoxPreference pref = (CheckBoxPreference) findPreference( Preferences.KEY_FIX_HTC_ROUTES );
+			pref.setOnPreferenceChangeListener(
+					new Preference.OnPreferenceChangeListener() {
+						public boolean onPreferenceChange(Preference pref, Object newValue) {
+							if ( (Boolean)newValue )
+							{
+								showDialog( INFO_DIALOG_ISSUE_35 );
+							}
+							return true;
+						}
+					});
+		}
+
+		{
 			CheckBoxPreference pref = (CheckBoxPreference) findPreference( Preferences.KEY_OPENVPN_SHOW_ADS );
 			pref.setOnPreferenceChangeListener(
 					new Preference.OnPreferenceChangeListener() {
@@ -174,5 +195,26 @@ public class AdvancedSettings extends PreferenceActivity
 	private void updateSummary(String cmd) {
 		CheckBoxPreference pref = (CheckBoxPreference) findPreference( Preferences.KEY_OPENVPN_DO_MODPROBE_TUN );
 		pref.setSummary( getString( R.string.advanced_settings_do_modprobe_tun, cmd ) );
+	}
+	
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		switch ( id ) {
+		case INFO_DIALOG_ISSUE_35:
+			return new AlertDialog.Builder( this )
+			.setTitle("Attention")
+			.setIcon( android.R.drawable.ic_dialog_info )
+			.setMessage( "Please make sure you understand issue 35: http://code.google.com/p/android-openvpn-settings/issues/detail?id=35" )
+			.setPositiveButton( "View", new AlertDialog.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://code.google.com/p/android-openvpn-settings/issues/detail?id=35") ));
+				}
+			})
+			.setNegativeButton( "Dismiss", null )
+			.create();
+
+		default:
+			return super.onCreateDialog(id);
+		}
 	}
 }
