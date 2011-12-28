@@ -154,7 +154,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 			super(context);
 			setKey( Preferences.KEY_CONFIG_ENABLED( config ) );
 			setTitle( Preferences.getConfigName(context, config) );
-			setSummary( "Select to turn on OpenVPN tunel");
+			setSummary( "Select to turn on OpenVPN tunnel");
 			mConfig = config;
 			mDaemonEnabler = new DaemonEnabler( context, openVpnService, this, config );
 		}
