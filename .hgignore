@@ -1,3 +1,4 @@
-syntax: regexp
-^bin$
-syntax: regexp
+syntax: glob
+bin
+gen
+
