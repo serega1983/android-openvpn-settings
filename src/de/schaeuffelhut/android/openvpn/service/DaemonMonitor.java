@@ -182,7 +182,7 @@ public final class DaemonMonitor
 		mDaemonProcess = new Shell( 
 				mTagDaemonMonitor + "-daemon",
 				String.format( 
-						"%s --cd %s --config %s --writepid %s --script-security %d --management 127.0.0.1 %d --management-query-passwords",
+						"%s --cd %s --config %s --writepid %s --script-security %d --management 127.0.0.1 %d --management-query-passwords --verb 3",
 						openvpnBinary.getAbsolutePath(),				
 						Util.shellEscape(mConfigFile.getParentFile().getAbsolutePath()),
 						Util.shellEscape(mConfigFile.getName()),
