@@ -24,9 +24,14 @@
 		android:icon="@android:drawable/ic_menu_revert"/>
 
 	<item
-		android:id="@+id/settings_meun_contact_author"
+		android:id="@+id/settings_menu_contact_author"
 		android:title="@string/settings_menu_contact_author"
 		android:icon="@android:drawable/ic_menu_send"/>
+		
+	<item
+		android:id="@+id/settings_menu_share_tun"
+		android:title="@string/settings_menu_share_tun"
+		android:icon="@android:drawable/ic_menu_share"/>
 		
 	<item
 		android:id="@+id/settings_menu_help"
