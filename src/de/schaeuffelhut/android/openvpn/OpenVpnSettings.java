@@ -17,6 +17,7 @@ package de.schaeuffelhut.android.openvpn;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -42,6 +43,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
+import de.schaeuffelhut.android.openvpn.tun.ShareTunActivity;
 import de.schaeuffelhut.android.openvpn.util.AdUtil;
 import de.schaeuffelhut.android.openvpn.util.DnsUtil;
 import de.schaeuffelhut.android.openvpn.util.Preconditions;
@@ -279,6 +281,12 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
+
+//	TODO!!! disable share after a certain date.		
+//		new GregorianCalendar( 2012, 2, 15 ).getTimeInMillis();
+//	    menu.findItem( R.id.settings_menu_share_tun ).setVisible( false );
+
+		
 //	    menu.findItem( R.id.configs_options_startall ).setVisible( configs.length > 0 );
 //	    menu.findItem( R.id.configs_options_restartall ).setVisible( mControlShell.hasDaemonsStarted() );
 //	    menu.findItem( R.id.configs_options_stopall ).setVisible( mOpenVpnService != null && mOpenVpnService.hasDaemonsStarted() );
@@ -304,8 +312,12 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 			showDialog( DIALOG_FIX_DNS );
 			return true; }
 
-		case R.id.settings_meun_contact_author: {
+		case R.id.settings_menu_contact_author: {
 			showDialog( DIALOG_CONTACT_AUTHOR );
+			return true; }
+
+		case R.id.settings_menu_share_tun: {
+			startActivity( new Intent(this, ShareTunActivity.class ) );
 			return true; }
 
 		case R.id.settings_menu_help:

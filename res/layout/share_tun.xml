@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+    
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/share_tun_module_into" />
+    
+    <CheckBox
+        android:id="@+id/share_tun_moudule_yes_i_share"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="@string/share_tun_module_yes_i_share" />
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp" >
+        <TableRow>
+            <TextView
+                android:paddingRight="6dp"
+                android:text="@string/share_tun_module_kernel_version" />
+            <TextView
+                android:id="@+id/share_tun_moudule_kernel_version"
+                android:text="1.2.34.5-67890-g1234567" />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:paddingRight="6dp"
+                android:text="@string/share_tun_module_file" />
+            <TextView
+                android:id="@+id/share_tun_moudule_path_to_tun"
+                android:text="/system/lib/modules/tun.ko" />
+        </TableRow>
+    </TableLayout>
+    
+    <CheckBox
+        android:id="@+id/share_tun_moudule_include_details"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="@string/share_tun_moudule_include_details" />
+
+    <ScrollView
+	    android:layout_width="fill_parent"
+	    android:layout_height="0dip"
+	    android:layout_weight="1"
+        android:padding="3dp"
+        android:layout_marginLeft="40dp"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        >
+	    <TextView
+		    android:id="@+id/share_tun_moudule_details"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+			/>
+    </ScrollView>
+    
+	<LinearLayout
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal" >
+	    <Button
+	        android:id="@+id/share_tun_moudule_cancel"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:text="@string/share_tun_moudule_cancel" />
+	    <Button
+	        android:id="@+id/share_tun_moudule_share"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:text="@string/share_tun_moudule_share" />
+	</LinearLayout>
+</LinearLayout>
+		

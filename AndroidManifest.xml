@@ -70,6 +70,11 @@
 			android:label="Import Files"
 			/>
 		
+		<activity
+			android:name=".tun.ShareTunActivity" 
+			android:label="Share TUN Module"
+			/>
+			
 		<service
 			android:name="de.schaeuffelhut.android.openvpn.service.OpenVpnService"
 			android:label="@string/openvpn_service"

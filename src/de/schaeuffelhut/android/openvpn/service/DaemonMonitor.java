@@ -34,6 +34,7 @@ import android.content.Intent;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.Notifications;
 import de.schaeuffelhut.android.openvpn.Preferences;
@@ -144,8 +145,7 @@ public final class DaemonMonitor
 				)
 		);
 		
-		// TODO: is /dev/tun a reliable indicator for tun capability being installed? 
-		if( !(new File("/dev/tun").exists() || new File("/dev/net/tun").exists()) ) // only load the driver if it's not yet available
+		if( !(hasTunSupport()) ) // only load the driver if it's not yet available
 		{
 			if (Preferences.getDoModprobeTun( PreferenceManager.getDefaultSharedPreferences(mContext) ) )  // LATER remove the preferences setting
 			{
@@ -165,6 +165,16 @@ public final class DaemonMonitor
 					insmod.join();
 				} catch (InterruptedException e) {
 					throw new RuntimeException( "waiting for insmod to finish", e );
+				}
+				
+				if ( hasTunSupport() )
+				{
+					shareTunModule();
+				}
+				else
+				{
+					Toast.makeText(mContext, "Failed to load tun module. Device node /dev/tun or dev/net/tun did not show up.", Toast.LENGTH_LONG).show();
+					//TODO: bail out, dont start openvpn as tun support is not given
 				}
 			}
 		}
@@ -216,6 +226,18 @@ public final class DaemonMonitor
 		mDaemonProcess.start();
 	}
 
+	private boolean hasTunSupport()
+	{
+		// TODO: is /dev/tun a reliable indicator for tun capability being installed? 
+		return new File("/dev/tun").exists() || new File("/dev/net/tun").exists();
+	}
+
+	private void shareTunModule()
+	{
+		if ( !Preferences.getSendDeviceDetailWasSuccessfull( mContext ) )
+			Notifications.sendShareTunModule(mContext, mNotificationManager);
+	}
+	
 	void restart()
 	{
 		if ( !isAlive() )

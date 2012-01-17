@@ -15,6 +15,7 @@
 	<string name="settings_menu_advanced">Advanced</string>
 	<string name="settings_menu_fix_dns">Fix DNS</string>
 	<string name="settings_menu_contact_author">Contact Author</string>
+	<string name="settings_menu_share_tun">Share TUN Module</string>
 	<string name="settings_menu_help">Help</string>
 
 	<string name="fix_dns_dialog_title">Fix DNS Server</string>
@@ -40,6 +41,17 @@
 	<string name="enter_user_password_password">Password</string>
 
 	<string name="monitor_title">OpenVPN Monitor %s</string>
+
+	<string name="share_tun_module_title">Share TUN Module</string>
+	<string name="share_tun_module_into">Thank you for considering to share your TUN kernel module and technical data about your device. Sharing the TUN module will improve the user experience. Sharing technical data will provide developers the necessary insight to handle subtile differences between the many android devices out there.</string>
+	<string name="share_tun_module_yes_i_share">Yes, I want to share my TUN module</string>
+	<string name="share_tun_module_kernel_version">Kernel:</string>
+	<string name="share_tun_module_file">File:</string>
+	<string name="share_tun_moudule_include_details">Include technical details about device</string>
+	<string name="share_tun_moudule_cancel">Cancel</string>
+	<string name="share_tun_moudule_share">Share</string>
+		
+	
 	<!-- 
 	<string name="start">Start</string>
 	<string name="restart">Restart</string>

@@ -45,7 +45,8 @@ public final class Preferences {
 	public static final String KEY_OPENVPN_SU_ARGUMENTS = "openvpn_su_arguments";
 	public static final String KEY_OPENVPN_DO_MODPROBE_TUN = "openvpn_do_modprobe_tun";
 	public static final String KEY_OPENVPN_SHOW_ADS = "show_ads";
-
+	public static final String KEY_SEND_DEVICE_DETAIL_WAS_SUCCESSFULL = "send_device_detail_was_successfull";
+	
 	public static final String KEY_NEXT_NOTIFICATION_ID = "openvpn_next_notification_id";
 	public static final String KEY_FIX_HTC_ROUTES = "fix_htc_routes"; 	// see issue #35: http://code.google.com/p/android-openvpn-settings/issues/detail?id=35
 
@@ -332,5 +333,16 @@ public final class Preferences {
 			name = configFileName;
 		}
 		return name;
+	}
+
+	
+	public static boolean getSendDeviceDetailWasSuccessfull(Context context) {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);	
+		return sharedPreferences.getBoolean( Preferences.KEY_SEND_DEVICE_DETAIL_WAS_SUCCESSFULL, false );
+	}
+
+	public static void setSendDeviceDetailWasSuccessfull(Context context, boolean success){
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);	
+		sharedPreferences.edit().putBoolean( Preferences.KEY_SEND_DEVICE_DETAIL_WAS_SUCCESSFULL, success ).commit();
 	}
 }
