@@ -392,4 +392,16 @@ public class Util
 			files = configDir.listFiles( filter );
 		return files == null ? new File[0] : files;
 	}
+
+	public static boolean hasTunSupport()
+	{
+		// TODO: is /dev/tun a reliable indicator for tun capability being installed
+		try
+		{
+			return new File("/dev/tun").exists() || new File("/dev/net/tun").exists();
+		}
+		catch (Exception e) {
+			return false;
+		}
+	}
 }

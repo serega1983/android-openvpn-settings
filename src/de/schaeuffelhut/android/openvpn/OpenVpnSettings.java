@@ -281,10 +281,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-
-//	TODO!!! disable share after a certain date.		
-//		new GregorianCalendar( 2012, 2, 15 ).getTimeInMillis();
-//	    menu.findItem( R.id.settings_menu_share_tun ).setVisible( false );
+		menu.findItem( R.id.settings_menu_share_tun ).setVisible( Preferences.isTunSharingEnabled( getApplicationContext() ) );
 
 		
 //	    menu.findItem( R.id.configs_options_startall ).setVisible( configs.length > 0 );
@@ -292,6 +289,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 //	    menu.findItem( R.id.configs_options_stopall ).setVisible( mOpenVpnService != null && mOpenVpnService.hasDaemonsStarted() );
 		return super.onPrepareOptionsMenu(menu);
 	}
+
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
