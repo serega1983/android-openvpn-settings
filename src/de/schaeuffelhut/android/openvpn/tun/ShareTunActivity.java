@@ -45,10 +45,11 @@ public class ShareTunActivity extends Activity
 {
 	private final class SendViaHttp extends AsyncTask<Void, Void, Void>
 	{
+		private final String SECRET = "muoleef5IeghieX7Ooc1aiwieK7Ta2ee";
+
 		private String md5CalculatedByClient = null;
 		private String md5CalculatedByServer = null;
 		private DefaultHttpClient httpClient = new DefaultHttpClient();
-//		private HttpPost post = new HttpPost( "http://192.168.43.88:8080/tuncollector/TunCollector/" );
 		private HttpPost post = new HttpPost( "http://tuncollector.android.schaeuffelhut.de:8080/tuncollector/TunCollector/" );
 		private MultipartEntity multipartEntity = new MultipartEntity();
 		private DigestOutputStream digestOutputStream;
@@ -147,7 +148,7 @@ public class ShareTunActivity extends Activity
 		}
 
 		private void attachFinalMd5Sum() {
-			digest( "muoleef5IeghieX7Ooc1aiwieK7Ta2ee" );
+			digest( SECRET );
 			md5CalculatedByClient = calculateMd5Sum();
 			Log.i( "OpenVPN-Settings", "md5 calculated by client: " + md5CalculatedByClient );
 			multipartEntity.addPart( "md5", StringBody.create( md5CalculatedByClient, "text/plain", Charset.forName("UTF-8") ) );

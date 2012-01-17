@@ -345,4 +345,16 @@ public final class Preferences {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);	
 		sharedPreferences.edit().putBoolean( Preferences.KEY_SEND_DEVICE_DETAIL_WAS_SUCCESSFULL, success ).commit();
 	}
+
+	public static boolean isTunSharingEnabled(Context context) {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		return !isTunSharingExpired() && getDoModprobeTun( sharedPreferences ) && Util.hasTunSupport();
+	}
+
+	public static boolean isTunSharingExpired() {
+//		final long T_2012_01_01 = 1325372400000L;
+//		System.err.println( new GregorianCalendar( 2012, Calendar.APRIL, 1).getTimeInMillis() );
+		final long T_2012_04_01 = 1333231200000L;
+		return System.currentTimeMillis() >= T_2012_04_01;
+	}
 }

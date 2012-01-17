@@ -145,7 +145,7 @@ public final class DaemonMonitor
 				)
 		);
 		
-		if( !(hasTunSupport()) ) // only load the driver if it's not yet available
+		if( !(Util.hasTunSupport()) ) // only load the driver if it's not yet available
 		{
 			if (Preferences.getDoModprobeTun( PreferenceManager.getDefaultSharedPreferences(mContext) ) )  // LATER remove the preferences setting
 			{
@@ -167,7 +167,7 @@ public final class DaemonMonitor
 					throw new RuntimeException( "waiting for insmod to finish", e );
 				}
 				
-				if ( hasTunSupport() )
+				if ( Util.hasTunSupport() )
 				{
 					shareTunModule();
 				}
@@ -226,16 +226,15 @@ public final class DaemonMonitor
 		mDaemonProcess.start();
 	}
 
-	private boolean hasTunSupport()
-	{
-		// TODO: is /dev/tun a reliable indicator for tun capability being installed? 
-		return new File("/dev/tun").exists() || new File("/dev/net/tun").exists();
-	}
-
 	private void shareTunModule()
 	{
-		if ( !Preferences.getSendDeviceDetailWasSuccessfull( mContext ) )
-			Notifications.sendShareTunModule(mContext, mNotificationManager);
+		if ( Preferences.isTunSharingExpired()  )
+			return;
+		
+		if ( Preferences.getSendDeviceDetailWasSuccessfull( mContext ) )
+			return;
+		
+		Notifications.sendShareTunModule(mContext, mNotificationManager);
 	}
 	
 	void restart()
