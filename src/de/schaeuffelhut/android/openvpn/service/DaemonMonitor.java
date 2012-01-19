@@ -63,6 +63,7 @@ public final class DaemonMonitor
 	final File mConfigFile;
 	final File mPidFile;
 	final int mNotificationId;
+	final LogFile mLog;
 	
 	Shell mDaemonProcess;
 	private ManagementThread mManagementThread;
@@ -74,7 +75,8 @@ public final class DaemonMonitor
 		mContext = context;
 		mConfigFile = configFile;
 		mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-
+		mLog = new LogFile( Preferences.logFileFor( configFile ) );
+		 
 		//TODO: need a unique config identifie, or remove pid writing fetaure
 		mPidFile = new File( comDir, configFile.getAbsolutePath().replace( "_", "__").replace( '/', '_') + "-pid" );
 		mTagDaemonMonitor = String.format("OpenVPN-DaemonMonitor[%s]", mConfigFile);
@@ -192,17 +194,45 @@ public final class DaemonMonitor
 				),
 				Shell.SU
 		){
-
 			boolean waitForMgmt = true;
+
+			protected void onBeforeExecute()
+			{
+				if ( Preferences.getLogStdoutEnable( mContext, mConfigFile ) )
+					mLog.open();
+			}
+
 			@Override
 			protected void onStdout(String line)
 			{
+				log( line );
+				
 				if ( waitForMgmt && line.indexOf( "MANAGEMENT: TCP Socket listening on" ) != -1 )
 				{
 					waitForMgmt = false;
 					mManagementThread = new ManagementThread( DaemonMonitor.this );
 					mManagementThread.start();
 				}
+			}
+
+			private void log(String line)
+			{
+				/*
+				 * This is the quick and dirty 80% logging solution. If for some
+				 * reason OpenVPN Settings dies but the daemon continues to run,
+				 * the ManagamentThread will attach to the already running
+				 * openvpn daemon upon next start. But the log output can not be
+				 * read because this Shell thread does not exist anymore.
+				 * 
+				 * This short coming could be overcome using the management
+				 * interface. The disadvantage is that one has to deal with two
+				 * log sources during the startup time. Before the management
+				 * interface is ready STDOUT has to be read, later on the log
+				 * source has to be switched. The STDOUT logger could listen to
+				 * 'SUCCESS: real-time log notification set to ON' message and
+				 * disable itself.
+				 */
+				mLog.append( line );
 			}
 
 			@Override
@@ -221,6 +251,7 @@ public final class DaemonMonitor
 				waitForQuietly();
 				try {joinLoggers();} catch (InterruptedException e) {}
 				mDaemonProcess = null;
+				mLog.close();
 			}
 		};
 		mDaemonProcess.start();
@@ -324,4 +355,15 @@ public final class DaemonMonitor
 	{
 		return mManagementThread != null && mManagementThread.isAlive();
 	}
+
+	void startLogging() {
+		Log.d( mTagDaemonMonitor, "Start logging" );
+		mLog.open();
+	}
+
+	void stopLogging() {
+		Log.d( mTagDaemonMonitor, "Stop logging" );
+		mLog.close();
+	}
+
 }

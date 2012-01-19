@@ -91,6 +91,38 @@ public final class OpenVpnService extends Service
 	public OpenVpnService() {
 	}
 	
+	private final OnSharedPreferenceChangeListenerImplementation onSharedPreferenceChangeListener = new OnSharedPreferenceChangeListenerImplementation();
+	private final class OnSharedPreferenceChangeListenerImplementation implements SharedPreferences.OnSharedPreferenceChangeListener {
+		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
+		{
+			if ( Preferences.isConfigKey( key ) )
+				handleConfigKey( key );
+		}
+
+		private void handleConfigKey(String key)
+		{
+			final File config = Preferences.configOf(key);
+			if ( key.equals( Preferences.KEY_CONFIG_LOG_STDOUT_ENABLE( config ) ) )
+				handleWriteLogFile( config, key );
+		}
+
+		private void handleWriteLogFile(File config, String key)
+		{
+			DaemonMonitor daemonMonitor = mRegistry.get( config );
+			
+			if ( daemonMonitor == null )
+				return;
+			if ( !daemonMonitor.isAlive() )
+				return;
+			
+			if ( Preferences.getLogStdoutEnable( OpenVpnService.this, config ) )
+				daemonMonitor.startLogging();
+			else
+				daemonMonitor.stopLogging();
+		}
+	}
+
+	
 	@Deprecated //TODO: aidl?
 	public final class ServiceBinder extends Binder {
 		public final OpenVpnService getService() {
@@ -114,12 +146,18 @@ public final class OpenVpnService extends Service
 		PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(
 				Preferences.KEY_OPENVPN_ENABLED, true
 		).commit();
+		
 		markServiceStarted();
+
+		PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener( onSharedPreferenceChangeListener );
 	}
 	
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		
+		PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener( onSharedPreferenceChangeListener );
+
 		markServiceStopped();
 		PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(
 				Preferences.KEY_OPENVPN_ENABLED, false
