@@ -73,7 +73,9 @@ public class Shell extends Thread
 					"invoking external process: %s", 
 					Util.join( pb.command(), ' ' )
 			));
-
+		
+		onBeforeExecute();
+		
 		try {
 			mProcess = pb.start();
 
@@ -117,6 +119,10 @@ public class Shell extends Thread
 		}
 	}
 	
+
+	protected void onBeforeExecute() {
+		//overwrite if desired
+	}
 
 	protected void onStdout(String line) {
 		//overwrite if desired
