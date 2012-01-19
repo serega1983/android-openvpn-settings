@@ -768,7 +768,7 @@ final class ManagementThread extends Thread
 
 	/**
 	 * Waits for the management thread to come ready, then calls
-	 * senCommandImmediately to enqueue the given command. This method may be
+	 * sendCommandImmediately to enqueue the given command. This method may be
 	 * invoked by any thread besides the management thread. This method is
 	 * thread safe.
 	 * 
