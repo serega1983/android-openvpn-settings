@@ -349,6 +349,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 	final static int CONTEXT_CONFIG_ENABLE = 2;
 	final static int CONTEXT_CONFIG_EDIT = 3;
 	final static int CONTEXT_CONFIG_EDIT_PREFERENCES = 4;
+	final static int CONTEXT_CONFIG_VIEW_LOG = 5;
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
@@ -366,12 +367,14 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 			
 			//Edit
 			menu.add( ContextMenu.NONE, CONTEXT_CONFIG_EDIT, 2, "Edit Config File" );
+			if ( Preferences.logFileFor( configFilePref.mConfig ).exists() )
+				menu.add( ContextMenu.NONE, CONTEXT_CONFIG_VIEW_LOG, 2, "View Log File" );
 			menu.add( ContextMenu.NONE, CONTEXT_CONFIG_EDIT_PREFERENCES, 2, "Preferences" );
 			
 			//Delete
 		}
 	}
-	
+
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		
@@ -391,6 +394,11 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 			Intent i = new Intent(this, EditConfig.class);
 			i.putExtra( EditConfig.EXTRA_FILENAME, configFilePref.mConfig.getAbsolutePath() );
 	        startActivityForResult(i, REQUEST_CODE_EDIT_CONFIG ); 
+		} return true;
+		case CONTEXT_CONFIG_VIEW_LOG: {
+			Intent i = new Intent(this, ViewLogFile.class);
+			i.putExtra( EditConfig.EXTRA_FILENAME, configFilePref.mConfig.getAbsolutePath() );
+	        startActivity( i ); 
 		} return true;
 		case CONTEXT_CONFIG_EDIT_PREFERENCES: {
 			Intent i = new Intent(this, EditConfigPreferences.class);

@@ -50,6 +50,11 @@
 	<string name="share_tun_moudule_include_details">Include technical details about device</string>
 	<string name="share_tun_moudule_cancel">Cancel</string>
 	<string name="share_tun_moudule_share">Share</string>
+	
+	<string name="view_log_file_category">View OpenVPN Log File</string>
+	<string name="view_logfile_name">Log File Name</string>
+	<string name="view_logfile_content">The Log</string>
+	<string name="view_logfile_refresh">Refresh</string>
 		
 	
 	<!-- 
