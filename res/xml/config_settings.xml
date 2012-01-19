@@ -14,7 +14,6 @@
 		android:title="Use VPN DNS Server"
 		android:persistent="true"
 		/>
-	
 	<EditTextPreference
 		android:key="openvpn_config_dns1"
 		android:title="VPN DNS Server"
@@ -22,12 +21,19 @@
 		android:singleLine="true"
 		android:inputType="phone"
 		/>
-
+	
 	<ListPreference
 		android:key="openvpn_config_script_security_level"
 		android:title="Script Security Level"
 		android:persistent="true"
 		android:entries="@array/openvpn_param_script_security_level_text"
-		android:entryValues="@array/openvpn_param_script_security_level_value" android:defaultValue="1"/>
-
+		android:entryValues="@array/openvpn_param_script_security_level_value" android:defaultValue="1"
+		/>
+	
+	<CheckBoxPreference
+		android:key="openvpn_config_log_stdout_enable"
+		android:title="Enable Logging"
+		android:persistent="true"
+		/>
+	
 </PreferenceScreen>
