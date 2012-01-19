@@ -26,7 +26,7 @@ public class LogFile {
 		
 		Log.d( "OpenVPn Settings", "Opening log file " + logFile );
 		try {
-			fileOutputStream = new FileOutputStream( logFile, true );
+			fileOutputStream = new FileOutputStream( logFile, false );
 		} catch (FileNotFoundException e) {
 			Log.e( "OpenVPN Settings", "Failed to open log file: " + logFile, e );
 		}
