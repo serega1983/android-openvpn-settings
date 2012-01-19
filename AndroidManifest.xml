@@ -74,7 +74,11 @@
 			android:name=".tun.ShareTunActivity" 
 			android:label="Share TUN Module"
 			/>
-			
+		<activity
+			android:name="ViewLogFile" 
+			android:label="@string/view_log_file_category"
+			/>
+					
 		<service
 			android:name="de.schaeuffelhut.android.openvpn.service.OpenVpnService"
 			android:label="@string/openvpn_service"
