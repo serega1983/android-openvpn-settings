@@ -3,7 +3,7 @@ package de.schaeuffelhut.android.openvpn;
 import java.io.File;
 import java.util.Arrays;
 
-import de.schaeuffelhut.android.openvpn.util.AdUtil;
+import org.apache.commons.io.FileUtils;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +12,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.text.TextUtils;
+import de.schaeuffelhut.android.openvpn.util.AdUtil;
 
 public class EditConfigPreferences extends PreferenceActivity
 {
@@ -81,6 +82,12 @@ public class EditConfigPreferences extends PreferenceActivity
 				}
 			});
 			pref.setSummary( pref.getEntry() );
+		}
+
+		renamePreference("openvpn_config_log_stdout_enable", Preferences.KEY_CONFIG_LOG_STDOUT_ENABLE(config));
+		{
+			Preference pref = (Preference)findPreference( Preferences.KEY_CONFIG_LOG_STDOUT_ENABLE(config) );
+			pref.setSummary( Preferences.logFileFor(config).getAbsolutePath() );
 		}
 	}
 

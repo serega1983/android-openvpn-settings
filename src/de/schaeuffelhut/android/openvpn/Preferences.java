@@ -19,6 +19,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.apache.commons.io.FilenameUtils;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -54,6 +56,18 @@ public final class Preferences {
 		return String.format( "%s[%s]", KEY_OPENVPN_CONFIGURATIONS, config );
 	}
 
+	public final static File configOf(String key) {
+		if ( !isConfigKey(key) )
+			throw new IllegalArgumentException( "Not a config preference key: "+key );
+		int start = key.indexOf( '[' );
+		int end = key.lastIndexOf( ']' );
+		return new File( key.substring( start + 1, end ) );
+	}
+
+	public static boolean isConfigKey(String key) {
+		return key.startsWith( KEY_OPENVPN_CONFIGURATIONS + "[" );
+	}
+	
 	public final static String KEY_CONFIG_NAME(File config){
 		return KEY_CONFIG(config.getAbsolutePath())+".name";
 	}
@@ -74,6 +88,9 @@ public final class Preferences {
 	}
 	public final static String KEY_CONFIG_DNS1(File config){
 		return KEY_CONFIG(config.getAbsolutePath())+".dns1";
+	}
+	public final static String KEY_CONFIG_LOG_STDOUT_ENABLE(File config){
+		return KEY_CONFIG(config.getAbsolutePath())+".log_stdout.enable";
 	}
 	public final static String KEY_VPN_DNS(File config){
 		return KEY_CONFIG(config.getAbsolutePath())+".vpndns1";
@@ -270,6 +287,17 @@ public final class Preferences {
 		return Integer.parseInt( sharedPreferences.getString( Preferences.KEY_SCRIPT_SECURITY_LEVEL(configFile), "1" ) );
 	}
 
+	public static boolean getLogStdoutEnable(Context context, File configFile) 
+	{
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		return sharedPreferences.getBoolean( Preferences.KEY_CONFIG_LOG_STDOUT_ENABLE(configFile), false );
+	}
+
+	public static File logFileFor(File config)
+	{
+		return new File( config.getParentFile(), FilenameUtils.getBaseName( config.getAbsolutePath() ) + ".log" );
+	}
+
 	
 	public final static boolean getDoModprobeTun(SharedPreferences sharedPreferences) {
 		return sharedPreferences.getBoolean( Preferences.KEY_OPENVPN_DO_MODPROBE_TUN, false);
@@ -357,4 +385,5 @@ public final class Preferences {
 		final long T_2012_04_01 = 1333231200000L;
 		return System.currentTimeMillis() >= T_2012_04_01;
 	}
+
 }
