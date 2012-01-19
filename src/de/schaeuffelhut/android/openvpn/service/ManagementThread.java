@@ -52,7 +52,7 @@ final class ManagementThread extends Thread
 		mTAG_MT = daemonMonitor.mTagDaemonMonitor + "-mgmt";
 	}
 	
-	private final CountDownLatch mReady = new CountDownLatch(1);
+	private final CountDownLatch mReadyForCommands = new CountDownLatch(1);
 	final CountDownLatch mTerminated = new CountDownLatch(1);
 	
 	private final LinkedList<Command> ms_PendingCommandFifo = new LinkedList<Command>();
@@ -167,7 +167,7 @@ final class ManagementThread extends Thread
 			sendCommandImmediately( new SimpleCommand( "state on" ) );
 			
 			// allow other threads to submit commands
-			mReady.countDown(); 
+			mReadyForCommands.countDown(); 
 			
 			//block until input is available
 			while( block(lnr) )
@@ -186,7 +186,7 @@ final class ManagementThread extends Thread
 			Util.closeQuietly( mSocket );
 			
 			// make sure nobody is waiting for us
-			mReady.countDown();
+			mReadyForCommands.countDown();
 		}
 	}
 	
@@ -493,7 +493,7 @@ final class ManagementThread extends Thread
 	{
 		try
 		{
-			mReady.await();
+			mReadyForCommands.await();
 			sendCommandImmediately(command);
 		}
 		catch (InterruptedException e)
