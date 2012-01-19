@@ -53,7 +53,7 @@
 	
 	<string name="view_log_file_category">View OpenVPN Log File</string>
 	<string name="view_logfile_name">Log File Name</string>
-	<string name="view_logfile_content">The Log</string>
+	<string name="view_logfile_content">Log file is empty!</string>
 	<string name="view_logfile_refresh">Refresh</string>
 		
 	
