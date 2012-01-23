@@ -22,9 +22,6 @@ import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
-import com.bugsense.trace.BugSense;
-import com.bugsense.trace.BugSenseHandler;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -39,6 +36,10 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+
+import com.bugsense.trace.BugSenseHandler;
+
+import de.schaeuffelhut.android.openvpn.Configuration;
 import de.schaeuffelhut.android.openvpn.Notifications;
 import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.R;
@@ -48,12 +49,11 @@ public class ShareTunActivity extends Activity
 {
 	private final class SendViaHttp extends AsyncTask<Void, Void, Void>
 	{
-		private final String SECRET = "muoleef5IeghieX7Ooc1aiwieK7Ta2ee";
 
 		private String md5CalculatedByClient = null;
 		private String md5CalculatedByServer = null;
 		private DefaultHttpClient httpClient = new DefaultHttpClient();
-		private HttpPost post = new HttpPost( "http://tuncollector.android.schaeuffelhut.de:8080/tuncollector/TunCollector/" );
+		private HttpPost post = new HttpPost( Configuration.TUN_COLLECTOR_URL );
 		private MultipartEntity multipartEntity = new MultipartEntity();
 		private DigestOutputStream digestOutputStream;
 
@@ -154,7 +154,7 @@ public class ShareTunActivity extends Activity
 		}
 
 		private void attachFinalMd5Sum() {
-			digest( SECRET );
+			digest( Configuration.TUN_COLLECTOR_SECRET );
 			md5CalculatedByClient = calculateMd5Sum();
 			Log.i( "OpenVPN-Settings", "md5 calculated by client: " + md5CalculatedByClient );
 			multipartEntity.addPart( "md5", StringBody.create( md5CalculatedByClient, "text/plain", Charset.forName("UTF-8") ) );
