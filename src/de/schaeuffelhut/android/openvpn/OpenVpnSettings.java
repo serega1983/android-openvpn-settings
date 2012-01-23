@@ -19,6 +19,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
+import com.bugsense.trace.BugSense;
+import com.bugsense.trace.BugSenseHandler;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ComponentName;
@@ -78,7 +81,11 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
     	Log.d(TAG, "onCreate()" );
         
     	setContentView( mCurrentContentView = AdUtil.getAdSupportedListView( getApplicationContext() ) );
-        addPreferencesFromResource( R.xml.openvpn_settings );
+    	
+    	if ( Configuration.BUG_SENSE_API_KEY != null  )
+    		BugSenseHandler.setup( this, Configuration.BUG_SENSE_API_KEY );
+    	
+    	addPreferencesFromResource( R.xml.openvpn_settings );
 
         //TODO: write OpenVpnEnabled, see WifiEnabler => start stop OpenVpnService
         {
