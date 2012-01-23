@@ -22,6 +22,9 @@ import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
+import com.bugsense.trace.BugSense;
+import com.bugsense.trace.BugSenseHandler;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -68,8 +71,11 @@ public class ShareTunActivity extends Activity
 			} catch (OperationFailed e) {
 				Log.e( "OpenVPN-Settings", "Uploading device dteails failed", e );
 				// TODO: log via ACRA
+				BugSenseHandler.log( "Uploading device dteails failed", e );
 				Preferences.setSendDeviceDetailWasSuccessfull( getApplicationContext(), false );
-			}
+			} catch (Exception e) {
+				BugSenseHandler.log( "Uploading device dteails failed", e );
+			}			
 			return null;
 		}
 
@@ -164,6 +170,7 @@ public class ShareTunActivity extends Activity
 			try {
 				IOUtils.write(bytes, digestOutputStream);
 			} catch (Exception e) {
+				BugSenseHandler.log( "Digesting bytes", e );
 				// ignore, all data goes to a NullOutputStream
 			}
 		}
@@ -172,6 +179,7 @@ public class ShareTunActivity extends Activity
 			try {
 				FileUtils.copyFile( file, digestOutputStream );
 			} catch (Exception e) {
+				BugSenseHandler.log( "Digesting file", e );
 				// ignore, all data goes to a NullOutputStream
 			}
 		}
@@ -180,6 +188,7 @@ public class ShareTunActivity extends Activity
 			try {
 				digestOutputStream.write( value.getBytes( "UTF-8" ) );
 			} catch (Exception e) {
+				BugSenseHandler.log( "Digesting String", e );
 				// ignore, all data goes to a NullOutputStream
 			}
 		}
