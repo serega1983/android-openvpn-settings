@@ -3,8 +3,6 @@ package de.schaeuffelhut.android.openvpn;
 import java.io.File;
 import java.util.Arrays;
 
-import org.apache.commons.io.FileUtils;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
