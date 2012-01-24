@@ -43,7 +43,6 @@ public class Shell extends Thread
 	private Process mShellProcess;
 	private LoggerThread mStdoutLogger;
 	private LoggerThread mStderrLogger;
-	private PrintStream stdin;
 	
 	public Shell(String tag, String cmd, boolean root)
 	{
@@ -63,11 +62,35 @@ public class Shell extends Thread
 				return path;
 		}
 		return executable;
+		
 		// causes Force Close on unrooted phones
 //		throw new RuntimeException( "executable not found: " + executable );
 	}
 
 	public final void run()
+	{
+		onBeforeExecute();
+							
+		forkShell();
+		
+		if ( !hasShellProcess() )
+			return;
+
+		startStdoutThread();
+		startStderrThread();
+
+		executeCommand();
+		
+		final int exitCode = awaitTermination();
+
+		onCmdTerminated( exitCode );
+	}
+	
+	protected void onBeforeExecute() {
+		//overwrite if desired
+	}
+
+	private void forkShell()
 	{
 		final ProcessBuilder shellBuilder = new ProcessBuilder( mRoot ? mSu : mSh );
 
@@ -76,9 +99,7 @@ public class Shell extends Thread
 					"invoking external process: %s", 
 					Util.join( shellBuilder.command(), ' ' )
 			));
-		
-		onBeforeExecute();
-					
+
 		try
 		{
 			mShellProcess = shellBuilder.start();
@@ -105,10 +126,21 @@ public class Shell extends Thread
 			);
 			
 			onExecuteFailed( e );
-			
-			return;
 		}
+	}
 
+	protected void onExecuteFailed(IOException e) {
+		//overwrite if desired
+		// if this method is called either su or sh was not found or may not be executed.
+	}
+
+	private boolean hasShellProcess()
+	{
+		return mShellProcess == null;
+	}
+
+	private void startStdoutThread()
+	{
 		mStdoutLogger = new LoggerThread( mTag+"-stdout", mShellProcess.getInputStream(), true ){
 			@Override
 			protected void onLogLine(String line) {
@@ -116,7 +148,20 @@ public class Shell extends Thread
 			}
 		};
 		mStdoutLogger.start();
+	}
 
+	/**
+	 * Shell.onStdout() is called from a separate thread reading the shells
+	 * STDOUT channel line by line.
+	 * 
+	 * @param line A line read from the shells STDOUT channel.
+	 */
+	protected void onStdout(String line) {
+		//overwrite if desired
+	}
+
+	private void startStderrThread()
+	{
 		mStderrLogger = new LoggerThread( mTag+"-stderr", mShellProcess.getErrorStream(), true ){
 			@Override
 			protected void onLogLine(String line) {
@@ -124,58 +169,74 @@ public class Shell extends Thread
 			}
 		};
 		mStderrLogger.start();
-
-		stdin = new PrintStream( mShellProcess.getOutputStream() );
-
-		if ( LOCAL_LOGD )
-			Log.d( mTag, String.format( "invoking command line: %s", mCmd ) );
-		stdin.println( mCmd );
-		stdin.flush();
-		onCmdStarted();
-		Util.closeQuietly( stdin );
-		
-		try { joinLoggers(); } catch (InterruptedException e) {Log.e( mTag, "joining loggers", e);}
-		int exitCode = waitForQuietly();
-
-		onCmdTerminated( exitCode );
-	}
-	
-	protected void onBeforeExecute() {
-		//overwrite if desired
 	}
 
-	protected void onExecuteFailed(IOException e) {
-		//overwrite if desired
-		// if this method is called either su or sh was not found or may not be executed.
-	}
-	
-	protected void onStdout(String line) {
-		//overwrite if desired
-	}
-
+	/**
+	 * Shell.onStderr() is called from a separate thread reading the shells
+	 * STDERR channel line by line.
+	 * 
+	 * @param line A line read from the shells STDERR channel.
+	 */
 	protected void onStderr(String line) {
 		//overwrite if desired
 	}
+
+	private void executeCommand()
+	{
+		if ( LOCAL_LOGD )
+			Log.d( mTag, String.format( "invoking command line: %s", mCmd ) );
 	
+		final PrintStream stdin = new PrintStream( mShellProcess.getOutputStream() );
+		try
+		{
+			stdin.println( mCmd );
+			//TODO: check the streams error state
+
+			stdin.flush();
+			//TODO: check the streams error state
+		
+			onCmdStarted();
+		}
+		finally
+		{
+			Util.closeQuietly( stdin );
+		}
+	}
+
+	/**
+	 * Shell.onCmdStarted() is called after the command has been
+	 * flushed to the forked shells STDIN.
+	 */
 	protected void onCmdStarted() {
 		//overwrite if desired
 	}
 
-	protected void onCmdTerminated(int exitCode){
-		//overwrite if desired
+	private int awaitTermination()
+	{
+		try { joinLoggers(); } catch (InterruptedException e) {Log.e( mTag, "joining loggers", e);}
+		final int exitCode = waitForQuietly();
+		return exitCode;
 	}
 
 	private final void joinLoggers() throws InterruptedException
 	{
-		if ( mStdoutLogger != null )
-			mStdoutLogger.join();
-		
-		if ( mStderrLogger != null )
-			mStderrLogger.join();
+		mStdoutLogger.join();
+		mStderrLogger.join();
 	}
 	
 	private final int waitForQuietly()
 	{
 		return Util.waitForQuietly( mShellProcess );
+	}
+
+	/**
+	 * Shell.onCmdTerminated is called when the forked process
+	 * has returned and the threads reading STDOUT and STDERR
+	 * are finished.
+	 *  
+	 * @param exitCode The exit code returned by the forked process.
+	 */
+	protected void onCmdTerminated(int exitCode){
+		//overwrite if desired
 	}
 }
