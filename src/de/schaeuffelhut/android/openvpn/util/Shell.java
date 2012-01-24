@@ -127,9 +127,9 @@ public class Shell extends Thread
 			Util.closeQuietly( stdin );
 			
 			try { joinLoggers(); } catch (InterruptedException e) {Log.e( mTag, "joining loggers", e);}
-			waitForQuietly();
+			int exitCode = waitForQuietly();
 
-			onCmdTerminated();
+			onCmdTerminated( exitCode );
 		}
 	}
 	
@@ -150,11 +150,11 @@ public class Shell extends Thread
 		//overwrite if desired
 	}
 
-	protected void onCmdTerminated(){
+	protected void onCmdTerminated(int exitCode){
 		//overwrite if desired
 	}
 
-	public final void joinLoggers() throws InterruptedException
+	private final void joinLoggers() throws InterruptedException
 	{
 		if ( mStdoutLogger != null )
 			mStdoutLogger.join();
@@ -163,7 +163,7 @@ public class Shell extends Thread
 			mStderrLogger.join();
 	}
 	
-	public final int waitForQuietly()
+	private final int waitForQuietly()
 	{
 		return Util.waitForQuietly( mProcess );
 	}
