@@ -155,13 +155,7 @@ public final class DaemonMonitor
 						mTagDaemonMonitor + "-daemon",
 						Preferences.getLoadTunModuleCommand( PreferenceManager.getDefaultSharedPreferences(mContext) ),
 						Shell.SU
-				){
-					@Override
-					protected void onCmdTerminated() {
-						waitForQuietly();
-						try {joinLoggers();} catch (InterruptedException e) {}
-					}
-				};
+				);
 				insmod.start();
 				try {
 					insmod.join();
@@ -247,9 +241,6 @@ public final class DaemonMonitor
 									Intents.DAEMON_STATE_DISABLED
 							)
 					);
-				
-				waitForQuietly();
-				try {joinLoggers();} catch (InterruptedException e) {}
 				mDaemonProcess = null;
 				mLog.close();
 			}
