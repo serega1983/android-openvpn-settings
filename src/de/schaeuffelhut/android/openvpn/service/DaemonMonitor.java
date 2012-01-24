@@ -230,7 +230,7 @@ public final class DaemonMonitor
 			}
 
 			@Override
-			protected void onCmdTerminated()
+			protected void onCmdTerminated(int exitCode)
 			{
 				// while mManagementThread == null, system is in startup phase
 				// and a DAEMON_STATE_DISABLED message is expected
