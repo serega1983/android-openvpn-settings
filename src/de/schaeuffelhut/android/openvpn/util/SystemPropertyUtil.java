@@ -24,12 +24,6 @@ public class SystemPropertyUtil
 			super.onStdout(line);
 			value = line;
 		}
-		
-		@Override
-		protected void onCmdTerminated() {
-			try { joinLoggers(); } catch (InterruptedException e) {Log.e("OpenVPN-Settings-getprop", "joining loggers", e);};
-			waitForQuietly();
-		}
 	}
 
 	private final static class GetAllProp extends Shell {
@@ -51,24 +45,12 @@ public class SystemPropertyUtil
 			else
 				Log.e("OpenVPN-Settings-getprop", "unmatched: "+line);
 		}
-		
-		@Override
-		protected void onCmdTerminated() {
-			try { joinLoggers(); } catch (InterruptedException e) {Log.e("OpenVPN-Settings-getallprop", "joining loggers", e);}
-			waitForQuietly();
-		}
 	}
 
 	private final static class SetProp extends Shell {
 
 		private SetProp(String key, String value) {
 			super( "OpenVPN-Settings-setprop", "setprop " + key + " " + value, Shell.SU );
-		}
-
-		@Override
-		protected void onCmdTerminated() {
-			try { joinLoggers(); } catch (InterruptedException e) {Log.e("OpenVPN-Settings-setprop", "joining loggers", e);}
-			waitForQuietly();
 		}
 	}
 

@@ -19,6 +19,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
+import com.bugsense.trace.BugSense;
+import com.bugsense.trace.BugSenseHandler;
+
 import android.util.Log;
 
 
@@ -78,7 +81,7 @@ public class Shell extends Thread
 		
 		try {
 			mProcess = pb.start();
-
+			
 			mStdoutLogger = new LoggerThread( mTag+"-stdout", mProcess.getInputStream(), true ){
 				@Override
 				protected void onLogLine(String line) {
@@ -110,11 +113,22 @@ public class Shell extends Thread
 					Util.join( pb.command(), ' ' ),
 					e
 			));
+			BugSenseHandler.log(
+					String.format( 
+							"invoking external process: %s", 
+							Util.join( pb.command(), ' ' )
+					),
+					e
+			);
 			//TODO: display a toast!
 		}
 		finally
 		{
 			Util.closeQuietly( stdin );
+			
+			try { joinLoggers(); } catch (InterruptedException e) {Log.e( mTag, "joining loggers", e);}
+			waitForQuietly();
+
 			onCmdTerminated();
 		}
 	}
@@ -142,8 +156,11 @@ public class Shell extends Thread
 
 	public final void joinLoggers() throws InterruptedException
 	{
-		mStdoutLogger.join();
-		mStderrLogger.join();
+		if ( mStdoutLogger != null )
+			mStdoutLogger.join();
+		
+		if ( mStderrLogger != null )
+			mStderrLogger.join();
 	}
 	
 	public final int waitForQuietly()
