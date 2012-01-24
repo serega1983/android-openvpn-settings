@@ -135,7 +135,7 @@ public class Shell extends Thread
 
 	private boolean hasShellProcess()
 	{
-		return mShellProcess == null;
+		return mShellProcess != null;
 	}
 
 	private void startStdoutThread()
