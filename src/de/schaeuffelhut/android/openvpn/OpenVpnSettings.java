@@ -17,10 +17,6 @@ package de.schaeuffelhut.android.openvpn;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
-
-import com.bugsense.trace.BugSense;
-import com.bugsense.trace.BugSenseHandler;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -45,6 +41,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+
+import com.bugsense.trace.BugSenseHandler;
+
 import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
 import de.schaeuffelhut.android.openvpn.tun.ShareTunActivity;
 import de.schaeuffelhut.android.openvpn.util.AdUtil;

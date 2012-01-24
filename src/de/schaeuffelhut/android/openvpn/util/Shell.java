@@ -19,10 +19,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import com.bugsense.trace.BugSense;
-import com.bugsense.trace.BugSenseHandler;
-
 import android.util.Log;
+
+import com.bugsense.trace.BugSenseHandler;
 
 
 public class Shell extends Thread

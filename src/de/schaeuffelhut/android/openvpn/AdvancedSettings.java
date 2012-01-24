@@ -19,7 +19,6 @@ import java.io.File;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
