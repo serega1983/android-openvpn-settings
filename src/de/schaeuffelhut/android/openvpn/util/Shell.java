@@ -40,7 +40,7 @@ public class Shell extends Thread
 	private final String mCmd;
 	private final boolean mRoot;
 
-	private Process mProcess;
+	private Process mShellProcess;
 	private LoggerThread mStdoutLogger;
 	private LoggerThread mStderrLogger;
 	private PrintStream stdin;
@@ -69,75 +69,86 @@ public class Shell extends Thread
 
 	public final void run()
 	{
-		final ProcessBuilder pb = new ProcessBuilder( mRoot ? mSu : mSh );
+		final ProcessBuilder shellBuilder = new ProcessBuilder( mRoot ? mSu : mSh );
 
 		if ( LOCAL_LOGD )
 			Log.d( mTag, String.format( 
 					"invoking external process: %s", 
-					Util.join( pb.command(), ' ' )
+					Util.join( shellBuilder.command(), ' ' )
 			));
 		
 		onBeforeExecute();
-		
-		try {
-			mProcess = pb.start();
-			
-			mStdoutLogger = new LoggerThread( mTag+"-stdout", mProcess.getInputStream(), true ){
-				@Override
-				protected void onLogLine(String line) {
-					onStdout(line);
-				}
-			};
-			mStdoutLogger.start();
-
-			mStderrLogger = new LoggerThread( mTag+"-stderr", mProcess.getErrorStream(), true ){
-				@Override
-				protected void onLogLine(String line) {
-					onStderr(line);
-				}
-			};
-			mStderrLogger.start();
-
-			stdin = new PrintStream( mProcess.getOutputStream() );
-
-			if ( LOCAL_LOGD )
-				Log.d( mTag, String.format( "invoking command line: %s", mCmd ) );
-			stdin.println( mCmd );
-			stdin.flush();
-			onCmdStarted();
+					
+		try
+		{
+			mShellProcess = shellBuilder.start();
 		}
 		catch (IOException e)
 		{
+			// Something went fundamentally wrong as either
+			// /system/bin/sh or /system/bin/su could not be
+			// found. This is a border line case which really
+			// should have been already handled before run()
+			// was called!
+			
 			Log.e( mTag, String.format( 
 					"invoking external process: %s", 
-					Util.join( pb.command(), ' ' ),
+					Util.join( shellBuilder.command(), ' ' ),
 					e
 			));
 			BugSenseHandler.log(
 					String.format( 
 							"invoking external process: %s", 
-							Util.join( pb.command(), ' ' )
+							Util.join( shellBuilder.command(), ' ' )
 					),
 					e
 			);
-			//TODO: display a toast!
-		}
-		finally
-		{
-			Util.closeQuietly( stdin );
 			
-			try { joinLoggers(); } catch (InterruptedException e) {Log.e( mTag, "joining loggers", e);}
-			int exitCode = waitForQuietly();
-
-			onCmdTerminated( exitCode );
+			onExecuteFailed( e );
+			
+			return;
 		}
+
+		mStdoutLogger = new LoggerThread( mTag+"-stdout", mShellProcess.getInputStream(), true ){
+			@Override
+			protected void onLogLine(String line) {
+				onStdout(line);
+			}
+		};
+		mStdoutLogger.start();
+
+		mStderrLogger = new LoggerThread( mTag+"-stderr", mShellProcess.getErrorStream(), true ){
+			@Override
+			protected void onLogLine(String line) {
+				onStderr(line);
+			}
+		};
+		mStderrLogger.start();
+
+		stdin = new PrintStream( mShellProcess.getOutputStream() );
+
+		if ( LOCAL_LOGD )
+			Log.d( mTag, String.format( "invoking command line: %s", mCmd ) );
+		stdin.println( mCmd );
+		stdin.flush();
+		onCmdStarted();
+		Util.closeQuietly( stdin );
+		
+		try { joinLoggers(); } catch (InterruptedException e) {Log.e( mTag, "joining loggers", e);}
+		int exitCode = waitForQuietly();
+
+		onCmdTerminated( exitCode );
 	}
 	
-
 	protected void onBeforeExecute() {
 		//overwrite if desired
 	}
 
+	protected void onExecuteFailed(IOException e) {
+		//overwrite if desired
+		// if this method is called either su or sh was not found or may not be executed.
+	}
+	
 	protected void onStdout(String line) {
 		//overwrite if desired
 	}
@@ -165,6 +176,6 @@ public class Shell extends Thread
 	
 	private final int waitForQuietly()
 	{
-		return Util.waitForQuietly( mProcess );
+		return Util.waitForQuietly( mShellProcess );
 	}
 }

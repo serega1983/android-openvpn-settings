@@ -17,33 +17,17 @@ package de.schaeuffelhut.android.openvpn.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.concurrent.CountDownLatch;
 
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.Intent;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.Notifications;
 import de.schaeuffelhut.android.openvpn.Preferences;
-import de.schaeuffelhut.android.openvpn.util.DnsUtil;
 import de.schaeuffelhut.android.openvpn.util.Preconditions;
 import de.schaeuffelhut.android.openvpn.util.Shell;
-import de.schaeuffelhut.android.openvpn.util.SystemPropertyUtil;
-import de.schaeuffelhut.android.openvpn.util.TrafficStats;
-import de.schaeuffelhut.android.openvpn.util.UnexpectedSwitchValueException;
 import de.schaeuffelhut.android.openvpn.util.Util;
 
 /**
@@ -230,7 +214,18 @@ public final class DaemonMonitor
 			}
 
 			@Override
+			protected void onExecuteFailed(IOException e)
+			{
+				onExit();
+			}
+			
+			@Override
 			protected void onCmdTerminated(int exitCode)
+			{
+				onExit();
+			}
+
+			private void onExit()
 			{
 				// while mManagementThread == null, system is in startup phase
 				// and a DAEMON_STATE_DISABLED message is expected
