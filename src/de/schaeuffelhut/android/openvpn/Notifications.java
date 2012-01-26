@@ -47,9 +47,9 @@ public final class Notifications {
 		);
 		notification.flags |= Notification.FLAG_NO_CLEAR;
 		notification.flags |= Notification.FLAG_ONGOING_EVENT;
+		notification.flags |= Notification.FLAG_ONLY_ALERT_ONCE;
 		
 		Intent intent = new Intent(context, OpenVpnSettings.class );
-//		intent.putExtra( EnterPassphrase.EXTRA_FILENAME, configFile.getAbsolutePath() );
 		
 		notification.setLatestEventInfo(
 				context,
