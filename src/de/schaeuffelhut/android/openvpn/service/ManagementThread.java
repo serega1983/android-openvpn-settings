@@ -820,8 +820,8 @@ final class ManagementThread extends Thread
 	private void onByteCount(String line) {
 		int startOfOut = line.indexOf(',');
 		int startOfIn = RTMSG_BYTECOUNT.length();
-		int in = Integer.parseInt( line.substring( startOfIn, startOfOut) ); // in the tunnel
-		int out = Integer.parseInt( line.substring( startOfOut+1) ); // out of the tunnel
+		long in = Long.parseLong( line.substring( startOfIn, startOfOut) ); // in the tunnel
+		long out = Long.parseLong( line.substring( startOfOut+1) ); // out of the tunnel
 		if (mTrafficStats==null) mTrafficStats = new TrafficStats();
 		mTrafficStats.setStats(out, in);
 		String msg = mTrafficStats.toSmallInOutPerSecString();
