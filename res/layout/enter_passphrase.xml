@@ -22,6 +22,9 @@
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content" 
 		android:hint="@string/enter_passphrase_passphrase"
-		android:password="true"/>
+		android:inputType="textPassword"
+
+		android:password="true"
+		/>
 
 </LinearLayout>
