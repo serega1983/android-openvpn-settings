@@ -1,4 +1,6 @@
 syntax: glob
 bin
 gen
-
+.idea
+out
+*.iml
