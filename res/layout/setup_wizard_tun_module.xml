@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~ This file is part of OpenVPN-Settings.
+  ~
+  ~ Copyright © 2009-2012  Friedrich Schäuffelhut
+  ~
+  ~ OpenVPN-Settings is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ OpenVPN-Settings is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with OpenVPN-Settings.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~ Report bugs or new features at: http://code.google.com/p/android-openvpn-settings/ 
+  ~ Contact the author at:          android.openvpn@schaeuffelhut.de
+  -->
+
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_height="fill_parent"
+        android:layout_width="fill_parent"
+        android:orientation="vertical"
+        >
+
+    <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="TUN Module"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:padding="15dip"
+            />
+
+    <TableLayout
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_gravity="center"
+            android:padding="15dip"
+            >
+        <TableRow
+            android:padding="3dip"
+            >
+            <TextView
+                    android:text="Status:"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    />
+            <TextView
+                    android:text="Module is loaded"
+                    android:layout_height="fill_parent"
+                    android:layout_gravity="right"
+                    />
+        </TableRow>
+        <TableRow
+            android:padding="3dip"
+            >
+            <TextView
+                    android:text="provided by:"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    />
+            <TextView
+                    android:text="/system/lib/modules/tun.ko"
+                    android:layout_height="fill_parent"
+                    android:layout_gravity="right"
+                    />
+        </TableRow>
+    </TableLayout>
+
+    <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:orientation="vertical"
+            android:padding="15dip"
+            >
+        <CheckBox
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Find one online"
+            />
+        <CheckBox
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Try to load the module"
+            />
+        <CheckBox
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Yes, I want to share the module"
+            />
+    </LinearLayout>
+
+</LinearLayout>
