@@ -56,6 +56,12 @@
             android:text="Cancel"
             android:id="@+id/setup_wizard_cancel"
             />
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="0dip"
+            android:layout_weight="1"
+            android:background="#ffff0000"
+                />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
