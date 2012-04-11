@@ -51,6 +51,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import com.bugsense.trace.BugSenseHandler;
 
 import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
+import de.schaeuffelhut.android.openvpn.setup.SystemSetupWizard;
 import de.schaeuffelhut.android.openvpn.tun.ShareTunActivity;
 import de.schaeuffelhut.android.openvpn.util.AdUtil;
 import de.schaeuffelhut.android.openvpn.util.DnsUtil;
@@ -333,6 +334,11 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 		case R.id.settings_menu_help:
 			showDialog( DIALOG_HELP );
 			return true;
+
+        case R.id.settings_menu_setup_wizard: {
+            startActivity( new Intent( this, SystemSetupWizard.class ) );
+            return true; }
+
 //		case R.id.configs_options_import:
 //			Intent intent = new Intent( getApplicationContext(), ImportFiles.class );
 //			startActivityForResult(intent, REQUEST_CODE_IMPORT_FILES);

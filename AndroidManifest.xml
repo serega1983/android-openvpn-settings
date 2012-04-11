@@ -30,7 +30,7 @@
 	<uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.BROADCAST_STICKY"/>
 	<uses-sdk android:minSdkVersion="3" android:targetSdkVersion="4"/>
-	
+
 	<supports-screens
  		android:smallScreens="true"
  		android:normalScreens="true"
@@ -80,12 +80,15 @@
 			android:name=".tun.ShareTunActivity" 
 			android:label="Share TUN Module"
 			/>
+
 		<activity
 			android:name="ViewLogFile" 
 			android:label="@string/view_log_file_category"
 			/>
-					
-		<service
+
+        <activity android:name=".setup.SystemSetupWizard" android:label="System Setup Wizard"/>
+
+        <service
 			android:name="de.schaeuffelhut.android.openvpn.service.OpenVpnService"
 			android:label="@string/openvpn_service"
 			android:exported="false"
