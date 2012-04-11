@@ -5,3 +5,6 @@ gen
 out
 *.iml
 tmp
+local.properties
+*/local.properties
+
