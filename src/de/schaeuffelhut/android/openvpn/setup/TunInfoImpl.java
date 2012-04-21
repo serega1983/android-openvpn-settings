@@ -24,7 +24,6 @@ package de.schaeuffelhut.android.openvpn.setup;
 
 import android.content.Context;
 import android.util.Log;
-import de.schaeuffelhut.android.openvpn.IocContext;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -86,16 +85,19 @@ public class TunInfoImpl implements TunInfo
         Collection<TunLoader> tunLoaders = new ArrayList<TunLoader>();
         for (TryToLoadTunModuleStrategy strategy : strategies)
             strategy.appendTunLoaderTo( tunLoaders );
+
+
         for (TunLoader tunLoader : tunLoaders)
         {
             tunLoader.load();
-            Log.i( "OpenVPN", "Trying to load tun module using "+tunLoader.toString() );
-            if ( isDeviceNodeAvailable() )
+            Log.i( "OpenVPN", "Trying to load tun module using " + tunLoader.toString() );
+            if (isDeviceNodeAvailable())
             {
                 Log.i( "OpenVPN", tunLoader.toString() );
-                //TODO: remember tunLoader
-                break;
+                tunLoader.save( new TunLoaderPreferences( context ) );
+                return;
             }
         }
+        new TunLoaders.NullTunLoader().save( new TunLoaderPreferences( context ) );
     }
 }
