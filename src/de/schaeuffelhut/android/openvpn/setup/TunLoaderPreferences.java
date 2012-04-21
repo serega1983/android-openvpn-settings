@@ -25,6 +25,7 @@ package de.schaeuffelhut.android.openvpn.setup;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import de.schaeuffelhut.android.openvpn.Preferences;
 
 import java.io.File;
 
@@ -91,7 +92,22 @@ public class TunLoaderPreferences
 
     public TunLoaders.Types getType()
     {
-        return TunLoaders.Types.valueOf( preferences.getString( KEY_TYPE, VALUE_TYPE_NONE ) );
+        return TunLoaders.Types.valueOf( preferences.getString( KEY_TYPE, getDefaultType() ) );
+    }
+
+    /**
+     * Returns the default type, if no type has been set yet. Defaults to {@code LEGACY} if
+     * the legacy key 'openvpn_do_modprobe_tun' (pre version 0.4.11) is true, otherwise defaults to {@code NONE}.
+     * @return the default type.
+     */
+    private String getDefaultType()
+    {
+        final String defaultType;
+        if (Preferences.getDoModprobeTun( preferences ))
+            defaultType = VALUE_TYPE_LEGACY;
+        else
+            defaultType = VALUE_TYPE_NONE;
+        return defaultType;
     }
 
     public void setPathToModule(File file)
