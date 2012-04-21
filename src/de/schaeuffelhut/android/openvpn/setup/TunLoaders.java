@@ -228,7 +228,7 @@ public class TunLoaders
         NONE
                 {
                     @Override
-                    public TunLoader createTunLoader(File pathToModule, SharedPreferences preferences)
+                    public TunLoader createTunLoader(TunLoaderPreferences tunLoaderPreferences, SharedPreferences sharedPreferences)
                     {
                         return new NullTunLoader();
                     }
@@ -236,7 +236,7 @@ public class TunLoaders
         MODPROBE
                 {
                     @Override
-                    public TunLoader createTunLoader(File pathToModule, SharedPreferences preferences)
+                    public TunLoader createTunLoader(TunLoaderPreferences tunLoaderPreferences, SharedPreferences sharedPreferences)
                     {
                         return new LoadTunViaModprobe();
                     }
@@ -244,23 +244,23 @@ public class TunLoaders
         INSMOD
                 {
                     @Override
-                    public TunLoader createTunLoader(File pathToModule, SharedPreferences preferences)
+                    public TunLoader createTunLoader(TunLoaderPreferences tunLoaderPreferences, SharedPreferences sharedPreferences)
                     {
-                        return new LoadTunViaInsmod( pathToModule );
+                        return new LoadTunViaInsmod( tunLoaderPreferences.getPathToModule() );
                     }
                 },
         LEGACY
                 {
                     @Override
-                    public TunLoader createTunLoader(File pathToModule, SharedPreferences preferences)
+                    public TunLoader createTunLoader(TunLoaderPreferences tunLoaderPreferences, SharedPreferences sharedPreferences)
                     {
-                        if (TunLoaders.hasLegacyDefinition( preferences ))
-                            return TunLoaders.createFromLegacyDefinition( preferences );
+                        if (TunLoaders.hasLegacyDefinition( sharedPreferences ))
+                            return TunLoaders.createFromLegacyDefinition( sharedPreferences );
                         else
                             return new NullTunLoader();
                     }
                 };
 
-        public abstract TunLoader createTunLoader(File pathToModule, SharedPreferences preferences);
+        public abstract TunLoader createTunLoader(TunLoaderPreferences tunLoaderPreferences, SharedPreferences sharedPreferences);
     }
 }

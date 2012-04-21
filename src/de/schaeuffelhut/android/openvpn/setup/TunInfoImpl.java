@@ -66,12 +66,12 @@ public class TunInfoImpl implements TunInfo
 
     public boolean hasTunLoader()
     {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return true;
     }
 
     public TunLoader getTunLoader()
     {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return new TunLoaderPreferences( context ).createTunLoader();
     }
 
     public List<File> listTunModules()

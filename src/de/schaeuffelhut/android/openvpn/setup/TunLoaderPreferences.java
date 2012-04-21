@@ -99,6 +99,11 @@ public class TunLoaderPreferences
         preferences.edit().putString( KEY_PATH_TO_MODULE, file.getPath() ).commit();
     }
 
+    public void removePathToModule()
+    {
+        preferences.edit().remove( KEY_PATH_TO_MODULE ).commit();
+    }
+
     public File getPathToModule()
     {
         return new File( preferences.getString( KEY_PATH_TO_MODULE, null ) );
@@ -106,6 +111,7 @@ public class TunLoaderPreferences
 
     public TunLoader createTunLoader()
     {
-        return getType().createTunLoader( getPathToModule(), preferences );
+        return getType().createTunLoader( this, preferences );
     }
+
 }
