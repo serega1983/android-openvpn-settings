@@ -32,7 +32,7 @@
     <TextView
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:text="TUN Module"
+            android:text="TUN Kernel Interface"
             android:layout_gravity="center"
             android:textStyle="bold"
             android:padding="15dip"
@@ -53,16 +53,33 @@
                     android:layout_weight="1"
                     />
             <TextView
-                    android:text="Module is loaded"
+                    android:text="Available/Missing"
                     android:layout_height="fill_parent"
                     android:layout_gravity="right"
+                    android:id="@+id/setup_wizard_tun_module_has_device_node"
                     />
         </TableRow>
         <TableRow
             android:padding="3dip"
             >
             <TextView
-                    android:text="provided by:"
+                    android:text="TUN loader:"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    />
+            <TextView
+                    android:text="none/modprobe"
+                    android:layout_height="fill_parent"
+                    android:layout_gravity="right"
+                    android:id="@+id/setup_wizard_tun_module_tun_loader"
+                    />
+        </TableRow>
+        <TableRow
+            android:padding="3dip"
+            android:id="@+id/setup_wizard_tun_module_path_to_module_table_row"
+            >
+            <TextView
+                    android:text="Path to Module:"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     />
@@ -70,6 +87,7 @@
                     android:text="/system/lib/modules/tun.ko"
                     android:layout_height="fill_parent"
                     android:layout_gravity="right"
+                    android:id="@+id/setup_wizard_tun_module_path_to_module"
                     />
         </TableRow>
     </TableLayout>
@@ -79,22 +97,52 @@
             android:layout_width="fill_parent"
             android:orientation="vertical"
             android:padding="15dip"
+            android:id="@+id/setup_wizard_tun_module_section_load_module"
             >
+
         <CheckBox
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:text="Find one online"
+            android:text="Try current TUN Loader"
+            android:checked="true"
+            android:id="@+id/setup_wizard_tun_module_option_try_current_tun_loader"
             />
         <CheckBox
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:text="Try to load the module"
+            android:text="Scan device for tun.ko"
+            android:checked="true"
+            android:id="@+id/setup_wizard_tun_module_option_scan_device_for_tun"
             />
+        <CheckBox
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:checked="false"
+            android:text="Also try /sdcard/tun.ko"
+            android:id="@+id/setup_wizard_tun_module_option_try_sdcard"
+            />
+        <Button
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:text="Try to Load the Module"
+            android:id="@+id/setup_wizard_tun_module_try_to_load_module"
+            />
+
+<!--
+        <CheckBox
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Find a tun.ko online"
+            />
+-->
+<!--
         <CheckBox
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:text="Yes, I want to share the module"
             />
+-->
+
     </LinearLayout>
 
 </LinearLayout>

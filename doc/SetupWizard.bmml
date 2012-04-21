@@ -793,7 +793,7 @@
         <text>OK</text>
       </controlProperties>
     </control>
-    <control controlID="193" controlTypeID="com.balsamiq.mockups::Label" x="107" y="397" w="56" h="21" measuredW="44" measuredH="21" zOrder="136" locked="false" isInGroup="-1">
+    <control controlID="193" controlTypeID="com.balsamiq.mockups::Label" x="107" y="397" w="56" h="21" measuredW="45" measuredH="21" zOrder="136" locked="false" isInGroup="-1">
       <controlProperties>
         <text>insmod</text>
       </controlProperties>
@@ -805,7 +805,7 @@
         <text>Failed</text>
       </controlProperties>
     </control>
-    <control controlID="195" controlTypeID="com.balsamiq.mockups::Label" x="107" y="414" w="56" h="21" measuredW="23" measuredH="21" zOrder="138" locked="false" isInGroup="-1">
+    <control controlID="195" controlTypeID="com.balsamiq.mockups::Label" x="107" y="414" w="56" h="21" measuredW="22" measuredH="21" zOrder="138" locked="false" isInGroup="-1">
       <controlProperties>
         <text>tun</text>
       </controlProperties>
@@ -817,7 +817,7 @@
         <text>Failed</text>
       </controlProperties>
     </control>
-    <control controlID="197" controlTypeID="com.balsamiq.mockups::Label" x="108" y="434" w="56" h="21" measuredW="55" measuredH="21" zOrder="140" locked="false" isInGroup="-1">
+    <control controlID="197" controlTypeID="com.balsamiq.mockups::Label" x="108" y="434" w="56" h="21" measuredW="54" measuredH="21" zOrder="140" locked="false" isInGroup="-1">
       <controlProperties>
         <text>openvpn</text>
       </controlProperties>
@@ -829,7 +829,7 @@
         <text>OK</text>
       </controlProperties>
     </control>
-    <control controlID="199" controlTypeID="com.balsamiq.mockups::Label" x="107" y="453" w="56" h="21" measuredW="52" measuredH="21" zOrder="142" locked="false" isInGroup="-1">
+    <control controlID="199" controlTypeID="com.balsamiq.mockups::Label" x="107" y="453" w="56" h="21" measuredW="50" measuredH="21" zOrder="142" locked="false" isInGroup="-1">
       <controlProperties>
         <text>busybox</text>
       </controlProperties>
