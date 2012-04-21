@@ -29,4 +29,9 @@ public final class UnexpectedSwitchValueException extends RuntimeException
 	{
 		super( Integer.toString( v ) );
 	}
+
+    public UnexpectedSwitchValueException(String value)
+    {
+        super( value );
+    }
 }
