@@ -169,4 +169,9 @@ public class TunLoaders
                     '}';
         }
     }
+
+    public enum Types
+    {
+        LEGACY, MODPROBE, INSMOD, NONE
+    }
 }
