@@ -23,6 +23,7 @@
 package de.schaeuffelhut.android.openvpn.setup;
 
 import android.test.InstrumentationTestCase;
+import android.test.MoreAsserts;
 import junit.framework.Assert;
 
 import java.io.File;
@@ -89,5 +90,40 @@ public class TunLoaderPreferencesTest extends InstrumentationTestCase
         final String uniqueFileName = "/system/lib/modules/tun.ko-" + System.currentTimeMillis();
         preferences.setPathToModule( new File( uniqueFileName ) );
         Assert.assertEquals( new File( uniqueFileName ), preferences.getPathToModule() );
+    }
+
+    public void test_createTunLoader_type_NONE()
+    {
+        preferences.setTypeToNone();
+        TunLoader tunLoader = preferences.createTunLoader();
+        MoreAsserts.assertAssignableFrom( TunLoaders.NullTunLoader.class, tunLoader );
+        Assert.assertFalse( tunLoader.hasPathToModule() );
+    }
+
+    public void test_createTunLoader_type_MODPROBE()
+    {
+        preferences.setTypeToModprobe();
+        TunLoader tunLoader = preferences.createTunLoader();
+        MoreAsserts.assertAssignableFrom( TunLoaders.LoadTunViaModprobe.class, tunLoader );
+        Assert.assertFalse( tunLoader.hasPathToModule() );
+    }
+
+    public void test_createTunLoader_type_INSMOD()
+    {
+        final String uniqueFileName = "/system/lib/modules/tun.ko-" + System.currentTimeMillis();
+        preferences.setTypeToInsmod( new File( uniqueFileName ) );
+        TunLoader tunLoader = preferences.createTunLoader();
+        MoreAsserts.assertAssignableFrom( TunLoaders.LoadTunViaInsmod.class, tunLoader );
+        Assert.assertTrue( tunLoader.hasPathToModule() );
+        Assert.assertEquals( new File( uniqueFileName ), tunLoader.getPathToModule() );
+    }
+
+    public void test_createTunLoader_type_LEGACY()
+    {
+        preferences.setTypeToLegacy();
+        TunLoader tunLoader = preferences.createTunLoader();
+        fail("TODO");
+//        MoreAsserts.assertAssignableFrom( TunLoaders.NullTunLoader.class, tunLoader );
+//        Assert.assertFalse( tunLoader.hasPathToModule() );
     }
 }
