@@ -35,7 +35,6 @@ import de.schaeuffelhut.android.openvpn.IocContext;
 import de.schaeuffelhut.android.openvpn.R;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -70,7 +69,7 @@ public class TunModuleFragment extends Fragment
                             params.add( TunInfo.TryToLoadTunModuleStrategy.SCAN_DEVICE_FOR_TUN );
                         if (trySdcard().isChecked())
                             params.add( TunInfo.TryToLoadTunModuleStrategy.TRY_SDCARD );
-                        IocContext.get().getTunInfo().tryToLoadTunModule( params );
+                        IocContext.get().getTunInfo( getActivity().getApplicationContext() ).tryToLoadTunModule( params );
                         initView();
                     }
                 }
@@ -101,7 +100,7 @@ public class TunModuleFragment extends Fragment
 
     private void initView()
     {
-        TunInfo tunInfo = IocContext.get().getTunInfo();
+        TunInfo tunInfo = IocContext.get().getTunInfo( getActivity().getApplicationContext() );
         setFlag( R.id.setup_wizard_tun_module_has_device_node, tunInfo.isDeviceNodeAvailable(), "Available", "Not Available" );
         if (tunInfo.hasTunLoader())
         {
