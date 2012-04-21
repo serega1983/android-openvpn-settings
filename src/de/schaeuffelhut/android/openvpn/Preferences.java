@@ -133,10 +133,22 @@ public final class Preferences {
 	{
 		return sharedPreferences.getString( Preferences.KEY_OPENVPN_MODPROBE_ALTERNATIVE, "modprobe" );
 	}
+	public final static void setModprobeAlternativeToModprobe(SharedPreferences sharedPreferences)
+	{
+		sharedPreferences.edit().putString( Preferences.KEY_OPENVPN_MODPROBE_ALTERNATIVE, "modprobe" ).commit();
+	}
+	public final static void setModprobeAlternativeToInsmod(SharedPreferences sharedPreferences)
+	{
+		sharedPreferences.edit().putString( Preferences.KEY_OPENVPN_MODPROBE_ALTERNATIVE, "insmod" ).commit();
+	}
 
 	public final static String getPathToTun(SharedPreferences sharedPreferences)
 	{
 		return sharedPreferences.getString( Preferences.KEY_OPENVPN_PATH_TO_TUN, "tun" );
+	}
+	public final static void setPathToTun(SharedPreferences sharedPreferences, File path)
+	{
+		sharedPreferences.edit().putString( Preferences.KEY_OPENVPN_PATH_TO_TUN, path.getPath() ).commit();
 	}
 
 	public final static String getLoadTunModuleCommand(SharedPreferences sharedPreferences)
@@ -308,8 +320,14 @@ public final class Preferences {
 	public final static boolean getDoModprobeTun(SharedPreferences sharedPreferences) {
 		return sharedPreferences.getBoolean( Preferences.KEY_OPENVPN_DO_MODPROBE_TUN, false);
 	}
+	public final static void setDoModprobeTun(Context context, boolean value) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( context );
+        sharedPreferences.edit().putBoolean( Preferences.KEY_OPENVPN_DO_MODPROBE_TUN, value ).commit();
+	}
 
-	public final static ArrayList<File> configs(Context context)
+
+
+    public final static ArrayList<File> configs(Context context)
 	{
 		return configs(getConfigDir( context, PreferenceManager.getDefaultSharedPreferences(context) ));
 	}
