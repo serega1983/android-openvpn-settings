@@ -22,7 +22,14 @@
 
 package de.schaeuffelhut.android.openvpn.setup;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
+import android.text.TextUtils;
+import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.util.Shell;
+import de.schaeuffelhut.android.openvpn.util.UnexpectedSwitchValueException;
 
 import java.io.File;
 
@@ -35,10 +42,56 @@ import java.io.File;
  */
 public class TunLoaders
 {
-    private TunLoaders(){}
+    private TunLoaders()
+    {
+    }
+
+    /**
+     * Create a TunLoader using the definition provided by the advanced settings dialog.
+      * @param context the application context holding the shared preferences.
+     * @return the Tun Loader.
+     */
+    public static TunLoader createFromLegacyDefinition(Context context)
+    {
+        if ( !hasLegacyDefinition( context ) )
+            throw new IllegalStateException( "No legacy tun loading method defined" );
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences( context );
+        final String modprobeAlternative = Preferences.getModprobeAlternative( preferences );
+        final File pathToModule = new File( Preferences.getPathToTun( preferences ) );
+        if ("modprobe".equals( modprobeAlternative ))
+            return new LoadTunViaModprobe( pathToModule );
+        if ("insmod".equals( modprobeAlternative ))
+            return new LoadTunViaInsmod( pathToModule );
+        throw new UnexpectedSwitchValueException( modprobeAlternative );
+    }
+
+    public static boolean hasLegacyDefinition(Context context)
+    {
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences( context );
+        return Preferences.getDoModprobeTun( preferences );
+    }
 
     static class LoadTunViaModprobe implements TunLoader
     {
+        protected static final File DEFAULT_TUN = new File( "tun" );
+
+        private final File pathToModule;
+
+        public LoadTunViaModprobe()
+        {
+            this( DEFAULT_TUN );
+        }
+
+        /*
+         In versions prior to 0.4.11 loading tun via modprobe would also accept a parameter.
+         This is now deprecated and is only kept for backward compatibility.
+         Remove, when all users have upgraded to 0.4.11 or above.
+          */
+        @Deprecated
+        public LoadTunViaModprobe(File pathToModule)
+        {
+            this.pathToModule = pathToModule;
+        }
 
         public String getName()
         {
@@ -47,11 +100,13 @@ public class TunLoaders
 
         public boolean hasPathToModule()
         {
-            return false;
+            return !DEFAULT_TUN.equals( pathToModule );
         }
 
         public File getPathToModule()
         {
+            if ( hasPathToModule() )
+                return pathToModule;
             throw new UnsupportedOperationException( "modprobe has no module path" );
         }
 
@@ -71,6 +126,7 @@ public class TunLoaders
             return getClass().getSimpleName();
         }
     }
+
     static class LoadTunViaInsmod implements TunLoader
     {
         private final File pathToModule;
@@ -97,12 +153,12 @@ public class TunLoaders
 
         public void load()
         {
-            if ( !pathToModule.exists() )
+            if (!pathToModule.exists())
                 return;
 
             Shell insmod = new Shell(
                     "OpenVPN",
-                    "insmod " + pathToModule.getAbsolutePath(),
+                    "insmod '" + pathToModule.getAbsolutePath().replace( "'", "\\'" ) + "'",
                     Shell.SU
             );
             insmod.run();
