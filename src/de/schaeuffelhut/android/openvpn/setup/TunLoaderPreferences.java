@@ -106,6 +106,6 @@ public class TunLoaderPreferences
 
     public TunLoader createTunLoader()
     {
-        return getType().createTunLoader( getPathToModule() );
+        return getType().createTunLoader( getPathToModule(), preferences );
     }
 }
