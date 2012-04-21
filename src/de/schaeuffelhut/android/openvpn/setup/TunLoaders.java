@@ -26,6 +26,7 @@ import android.content.SharedPreferences;
 import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.util.Shell;
 import de.schaeuffelhut.android.openvpn.util.UnexpectedSwitchValueException;
+import de.schaeuffelhut.android.openvpn.util.Util;
 
 import java.io.File;
 
@@ -66,21 +67,25 @@ public class TunLoaders
     }
 
 
-
-
     /**
      * Create a TunLoader using the definition provided by the advanced settings dialog.
-      * @param preferences the shared preferences holding the configuration.
+     *
+     * @param preferences the shared preferences holding the configuration.
      * @return the Tun Loader.
      */
     public static TunLoader createFromLegacyDefinition(SharedPreferences preferences)
     {
-        if ( !hasLegacyDefinition( preferences ))
+        if (!hasLegacyDefinition( preferences ))
             throw new IllegalStateException( "No legacy tun loading method defined" );
         final String modprobeAlternative = Preferences.getModprobeAlternative( preferences );
         final File pathToModule = new File( Preferences.getPathToTun( preferences ) );
         if ("modprobe".equals( modprobeAlternative ))
-            return new LoadTunViaModprobe( pathToModule );
+        {
+            if ("tun".equals( pathToModule.getPath() ))
+                return new LoadTunViaModprobe();
+            else
+                return new LoadTunViaModprobeWithParameter( pathToModule );
+        }
         if ("insmod".equals( modprobeAlternative ))
             return new LoadTunViaInsmod( pathToModule );
         throw new UnexpectedSwitchValueException( modprobeAlternative );
@@ -93,26 +98,6 @@ public class TunLoaders
 
     static class LoadTunViaModprobe implements TunLoader
     {
-        protected static final File DEFAULT_TUN = new File( "tun" );
-
-        private final File pathToModule;
-
-        public LoadTunViaModprobe()
-        {
-            this( DEFAULT_TUN );
-        }
-
-        /*
-         In versions prior to 0.4.11 loading tun via modprobe would also accept a parameter.
-         This is now deprecated and is only kept for backward compatibility.
-         Remove, when all users have upgraded to 0.4.11 or above.
-          */
-        @Deprecated
-        public LoadTunViaModprobe(File pathToModule)
-        {
-            this.pathToModule = pathToModule;
-        }
-
         public String getName()
         {
             return "modprobe tun";
@@ -120,13 +105,11 @@ public class TunLoaders
 
         public boolean hasPathToModule()
         {
-            return !DEFAULT_TUN.equals( pathToModule );
+            return false;
         }
 
         public File getPathToModule()
         {
-            if ( hasPathToModule() )
-                return pathToModule;
             throw new UnsupportedOperationException( "modprobe has no module path" );
         }
 
@@ -135,6 +118,53 @@ public class TunLoaders
             Shell modprobe = new Shell(
                     "OpenVPN",
                     "modprobe tun",
+                    Shell.SU
+            );
+            modprobe.run();
+        }
+
+        @Override
+        public String toString()
+        {
+            return getClass().getSimpleName();
+        }
+    }
+
+    /*
+     * In versions prior to 0.4.11 loading tun via modprobe would also accept a parameter.
+     * This is now deprecated and is only kept for backward compatibility.
+     * Remove, when all users have upgraded to 0.4.11 or above.
+     */
+    @Deprecated
+    static class LoadTunViaModprobeWithParameter implements TunLoader
+    {
+        private final File pathToModule;
+
+        public LoadTunViaModprobeWithParameter(File pathToModule)
+        {
+            this.pathToModule = pathToModule;
+        }
+
+        public String getName()
+        {
+            return "modprobe";
+        }
+
+        public boolean hasPathToModule()
+        {
+            return true;
+        }
+
+        public File getPathToModule()
+        {
+            return pathToModule;
+        }
+
+        public void load()
+        {
+            Shell modprobe = new Shell(
+                    "OpenVPN",
+                    "modprobe " + Util.shellEscape( pathToModule.getPath() ),
                     Shell.SU
             );
             modprobe.run();
@@ -195,19 +225,42 @@ public class TunLoaders
 
     public enum Types
     {
-        LEGACY{
-            @Override public TunLoader createTunLoader(File pathToModule) { throw new UnsupportedOperationException(); }
-        },
-        MODPROBE{
-            @Override public TunLoader createTunLoader(File pathToModule) { return new LoadTunViaModprobe(); }
-        },
-        INSMOD{
-            @Override public TunLoader createTunLoader(File pathToModule) { return new LoadTunViaInsmod( pathToModule ); }
-        },
-        NONE{
-            @Override public TunLoader createTunLoader(File pathToModule) { return new NullTunLoader(); }
-        };
+        NONE
+                {
+                    @Override
+                    public TunLoader createTunLoader(File pathToModule, SharedPreferences preferences)
+                    {
+                        return new NullTunLoader();
+                    }
+                },
+        MODPROBE
+                {
+                    @Override
+                    public TunLoader createTunLoader(File pathToModule, SharedPreferences preferences)
+                    {
+                        return new LoadTunViaModprobe();
+                    }
+                },
+        INSMOD
+                {
+                    @Override
+                    public TunLoader createTunLoader(File pathToModule, SharedPreferences preferences)
+                    {
+                        return new LoadTunViaInsmod( pathToModule );
+                    }
+                },
+        LEGACY
+                {
+                    @Override
+                    public TunLoader createTunLoader(File pathToModule, SharedPreferences preferences)
+                    {
+                        if (TunLoaders.hasLegacyDefinition( preferences ))
+                            return TunLoaders.createFromLegacyDefinition( preferences );
+                        else
+                            return new NullTunLoader();
+                    }
+                };
 
-        public abstract TunLoader createTunLoader(File pathToModule);
+        public abstract TunLoader createTunLoader(File pathToModule, SharedPreferences preferences);
     }
 }

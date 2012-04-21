@@ -22,8 +22,12 @@
 
 package de.schaeuffelhut.android.openvpn.setup;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.test.InstrumentationTestCase;
 import android.test.MoreAsserts;
+import de.schaeuffelhut.android.openvpn.Preferences;
 import junit.framework.Assert;
 
 import java.io.File;
@@ -37,11 +41,15 @@ import java.io.File;
  */
 public class TunLoaderPreferencesTest extends InstrumentationTestCase
 {
-    TunLoaderPreferences preferences;
+    private Context context;
+    private TunLoaderPreferences preferences;
+    private SharedPreferences sharedPreferences;
 
     public void setUp()
     {
-        preferences = new TunLoaderPreferences( getInstrumentation().getContext() );
+        context = getInstrumentation().getContext();
+        preferences = new TunLoaderPreferences( context );
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences( context );
     }
 
     /*
@@ -118,12 +126,76 @@ public class TunLoaderPreferencesTest extends InstrumentationTestCase
         Assert.assertEquals( new File( uniqueFileName ), tunLoader.getPathToModule() );
     }
 
-    public void test_createTunLoader_type_LEGACY()
+    public void test_createTunLoader_type_LEGACY_modprobe()
     {
         preferences.setTypeToLegacy();
-        TunLoader tunLoader = preferences.createTunLoader();
-        fail("TODO");
-//        MoreAsserts.assertAssignableFrom( TunLoaders.NullTunLoader.class, tunLoader );
-//        Assert.assertFalse( tunLoader.hasPathToModule() );
+        Preferences.setDoModprobeTun( context, true );
+        Preferences.setModprobeAlternativeToModprobe( sharedPreferences );
+        Preferences.setPathToTun( sharedPreferences, new File( "tun" ) );
+        MoreAsserts.assertAssignableFrom( TunLoaders.LoadTunViaModprobe.class, preferences.createTunLoader() );
     }
+
+    public void test_createTunLoader_type_LEGACY_modprobe_with_parameter()
+    {
+        preferences.setTypeToLegacy();
+        Preferences.setDoModprobeTun( context, true );
+        Preferences.setModprobeAlternativeToModprobe( sharedPreferences );
+        Preferences.setPathToTun( sharedPreferences, new File( "/system/lib/modules/tun.ko" ) );
+        MoreAsserts.assertAssignableFrom( TunLoaders.LoadTunViaModprobeWithParameter.class, TunLoaders.createFromLegacyDefinition( sharedPreferences ) );
+    }
+
+    public void test_createTunLoader_type_LEGACY_insmod()
+    {
+        preferences.setTypeToLegacy();
+        Preferences.setDoModprobeTun( context, true );
+        Preferences.setModprobeAlternativeToInsmod( sharedPreferences );
+        Preferences.setPathToTun( sharedPreferences, new File( "/system/lib/modules/tun.ko" ) );
+        MoreAsserts.assertAssignableFrom( TunLoaders.LoadTunViaInsmod.class, preferences.createTunLoader() );
+    }
+
+    public void test_createTunLoader_type_LEGACY_insmod_check_pathToModule()
+    {
+        preferences.setTypeToLegacy();
+        Preferences.setDoModprobeTun( context, true );
+        Preferences.setModprobeAlternativeToInsmod( sharedPreferences );
+        String uniqueFile = "/system/lib/modules/tun.ko" + System.currentTimeMillis();
+        Preferences.setPathToTun( sharedPreferences, new File( uniqueFile ) );
+        Assert.assertEquals( new File( uniqueFile ), preferences.createTunLoader().getPathToModule() );
+    }
+
+    public void test_createTunLoader_type_LEGACY_modprobe_with_parameter_check_hasPathToModule_equals_true()
+    {
+        preferences.setTypeToLegacy();
+        Preferences.setDoModprobeTun( context, true );
+        Preferences.setModprobeAlternativeToModprobe( sharedPreferences );
+        Preferences.setPathToTun( sharedPreferences, new File( "some-tun" ) );
+        Assert.assertTrue( preferences.createTunLoader().hasPathToModule() );
+    }
+
+    public void test_createTunLoader_type_LEGACY_modprobe_check_hasPathToModule_equals_false()
+    {
+        preferences.setTypeToLegacy();
+        Preferences.setDoModprobeTun( context, true );
+        Preferences.setModprobeAlternativeToModprobe( sharedPreferences );
+        Preferences.setPathToTun( sharedPreferences, new File( "tun" ) );
+        Assert.assertFalse( preferences.createTunLoader().hasPathToModule() );
+    }
+
+    public void test_createTunLoader_type_LEGACY_modprobe_with_parameter_check_getPathToModule()
+    {
+        preferences.setTypeToLegacy();
+        Preferences.setDoModprobeTun( context, true );
+        Preferences.setModprobeAlternativeToModprobe( sharedPreferences );
+        String uniqueFile = "/system/lib/modules/tun.ko" + System.currentTimeMillis();
+        Preferences.setPathToTun( sharedPreferences, new File( uniqueFile ) );
+        Assert.assertEquals( new File( uniqueFile ), preferences.createTunLoader().getPathToModule() );
+    }
+
+    public void test_createTunLoader_type_LEGACY_with_doModprobe_false_returns_NullTunLoader()
+    {
+        preferences.setTypeToLegacy();
+        Preferences.setDoModprobeTun( context, false );
+        MoreAsserts.assertAssignableFrom( TunLoaders.NullTunLoader.class, preferences.createTunLoader() );
+    }
+
 }

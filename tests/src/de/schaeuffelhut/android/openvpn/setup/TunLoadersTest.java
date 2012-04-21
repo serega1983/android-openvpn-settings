@@ -56,7 +56,16 @@ public class TunLoadersTest extends InstrumentationTestCase
     {
         Preferences.setDoModprobeTun( context, true );
         Preferences.setModprobeAlternativeToModprobe( preferences );
+        Preferences.setPathToTun( preferences, new File( "tun" ) );
         MoreAsserts.assertAssignableFrom( TunLoaders.LoadTunViaModprobe.class, TunLoaders.createFromLegacyDefinition( preferences ) );
+    }
+
+    public void test_createFromLegacyDefinition__should_return_LoadTunViaModprobeWithParameter()
+    {
+        Preferences.setDoModprobeTun( context, true );
+        Preferences.setModprobeAlternativeToModprobe( preferences );
+        Preferences.setPathToTun( preferences, PATH1 );
+        MoreAsserts.assertAssignableFrom( TunLoaders.LoadTunViaModprobeWithParameter.class, TunLoaders.createFromLegacyDefinition( preferences ) );
     }
 
     public void test_createFromLegacyDefinition__should_return_LoadTunViaInsmod()
