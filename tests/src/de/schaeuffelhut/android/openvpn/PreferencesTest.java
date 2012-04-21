@@ -49,7 +49,7 @@ public class PreferencesTest extends InstrumentationTestCase
         preferences = PreferenceManager.getDefaultSharedPreferences( context );
     }
 
-    public void test_doModproneTun()
+    public void test_doModprobeTun()
     {
         Preferences.setDoModprobeTun( context, true );
         Assert.assertTrue( Preferences.getDoModprobeTun( preferences ) );
