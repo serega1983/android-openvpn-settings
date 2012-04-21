@@ -91,12 +91,12 @@ public class TunLoaders
             return null;
         }
 
-        public void load()
+        public void loadModule()
         {
             // NOP
         }
 
-        public void save(TunLoaderPreferences preferences)
+        public void makeDefault(TunLoaderPreferences preferences)
         {
             preferences.setTypeToNone();
         }
@@ -119,7 +119,7 @@ public class TunLoaders
             throw new UnsupportedOperationException( "modprobe has no module path" );
         }
 
-        public void load()
+        public void loadModule()
         {
             Shell modprobe = new Shell(
                     "OpenVPN",
@@ -129,7 +129,7 @@ public class TunLoaders
             modprobe.run();
         }
 
-        public void save(TunLoaderPreferences preferences)
+        public void makeDefault(TunLoaderPreferences preferences)
         {
             preferences.setTypeToModprobe();
         }
@@ -171,7 +171,7 @@ public class TunLoaders
             return pathToModule;
         }
 
-        public void load()
+        public void loadModule()
         {
             Shell modprobe = new Shell(
                     "OpenVPN",
@@ -182,7 +182,7 @@ public class TunLoaders
         }
 
 
-        public void save(TunLoaderPreferences preferences)
+        public void makeDefault(TunLoaderPreferences preferences)
         {
             preferences.setTypeToLegacy();
         }
@@ -218,7 +218,7 @@ public class TunLoaders
             return pathToModule;
         }
 
-        public void load()
+        public void loadModule()
         {
             if (!pathToModule.exists())
                 return;
@@ -231,7 +231,7 @@ public class TunLoaders
             insmod.run();
         }
 
-        public void save(TunLoaderPreferences preferences)
+        public void makeDefault(TunLoaderPreferences preferences)
         {
             preferences.setTypeToInsmod( pathToModule );
         }

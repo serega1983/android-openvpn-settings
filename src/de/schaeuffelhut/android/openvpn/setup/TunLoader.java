@@ -36,8 +36,6 @@ public interface TunLoader
     String getName();
     boolean hasPathToModule();
     File getPathToModule();
-    //TODO: rename to loadModule
-    void load();
-    //TODO: rename to makeDefault
-    void save(TunLoaderPreferences preferences);
+    void loadModule();
+    void makeDefault(TunLoaderPreferences preferences);
 }
