@@ -48,8 +48,9 @@ public class TunLoaderPreferencesTest extends InstrumentationTestCase
     public void setUp()
     {
         context = getInstrumentation().getContext();
-        preferences = new TunLoaderPreferences( context );
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences( context );
+        sharedPreferences.edit().clear().commit(); // Very important, otherwise we depend on unknown values
+        preferences = new TunLoaderPreferences( context );
     }
 
     /*
@@ -198,4 +199,12 @@ public class TunLoaderPreferencesTest extends InstrumentationTestCase
         MoreAsserts.assertAssignableFrom( TunLoaders.NullTunLoader.class, preferences.createTunLoader() );
     }
 
+    public void test_fix_for__createTunLoader_type_LEGACY_did_throw_a_NPE()
+    {
+        preferences.setTypeToLegacy();
+        preferences.removePathToModule();
+        Assert.assertNotNull( preferences.createTunLoader() );
+    }
+
 }
+
