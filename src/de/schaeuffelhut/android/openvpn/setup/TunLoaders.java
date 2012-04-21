@@ -44,14 +44,14 @@ public class TunLoaders
     {
     }
 
+
     /**
      * Create a TunLoader using the definition provided by the advanced settings dialog.
-      * @param context the application context holding the shared preferences.
+      * @param preferences the shared preferences holding the configuration.
      * @return the Tun Loader.
      */
-    public static TunLoader createFromLegacyDefinition(Context context)
+    public static TunLoader createFromLegacyDefinition(SharedPreferences preferences)
     {
-        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences( context );
         if ( !hasLegacyDefinition( preferences ))
             throw new IllegalStateException( "No legacy tun loading method defined" );
         final String modprobeAlternative = Preferences.getModprobeAlternative( preferences );
