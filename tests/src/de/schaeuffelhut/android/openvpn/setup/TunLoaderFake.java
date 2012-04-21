@@ -68,4 +68,9 @@ public class TunLoaderFake implements TunLoader
     {
         throw new UnsupportedOperationException();
     }
+
+    public void save(TunLoaderPreferences preferences)
+    {
+        // NOOP
+    }
 }

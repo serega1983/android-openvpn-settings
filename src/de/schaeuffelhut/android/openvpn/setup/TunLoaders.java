@@ -43,29 +43,6 @@ public class TunLoaders
     {
     }
 
-    public static class NullTunLoader implements TunLoader
-    {
-        public String getName()
-        {
-            return "None";
-        }
-
-        public boolean hasPathToModule()
-        {
-            return false;
-        }
-
-        public File getPathToModule()
-        {
-            return null;
-        }
-
-        public void load()
-        {
-            // NOP
-        }
-    }
-
 
     /**
      * Create a TunLoader using the definition provided by the advanced settings dialog.
@@ -96,6 +73,35 @@ public class TunLoaders
         return Preferences.getDoModprobeTun( preferences );
     }
 
+
+    public static class NullTunLoader implements TunLoader
+    {
+        public String getName()
+        {
+            return "None";
+        }
+
+        public boolean hasPathToModule()
+        {
+            return false;
+        }
+
+        public File getPathToModule()
+        {
+            return null;
+        }
+
+        public void load()
+        {
+            // NOP
+        }
+
+        public void save(TunLoaderPreferences preferences)
+        {
+            preferences.setTypeToNone();
+        }
+    }
+
     static class LoadTunViaModprobe implements TunLoader
     {
         public String getName()
@@ -121,6 +127,11 @@ public class TunLoaders
                     Shell.SU
             );
             modprobe.run();
+        }
+
+        public void save(TunLoaderPreferences preferences)
+        {
+            preferences.setTypeToModprobe();
         }
 
         @Override
@@ -170,6 +181,12 @@ public class TunLoaders
             modprobe.run();
         }
 
+
+        public void save(TunLoaderPreferences preferences)
+        {
+            preferences.setTypeToLegacy();
+        }
+
         @Override
         public String toString()
         {
@@ -212,6 +229,11 @@ public class TunLoaders
                     Shell.SU
             );
             insmod.run();
+        }
+
+        public void save(TunLoaderPreferences preferences)
+        {
+            preferences.setTypeToInsmod( pathToModule );
         }
 
         @Override
