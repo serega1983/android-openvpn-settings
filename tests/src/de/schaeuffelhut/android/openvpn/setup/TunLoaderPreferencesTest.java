@@ -57,10 +57,18 @@ public class TunLoaderPreferencesTest extends InstrumentationTestCase
      * getType()
      */
 
-    public void test_getType_with_default_value()
+    public void test_getType_defaults_to_NONE_when_doModprobeIs_false()
     {
         preferences.removeType();
+        Preferences.setDoModprobeTun( context, false );
         Assert.assertEquals( TunLoaders.Types.NONE, preferences.getType() );
+    }
+
+    public void test_getType_defaults_to_LEGACY_when_doModprobeIs_true()
+    {
+        preferences.removeType();
+        Preferences.setDoModprobeTun( context, true );
+        Assert.assertEquals( TunLoaders.Types.LEGACY, preferences.getType() );
     }
 
     public void test_getType_with_value_NONE()
