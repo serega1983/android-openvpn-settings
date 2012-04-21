@@ -22,6 +22,7 @@
 
 package de.schaeuffelhut.android.openvpn;
 
+import android.content.Context;
 import de.schaeuffelhut.android.openvpn.setup.Prerequisites;
 import de.schaeuffelhut.android.openvpn.setup.PrerequisitesImpl;
 import de.schaeuffelhut.android.openvpn.setup.TunInfo;
@@ -60,10 +61,10 @@ public class IocContext
     {
         this.tunInfo = tunInfo;
     }
-    public TunInfo getTunInfo()
+    public TunInfo getTunInfo(Context context)
     {
         if ( tunInfo == null )
-            tunInfo = new TunInfoImpl();
+            tunInfo = new TunInfoImpl( context );
         return tunInfo;
     }
 }

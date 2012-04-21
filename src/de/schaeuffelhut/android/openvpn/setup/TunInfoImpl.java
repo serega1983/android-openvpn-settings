@@ -22,6 +22,7 @@
 
 package de.schaeuffelhut.android.openvpn.setup;
 
+import android.content.Context;
 import android.util.Log;
 import de.schaeuffelhut.android.openvpn.IocContext;
 
@@ -42,6 +43,12 @@ public class TunInfoImpl implements TunInfo
 
     private static final File DEV_TUN = new File( "/dev/tun" );
     private static final File DEV_NET_TUN = new File( "/dev/net/tun" );
+    private final Context context;
+
+    public TunInfoImpl(Context context)
+    {
+        this.context = context;
+    }
 
     public boolean isDeviceNodeAvailable()
     {
@@ -83,7 +90,7 @@ public class TunInfoImpl implements TunInfo
         {
             tunLoader.load();
             Log.i( "OpenVPN", "Trying to load tun module using "+tunLoader.toString() );
-            if (IocContext.get().getTunInfo().isDeviceNodeAvailable())
+            if ( isDeviceNodeAvailable() )
             {
                 Log.i( "OpenVPN", tunLoader.toString() );
                 //TODO: remember tunLoader
