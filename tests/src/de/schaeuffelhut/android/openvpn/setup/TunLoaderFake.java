@@ -64,12 +64,12 @@ public class TunLoaderFake implements TunLoader
         return pathToModule;
     }
 
-    public void load()
+    public void loadModule()
     {
         throw new UnsupportedOperationException();
     }
 
-    public void save(TunLoaderPreferences preferences)
+    public void makeDefault(TunLoaderPreferences preferences)
     {
         // NOOP
     }

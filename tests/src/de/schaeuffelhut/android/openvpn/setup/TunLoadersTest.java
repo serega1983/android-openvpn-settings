@@ -144,28 +144,28 @@ public class TunLoadersTest extends InstrumentationTestCase
     public void test_NullTunLoader_makeDefault()
     {
         TunLoader tunLoader = new TunLoaders.NullTunLoader();
-        tunLoader.save( new TunLoaderPreferences( context ) );
+        tunLoader.makeDefault( new TunLoaderPreferences( context ) );
         Assert.assertEquals( TunLoaders.Types.NONE, new TunLoaderPreferences( context ).getType() );
     }
 
     public void test_LoadTunViaInsmod_makeDefault()
     {
         TunLoader tunLoader = new TunLoaders.LoadTunViaInsmod( PATH1 );
-        tunLoader.save( new TunLoaderPreferences( context ) );
+        tunLoader.makeDefault( new TunLoaderPreferences( context ) );
         Assert.assertEquals( TunLoaders.Types.INSMOD, new TunLoaderPreferences( context ).getType() );
     }
 
     public void test_LoadTunViaModprobe_makeDefault()
     {
         TunLoader tunLoader = new TunLoaders.LoadTunViaModprobe();
-        tunLoader.save( new TunLoaderPreferences( context ) );
+        tunLoader.makeDefault( new TunLoaderPreferences( context ) );
         Assert.assertEquals( TunLoaders.Types.MODPROBE, new TunLoaderPreferences( context ).getType() );
     }
 
     public void test_LoadTunViaModprobeWithParameter_makeDefault()
     {
         TunLoader tunLoader = new TunLoaders.LoadTunViaModprobeWithParameter( PATH1 );
-        tunLoader.save( new TunLoaderPreferences( context ) );
+        tunLoader.makeDefault( new TunLoaderPreferences( context ) );
         Assert.assertEquals( TunLoaders.Types.LEGACY, new TunLoaderPreferences( context ).getType() );
     }
 }

@@ -89,15 +89,15 @@ public class TunInfoImpl implements TunInfo
 
         for (TunLoader tunLoader : tunLoaders)
         {
-            tunLoader.load();
+            tunLoader.loadModule();
             Log.i( "OpenVPN", "Trying to load tun module using " + tunLoader.toString() );
             if (isDeviceNodeAvailable())
             {
                 Log.i( "OpenVPN", tunLoader.toString() );
-                tunLoader.save( new TunLoaderPreferences( context ) );
+                tunLoader.makeDefault( new TunLoaderPreferences( context ) );
                 return;
             }
         }
-        new TunLoaders.NullTunLoader().save( new TunLoaderPreferences( context ) );
+        new TunLoaders.NullTunLoader().makeDefault( new TunLoaderPreferences( context ) );
     }
 }
