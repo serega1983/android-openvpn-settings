@@ -109,13 +109,13 @@ public class TunLoadersTest extends InstrumentationTestCase
     public void test_hasLegacyDefinition_returns_true()
     {
         Preferences.setDoModprobeTun( context, true );
-        Assert.assertTrue( TunLoaders.hasLegacyDefinition( context ) );
+        Assert.assertTrue( TunLoaders.hasLegacyDefinition( preferences ) );
     }
 
     public void test_hasLegacyDefinition_returns_false()
     {
         Preferences.setDoModprobeTun( context, false );
-        Assert.assertFalse( TunLoaders.hasLegacyDefinition( context ) );
+        Assert.assertFalse( TunLoaders.hasLegacyDefinition( preferences ) );
     }
 
     public void test_createFromLegacyDefinition_throws_when_hasLegacyDefinition_returns_false()
