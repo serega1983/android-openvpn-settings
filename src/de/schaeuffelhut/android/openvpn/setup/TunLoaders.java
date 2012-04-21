@@ -24,9 +24,7 @@ package de.schaeuffelhut.android.openvpn.setup;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
 import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.util.Shell;
 import de.schaeuffelhut.android.openvpn.util.UnexpectedSwitchValueException;
@@ -53,9 +51,9 @@ public class TunLoaders
      */
     public static TunLoader createFromLegacyDefinition(Context context)
     {
-        if ( !hasLegacyDefinition( context ) )
-            throw new IllegalStateException( "No legacy tun loading method defined" );
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences( context );
+        if ( !hasLegacyDefinition( preferences ))
+            throw new IllegalStateException( "No legacy tun loading method defined" );
         final String modprobeAlternative = Preferences.getModprobeAlternative( preferences );
         final File pathToModule = new File( Preferences.getPathToTun( preferences ) );
         if ("modprobe".equals( modprobeAlternative ))
@@ -65,9 +63,8 @@ public class TunLoaders
         throw new UnexpectedSwitchValueException( modprobeAlternative );
     }
 
-    public static boolean hasLegacyDefinition(Context context)
+    public static boolean hasLegacyDefinition(SharedPreferences preferences)
     {
-        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences( context );
         return Preferences.getDoModprobeTun( preferences );
     }
 
