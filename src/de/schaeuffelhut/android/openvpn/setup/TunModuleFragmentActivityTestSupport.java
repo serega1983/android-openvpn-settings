@@ -20,50 +20,25 @@
  * Contact the author at:          android.openvpn@schaeuffelhut.de
  */
 
-package de.schaeuffelhut.android.openvpn;
+package de.schaeuffelhut.android.openvpn.setup;
 
-import de.schaeuffelhut.android.openvpn.setup.Prerequisites;
-import de.schaeuffelhut.android.openvpn.setup.PrerequisitesImpl;
-import de.schaeuffelhut.android.openvpn.setup.TunInfo;
-import de.schaeuffelhut.android.openvpn.setup.TunInfoImpl;
+import android.app.Activity;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import de.schaeuffelhut.android.openvpn.R;
 
 /**
  * Created with IntelliJ IDEA.
  * User: fries
- * Date: 4/10/12
- * Time: 9:09 PM
+ * Date: 4/14/12
+ * Time: 7:44 AM
  * To change this template use File | Settings | File Templates.
  */
-public class IocContext
+public class TunModuleFragmentActivityTestSupport extends FragmentActivity
 {
-    static IocContext iocContext = new IocContext();
-    private TunInfo tunInfo;
-
-    public final static IocContext get()
+    public void onCreate(Bundle savedInstanceState)
     {
-        return iocContext;
-    }
-
-    Prerequisites prerequisites;
-    public Prerequisites getPrerequisites()
-    {
-        if ( prerequisites == null )
-            prerequisites = new PrerequisitesImpl();
-        return prerequisites;
-    }
-    public void setPrerequisites(Prerequisites prerequisites)
-    {
-        this.prerequisites = prerequisites;
-    }
-
-    public void setTunInfo(TunInfo tunInfo)
-    {
-        this.tunInfo = tunInfo;
-    }
-    public TunInfo getTunInfo()
-    {
-        if ( tunInfo == null )
-            tunInfo = new TunInfoImpl();
-        return tunInfo;
+        super.onCreate( savedInstanceState );
+        setContentView( R.layout.setup_wizard_tun_module_fragment );
     }
 }

@@ -20,50 +20,52 @@
  * Contact the author at:          android.openvpn@schaeuffelhut.de
  */
 
-package de.schaeuffelhut.android.openvpn;
+package de.schaeuffelhut.android.openvpn.setup;
 
-import de.schaeuffelhut.android.openvpn.setup.Prerequisites;
-import de.schaeuffelhut.android.openvpn.setup.PrerequisitesImpl;
-import de.schaeuffelhut.android.openvpn.setup.TunInfo;
-import de.schaeuffelhut.android.openvpn.setup.TunInfoImpl;
+import java.io.File;
 
 /**
  * Created with IntelliJ IDEA.
  * User: fries
- * Date: 4/10/12
- * Time: 9:09 PM
+ * Date: 4/14/12
+ * Time: 8:32 AM
  * To change this template use File | Settings | File Templates.
  */
-public class IocContext
+public class TunLoaderFake implements TunLoader
 {
-    static IocContext iocContext = new IocContext();
-    private TunInfo tunInfo;
+    private final String name;
+    private final File pathToModule;
 
-    public final static IocContext get()
+    public TunLoaderFake(String name)
     {
-        return iocContext;
-    }
-
-    Prerequisites prerequisites;
-    public Prerequisites getPrerequisites()
-    {
-        if ( prerequisites == null )
-            prerequisites = new PrerequisitesImpl();
-        return prerequisites;
-    }
-    public void setPrerequisites(Prerequisites prerequisites)
-    {
-        this.prerequisites = prerequisites;
+        super();
+        this.name = name;
+        this.pathToModule = null;
     }
 
-    public void setTunInfo(TunInfo tunInfo)
+    public TunLoaderFake(String name, File pathToModule)
     {
-        this.tunInfo = tunInfo;
+        this.name = name;
+        this.pathToModule = pathToModule;
     }
-    public TunInfo getTunInfo()
+
+    public String getName()
     {
-        if ( tunInfo == null )
-            tunInfo = new TunInfoImpl();
-        return tunInfo;
+        return name;
+    }
+
+    public boolean hasPathToModule()
+    {
+        return pathToModule != null;
+    }
+
+    public File getPathToModule()
+    {
+        return pathToModule;
+    }
+
+    public void load()
+    {
+        throw new UnsupportedOperationException();
     }
 }

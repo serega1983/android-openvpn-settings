@@ -28,9 +28,15 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import de.schaeuffelhut.android.openvpn.IocContext;
 import de.schaeuffelhut.android.openvpn.R;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -51,5 +57,101 @@ public class TunModuleFragment extends Fragment
     public void onViewCreated(View view, Bundle savedInstanceState)
     {
         super.onViewCreated( view, savedInstanceState );
+        initView();
+        ((Button) view.findViewById( R.id.setup_wizard_tun_module_try_to_load_module )).setOnClickListener(
+                new View.OnClickListener()
+                {
+                    public void onClick(View view)
+                    {
+                        List<TunInfo.TryToLoadTunModuleStrategy> params = new ArrayList<TunInfo.TryToLoadTunModuleStrategy>( 3 );
+                        if (tryCurrentTunLoader().isChecked() && tryCurrentTunLoader().getVisibility() == View.VISIBLE)
+                            params.add( TunInfo.TryToLoadTunModuleStrategy.TRY_CURRENT_TUN_LOADER );
+                        if (scanDeviceForTun().isChecked())
+                            params.add( TunInfo.TryToLoadTunModuleStrategy.SCAN_DEVICE_FOR_TUN );
+                        if (trySdcard().isChecked())
+                            params.add( TunInfo.TryToLoadTunModuleStrategy.TRY_SDCARD );
+                        IocContext.get().getTunInfo().tryToLoadTunModule( params );
+                        initView();
+                    }
+                }
+        );
     }
+
+    private CheckBox tryCurrentTunLoader()
+    {
+        return (CheckBox) findView( R.id.setup_wizard_tun_module_option_try_current_tun_loader );
+    }
+
+    private CheckBox scanDeviceForTun()
+    {
+        return (CheckBox) findView( R.id.setup_wizard_tun_module_option_scan_device_for_tun );
+    }
+
+    private CheckBox trySdcard()
+    {
+        return (CheckBox) findView( R.id.setup_wizard_tun_module_option_try_sdcard );
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden)
+    {
+        super.onHiddenChanged( hidden );
+        initView();
+    }
+
+    private void initView()
+    {
+        TunInfo tunInfo = IocContext.get().getTunInfo();
+        setFlag( R.id.setup_wizard_tun_module_has_device_node, tunInfo.isDeviceNodeAvailable(), "Available", "Not Available" );
+        if (tunInfo.hasTunLoader())
+        {
+            TunLoader tunLoader = tunInfo.getTunLoader();
+            findTextView( R.id.setup_wizard_tun_module_tun_loader ).setText( tunLoader.getName() );
+            if (tunLoader.hasPathToModule())
+            {
+                findView( R.id.setup_wizard_tun_module_path_to_module_table_row ).setVisibility( View.VISIBLE );
+                findTextView( R.id.setup_wizard_tun_module_path_to_module ).setText( tunLoader.getPathToModule().getPath() );
+            }
+            else
+            {
+                findView( R.id.setup_wizard_tun_module_path_to_module_table_row ).setVisibility( View.INVISIBLE );
+            }
+        }
+        else
+        {
+            findTextView( R.id.setup_wizard_tun_module_tun_loader ).setText( "none" );
+            findView( R.id.setup_wizard_tun_module_path_to_module_table_row ).setVisibility( View.INVISIBLE );
+        }
+        if (tunInfo.isDeviceNodeAvailable())
+            findView( R.id.setup_wizard_tun_module_section_load_module ).setVisibility( View.INVISIBLE );
+        else
+            findView( R.id.setup_wizard_tun_module_section_load_module ).setVisibility( View.VISIBLE );
+        if (tunInfo.hasTunLoader())
+            findView( R.id.setup_wizard_tun_module_option_try_current_tun_loader ).setVisibility( View.VISIBLE );
+        else
+            findView( R.id.setup_wizard_tun_module_option_try_current_tun_loader ).setVisibility( View.GONE );
+    }
+
+    private void setFlag(int componentId, boolean flag)
+    {
+        setFlag( componentId, flag, "Yes", "No" );
+    }
+
+    private void setFlag(int componentId, boolean flag, String yes, String no)
+    {
+        TextView testView = findTextView( componentId );
+        testView.setText( flag ? yes : no );
+        testView.setTextColor( flag ? Color.GREEN : Color.RED );
+    }
+
+    private TextView findTextView(int componentId)
+    {
+        return (TextView) getView().findViewById( componentId );
+    }
+
+    private View findView(int componentId)
+    {
+        return getView().findViewById( componentId );
+    }
+
 }

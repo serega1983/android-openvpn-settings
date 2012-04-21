@@ -87,6 +87,7 @@
 			/>
 
         <activity android:name=".setup.SystemSetupWizard" android:label="System Setup Wizard"/>
+        <activity android:name=".setup.TunModuleFragmentActivityTestSupport"/>
 
         <service
 			android:name="de.schaeuffelhut.android.openvpn.service.OpenVpnService"
