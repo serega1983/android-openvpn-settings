@@ -22,9 +22,7 @@
 
 package de.schaeuffelhut.android.openvpn.setup;
 
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.util.Shell;
 import de.schaeuffelhut.android.openvpn.util.UnexpectedSwitchValueException;
@@ -43,6 +41,31 @@ public class TunLoaders
     private TunLoaders()
     {
     }
+
+    public static class NullTunLoader implements TunLoader
+    {
+        public String getName()
+        {
+            return "None";
+        }
+
+        public boolean hasPathToModule()
+        {
+            return false;
+        }
+
+        public File getPathToModule()
+        {
+            return null;
+        }
+
+        public void load()
+        {
+            // NOP
+        }
+    }
+
+
 
 
     /**
@@ -172,6 +195,19 @@ public class TunLoaders
 
     public enum Types
     {
-        LEGACY, MODPROBE, INSMOD, NONE
+        LEGACY{
+            @Override public TunLoader createTunLoader(File pathToModule) { throw new UnsupportedOperationException(); }
+        },
+        MODPROBE{
+            @Override public TunLoader createTunLoader(File pathToModule) { return new LoadTunViaModprobe(); }
+        },
+        INSMOD{
+            @Override public TunLoader createTunLoader(File pathToModule) { return new LoadTunViaInsmod( pathToModule ); }
+        },
+        NONE{
+            @Override public TunLoader createTunLoader(File pathToModule) { return new NullTunLoader(); }
+        };
+
+        public abstract TunLoader createTunLoader(File pathToModule);
     }
 }

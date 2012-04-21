@@ -103,4 +103,9 @@ public class TunLoaderPreferences
     {
         return new File( preferences.getString( KEY_PATH_TO_MODULE, null ) );
     }
+
+    public TunLoader createTunLoader()
+    {
+        return getType().createTunLoader( getPathToModule() );
+    }
 }
