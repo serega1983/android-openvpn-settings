@@ -46,12 +46,14 @@ public class IocContext
     }
 
     Prerequisites prerequisites;
+
     public Prerequisites getPrerequisites()
     {
-        if ( prerequisites == null )
+        if (prerequisites == null)
             prerequisites = new PrerequisitesImpl();
         return prerequisites;
     }
+
     public void setPrerequisites(Prerequisites prerequisites)
     {
         this.prerequisites = prerequisites;
@@ -61,10 +63,14 @@ public class IocContext
     {
         this.tunInfo = tunInfo;
     }
+
     public TunInfo getTunInfo(Context context)
     {
-        if ( tunInfo == null )
-            tunInfo = new TunInfoImpl( context );
+        if (tunInfo == null)
+        {
+            // return new instance on each call, otherwise we leak the context!
+            return new TunInfoImpl( context );
+        }
         return tunInfo;
     }
 }
