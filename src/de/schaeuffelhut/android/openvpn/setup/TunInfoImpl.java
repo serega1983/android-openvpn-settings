@@ -66,7 +66,7 @@ public class TunInfoImpl implements TunInfo
 
     public boolean hasTunLoader()
     {
-        return true;
+        return new TunLoaderPreferences( context ).getType().canLoadTun;
     }
 
     public TunLoader getTunLoader()

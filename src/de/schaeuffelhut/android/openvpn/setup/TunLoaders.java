@@ -225,7 +225,7 @@ public class TunLoaders
 
     public enum Types
     {
-        NONE
+        NONE( false )
                 {
                     @Override
                     public TunLoader createTunLoader(TunLoaderPreferences tunLoaderPreferences, SharedPreferences sharedPreferences)
@@ -233,7 +233,7 @@ public class TunLoaders
                         return new NullTunLoader();
                     }
                 },
-        MODPROBE
+        MODPROBE( true )
                 {
                     @Override
                     public TunLoader createTunLoader(TunLoaderPreferences tunLoaderPreferences, SharedPreferences sharedPreferences)
@@ -241,7 +241,7 @@ public class TunLoaders
                         return new LoadTunViaModprobe();
                     }
                 },
-        INSMOD
+        INSMOD( true )
                 {
                     @Override
                     public TunLoader createTunLoader(TunLoaderPreferences tunLoaderPreferences, SharedPreferences sharedPreferences)
@@ -249,7 +249,7 @@ public class TunLoaders
                         return new LoadTunViaInsmod( tunLoaderPreferences.getPathToModule() );
                     }
                 },
-        LEGACY
+        LEGACY( true )
                 {
                     @Override
                     public TunLoader createTunLoader(TunLoaderPreferences tunLoaderPreferences, SharedPreferences sharedPreferences)
@@ -260,6 +260,12 @@ public class TunLoaders
                             return new NullTunLoader();
                     }
                 };
+        public final boolean canLoadTun;
+
+        private Types(boolean canLoadTun)
+        {
+            this.canLoadTun = canLoadTun;
+        }
 
         public abstract TunLoader createTunLoader(TunLoaderPreferences tunLoaderPreferences, SharedPreferences sharedPreferences);
     }
