@@ -51,6 +51,7 @@ public class PrerequisitesImplTest extends ActivityInstrumentationTestCase2<Syst
 
     public void testHasTunDevice()
     {
+        //TODO: use IocContext to set test values
         assertTrue( prerequisites.hasTunDevice() );
     }
 
