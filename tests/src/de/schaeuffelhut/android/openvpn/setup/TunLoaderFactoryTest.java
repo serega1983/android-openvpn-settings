@@ -39,7 +39,7 @@ import java.io.File;
  * Time: 6:11 AM
  * To change this template use File | Settings | File Templates.
  */
-public class TunLoadersTest extends InstrumentationTestCase
+public class TunLoaderFactoryTest extends InstrumentationTestCase
 {
     protected static final File PATH1 = new File( "/system/lib/modules/tun.ko" );
     protected static final File PATH2 = new File( "/lib/modules/tun.ko" );
@@ -57,7 +57,7 @@ public class TunLoadersTest extends InstrumentationTestCase
         Preferences.setDoModprobeTun( context, true );
         Preferences.setModprobeAlternativeToModprobe( preferences );
         Preferences.setPathToTun( preferences, new File( "tun" ) );
-        MoreAsserts.assertAssignableFrom( TunLoaders.LoadTunViaModprobe.class, TunLoaders.createFromLegacyDefinition( preferences ) );
+        MoreAsserts.assertAssignableFrom( TunLoaderFactory.LoadTunViaModprobe.class, TunLoaderFactory.createFromLegacyDefinition( preferences ) );
     }
 
     public void test_createFromLegacyDefinition__should_return_LoadTunViaModprobeWithParameter()
@@ -65,14 +65,14 @@ public class TunLoadersTest extends InstrumentationTestCase
         Preferences.setDoModprobeTun( context, true );
         Preferences.setModprobeAlternativeToModprobe( preferences );
         Preferences.setPathToTun( preferences, PATH1 );
-        MoreAsserts.assertAssignableFrom( TunLoaders.LoadTunViaModprobeWithParameter.class, TunLoaders.createFromLegacyDefinition( preferences ) );
+        MoreAsserts.assertAssignableFrom( TunLoaderFactory.LoadTunViaModprobeWithParameter.class, TunLoaderFactory.createFromLegacyDefinition( preferences ) );
     }
 
     public void test_createFromLegacyDefinition__should_return_LoadTunViaInsmod()
     {
         Preferences.setDoModprobeTun( context, true );
         Preferences.setModprobeAlternativeToInsmod( preferences );
-        MoreAsserts.assertAssignableFrom( TunLoaders.LoadTunViaInsmod.class, TunLoaders.createFromLegacyDefinition( preferences ) );
+        MoreAsserts.assertAssignableFrom( TunLoaderFactory.LoadTunViaInsmod.class, TunLoaderFactory.createFromLegacyDefinition( preferences ) );
     }
 
     public void test_createFromLegacyDefinition__should_return_LoadTunViaInsmod_getPathToModule_equals_path1()
@@ -80,7 +80,7 @@ public class TunLoadersTest extends InstrumentationTestCase
         Preferences.setDoModprobeTun( context, true );
         Preferences.setModprobeAlternativeToInsmod( preferences );
         Preferences.setPathToTun( preferences, PATH1 );
-        Assert.assertEquals( PATH1, TunLoaders.createFromLegacyDefinition( preferences ).getPathToModule() );
+        Assert.assertEquals( PATH1, TunLoaderFactory.createFromLegacyDefinition( preferences ).getPathToModule() );
     }
 
     public void test_createFromLegacyDefinition__should_return_LoadTunViaInsmod_getPathToModule_equals_path2()
@@ -88,7 +88,7 @@ public class TunLoadersTest extends InstrumentationTestCase
         Preferences.setDoModprobeTun( context, true );
         Preferences.setModprobeAlternativeToInsmod( preferences );
         Preferences.setPathToTun( preferences, PATH2 );
-        Assert.assertEquals( PATH2, TunLoaders.createFromLegacyDefinition( preferences ).getPathToModule() );
+        Assert.assertEquals( PATH2, TunLoaderFactory.createFromLegacyDefinition( preferences ).getPathToModule() );
     }
 
     public void test_createFromLegacyDefinition__should_return_LoadTunViaModprobe_hasPathToModule_equals_true()
@@ -96,7 +96,7 @@ public class TunLoadersTest extends InstrumentationTestCase
         Preferences.setDoModprobeTun( context, true );
         Preferences.setModprobeAlternativeToModprobe( preferences );
         Preferences.setPathToTun( preferences, new File( "some-tun" ) );
-        Assert.assertTrue( TunLoaders.createFromLegacyDefinition( preferences ).hasPathToModule() );
+        Assert.assertTrue( TunLoaderFactory.createFromLegacyDefinition( preferences ).hasPathToModule() );
     }
 
     public void test_createFromLegacyDefinition__should_return_LoadTunViaModprobe_hasPathToModule_equals_false()
@@ -104,7 +104,7 @@ public class TunLoadersTest extends InstrumentationTestCase
         Preferences.setDoModprobeTun( context, true );
         Preferences.setModprobeAlternativeToModprobe( preferences );
         Preferences.setPathToTun( preferences, new File( "tun" ) );
-        Assert.assertFalse( TunLoaders.createFromLegacyDefinition( preferences ).hasPathToModule() );
+        Assert.assertFalse( TunLoaderFactory.createFromLegacyDefinition( preferences ).hasPathToModule() );
     }
 
     public void test_createFromLegacyDefinition__should_return_LoadTunViaModprobe_getPathToModule()
@@ -112,19 +112,19 @@ public class TunLoadersTest extends InstrumentationTestCase
         Preferences.setDoModprobeTun( context, true );
         Preferences.setModprobeAlternativeToModprobe( preferences );
         Preferences.setPathToTun( preferences, new File( "some-tun" ) );
-        Assert.assertEquals( new File( "some-tun" ), TunLoaders.createFromLegacyDefinition( preferences ).getPathToModule() );
+        Assert.assertEquals( new File( "some-tun" ), TunLoaderFactory.createFromLegacyDefinition( preferences ).getPathToModule() );
     }
 
     public void test_hasLegacyDefinition_returns_true()
     {
         Preferences.setDoModprobeTun( context, true );
-        Assert.assertTrue( TunLoaders.hasLegacyDefinition( preferences ) );
+        Assert.assertTrue( TunLoaderFactory.hasLegacyDefinition( preferences ) );
     }
 
     public void test_hasLegacyDefinition_returns_false()
     {
         Preferences.setDoModprobeTun( context, false );
-        Assert.assertFalse( TunLoaders.hasLegacyDefinition( preferences ) );
+        Assert.assertFalse( TunLoaderFactory.hasLegacyDefinition( preferences ) );
     }
 
     public void test_createFromLegacyDefinition_throws_when_hasLegacyDefinition_returns_false()
@@ -132,7 +132,7 @@ public class TunLoadersTest extends InstrumentationTestCase
         Preferences.setDoModprobeTun( context, false );
         try
         {
-            TunLoaders.createFromLegacyDefinition( preferences );
+            TunLoaderFactory.createFromLegacyDefinition( preferences );
             fail( "IllegalStateException expected" );
         }
         catch (IllegalStateException e)
@@ -143,29 +143,32 @@ public class TunLoadersTest extends InstrumentationTestCase
 
     public void test_NullTunLoader_makeDefault()
     {
-        TunLoader tunLoader = new TunLoaders.NullTunLoader();
+        TunLoader tunLoader = new TunLoaderFactory.NullTunLoader();
         tunLoader.makeDefault( new TunLoaderPreferences( context ) );
-        Assert.assertEquals( TunLoaders.Types.NONE, new TunLoaderPreferences( context ).getType() );
+        Assert.assertEquals( TunLoaderFactory.Types.NONE, new TunLoaderPreferences( context ).getType() );
     }
 
     public void test_LoadTunViaInsmod_makeDefault()
     {
-        TunLoader tunLoader = new TunLoaders.LoadTunViaInsmod( PATH1 );
+        TunLoader tunLoader = new TunLoaderFactory.LoadTunViaInsmod( PATH1 );
         tunLoader.makeDefault( new TunLoaderPreferences( context ) );
-        Assert.assertEquals( TunLoaders.Types.INSMOD, new TunLoaderPreferences( context ).getType() );
+        Assert.assertEquals( TunLoaderFactory.Types.INSMOD, new TunLoaderPreferences( context ).getType() );
     }
 
     public void test_LoadTunViaModprobe_makeDefault()
     {
-        TunLoader tunLoader = new TunLoaders.LoadTunViaModprobe();
+        TunLoader tunLoader = new TunLoaderFactory.LoadTunViaModprobe();
         tunLoader.makeDefault( new TunLoaderPreferences( context ) );
-        Assert.assertEquals( TunLoaders.Types.MODPROBE, new TunLoaderPreferences( context ).getType() );
+        Assert.assertEquals( TunLoaderFactory.Types.MODPROBE, new TunLoaderPreferences( context ).getType() );
     }
 
     public void test_LoadTunViaModprobeWithParameter_makeDefault()
     {
-        TunLoader tunLoader = new TunLoaders.LoadTunViaModprobeWithParameter( PATH1 );
+        TunLoader tunLoader = new TunLoaderFactory.LoadTunViaModprobeWithParameter( PATH1 );
         tunLoader.makeDefault( new TunLoaderPreferences( context ) );
-        Assert.assertEquals( TunLoaders.Types.LEGACY, new TunLoaderPreferences( context ).getType() );
+        Assert.assertEquals( TunLoaderFactory.Types.LEGACY, new TunLoaderPreferences( context ).getType() );
     }
+
+
+
 }

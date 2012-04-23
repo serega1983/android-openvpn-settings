@@ -84,15 +84,15 @@ public interface TunInfo
             @Override
             public void appendTunLoaderTo(Collection<TunLoader> tunLoaders)
             {
-                tunLoaders.add( new TunLoaders.LoadTunViaModprobe() );
-                tunLoaders.add( new TunLoaders.LoadTunViaInsmod( new File( "/system/lib/modules/tun.ko" ) ) );
+                tunLoaders.add( new TunLoaderFactory.LoadTunViaModprobe() );
+                tunLoaders.add( new TunLoaderFactory.LoadTunViaInsmod( new File( "/system/lib/modules/tun.ko" ) ) );
             }
         },
         TRY_SDCARD{
             @Override
             public void appendTunLoaderTo(Collection<TunLoader> tunLoaders)
             {
-                tunLoaders.add( new TunLoaders.LoadTunViaInsmod( new File( "/sdcard/tun.ko" ) ) );
+                tunLoaders.add( new TunLoaderFactory.LoadTunViaInsmod( new File( "/sdcard/tun.ko" ) ) );
             }
         };
 
