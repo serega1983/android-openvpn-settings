@@ -98,6 +98,6 @@ public class TunInfoImpl implements TunInfo
                 return;
             }
         }
-        new TunLoaders.NullTunLoader().makeDefault( new TunLoaderPreferences( context ) );
+        new TunLoaderFactory.NullTunLoader().makeDefault( new TunLoaderPreferences( context ) );
     }
 }

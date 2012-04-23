@@ -90,9 +90,9 @@ public class TunLoaderPreferences
         preferences.edit().remove( KEY_TYPE ).commit();
     }
 
-    public TunLoaders.Types getType()
+    public TunLoaderFactory.Types getType()
     {
-        return TunLoaders.Types.valueOf( preferences.getString( KEY_TYPE, getDefaultType() ) );
+        return TunLoaderFactory.Types.valueOf( preferences.getString( KEY_TYPE, getDefaultType() ) );
     }
 
     /**
