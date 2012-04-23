@@ -103,6 +103,16 @@ public class TunLoaderProbeTest extends TestCase
         ), tunLoaderEvent );
     }
 
+    public void test_tryToLoadModule_checks_sdcard()
+    {
+        tunLoaderProbe.trySdCard();
+        tunLoaderProbe.tryToLoadModule();
+        Assert.assertTrue( called_createInsmod );
+        Assert.assertEquals( Arrays.asList(
+                "insmod /sdcard/tun.ko" //TODO: this is naive. The tun module needs to be copied to private storage
+        ), tunLoaderEvent );
+    }
+
     public void test_tryToLoadModule_does_nothing()
     {
         tunLoaderProbe.tryToLoadModule();

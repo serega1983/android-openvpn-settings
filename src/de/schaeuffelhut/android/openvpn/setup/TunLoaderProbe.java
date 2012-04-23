@@ -54,6 +54,11 @@ public class TunLoaderProbe
         tunLoaders.add( tunLoaderFactory.createInsmod( new File( "/lib/modules/tun.ko" ) ) );
     }
 
+    public void trySdCard()
+    {
+        tunLoaders.add( tunLoaderFactory.createInsmod( new File( "/sdcard/tun.ko" ) ) );
+    }
+
     public void tryToLoadModule()
     {
         for (TunLoader tunLoader : tunLoaders)
