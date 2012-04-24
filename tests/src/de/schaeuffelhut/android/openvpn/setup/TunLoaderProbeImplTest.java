@@ -37,7 +37,7 @@ import java.util.Arrays;
  * Time: 7:59 PM
  * To change this template use File | Settings | File Templates.
  */
-public class TunLoaderProbeTest extends TestCase
+public class TunLoaderProbeImplTest extends TestCase
 {
     private ArrayList<String> tunLoaderEvent = new ArrayList<String>();
     private String successfullTunLoader = "not defined";
@@ -50,7 +50,7 @@ public class TunLoaderProbeTest extends TestCase
             return super.isDeviceNodeAvailable() || tunLoaderEvent.contains( successfullTunLoader );
         }
     };
-    private TunLoaderProbe tunLoaderProbe = new TunLoaderProbe( tunInfo, new ITunLoaderFactory(){
+    private TunLoaderProbeImpl tunLoaderProbe = new TunLoaderProbeImpl( tunInfo, new ITunLoaderFactory(){
 
         public TunLoader createModprobe()
         {
