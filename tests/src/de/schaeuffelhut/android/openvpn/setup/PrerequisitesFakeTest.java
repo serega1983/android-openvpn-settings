@@ -22,9 +22,7 @@
 
 package de.schaeuffelhut.android.openvpn.setup;
 
-import android.test.ActivityInstrumentationTestCase2;
 import android.test.AndroidTestCase;
-import junit.framework.TestCase;
 
 /**
  * Created with IntelliJ IDEA.

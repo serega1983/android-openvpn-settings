@@ -22,11 +22,6 @@
 
 package de.schaeuffelhut.android.openvpn.setup;
 
-import android.text.TextUtils;
-import android.util.Log;
-import de.schaeuffelhut.android.openvpn.util.SystemPropertyUtil;
-import junit.framework.TestCase;
-
 /**
  * Created with IntelliJ IDEA.
  * User: fries
