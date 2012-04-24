@@ -92,16 +92,4 @@ public class TunInfoFakeTest extends AndroidTestCase
         tunInfo.setTunLoader( tunLoader );
         assertSame( tunLoader, tunInfo.getTunLoader() );
     }
-
-    public void testListTunModules_uninitialized()
-    {
-        assertNotNull( tunInfo.listTunModules() );
-    }
-
-    public void testListTunModules()
-    {
-        List<File> tunModules = Arrays.asList( new File( "/system/lib/modules/tun.ko" ) );
-        tunInfo.setListTunModules( tunModules );
-        assertSame( tunModules, tunInfo.listTunModules() );
-    }
 }
