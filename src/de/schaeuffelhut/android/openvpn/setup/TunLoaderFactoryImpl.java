@@ -37,9 +37,9 @@ import java.io.File;
  * Time: 7:11 AM
  * To change this template use File | Settings | File Templates.
  */
-public class TunLoaderFactory implements ITunLoaderFactory
+public class TunLoaderFactoryImpl implements ITunLoaderFactory
 {
-    public TunLoaderFactory()
+    public TunLoaderFactoryImpl()
     {
     }
 
@@ -291,8 +291,8 @@ public class TunLoaderFactory implements ITunLoaderFactory
                     @Override
                     public TunLoader createTunLoader(TunLoaderPreferences tunLoaderPreferences, SharedPreferences sharedPreferences)
                     {
-                        if (TunLoaderFactory.hasLegacyDefinition( sharedPreferences ))
-                            return TunLoaderFactory.createFromLegacyDefinition( sharedPreferences );
+                        if (TunLoaderFactoryImpl.hasLegacyDefinition( sharedPreferences ))
+                            return TunLoaderFactoryImpl.createFromLegacyDefinition( sharedPreferences );
                         else
                             return new NullTunLoader();
                     }
