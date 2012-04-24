@@ -77,12 +77,10 @@ public class IocContext
         this.tunLoaderProbe = tunLoaderProbe;
     }
 
-    public TunLoaderProbe getTunLoaderProbe()
+    public TunLoaderProbe getTunLoaderProbe(Context context)
     {
         if ( tunLoaderProbe == null )
-            //TODO: create a TunLoaderProbeImpl
-            //return new TunLoaderProbeImpl( getTunInfo( context ), new );
-            throw new UnsupportedOperationException( "//TODO: create a TunLoaderProbeImpl" );
+            return new TunLoaderProbeImpl( getTunInfo( context ), new TunLoaderFactoryImpl() );
         return tunLoaderProbe;
     }
 }
