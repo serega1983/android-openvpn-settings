@@ -37,11 +37,27 @@ import java.io.File;
  * Time: 7:11 AM
  * To change this template use File | Settings | File Templates.
  */
-public class TunLoaderFactory
+public class TunLoaderFactory implements ITunLoaderFactory
 {
-    private TunLoaderFactory()
+    public TunLoaderFactory()
     {
     }
+
+    public TunLoader createModprobe()
+    {
+        return new LoadTunViaModprobe();
+    }
+
+    public TunLoader createInsmod(File pathToModule)
+    {
+        return new LoadTunViaInsmod( pathToModule );
+    }
+
+    public TunLoader createNullTunLoader()
+    {
+        return new NullTunLoader();
+    }
+
 
 
     /**
@@ -72,7 +88,6 @@ public class TunLoaderFactory
     {
         return Preferences.getDoModprobeTun( preferences );
     }
-
 
     public static class NullTunLoader implements TunLoader
     {

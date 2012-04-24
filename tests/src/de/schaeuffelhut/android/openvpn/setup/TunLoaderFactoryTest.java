@@ -169,6 +169,23 @@ public class TunLoaderFactoryTest extends InstrumentationTestCase
         Assert.assertEquals( TunLoaderFactory.Types.LEGACY, new TunLoaderPreferences( context ).getType() );
     }
 
+    public void test_createModprobe()
+    {
+        MoreAsserts.assertAssignableFrom( TunLoaderFactory.LoadTunViaModprobe.class, new TunLoaderFactory().createModprobe() );
+    }
+
+    public void test_createInsmod()
+    {
+        File pathToModule = new File( "/lib/modules/tun.ko-"+System.currentTimeMillis() );
+        TunLoader insmod = new TunLoaderFactory().createInsmod( pathToModule );
+        MoreAsserts.assertAssignableFrom( TunLoaderFactory.LoadTunViaInsmod.class, insmod );
+        Assert.assertEquals( pathToModule, insmod.getPathToModule() );
+    }
+
+    public void test_createNullTunLoader()
+    {
+        MoreAsserts.assertAssignableFrom( TunLoaderFactory.NullTunLoader.class, new TunLoaderFactory().createNullTunLoader() );
+    }
 
 
 }
