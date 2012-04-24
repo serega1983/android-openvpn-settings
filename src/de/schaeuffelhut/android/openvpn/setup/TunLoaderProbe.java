@@ -62,7 +62,7 @@ public class TunLoaderProbe
         tunLoaders.add( tunLoaderFactory.createInsmod( new File( "/sdcard/tun.ko" ) ) );
     }
 
-    public TunLoader tryToLoadModule()
+    TunLoader tryToLoadModule()
     {
         if ( tunInfo.isDeviceNodeAvailable() )
             throw new IllegalStateException( "Can not test for tun device node as it is already available." );
@@ -73,5 +73,10 @@ public class TunLoaderProbe
                 return tunLoader;
         }
         return tunLoaderFactory.createNullTunLoader();
+    }
+
+    public void makeSuccessfullyProbedTunLoaderTheDefault(TunLoaderPreferences preferences)
+    {
+        tryToLoadModule().makeDefault( preferences );
     }
 }

@@ -29,8 +29,6 @@ import junit.framework.TestCase;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -43,6 +41,8 @@ public class TunLoaderProbeTest extends TestCase
 {
     private ArrayList<String> tunLoaderEvent = new ArrayList<String>();
     private String successfullTunLoader = "not defined";
+    private String called_makeDefault;
+
     private final TunInfoFake tunInfo = new TunInfoFake() {
         @Override
         public boolean isDeviceNodeAvailable()
@@ -83,6 +83,13 @@ public class TunLoaderProbeTest extends TestCase
         public void loadModule()
         {
             tunLoaderEvent.add( tunLoaderKey );
+        }
+
+        @Override
+        public void makeDefault(TunLoaderPreferences preferences)
+        {
+            super.makeDefault( preferences );
+            called_makeDefault = getName();
         }
     }
 
@@ -160,4 +167,11 @@ public class TunLoaderProbeTest extends TestCase
         }
     }
 
+    public void test_makeSuccessfullyProbedTunLoaderTheDefault()
+    {
+        successfullTunLoader = "modprobe";
+        tunLoaderProbe.scanDeviceForTun();
+        tunLoaderProbe.makeSuccessfullyProbedTunLoaderTheDefault( null );
+        Assert.assertEquals( "modprobe", called_makeDefault );
+    }
 }
