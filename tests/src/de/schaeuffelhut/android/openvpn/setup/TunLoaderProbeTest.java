@@ -22,12 +22,15 @@
 
 package de.schaeuffelhut.android.openvpn.setup;
 
+import android.test.MoreAsserts;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -38,28 +41,30 @@ import java.util.Arrays;
  */
 public class TunLoaderProbeTest extends TestCase
 {
-    private boolean called_createCurrent;
-    private boolean called_createModprobe;
-    private boolean called_createInsmod;
     private ArrayList<String> tunLoaderEvent = new ArrayList<String>();
-    private TunLoaderProbe tunLoaderProbe = new TunLoaderProbe( new ITunLoaderFactory(){
-
-        public TunLoader createCurrent()
+    private String successfullTunLoader = "not defined";
+    private final TunInfoFake tunInfo = new TunInfoFake() {
+        @Override
+        public boolean isDeviceNodeAvailable()
         {
-            called_createCurrent = true;
-            return new MyTunLoaderFake( "current" );
+            return super.isDeviceNodeAvailable() || tunLoaderEvent.contains( successfullTunLoader );
         }
+    };
+    private TunLoaderProbe tunLoaderProbe = new TunLoaderProbe( tunInfo, new ITunLoaderFactory(){
 
         public TunLoader createModprobe()
         {
-            called_createModprobe = true;
             return new MyTunLoaderFake( "modprobe" );
         }
 
         public TunLoader createInsmod(File pathToModule)
         {
-            called_createInsmod = true;
             return new MyTunLoaderFake( "insmod " + pathToModule.getPath() );
+        }
+
+        public TunLoader createNullTunLoader()
+        {
+            return new TunLoaderFactory.NullTunLoader();
         }
     });
 
@@ -70,7 +75,7 @@ public class TunLoaderProbeTest extends TestCase
 
         public MyTunLoaderFake(String tunLoaderKey)
         {
-            super( "fake" );
+            super( tunLoaderKey );
             this.tunLoaderKey = tunLoaderKey;
         }
 
@@ -83,11 +88,20 @@ public class TunLoaderProbeTest extends TestCase
 
 
 
-    public void test_tryToLoadModule_tries_current_TunLoader()
+    public void test_tryToLoadModule_tries_current_TunLoader_if_defined()
     {
+        tunInfo.setTunLoader( new MyTunLoaderFake( "current" ) );
         tunLoaderProbe.tryCurrentTunLoader();
         tunLoaderProbe.tryToLoadModule();
         Assert.assertEquals( Arrays.asList("current"), tunLoaderEvent );
+    }
+
+    public void test_tryToLoadModule_tries_current_TunLoader_not_if_not_defined()
+    {
+        tunInfo.setTunLoader( null );
+        tunLoaderProbe.tryCurrentTunLoader();
+        tunLoaderProbe.tryToLoadModule();
+        Assert.assertTrue( tunLoaderEvent.isEmpty() ) ;
     }
 
 
@@ -95,7 +109,6 @@ public class TunLoaderProbeTest extends TestCase
     {
         tunLoaderProbe.scanDeviceForTun();
         tunLoaderProbe.tryToLoadModule();
-        Assert.assertTrue( called_createInsmod );
         Assert.assertEquals( Arrays.asList(
                 "modprobe",
                 "insmod /system/lib/modules/tun.ko",
@@ -107,7 +120,6 @@ public class TunLoaderProbeTest extends TestCase
     {
         tunLoaderProbe.trySdCard();
         tunLoaderProbe.tryToLoadModule();
-        Assert.assertTrue( called_createInsmod );
         Assert.assertEquals( Arrays.asList(
                 "insmod /sdcard/tun.ko" //TODO: this is naive. The tun module needs to be copied to private storage
         ), tunLoaderEvent );
@@ -118,5 +130,34 @@ public class TunLoaderProbeTest extends TestCase
         tunLoaderProbe.tryToLoadModule();
         Assert.assertTrue( tunLoaderEvent.isEmpty() );
     }
-}
 
+    public void test_tryToLoadModule_returns_NullTunLoader()
+    {
+        successfullTunLoader = "not defined";
+        MoreAsserts.assertAssignableFrom( TunLoaderFactory.NullTunLoader.class, tunLoaderProbe.tryToLoadModule() );
+    }
+
+    public void test_tryToLoadModule_returns_successfull_loader()
+    {
+        successfullTunLoader = "current";
+        tunInfo.setTunLoader( new MyTunLoaderFake( "current" ) );
+        tunLoaderProbe.tryCurrentTunLoader();
+        TunLoader tunLoader = tunLoaderProbe.tryToLoadModule();
+        Assert.assertEquals( "current", tunLoader.getName() );
+    }
+
+    public void test_tryToLoadModule_throws_exception_if_module_has_already_been_loaded()
+    {
+        tunInfo.setDeviceNodeAvailable( true );
+        try
+        {
+            tunLoaderProbe.tryToLoadModule();
+            fail( "IllegalStateException expected" );
+        }
+        catch (IllegalStateException e)
+        {
+            Assert.assertEquals( "Can not test for tun device node as it is already available.", e.getMessage() );
+        }
+    }
+
+}

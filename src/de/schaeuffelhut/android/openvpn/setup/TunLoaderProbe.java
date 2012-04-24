@@ -34,17 +34,20 @@ import java.util.ArrayList;
  */
 public class TunLoaderProbe
 {
+    private final TunInfo tunInfo;
     private final ITunLoaderFactory tunLoaderFactory;
     private ArrayList<TunLoader> tunLoaders = new ArrayList<TunLoader>();
 
-    public TunLoaderProbe(ITunLoaderFactory tunLoaderFactory)
+    public TunLoaderProbe(TunInfo tunInfo, ITunLoaderFactory tunLoaderFactory)
     {
+        this.tunInfo = tunInfo;
         this.tunLoaderFactory = tunLoaderFactory;
     }
 
     public void tryCurrentTunLoader()
     {
-        tunLoaders.add( tunLoaderFactory.createCurrent() );
+        if (tunInfo.hasTunLoader())
+            tunLoaders.add( tunInfo.getTunLoader() );
     }
 
     public void scanDeviceForTun()
@@ -59,9 +62,16 @@ public class TunLoaderProbe
         tunLoaders.add( tunLoaderFactory.createInsmod( new File( "/sdcard/tun.ko" ) ) );
     }
 
-    public void tryToLoadModule()
+    public TunLoader tryToLoadModule()
     {
+        if ( tunInfo.isDeviceNodeAvailable() )
+            throw new IllegalStateException( "Can not test for tun device node as it is already available." );
         for (TunLoader tunLoader : tunLoaders)
+        {
             tunLoader.loadModule();
+            if ( tunInfo.isDeviceNodeAvailable() )
+                return tunLoader;
+        }
+        return tunLoaderFactory.createNullTunLoader();
     }
 }
