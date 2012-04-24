@@ -33,7 +33,7 @@ import java.io.File;
 */
 interface ITunLoaderFactory
 {
-    TunLoader createCurrent();
     TunLoader createModprobe();
     TunLoader createInsmod(File pathToModule);
+    TunLoader createNullTunLoader();
 }
