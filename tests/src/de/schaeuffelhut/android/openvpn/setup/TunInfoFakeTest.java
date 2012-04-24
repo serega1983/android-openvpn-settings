@@ -23,12 +23,8 @@
 package de.schaeuffelhut.android.openvpn.setup;
 
 import android.test.AndroidTestCase;
-import junit.framework.Assert;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.

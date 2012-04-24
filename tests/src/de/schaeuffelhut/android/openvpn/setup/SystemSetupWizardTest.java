@@ -23,7 +23,6 @@
 package de.schaeuffelhut.android.openvpn.setup;
 
 import android.test.ActivityInstrumentationTestCase2;
-import android.test.MoreAsserts;
 import android.widget.TextView;
 import de.schaeuffelhut.android.openvpn.IocContext;
 import de.schaeuffelhut.android.openvpn.R;

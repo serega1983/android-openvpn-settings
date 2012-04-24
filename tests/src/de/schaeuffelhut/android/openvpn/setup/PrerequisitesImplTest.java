@@ -23,9 +23,6 @@
 package de.schaeuffelhut.android.openvpn.setup;
 
 import android.test.ActivityInstrumentationTestCase2;
-import junit.framework.TestCase;
-
-import static junit.framework.Assert.*;
 
 /**
  * Created with IntelliJ IDEA.
