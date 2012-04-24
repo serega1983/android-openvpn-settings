@@ -50,7 +50,7 @@ public class TunLoaderProbeImplTest extends InstrumentationTestCase
             return super.isDeviceNodeAvailable() || tunLoaderEvent.contains( successfullTunLoader );
         }
     };
-    private TunLoaderProbeImpl tunLoaderProbe = new TunLoaderProbeImpl( tunInfo, new ITunLoaderFactory(){
+    private TunLoaderProbeImpl tunLoaderProbe = new TunLoaderProbeImpl( tunInfo, new TunLoaderFactory(){
 
         public TunLoader createModprobe()
         {

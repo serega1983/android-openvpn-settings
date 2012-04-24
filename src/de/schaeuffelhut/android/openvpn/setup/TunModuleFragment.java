@@ -34,9 +34,6 @@ import android.widget.TextView;
 import de.schaeuffelhut.android.openvpn.IocContext;
 import de.schaeuffelhut.android.openvpn.R;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created with IntelliJ IDEA.
  * User: fries
@@ -63,7 +60,7 @@ public class TunModuleFragment extends Fragment
                     public void onClick(View view)
                     {
 
-                        TunLoaderProbe tunLoaderProbe = IocContext.get().getTunLoaderProbe();
+                        TunLoaderProbe tunLoaderProbe = IocContext.get().getTunLoaderProbe( getActivity().getApplicationContext() );
 
                         if (tryCurrentTunLoader().isChecked() && tryCurrentTunLoader().getVisibility() == View.VISIBLE)
                             tunLoaderProbe.tryCurrentTunLoader();

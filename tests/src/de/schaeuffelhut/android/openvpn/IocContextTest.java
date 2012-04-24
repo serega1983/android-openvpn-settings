@@ -22,6 +22,7 @@
 
 package de.schaeuffelhut.android.openvpn;
 
+import android.test.InstrumentationTestCase;
 import android.test.MoreAsserts;
 import de.schaeuffelhut.android.openvpn.setup.TunLoaderProbeImpl;
 import junit.framework.TestCase;
@@ -33,10 +34,10 @@ import junit.framework.TestCase;
  * Time: 5:43 PM
  * To change this template use File | Settings | File Templates.
  */
-public class IocContextTest extends TestCase
+public class IocContextTest extends InstrumentationTestCase
 {
     public void testGetTunLoaderProbe() throws Exception
     {
-        MoreAsserts.assertAssignableFrom( TunLoaderProbeImpl.class, IocContext.get().getTunLoaderProbe() );
+        MoreAsserts.assertAssignableFrom( TunLoaderProbeImpl.class, IocContext.get().getTunLoaderProbe( getInstrumentation().getContext() ) );
     }
 }
