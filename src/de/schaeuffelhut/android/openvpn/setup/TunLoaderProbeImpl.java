@@ -35,10 +35,10 @@ import java.util.ArrayList;
 public class TunLoaderProbeImpl implements TunLoaderProbe
 {
     private final TunInfo tunInfo;
-    private final ITunLoaderFactory tunLoaderFactory;
+    private final TunLoaderFactory tunLoaderFactory;
     private ArrayList<TunLoader> tunLoaders = new ArrayList<TunLoader>();
 
-    public TunLoaderProbeImpl(TunInfo tunInfo, ITunLoaderFactory tunLoaderFactory)
+    public TunLoaderProbeImpl(TunInfo tunInfo, TunLoaderFactory tunLoaderFactory)
     {
         this.tunInfo = tunInfo;
         this.tunLoaderFactory = tunLoaderFactory;

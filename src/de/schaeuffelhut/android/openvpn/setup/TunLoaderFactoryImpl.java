@@ -37,7 +37,7 @@ import java.io.File;
  * Time: 7:11 AM
  * To change this template use File | Settings | File Templates.
  */
-public class TunLoaderFactoryImpl implements ITunLoaderFactory
+public class TunLoaderFactoryImpl implements TunLoaderFactory
 {
     public TunLoaderFactoryImpl()
     {
