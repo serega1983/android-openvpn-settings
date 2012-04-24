@@ -25,7 +25,6 @@ package de.schaeuffelhut.android.openvpn.setup;
 import android.test.InstrumentationTestCase;
 import android.test.MoreAsserts;
 import junit.framework.Assert;
-import junit.framework.TestCase;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -65,7 +64,7 @@ public class TunLoaderProbeImplTest extends InstrumentationTestCase
 
         public TunLoader createNullTunLoader()
         {
-            return new TunLoaderFactory.NullTunLoader();
+            return new TunLoaderFactoryImpl.NullTunLoader();
         }
     });
 
@@ -142,7 +141,7 @@ public class TunLoaderProbeImplTest extends InstrumentationTestCase
     public void test_tryToLoadModule_returns_NullTunLoader()
     {
         successfullTunLoader = "not defined";
-        MoreAsserts.assertAssignableFrom( TunLoaderFactory.NullTunLoader.class, tunLoaderProbe.tryToLoadModule() );
+        MoreAsserts.assertAssignableFrom( TunLoaderFactoryImpl.NullTunLoader.class, tunLoaderProbe.tryToLoadModule() );
     }
 
     public void test_tryToLoadModule_returns_successfull_loader()
