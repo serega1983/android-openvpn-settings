@@ -31,7 +31,7 @@ import java.io.File;
 * Time: 8:50 PM
 * To change this template use File | Settings | File Templates.
 */
-interface ITunLoaderFactory
+interface TunLoaderFactory
 {
     TunLoader createModprobe();
     TunLoader createInsmod(File pathToModule);
