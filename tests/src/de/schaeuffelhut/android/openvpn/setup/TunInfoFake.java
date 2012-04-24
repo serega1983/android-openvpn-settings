@@ -39,7 +39,6 @@ public class TunInfoFake implements TunInfo
 {
     private int flags;
     private TunLoader tunLoader;
-    private List<File> tunModules;
     private boolean deviceNodeAvailable;
 
     public boolean isDeviceNodeAvailable()
@@ -66,21 +65,9 @@ public class TunInfoFake implements TunInfo
         return tunLoader;
     }
 
-    public List<File> listTunModules()
-    {
-        if ( tunModules == null )
-            return Collections.emptyList();
-        return tunModules;
-    }
-
     public void setTunLoader(TunLoader tunLoader)
     {
         this.tunLoader = tunLoader;
-    }
-
-    public void setListTunModules(List<File> tunModules)
-    {
-        this.tunModules = tunModules;
     }
 
     public void setDeviceNodeAvailable(boolean deviceNodeAvailable)

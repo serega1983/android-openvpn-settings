@@ -63,12 +63,4 @@ public interface TunInfo
      * @return an instance of {@link TunLoader}, capable of loading the tun module.
      */
     TunLoader getTunLoader();
-
-    /**
-     * Returns a list of all tun.ko modules found on this system.
-     *
-     * @return a list of all tun.ko modules found on this system.
-     */
-    //TODO: remove
-    List<File> listTunModules();
 }
