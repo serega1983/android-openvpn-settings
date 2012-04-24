@@ -22,61 +22,20 @@
 
 package de.schaeuffelhut.android.openvpn.setup;
 
-import java.io.File;
-import java.util.ArrayList;
-
 /**
  * Created with IntelliJ IDEA.
  * User: fries
- * Date: 4/23/12
- * Time: 7:59 PM
+ * Date: 4/24/12
+ * Time: 8:50 AM
  * To change this template use File | Settings | File Templates.
  */
-public class TunLoaderProbe
+public interface TunLoaderProbe
 {
-    private final TunInfo tunInfo;
-    private final ITunLoaderFactory tunLoaderFactory;
-    private ArrayList<TunLoader> tunLoaders = new ArrayList<TunLoader>();
+    void tryCurrentTunLoader();
 
-    public TunLoaderProbe(TunInfo tunInfo, ITunLoaderFactory tunLoaderFactory)
-    {
-        this.tunInfo = tunInfo;
-        this.tunLoaderFactory = tunLoaderFactory;
-    }
+    void scanDeviceForTun();
 
-    public void tryCurrentTunLoader()
-    {
-        if (tunInfo.hasTunLoader())
-            tunLoaders.add( tunInfo.getTunLoader() );
-    }
+    void trySdCard();
 
-    public void scanDeviceForTun()
-    {
-        tunLoaders.add( tunLoaderFactory.createModprobe() );
-        tunLoaders.add( tunLoaderFactory.createInsmod( new File( "/system/lib/modules/tun.ko" ) ) );
-        tunLoaders.add( tunLoaderFactory.createInsmod( new File( "/lib/modules/tun.ko" ) ) );
-    }
-
-    public void trySdCard()
-    {
-        tunLoaders.add( tunLoaderFactory.createInsmod( new File( "/sdcard/tun.ko" ) ) );
-    }
-
-    TunLoader tryToLoadModule()
-    {
-        if ( tunInfo.isDeviceNodeAvailable() )
-            throw new IllegalStateException( "Can not test for tun device node as it is already available." );
-        for (TunLoader tunLoader : tunLoaders)
-        {
-            tunLoader.loadModule();
-            if ( tunInfo.isDeviceNodeAvailable() )
-                return tunLoader;
-        }
-        return tunLoaderFactory.createNullTunLoader();
-    }
-
-    public void makeSuccessfullyProbedTunLoaderTheDefault(TunLoaderPreferences preferences)
-    {
-        tryToLoadModule().makeDefault( preferences );
-    }
+    void makeSuccessfullyProbedTunLoaderTheDefault(TunLoaderPreferences preferences);
 }
