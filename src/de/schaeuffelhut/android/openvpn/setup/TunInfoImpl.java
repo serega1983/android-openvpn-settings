@@ -77,27 +77,4 @@ public class TunInfoImpl implements TunInfo
     {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
-
-    public void tryToLoadTunModule(Collection<TryToLoadTunModuleStrategy> strategies) throws IllegalStateException
-    {
-        Log.d( "OpenVPN", "trying to load tun module" );
-
-        Collection<TunLoader> tunLoaders = new ArrayList<TunLoader>();
-        for (TryToLoadTunModuleStrategy strategy : strategies)
-            strategy.appendTunLoaderTo( tunLoaders );
-
-
-        for (TunLoader tunLoader : tunLoaders)
-        {
-            tunLoader.loadModule();
-            Log.i( "OpenVPN", "Trying to load tun module using " + tunLoader.toString() );
-            if (isDeviceNodeAvailable())
-            {
-                Log.i( "OpenVPN", tunLoader.toString() );
-                tunLoader.makeDefault( new TunLoaderPreferences( context ) );
-                return;
-            }
-        }
-        new TunLoaderFactory.NullTunLoader().makeDefault( new TunLoaderPreferences( context ) );
-    }
 }

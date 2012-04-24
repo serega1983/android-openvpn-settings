@@ -23,10 +23,7 @@
 package de.schaeuffelhut.android.openvpn;
 
 import android.content.Context;
-import de.schaeuffelhut.android.openvpn.setup.Prerequisites;
-import de.schaeuffelhut.android.openvpn.setup.PrerequisitesImpl;
-import de.schaeuffelhut.android.openvpn.setup.TunInfo;
-import de.schaeuffelhut.android.openvpn.setup.TunInfoImpl;
+import de.schaeuffelhut.android.openvpn.setup.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -39,6 +36,7 @@ public class IocContext
 {
     static IocContext iocContext = new IocContext();
     private TunInfo tunInfo;
+    private TunLoaderProbe tunLoaderProbe;
 
     public final static IocContext get()
     {
@@ -72,5 +70,18 @@ public class IocContext
             return new TunInfoImpl( context );
         }
         return tunInfo;
+    }
+
+    public void setTunLoderProbe(TunLoaderProbe tunLoaderProbe)
+    {
+        this.tunLoaderProbe = tunLoaderProbe;
+    }
+
+    public TunLoaderProbe getTunLoaderProbe()
+    {
+        if ( tunLoaderProbe == null )
+            //TODO: create a TunLoaderProbeImpl
+            throw new UnsupportedOperationException( "//TODO: create a TunLoaderProbeImpl" );
+        return tunLoaderProbe;
     }
 }

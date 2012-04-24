@@ -69,42 +69,6 @@ public interface TunInfo
      *
      * @return a list of all tun.ko modules found on this system.
      */
+    //TODO: remove
     List<File> listTunModules();
-
-    public enum TryToLoadTunModuleStrategy
-    {
-        TRY_CURRENT_TUN_LOADER{
-            @Override
-            public void appendTunLoaderTo(Collection<TunLoader> tunLoaders)
-            {
-                //TODO:
-            }
-        },
-        SCAN_DEVICE_FOR_TUN{
-            @Override
-            public void appendTunLoaderTo(Collection<TunLoader> tunLoaders)
-            {
-                tunLoaders.add( new TunLoaderFactory.LoadTunViaModprobe() );
-                tunLoaders.add( new TunLoaderFactory.LoadTunViaInsmod( new File( "/system/lib/modules/tun.ko" ) ) );
-            }
-        },
-        TRY_SDCARD{
-            @Override
-            public void appendTunLoaderTo(Collection<TunLoader> tunLoaders)
-            {
-                tunLoaders.add( new TunLoaderFactory.LoadTunViaInsmod( new File( "/sdcard/tun.ko" ) ) );
-            }
-        };
-
-        public abstract void appendTunLoaderTo(Collection<TunLoader> tunLoaders);
-    }
-
-    /**
-     * Try to load the TUN kernel module. If a TunLoader has already been defined, try this one first.
-     * Otherwise list all tun modules on this device and try to insmod each one until one succeeds.
-     *
-     * @throws IllegalStateException if TUN support is already available.
-     * @param strategy
-     */
-    void tryToLoadTunModule(Collection<TryToLoadTunModuleStrategy> strategy) throws IllegalStateException;
 }
