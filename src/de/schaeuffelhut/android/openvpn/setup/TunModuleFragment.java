@@ -74,8 +74,7 @@ public class TunModuleFragment extends Fragment
                         if (trySdcard().isChecked())
                             tunLoaderProbe.trySdCard();
 
-//TODO:                 tunLoaderProbe.makeSuccessfullyProbedTunLoaderTheDefault( new TunLoaderPreferences( getActivity().getApplicationContext() ) );
-                        tunLoaderProbe.makeSuccessfullyProbedTunLoaderTheDefault( null );
+                        tunLoaderProbe.makeSuccessfullyProbedTunLoaderTheDefault( new TunLoaderPreferences( getActivity().getApplicationContext() ) );
 
                         initView();
                     }

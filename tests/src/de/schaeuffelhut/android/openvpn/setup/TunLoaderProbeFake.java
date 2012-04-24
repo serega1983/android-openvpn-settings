@@ -62,6 +62,8 @@ class TunLoaderProbeFake implements TunLoaderProbe
 
     public void makeSuccessfullyProbedTunLoaderTheDefault(TunLoaderPreferences preferences)
     {
+        if ( preferences == null )
+            throw new NullPointerException( "Parameter preferences may not be null" );
         makeSuccessfullyProbedTunLoaderTheDefaultCallCount++;
         tunInfo.setTunLoader( onCallToTryToLoadTunModuleSetTunLoaderTo );
         tunInfo.setDeviceNodeAvailable( onCallToTryToLoadTunModuleSetDeviceNodeAvailableTo );
