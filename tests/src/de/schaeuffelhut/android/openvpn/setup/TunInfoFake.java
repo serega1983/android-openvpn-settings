@@ -41,10 +41,6 @@ public class TunInfoFake implements TunInfo
     private TunLoader tunLoader;
     private List<File> tunModules;
     private boolean deviceNodeAvailable;
-    private int tryToLoadTunModuleCount = 0;
-    public Collection<TryToLoadTunModuleStrategy> tryToLoadTunModuleParameters = Collections.emptyList();
-    private TunLoader onCallToTryToLoadTunModuleSetTunLoaderTo;
-    private boolean onCallToTryToLoadTunModuleSetDeviceNodeAvailableTo;
 
     public boolean isDeviceNodeAvailable()
     {
@@ -77,26 +73,6 @@ public class TunInfoFake implements TunInfo
         return tunModules;
     }
 
-    public void tryToLoadTunModule(Collection<TryToLoadTunModuleStrategy> strategy) throws IllegalStateException
-    {
-        tryToLoadTunModuleCount++;
-        tryToLoadTunModuleParameters = new ArrayList<TryToLoadTunModuleStrategy>( strategy );
-        setTunLoader( onCallToTryToLoadTunModuleSetTunLoaderTo );
-        setDeviceNodeAvailable( onCallToTryToLoadTunModuleSetDeviceNodeAvailableTo );
-        //TODO: implement fake method tryToLoadTunModule().
-    }
-
-    public void onCallToTryToLoadTunModuleSetTunLoaderTo(TunLoader tunLoader)
-    {
-        onCallToTryToLoadTunModuleSetTunLoaderTo = tunLoader;
-    }
-
-
-    public void onCallToTryToLoadTunModuleSetDeviceNodeAvailableTo(boolean b)
-    {
-        onCallToTryToLoadTunModuleSetDeviceNodeAvailableTo = b;
-    }
-
     public void setTunLoader(TunLoader tunLoader)
     {
         this.tunLoader = tunLoader;
@@ -111,10 +87,4 @@ public class TunInfoFake implements TunInfo
     {
         this.deviceNodeAvailable = deviceNodeAvailable;
     }
-
-    public int tryToLoadTunModuleCount()
-    {
-        return tryToLoadTunModuleCount;
-    }
-
 }

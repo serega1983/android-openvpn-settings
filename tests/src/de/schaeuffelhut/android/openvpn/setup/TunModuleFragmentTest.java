@@ -50,6 +50,7 @@ public class TunModuleFragmentTest extends ActivityInstrumentationTestCase2<TunM
     protected static final String NO = "No";
     protected static final String YES = "Yes";
     private TunInfoFake tunInfo;
+    private TunLoaderProbeFake tunLoaderProbe;
 
     public TunModuleFragmentTest()
     {
@@ -60,6 +61,8 @@ public class TunModuleFragmentTest extends ActivityInstrumentationTestCase2<TunM
     {
         tunInfo = new TunInfoFake();
         IocContext.get().setTunInfo( tunInfo );
+        tunLoaderProbe = new TunLoaderProbeFake( tunInfo );
+        IocContext.get().setTunLoderProbe( tunLoaderProbe );
     }
 
     public void tearDown() throws InterruptedException
@@ -177,56 +180,56 @@ public class TunModuleFragmentTest extends ActivityInstrumentationTestCase2<TunM
         assertNotChecked( R.id.setup_wizard_tun_module_option_try_sdcard );
     }
 
-    public void test_try_to_load_module_calls_tunInfo()
+    public void test_try_to_load_module_calls_tunLoaderProbe()
     {
         TouchUtils.clickView( this, getActivity().findViewById( R.id.setup_wizard_tun_module_try_to_load_module ) );
-        Assert.assertEquals( 1, tunInfo.tryToLoadTunModuleCount() );
+        Assert.assertEquals( 1, tunLoaderProbe.makeSuccessfullyProbedTunLoaderTheDefaultCallCount );
     }
 
-    public void test_try_to_load_module_calls_tunInfo_with_option_try_current_tun_loader()
+    public void test_try_to_load_module_calls_tunLoaderProbe_with_option_try_current_tun_loader()
     {
         tunInfo.setTunLoader( new DummyTunLoader() );
         TouchUtils.clickView( this, getActivity().findViewById( R.id.setup_wizard_tun_module_try_to_load_module ) );
-        Assert.assertTrue( tunInfo.tryToLoadTunModuleParameters.contains( TunInfo.TryToLoadTunModuleStrategy.TRY_CURRENT_TUN_LOADER ) );
+        Assert.assertEquals( 1, tunLoaderProbe.tryCurrentTunLoaderCallCount );
     }
 
-    public void test_try_to_load_module_calls_tunInfo_with_option_try_current_tun_loader_is_not_visible()
+    public void test_try_to_load_module_calls_tunLoaderProbe_with_option_try_current_tun_loader_is_not_visible()
     {
         tunInfo.setTunLoader( null );
         TouchUtils.clickView( this, getActivity().findViewById( R.id.setup_wizard_tun_module_try_to_load_module ) );
-        Assert.assertTrue( !tunInfo.tryToLoadTunModuleParameters.contains( TunInfo.TryToLoadTunModuleStrategy.TRY_CURRENT_TUN_LOADER ) );
+        Assert.assertEquals( 0, tunLoaderProbe.tryCurrentTunLoaderCallCount );
     }
 
-    public void test_try_to_load_module_calls_tunInfo_with_option_scan_device()
+    public void test_try_to_load_module_calls_tunLoaderProbe_with_option_scan_device()
     {
         TouchUtils.clickView( this, getActivity().findViewById( R.id.setup_wizard_tun_module_try_to_load_module ) );
-        Assert.assertTrue( tunInfo.tryToLoadTunModuleParameters.contains( TunInfo.TryToLoadTunModuleStrategy.SCAN_DEVICE_FOR_TUN ) );
+        Assert.assertEquals( 1, tunLoaderProbe.scanDeviceForTunCallCount );
     }
 
-    public void test_try_to_load_module_calls_tunInfo_without_option_try_current_tun_loader_is_not_checked()
+    public void test_try_to_load_module_calls_tunLoaderProbe_without_option_try_current_tun_loader_is_not_checked()
     {
         TouchUtils.clickView( this, getActivity().findViewById( R.id.setup_wizard_tun_module_option_scan_device_for_tun ) );
         TouchUtils.clickView( this, getActivity().findViewById( R.id.setup_wizard_tun_module_try_to_load_module ) );
-        Assert.assertTrue( !tunInfo.tryToLoadTunModuleParameters.contains( TunInfo.TryToLoadTunModuleStrategy.SCAN_DEVICE_FOR_TUN ) );
+        Assert.assertEquals( 0, tunLoaderProbe.scanDeviceForTunCallCount );
     }
 
-    public void test_try_to_load_module_calls_tunInfo_with_option_try_sdcard()
+    public void test_try_to_load_module_calls_tunLoaderProbe_with_option_try_sdcard()
     {
         TouchUtils.clickView( this, getActivity().findViewById( R.id.setup_wizard_tun_module_option_try_sdcard ) );
         TouchUtils.clickView( this, getActivity().findViewById( R.id.setup_wizard_tun_module_try_to_load_module ) );
-        Assert.assertTrue( tunInfo.tryToLoadTunModuleParameters.contains( TunInfo.TryToLoadTunModuleStrategy.TRY_SDCARD ) );
+        Assert.assertEquals( 1, tunLoaderProbe.trySdCardCallCount );
     }
 
-    public void test_try_to_load_module_calls_tunInfo_without_option_try_sdcard_is_not_checked()
+    public void test_try_to_load_module_calls_tunLoaderprobe_without_option_try_sdcard_is_not_checked()
     {
         TouchUtils.clickView( this, getActivity().findViewById( R.id.setup_wizard_tun_module_try_to_load_module ) );
-        Assert.assertTrue( !tunInfo.tryToLoadTunModuleParameters.contains( TunInfo.TryToLoadTunModuleStrategy.TRY_SDCARD ) );
+        Assert.assertEquals( 0, tunLoaderProbe.trySdCardCallCount );
     }
 
 
     public void test_refresh_after_try_to_load_module()
     {
-        tunInfo.onCallToTryToLoadTunModuleSetDeviceNodeAvailableTo( true );
+        tunLoaderProbe.onCallToTryToLoadTunModuleSetDeviceNodeAvailableTo( true );
         TouchUtils.clickView( this, getActivity().findViewById( R.id.setup_wizard_tun_module_try_to_load_module ) );
         assertTrue( tunInfo.isDeviceNodeAvailable() );
         assertTextViewEquals( R.id.setup_wizard_tun_module_has_device_node, "Available" );
@@ -262,4 +265,5 @@ public class TunModuleFragmentTest extends ActivityInstrumentationTestCase2<TunM
     {
         Assert.assertFalse( ((CheckBox) getActivity().findViewById( componentId )).isChecked() );
     }
+
 }

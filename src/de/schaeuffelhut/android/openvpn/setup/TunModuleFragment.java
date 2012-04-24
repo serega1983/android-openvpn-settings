@@ -62,14 +62,21 @@ public class TunModuleFragment extends Fragment
                 {
                     public void onClick(View view)
                     {
-                        List<TunInfo.TryToLoadTunModuleStrategy> params = new ArrayList<TunInfo.TryToLoadTunModuleStrategy>( 3 );
+
+                        TunLoaderProbe tunLoaderProbe = IocContext.get().getTunLoaderProbe();
+
                         if (tryCurrentTunLoader().isChecked() && tryCurrentTunLoader().getVisibility() == View.VISIBLE)
-                            params.add( TunInfo.TryToLoadTunModuleStrategy.TRY_CURRENT_TUN_LOADER );
+                            tunLoaderProbe.tryCurrentTunLoader();
+
                         if (scanDeviceForTun().isChecked())
-                            params.add( TunInfo.TryToLoadTunModuleStrategy.SCAN_DEVICE_FOR_TUN );
+                            tunLoaderProbe.scanDeviceForTun();
+
                         if (trySdcard().isChecked())
-                            params.add( TunInfo.TryToLoadTunModuleStrategy.TRY_SDCARD );
-                        IocContext.get().getTunInfo( getActivity().getApplicationContext() ).tryToLoadTunModule( params );
+                            tunLoaderProbe.trySdCard();
+
+//TODO:                 tunLoaderProbe.makeSuccessfullyProbedTunLoaderTheDefault( new TunLoaderPreferences( getActivity().getApplicationContext() ) );
+                        tunLoaderProbe.makeSuccessfullyProbedTunLoaderTheDefault( null );
+
                         initView();
                     }
                 }

@@ -104,19 +104,4 @@ public class TunInfoFakeTest extends AndroidTestCase
         tunInfo.setListTunModules( tunModules );
         assertSame( tunModules, tunInfo.listTunModules() );
     }
-
-    public void testOnCallToTryToLoadTunModuleSetTunLoaderTo()
-    {
-        DummyTunLoader tunLoader = new DummyTunLoader();
-        tunInfo.onCallToTryToLoadTunModuleSetTunLoaderTo( tunLoader );
-        tunInfo.tryToLoadTunModule(Arrays.asList(TunInfo.TryToLoadTunModuleStrategy.SCAN_DEVICE_FOR_TUN));
-        Assert.assertSame( tunLoader, tunInfo.getTunLoader() );
-    }
-
-    public void testOnCallToTryToLoadTunModuleSetDeviceNodeAvailableTo()
-    {
-        tunInfo.onCallToTryToLoadTunModuleSetDeviceNodeAvailableTo( true );
-        tunInfo.tryToLoadTunModule(Arrays.asList(TunInfo.TryToLoadTunModuleStrategy.SCAN_DEVICE_FOR_TUN));
-        Assert.assertTrue( tunInfo.isDeviceNodeAvailable() );
-    }
 }
