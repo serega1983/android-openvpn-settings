@@ -22,57 +22,42 @@
 
 package de.schaeuffelhut.android.openvpn.setup;
 
-import java.io.File;
+import android.test.InstrumentationTestCase;
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
 /**
  * Created with IntelliJ IDEA.
  * User: fries
- * Date: 4/14/12
- * Time: 8:32 AM
+ * Date: 4/24/12
+ * Time: 12:21 PM
  * To change this template use File | Settings | File Templates.
  */
-public class TunLoaderFake implements TunLoader
+public class TunLoaderFakeTest extends InstrumentationTestCase
 {
-    private final String name;
-    private final File pathToModule;
-
-    public TunLoaderFake(String name)
+    public void test_makeDefault_throws_NPE_on_null_argument() throws Exception
     {
-        super();
-        this.name = name;
-        this.pathToModule = null;
+        try
+        {
+            new TunLoaderFake( "fake" ).makeDefault( null );
+            fail( "NullPointerException expected" );
+        }
+        catch (NullPointerException e)
+        {
+            Assert.assertEquals( "Parameter preferences may not be null", e.getMessage() );
+        }
     }
 
-    public TunLoaderFake(String name, File pathToModule)
+    public void test_makeDefault_does_now_throw_NPE_on_non_null_argument() throws Exception
     {
-        this.name = name;
-        this.pathToModule = pathToModule;
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public boolean hasPathToModule()
-    {
-        return pathToModule != null;
-    }
-
-    public File getPathToModule()
-    {
-        return pathToModule;
-    }
-
-    public void loadModule()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    public void makeDefault(TunLoaderPreferences preferences)
-    {
-        if (preferences == null)
-            throw new NullPointerException( "Parameter preferences may not be null" );
-        // NOOP
+        try
+        {
+            new TunLoaderFake( "fake" ).makeDefault( new TunLoaderPreferences( getInstrumentation().getContext() ) );
+            //OK
+        }
+        catch (NullPointerException e)
+        {
+            fail( "Unexpected NullPointerException" );
+        }
     }
 }

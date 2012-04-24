@@ -22,6 +22,7 @@
 
 package de.schaeuffelhut.android.openvpn.setup;
 
+import android.test.InstrumentationTestCase;
 import android.test.MoreAsserts;
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -37,7 +38,7 @@ import java.util.Arrays;
  * Time: 7:59 PM
  * To change this template use File | Settings | File Templates.
  */
-public class TunLoaderProbeImplTest extends TestCase
+public class TunLoaderProbeImplTest extends InstrumentationTestCase
 {
     private ArrayList<String> tunLoaderEvent = new ArrayList<String>();
     private String successfullTunLoader = "not defined";
@@ -171,7 +172,7 @@ public class TunLoaderProbeImplTest extends TestCase
     {
         successfullTunLoader = "modprobe";
         tunLoaderProbe.scanDeviceForTun();
-        tunLoaderProbe.makeSuccessfullyProbedTunLoaderTheDefault( null );
+        tunLoaderProbe.makeSuccessfullyProbedTunLoaderTheDefault( new TunLoaderPreferences( getInstrumentation().getContext() ) );
         Assert.assertEquals( "modprobe", called_makeDefault );
     }
 }
