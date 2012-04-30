@@ -35,18 +35,20 @@ class ProbeExecutable
 {
     private final String title;
     private final File[] files;
+    private final String subtitle;
 
-    ProbeExecutable(String title, File... files)
+    ProbeExecutable(String title, String subtitle, File... files)
     {
         this.title = title;
         this.files = files;
+        this.subtitle = subtitle;
     }
 
     public ProbeResult probe()
     {
         StringBuffer details = new StringBuffer();
         PrerequisitesActivity.Status status = probeFiles( details );
-        return new ProbeResult( status, title, "", details.toString().trim() );
+        return new ProbeResult( status, title, subtitle, details.toString().trim() );
     }
 
     private PrerequisitesActivity.Status probeFiles(StringBuffer details)
