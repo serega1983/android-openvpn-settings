@@ -33,6 +33,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import com.bugsense.trace.BugSenseHandler;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
+import de.schaeuffelhut.android.openvpn.setup.prerequisites.PrerequisitesActivity;
 import de.schaeuffelhut.android.openvpn.tun.ShareTunActivity;
 import de.schaeuffelhut.android.openvpn.util.*;
 
@@ -314,6 +315,10 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 		case R.id.settings_menu_help:
 			showDialog( DIALOG_HELP );
 			return true;
+
+        case R.id.settings_menu_prerequisites: {
+            startActivity( new Intent( this, PrerequisitesActivity.class ) );
+            return true; }
 
 //		case R.id.configs_options_import:
 //			Intent intent = new Intent( getApplicationContext(), ImportFiles.class );

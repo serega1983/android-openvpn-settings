@@ -60,12 +60,10 @@
 		android:title="@string/settings_menu_help"
 		android:icon="@android:drawable/ic_menu_help"/>
 
-    <!--
 	<item
-		android:id="@+id/settings_menu_setup_wizard"
-		android:title="@string/settings_menu_setup_wizard"
+		android:id="@+id/settings_menu_prerequisites"
+		android:title="@string/settings_menu_prerequisites"
 		android:icon="@android:drawable/ic_menu_preferences"/>
-    -->
 
 	<!--
 	<item android:id="@+id/configs_options_import" android:title="@string/options_import"></item>	

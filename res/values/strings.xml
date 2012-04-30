@@ -39,7 +39,7 @@
 	<string name="settings_menu_contact_author">Contact Author</string>
 	<string name="settings_menu_share_tun">Share TUN Module</string>
 	<string name="settings_menu_help">Help</string>
-    <string name="settings_menu_setup_wizard">SetUp</string>
+    <string name="settings_menu_prerequisites">Prerequisites</string>
 
 	<string name="fix_dns_dialog_title">Fix DNS Server</string>
 	<string name="fix_dns_dialog_message">Setup DNS to use Googles public DNS server (8.8.8.8). The next network connectivity change will reset the DNS to your ISPs server. If this does not fix your problem try to force a network connectivity change, e.g. by switching to airplane mode and back. Your current DNS server is %1$s.</string>
