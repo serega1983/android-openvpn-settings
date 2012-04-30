@@ -62,6 +62,6 @@ public class ProbeResult
         TextView logText = (TextView) v.findViewById( R.id.prerequisites_item_log_text );
         logText.setText( log );
 //        logText.setVisibility( log == null || log.isEmpty() ? View.GONE : View.VISIBLE );
-//        logText.setVisibility( View.GONE );
+        logText.setVisibility( View.GONE );
     }
 }
