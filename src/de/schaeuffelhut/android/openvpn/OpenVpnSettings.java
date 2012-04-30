@@ -21,43 +21,23 @@
  */
 package de.schaeuffelhut.android.openvpn;
 
-import java.io.File;
-import java.util.ArrayList;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.ServiceConnection;
+import android.content.*;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.preference.CheckBoxPreference;
-import android.preference.EditTextPreference;
-import android.preference.Preference;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceCategory;
-import android.preference.PreferenceManager;
+import android.preference.*;
 import android.util.Log;
-import android.view.ContextMenu;
+import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-
 import com.bugsense.trace.BugSenseHandler;
-
 import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
-import de.schaeuffelhut.android.openvpn.setup.SystemSetupWizard;
 import de.schaeuffelhut.android.openvpn.tun.ShareTunActivity;
-import de.schaeuffelhut.android.openvpn.util.AdUtil;
-import de.schaeuffelhut.android.openvpn.util.DnsUtil;
-import de.schaeuffelhut.android.openvpn.util.Preconditions;
-import de.schaeuffelhut.android.openvpn.util.UnexpectedSwitchValueException;
-import de.schaeuffelhut.android.openvpn.util.Util;
+import de.schaeuffelhut.android.openvpn.util.*;
+
+import java.io.File;
+import java.util.ArrayList;
 
 public class OpenVpnSettings extends PreferenceActivity implements ServiceConnection
 {
@@ -334,10 +314,6 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 		case R.id.settings_menu_help:
 			showDialog( DIALOG_HELP );
 			return true;
-
-        case R.id.settings_menu_setup_wizard: {
-            startActivity( new Intent( this, SystemSetupWizard.class ) );
-            return true; }
 
 //		case R.id.configs_options_import:
 //			Intent intent = new Intent( getApplicationContext(), ImportFiles.class );
