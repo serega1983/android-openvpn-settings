@@ -20,19 +20,43 @@
  * Contact the author at:          android.openvpn@schaeuffelhut.de
  */
 
-package de.schaeuffelhut.android.openvpn.setup;
+package de.schaeuffelhut.android.openvpn.util.tun;
+
+import android.test.InstrumentationTestCase;
+import junit.framework.Assert;
 
 /**
  * Created with IntelliJ IDEA.
  * User: fries
- * Date: 4/14/12
- * Time: 7:28 AM
+ * Date: 4/24/12
+ * Time: 12:21 PM
  * To change this template use File | Settings | File Templates.
  */
-public class DummyTunLoader extends TunLoaderFake
+public class TunLoaderFakeTest extends InstrumentationTestCase
 {
-    public DummyTunLoader()
+    public void test_makeDefault_throws_NPE_on_null_argument() throws Exception
     {
-        super( "dummy" );
+        try
+        {
+            new TunLoaderFake( "fake" ).makeDefault( null );
+            fail( "NullPointerException expected" );
+        }
+        catch (NullPointerException e)
+        {
+            Assert.assertEquals( "Parameter preferences may not be null", e.getMessage() );
+        }
+    }
+
+    public void test_makeDefault_does_now_throw_NPE_on_non_null_argument() throws Exception
+    {
+        try
+        {
+            new TunLoaderFake( "fake" ).makeDefault( new TunLoaderPreferences( getInstrumentation().getContext() ) );
+            //OK
+        }
+        catch (NullPointerException e)
+        {
+            fail( "Unexpected NullPointerException" );
+        }
     }
 }

@@ -24,6 +24,9 @@ package de.schaeuffelhut.android.openvpn;
 
 import android.content.Context;
 import de.schaeuffelhut.android.openvpn.setup.*;
+import de.schaeuffelhut.android.openvpn.util.tun.TunInfo;
+import de.schaeuffelhut.android.openvpn.util.tun.TunInfoImpl;
+import de.schaeuffelhut.android.openvpn.util.tun.TunLoaderFactoryImpl;
 
 /**
  * Created with IntelliJ IDEA.

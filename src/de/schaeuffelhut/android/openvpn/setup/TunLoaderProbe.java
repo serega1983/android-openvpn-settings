@@ -22,6 +22,8 @@
 
 package de.schaeuffelhut.android.openvpn.setup;
 
+import de.schaeuffelhut.android.openvpn.util.tun.TunLoaderPreferences;
+
 /**
  * Created with IntelliJ IDEA.
  * User: fries

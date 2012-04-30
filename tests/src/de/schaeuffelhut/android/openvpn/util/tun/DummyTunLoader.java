@@ -20,59 +20,19 @@
  * Contact the author at:          android.openvpn@schaeuffelhut.de
  */
 
-package de.schaeuffelhut.android.openvpn.setup;
-
-import java.io.File;
+package de.schaeuffelhut.android.openvpn.util.tun;
 
 /**
  * Created with IntelliJ IDEA.
  * User: fries
  * Date: 4/14/12
- * Time: 8:32 AM
+ * Time: 7:28 AM
  * To change this template use File | Settings | File Templates.
  */
-public class TunLoaderFake implements TunLoader
+public class DummyTunLoader extends TunLoaderFake
 {
-    private final String name;
-    private final File pathToModule;
-
-    public TunLoaderFake(String name)
+    public DummyTunLoader()
     {
-        super();
-        this.name = name;
-        this.pathToModule = null;
-    }
-
-    public TunLoaderFake(String name, File pathToModule)
-    {
-        this.name = name;
-        this.pathToModule = pathToModule;
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public boolean hasPathToModule()
-    {
-        return pathToModule != null;
-    }
-
-    public File getPathToModule()
-    {
-        return pathToModule;
-    }
-
-    public void loadModule()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    public void makeDefault(TunLoaderPreferences preferences)
-    {
-        if (preferences == null)
-            throw new NullPointerException( "Parameter preferences may not be null" );
-        // NOOP
+        super( "dummy" );
     }
 }

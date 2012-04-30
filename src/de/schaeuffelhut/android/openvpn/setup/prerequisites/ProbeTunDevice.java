@@ -25,11 +25,10 @@ package de.schaeuffelhut.android.openvpn.setup.prerequisites;
 import android.content.Context;
 import android.text.TextUtils;
 import de.schaeuffelhut.android.openvpn.IocContext;
-import de.schaeuffelhut.android.openvpn.setup.TunInfo;
-import de.schaeuffelhut.android.openvpn.setup.TunLoader;
-import de.schaeuffelhut.android.openvpn.setup.TunLoaderFactory;
-import de.schaeuffelhut.android.openvpn.setup.TunLoaderFactoryImpl;
-import org.w3c.dom.Text;
+import de.schaeuffelhut.android.openvpn.util.tun.TunInfo;
+import de.schaeuffelhut.android.openvpn.util.tun.TunLoader;
+import de.schaeuffelhut.android.openvpn.util.tun.TunLoaderFactory;
+import de.schaeuffelhut.android.openvpn.util.tun.TunLoaderFactoryImpl;
 
 import java.io.File;
 import java.util.ArrayList;

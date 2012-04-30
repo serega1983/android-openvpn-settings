@@ -24,6 +24,12 @@ package de.schaeuffelhut.android.openvpn.setup;
 
 import android.test.InstrumentationTestCase;
 import android.test.MoreAsserts;
+import de.schaeuffelhut.android.openvpn.util.tun.TunLoader;
+import de.schaeuffelhut.android.openvpn.util.tun.TunLoaderFactory;
+import de.schaeuffelhut.android.openvpn.util.tun.TunLoaderFactoryImpl;
+import de.schaeuffelhut.android.openvpn.util.tun.TunLoaderPreferences;
+import de.schaeuffelhut.android.openvpn.util.tun.TunInfoFake;
+import de.schaeuffelhut.android.openvpn.util.tun.TunLoaderFake;
 import junit.framework.Assert;
 
 import java.io.File;

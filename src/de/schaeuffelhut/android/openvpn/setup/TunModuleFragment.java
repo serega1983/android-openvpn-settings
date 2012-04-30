@@ -33,6 +33,9 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import de.schaeuffelhut.android.openvpn.IocContext;
 import de.schaeuffelhut.android.openvpn.R;
+import de.schaeuffelhut.android.openvpn.util.tun.TunInfo;
+import de.schaeuffelhut.android.openvpn.util.tun.TunLoader;
+import de.schaeuffelhut.android.openvpn.util.tun.TunLoaderPreferences;
 
 /**
  * Created with IntelliJ IDEA.

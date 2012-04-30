@@ -20,7 +20,10 @@
  * Contact the author at:          android.openvpn@schaeuffelhut.de
  */
 
-package de.schaeuffelhut.android.openvpn.setup;
+package de.schaeuffelhut.android.openvpn.util.tun;
+
+import de.schaeuffelhut.android.openvpn.util.tun.TunLoader;
+import de.schaeuffelhut.android.openvpn.util.tun.TunLoaderPreferences;
 
 import java.io.File;
 
@@ -28,46 +31,51 @@ import java.io.File;
  * Created with IntelliJ IDEA.
  * User: fries
  * Date: 4/14/12
- * Time: 7:13 AM
+ * Time: 8:32 AM
  * To change this template use File | Settings | File Templates.
  */
-public class TunInfoFake implements TunInfo
+public class TunLoaderFake implements TunLoader
 {
-    private int flags;
-    private TunLoader tunLoader;
-    private boolean deviceNodeAvailable;
+    private final String name;
+    private final File pathToModule;
 
-    public boolean isDeviceNodeAvailable()
+    public TunLoaderFake(String name)
     {
-        return deviceNodeAvailable;
+        super();
+        this.name = name;
+        this.pathToModule = null;
     }
 
-    public File getDeviceFile()
+    public TunLoaderFake(String name, File pathToModule)
     {
-        if ( !isDeviceNodeAvailable() )
-            throw new IllegalStateException( "Device node is not available" );
-        return new File( "/dev/tun" );
+        this.name = name;
+        this.pathToModule = pathToModule;
     }
 
-    public boolean hasTunLoader()
+    public String getName()
     {
-        return tunLoader != null;
+        return name;
     }
 
-    public TunLoader getTunLoader()
+    public boolean hasPathToModule()
     {
-        if ( !hasTunLoader() )
-            throw new IllegalStateException( "TunLoader has not been defined" );
-        return tunLoader;
+        return pathToModule != null;
     }
 
-    public void setTunLoader(TunLoader tunLoader)
+    public File getPathToModule()
     {
-        this.tunLoader = tunLoader;
+        return pathToModule;
     }
 
-    public void setDeviceNodeAvailable(boolean deviceNodeAvailable)
+    public void loadModule()
     {
-        this.deviceNodeAvailable = deviceNodeAvailable;
+        throw new UnsupportedOperationException();
+    }
+
+    public void makeDefault(TunLoaderPreferences preferences)
+    {
+        if (preferences == null)
+            throw new NullPointerException( "Parameter preferences may not be null" );
+        // NOOP
     }
 }
