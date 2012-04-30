@@ -25,6 +25,7 @@ package de.schaeuffelhut.android.openvpn.setup.prerequisites;
 import android.content.Context;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -36,13 +37,27 @@ import java.util.List;
  */
 public class ProbePrerequisites
 {
-    public List<ProbeResult> probe(Context context)
+    private List<ProbeResult> probeResults = Collections.emptyList();
+
+    public void probe(Context context)
     {
-        ArrayList<ProbeResult> probeResults = new ArrayList<ProbeResult>();
+        probeResults = new ArrayList<ProbeResult>();
         probeResults.add( ProbeRoot.probeRoot() );
         probeResults.add( new ProbeTunDevice( context ).probe() );
         probeResults.add( new ProbeOpenVpn().probe() );
         probeResults.add( new ProbeBusyBox().probe() );
-        return probeResults;
+    }
+
+    public List<ProbeResult> getProbeResults()
+    {
+        return Collections.unmodifiableList( probeResults );
+    }
+
+    public boolean isSuccess()
+    {
+        for(ProbeResult probeResult : probeResults )
+            if ( !PrerequisitesActivity.Status.SUCCESS.equals( probeResult ) )
+                return false;
+        return true;
     }
 }
