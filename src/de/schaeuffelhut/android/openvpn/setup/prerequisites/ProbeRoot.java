@@ -73,8 +73,14 @@ public class ProbeRoot
         }
 
 
-        return new ProbeResult(
-                hasRoot ? PrerequisitesActivity.Status.SUCCESS : PrerequisitesActivity.Status.FAILED,
+        if (hasRoot) return new ProbeResult(
+                PrerequisitesActivity.Status.SUCCESS,
+                "ROOT privileges",
+                "Check if device is rooted.",
+                detail.toString()
+        );
+        else return new ProbeResult(
+                PrerequisitesActivity.Status.FAILED,
                 "ROOT privileges",
                 "Check if device is rooted.",
                 detail.toString()

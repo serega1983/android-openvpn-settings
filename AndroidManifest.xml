@@ -86,6 +86,11 @@
 			android:label="@string/view_log_file_category"
 			/>
 
+		<activity
+			android:name=".setup.prerequisites.PrerequisitesActivity"
+			android:label="Prerequisites"
+			/>
+
         <service
 			android:name="de.schaeuffelhut.android.openvpn.service.OpenVpnService"
 			android:label="@string/openvpn_service"
