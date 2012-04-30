@@ -87,7 +87,7 @@
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:layout_weight="0"
-                android:text="Some Text descibing the details of this probe and the result."
+                android:text="Some Text describing the details of this probe and the result."
                 android:id="@+id/prerequisites_item_log_text"
                 />
     </LinearLayout>
