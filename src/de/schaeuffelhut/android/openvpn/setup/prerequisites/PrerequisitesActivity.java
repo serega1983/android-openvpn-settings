@@ -61,7 +61,9 @@ public class PrerequisitesActivity extends ListActivity
 
     public void probe()
     {
-        probeResults = new ProbePrerequisites().probe( getApplicationContext() );
+        ProbePrerequisites probePrerequisites = new ProbePrerequisites();
+        probePrerequisites.probe( getApplicationContext() );
+        probeResults = probePrerequisites.getProbeResults();
     }
 
     public void onCreate(Bundle savedInstanceState)
