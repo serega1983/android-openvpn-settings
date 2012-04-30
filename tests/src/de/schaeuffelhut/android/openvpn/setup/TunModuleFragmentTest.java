@@ -29,6 +29,9 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import de.schaeuffelhut.android.openvpn.IocContext;
 import de.schaeuffelhut.android.openvpn.R;
+import de.schaeuffelhut.android.openvpn.util.tun.DummyTunLoader;
+import de.schaeuffelhut.android.openvpn.util.tun.TunInfoFake;
+import de.schaeuffelhut.android.openvpn.util.tun.TunLoaderFake;
 import junit.framework.Assert;
 
 import java.io.File;

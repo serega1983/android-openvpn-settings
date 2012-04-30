@@ -22,6 +22,11 @@
 
 package de.schaeuffelhut.android.openvpn.setup;
 
+import de.schaeuffelhut.android.openvpn.util.tun.TunInfo;
+import de.schaeuffelhut.android.openvpn.util.tun.TunLoader;
+import de.schaeuffelhut.android.openvpn.util.tun.TunLoaderFactory;
+import de.schaeuffelhut.android.openvpn.util.tun.TunLoaderPreferences;
+
 import java.io.File;
 import java.util.ArrayList;
 

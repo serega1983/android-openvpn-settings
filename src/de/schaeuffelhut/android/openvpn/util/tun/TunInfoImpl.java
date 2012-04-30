@@ -20,47 +20,52 @@
  * Contact the author at:          android.openvpn@schaeuffelhut.de
  */
 
-package de.schaeuffelhut.android.openvpn.setup;
+package de.schaeuffelhut.android.openvpn.util.tun;
+
+import android.content.Context;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
  * User: fries
  * Date: 4/11/12
- * Time: 9:17 PM
+ * Time: 9:38 PM
  * To change this template use File | Settings | File Templates.
  */
-public interface TunInfo
+public class TunInfoImpl implements TunInfo
 {
-    /**
-     * Returns {@code true} if the device node in /dev/tun or /dev/net/tun is available.
-     *
-     * @return {@code true} if the device node in /dev/tun or /dev/net/tun is available, {@code false} otherwise.
-     */
-    boolean isDeviceNodeAvailable();
+    private static final File DEV_TUN = new File( "/dev/tun" );
+    private static final File DEV_NET_TUN = new File( "/dev/net/tun" );
+    private final Context context;
 
-    /**
-     * Returns path to device file, which is either /dev/tun or /dev/net/tun.
-     *
-     * @return path to device file.
-     * @throws IllegalStateException if device file is not available.
-     */
-    File getDeviceFile();
+    public TunInfoImpl(Context context)
+    {
+        this.context = context;
+    }
 
-    /**
-     * Returns {@code true} if a method to load the tun module is defined, {@code false} otherwise.
-     *
-     * @return {@code true} if a method to load the tun module is defined, {@code false} otherwise.
-     */
-    boolean hasTunLoader();
+    public boolean isDeviceNodeAvailable()
+    {
+        return DEV_TUN.exists() || DEV_NET_TUN.exists();
+    }
 
-    /**
-     * Returns an instance of {@link TunLoader}, capable of loading the tun module.
-     *
-     * @return an instance of {@link TunLoader}, capable of loading the tun module.
-     */
-    TunLoader getTunLoader();
+    public File getDeviceFile()
+    {
+        if (DEV_TUN.exists())
+            return DEV_TUN;
+        if (new File( "/dev/net/tun" ).exists())
+            return new File( "/dev/net/tun" );
+        throw new IllegalMonitorStateException( "tun device node not found" );
+    }
+
+    public boolean hasTunLoader()
+    {
+        return new TunLoaderPreferences( context ).getType().canLoadTun;
+    }
+
+    public TunLoader getTunLoader()
+    {
+        return new TunLoaderPreferences( context ).createTunLoader();
+    }
 }

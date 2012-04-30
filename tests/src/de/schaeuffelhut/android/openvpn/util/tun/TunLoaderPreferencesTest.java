@@ -20,7 +20,7 @@
  * Contact the author at:          android.openvpn@schaeuffelhut.de
  */
 
-package de.schaeuffelhut.android.openvpn.setup;
+package de.schaeuffelhut.android.openvpn.util.tun;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -28,6 +28,9 @@ import android.preference.PreferenceManager;
 import android.test.InstrumentationTestCase;
 import android.test.MoreAsserts;
 import de.schaeuffelhut.android.openvpn.Preferences;
+import de.schaeuffelhut.android.openvpn.util.tun.TunLoader;
+import de.schaeuffelhut.android.openvpn.util.tun.TunLoaderFactoryImpl;
+import de.schaeuffelhut.android.openvpn.util.tun.TunLoaderPreferences;
 import junit.framework.Assert;
 
 import java.io.File;

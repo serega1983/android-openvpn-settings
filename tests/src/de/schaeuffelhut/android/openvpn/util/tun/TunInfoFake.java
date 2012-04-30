@@ -20,61 +20,57 @@
  * Contact the author at:          android.openvpn@schaeuffelhut.de
  */
 
-package de.schaeuffelhut.android.openvpn.setup;
+package de.schaeuffelhut.android.openvpn.util.tun;
 
-import android.content.Context;
-import android.util.Log;
+import de.schaeuffelhut.android.openvpn.util.tun.TunInfo;
+import de.schaeuffelhut.android.openvpn.util.tun.TunLoader;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
  * User: fries
- * Date: 4/11/12
- * Time: 9:38 PM
+ * Date: 4/14/12
+ * Time: 7:13 AM
  * To change this template use File | Settings | File Templates.
  */
-public class TunInfoImpl implements TunInfo
+public class TunInfoFake implements TunInfo
 {
-
-    private static final File DEV_TUN = new File( "/dev/tun" );
-    private static final File DEV_NET_TUN = new File( "/dev/net/tun" );
-    private final Context context;
-
-    public TunInfoImpl(Context context)
-    {
-        this.context = context;
-    }
+    private int flags;
+    private TunLoader tunLoader;
+    private boolean deviceNodeAvailable;
 
     public boolean isDeviceNodeAvailable()
     {
-        return DEV_TUN.exists() || DEV_NET_TUN.exists();
+        return deviceNodeAvailable;
     }
 
     public File getDeviceFile()
     {
-        if (DEV_TUN.exists())
-            return DEV_TUN;
-        if (new File( "/dev/net/tun" ).exists())
-            return new File( "/dev/net/tun" );
-        throw new IllegalMonitorStateException( "tun device node not found" );
+        if ( !isDeviceNodeAvailable() )
+            throw new IllegalStateException( "Device node is not available" );
+        return new File( "/dev/tun" );
     }
 
     public boolean hasTunLoader()
     {
-        return new TunLoaderPreferences( context ).getType().canLoadTun;
+        return tunLoader != null;
     }
 
     public TunLoader getTunLoader()
     {
-        return new TunLoaderPreferences( context ).createTunLoader();
+        if ( !hasTunLoader() )
+            throw new IllegalStateException( "TunLoader has not been defined" );
+        return tunLoader;
     }
 
-    public List<File> listTunModules()
+    public void setTunLoader(TunLoader tunLoader)
     {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        this.tunLoader = tunLoader;
+    }
+
+    public void setDeviceNodeAvailable(boolean deviceNodeAvailable)
+    {
+        this.deviceNodeAvailable = deviceNodeAvailable;
     }
 }
