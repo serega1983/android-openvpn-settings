@@ -63,13 +63,26 @@
                     android:id="@+id/prerequisites_item_status_text"
                     />
         </LinearLayout>
-        <TextView
+        <LinearLayout
                 android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_weight="0"
-                android:text="Subtitle"
-                android:id="@+id/prerequisites_item_subtitle"
-                />
+                android:layout_width="fill_parent"
+                android:orientation="horizontal"
+                >
+            <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Subtitle"
+                    android:id="@+id/prerequisites_item_subtitle"
+                    />
+            <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="0"
+                    android:text="..."
+                    android:id="@+id/prerequisites_item_unhide_details"
+                    />
+        </LinearLayout>
         <TextView
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"

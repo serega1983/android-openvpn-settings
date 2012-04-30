@@ -103,9 +103,16 @@ public class PrerequisitesActivity extends ListActivity
     protected void onListItemClick(ListView l, View v, int position, long id)
     {
         View view = v.findViewById( R.id.prerequisites_item_log_text );
+        View view2 = v.findViewById( R.id.prerequisites_item_unhide_details );
         if (view.getVisibility() == View.VISIBLE)
+        {
             view.setVisibility( View.GONE );
+            view2.setVisibility( View.VISIBLE );
+        }
         else
+        {
             view.setVisibility( View.VISIBLE );
+            view2.setVisibility( View.GONE );
+        }
     }
 }
