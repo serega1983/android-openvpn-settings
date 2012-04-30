@@ -35,6 +35,6 @@ class ProbeOpenVpn extends ProbeExecutable
 {
     ProbeOpenVpn()
     {
-        super( "OpenVPN binary", new File("/system/xbin/openvpn"), new File("/system/bin/openvpn") );
+        super( "OpenVPN binary", "The actual VPN program.", new File("/system/xbin/openvpn"), new File("/system/bin/openvpn") );
     }
 }

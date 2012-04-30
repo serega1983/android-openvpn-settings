@@ -35,6 +35,6 @@ class ProbeBusyBox extends ProbeExecutable
 {
     ProbeBusyBox()
     {
-        super( "BusyBox binary", new File("/system/xbin/busybox"), new File("/system/bin/busybox") );
+        super( "BusyBox binary", "Used to configure the network interface.", new File("/system/xbin/busybox"), new File("/system/bin/busybox") );
     }
 }

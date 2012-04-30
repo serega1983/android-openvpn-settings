@@ -124,7 +124,7 @@ class ProbeTunDevice
         return new ProbeResult(
                 status,
                 "TUN Device Driver",
-                "",
+                "Exchange network packets with kernel.",
                 TextUtils.join( "\n", messages )
         );
     }
