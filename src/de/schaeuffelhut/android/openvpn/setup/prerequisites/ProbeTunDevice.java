@@ -25,10 +25,7 @@ package de.schaeuffelhut.android.openvpn.setup.prerequisites;
 import android.content.Context;
 import android.text.TextUtils;
 import de.schaeuffelhut.android.openvpn.IocContext;
-import de.schaeuffelhut.android.openvpn.util.tun.TunInfo;
-import de.schaeuffelhut.android.openvpn.util.tun.TunLoader;
-import de.schaeuffelhut.android.openvpn.util.tun.TunLoaderFactory;
-import de.schaeuffelhut.android.openvpn.util.tun.TunLoaderFactoryImpl;
+import de.schaeuffelhut.android.openvpn.util.tun.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -43,14 +40,15 @@ import java.util.List;
  */
 class ProbeTunDevice
 {
-    private TunInfo tunInfo;
-    TunLoaderFactory tunLoaderFactory = new TunLoaderFactoryImpl();
-
-    List<String> messages = new ArrayList<String>();
+    private final TunInfo tunInfo;
+    private final TunLoaderPreferences tunLoaderPreferences;
+    private TunLoaderFactory tunLoaderFactory = new TunLoaderFactoryImpl();
+    private List<String> messages = new ArrayList<String>();
 
     ProbeTunDevice(Context context)
     {
         tunInfo = IocContext.get().getTunInfo( context );
+        tunLoaderPreferences = new TunLoaderPreferences( context );
     }
 
     public ProbeResult probe()
@@ -84,7 +82,14 @@ class ProbeTunDevice
     private boolean tryInsmod(File tun)
     {
         message( "Executing insmod " + tun.getPath() );
-        return tryTunLoader( tunLoaderFactory.createInsmod( tun ) );
+        TunLoader insmod = tunLoaderFactory.createInsmod( tun );
+        boolean success = tryTunLoader( insmod );
+        if ( success )
+        {
+            message( "Setting the default TUN loader." );
+            insmod.makeDefault( tunLoaderPreferences );
+        }
+        return success;
     }
 
     private boolean tryDefaultTunLoader()
@@ -92,12 +97,12 @@ class ProbeTunDevice
         boolean success;
         if (tunInfo.hasTunLoader())
         {
-            message( "A TUN loader is defined, executing." );
+            message( "Executing default TUN loader." );
             success = tryTunLoader( tunInfo.getTunLoader() );
         }
         else
         {
-            message( "No TUN loader defined." );
+            message( "No default TUN loader defined." );
             success = false;
         }
         return success;
