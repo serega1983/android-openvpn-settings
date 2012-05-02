@@ -72,6 +72,10 @@ public class ProbeRoot
             hasRoot = false;
         }
 
+        //TODO: link to online resources
+        if (!hasRoot)
+            detail.append( "Please find out how to root your device before proceeding." );
+
         if (hasRoot)
             return newProbeResult( detail, PrerequisitesActivity.Status.SUCCESS );
         else
