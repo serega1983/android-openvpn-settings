@@ -23,6 +23,8 @@
 package de.schaeuffelhut.android.openvpn.setup.prerequisites;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import de.schaeuffelhut.android.openvpn.IocContext;
 import de.schaeuffelhut.android.openvpn.util.tun.*;
@@ -42,6 +44,7 @@ class ProbeTunDevice
 {
     private final TunInfo tunInfo;
     private final TunLoaderPreferences tunLoaderPreferences;
+    private final SharedPreferences sharedPreferences;
     private TunLoaderFactory tunLoaderFactory = new TunLoaderFactoryImpl();
     private List<String> messages = new ArrayList<String>();
 
@@ -49,6 +52,7 @@ class ProbeTunDevice
     {
         tunInfo = IocContext.get().getTunInfo( context );
         tunLoaderPreferences = new TunLoaderPreferences( context );
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences( context );
     }
 
     public ProbeResult probe()
@@ -65,10 +69,31 @@ class ProbeTunDevice
         if (tryStandardLocations())
             return successProbeResult();
 
-        //4 suggest TUN Installer
+        //4 try legacy tun loader only if defined, otherwise silently ignore
+        if ( TunLoaderFactoryImpl.hasLegacyDefinition( sharedPreferences ))
+            if (tryLegacyLoader())
+                return successProbeResult();
+
+        //5 suggest TUN Installer
         message( "Could not load the tun module. Please try the TUN Installer from the market." );
 
         return failedProbeResult();
+    }
+
+    private boolean tryLegacyLoader()
+    {
+        if (!TunLoaderFactoryImpl.hasLegacyDefinition( sharedPreferences ))
+            return false;
+
+        message( "Executing legacy tun loader (defined before version 0.4.11)." );
+        TunLoader tunLoader = TunLoaderFactoryImpl.createFromLegacyDefinition( sharedPreferences );
+        boolean success = tryTunLoader( tunLoader );
+        if (success)
+        {
+            message( "Setting the default TUN loader." );
+            tunLoader.makeDefault( tunLoaderPreferences );
+        }
+        return success;
     }
 
     private boolean tryStandardLocations()
