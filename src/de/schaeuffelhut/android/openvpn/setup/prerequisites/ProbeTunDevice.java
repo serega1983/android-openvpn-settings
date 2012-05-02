@@ -87,13 +87,7 @@ class ProbeTunDevice
 
         message( "Executing legacy tun loader (defined before version 0.4.11)." );
         TunLoader tunLoader = TunLoaderFactoryImpl.createFromLegacyDefinition( sharedPreferences );
-        boolean success = tryTunLoader( tunLoader );
-        if (success)
-        {
-            message( "Setting the default TUN loader." );
-            tunLoader.makeDefault( tunLoaderPreferences );
-        }
-        return success;
+        return makeTunLoaderDefaultIfLoadAttemptSucceeds( tunLoader );
     }
 
     private boolean tryStandardLocations()
@@ -108,11 +102,16 @@ class ProbeTunDevice
     {
         message( "Executing insmod " + tun.getPath() );
         TunLoader insmod = tunLoaderFactory.createInsmod( tun );
-        boolean success = tryTunLoader( insmod );
-        if ( success )
+        return makeTunLoaderDefaultIfLoadAttemptSucceeds( insmod );
+    }
+
+    private boolean makeTunLoaderDefaultIfLoadAttemptSucceeds(TunLoader tunLoader)
+    {
+        boolean success = tryTunLoader( tunLoader );
+        if (success)
         {
             message( "Setting the default TUN loader." );
-            insmod.makeDefault( tunLoaderPreferences );
+            tunLoader.makeDefault( tunLoaderPreferences );
         }
         return success;
     }
