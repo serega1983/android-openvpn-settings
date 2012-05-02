@@ -56,7 +56,7 @@ public class ProbePrerequisites
     public boolean isSuccess()
     {
         for(ProbeResult probeResult : probeResults )
-            if ( !PrerequisitesActivity.Status.SUCCESS.equals( probeResult ) )
+            if ( !PrerequisitesActivity.Status.SUCCESS.equals( probeResult.status ) )
                 return false;
         return true;
     }
