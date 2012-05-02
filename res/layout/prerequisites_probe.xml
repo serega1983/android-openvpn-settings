@@ -75,18 +75,20 @@
                     android:text="Subtitle"
                     android:id="@+id/prerequisites_item_subtitle"
                     />
-            <TextView
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:layout_weight="0"
-                    android:text="..."
-                    android:id="@+id/prerequisites_item_unhide_details"
-                    />
         </LinearLayout>
         <TextView
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:layout_weight="0"
+                android:text="Tap to view log..."
+                android:textSize="10dip"
+                android:id="@+id/prerequisites_item_unhide_details"
+                />
+        <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="0"
+                android:padding="5dip"
                 android:text="Some Text describing the details of this probe and the result."
                 android:id="@+id/prerequisites_item_log_text"
                 />
