@@ -23,6 +23,7 @@
 package de.schaeuffelhut.android.openvpn;
 
 import android.content.Context;
+import de.schaeuffelhut.android.openvpn.setup.prerequisites.ProbePrerequisites;
 import de.schaeuffelhut.android.openvpn.util.tun.TunInfo;
 import de.schaeuffelhut.android.openvpn.util.tun.TunInfoImpl;
 
@@ -37,6 +38,7 @@ public class IocContext
 {
     static IocContext iocContext = new IocContext();
     private TunInfo tunInfo;
+    private boolean fulfilsPrerequisites = false;
 
     public final static IocContext get()
     {
@@ -56,5 +58,18 @@ public class IocContext
             return new TunInfoImpl( context );
         }
         return tunInfo;
+    }
+
+    public ProbePrerequisites probePrerequisites(Context context)
+    {
+        ProbePrerequisites probePrerequisites = new ProbePrerequisites();
+        probePrerequisites.probe( context );
+        fulfilsPrerequisites = probePrerequisites.isSuccess();
+        return probePrerequisites;
+    }
+
+    public boolean fulfilsPrerequisites()
+    {
+        return fulfilsPrerequisites;
     }
 }

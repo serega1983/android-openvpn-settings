@@ -28,6 +28,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import de.schaeuffelhut.android.openvpn.IocContext;
 import de.schaeuffelhut.android.openvpn.R;
 
 import java.io.File;
@@ -61,9 +62,7 @@ public class PrerequisitesActivity extends ListActivity
 
     public void probe()
     {
-        ProbePrerequisites probePrerequisites = new ProbePrerequisites();
-        probePrerequisites.probe( getApplicationContext() );
-        probeResults = probePrerequisites.getProbeResults();
+        probeResults = IocContext.get().probePrerequisites( getApplicationContext() ).getProbeResults();
     }
 
     public void onCreate(Bundle savedInstanceState)
