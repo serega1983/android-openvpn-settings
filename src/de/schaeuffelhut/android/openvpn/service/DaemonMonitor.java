@@ -30,11 +30,13 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 import de.schaeuffelhut.android.openvpn.Intents;
+import de.schaeuffelhut.android.openvpn.IocContext;
 import de.schaeuffelhut.android.openvpn.Notifications;
 import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.util.Preconditions;
 import de.schaeuffelhut.android.openvpn.util.Shell;
 import de.schaeuffelhut.android.openvpn.util.Util;
+import de.schaeuffelhut.android.openvpn.util.tun.TunInfo;
 
 /**
  * Starts an OpenVPN process and monitors it until its death;
@@ -59,7 +61,7 @@ public final class DaemonMonitor
 	private ManagementThread mManagementThread;
 
 
-	
+
 	public DaemonMonitor(OpenVpnService context, File configFile, File comDir )
 	{
 		mContext = context;
@@ -136,36 +138,32 @@ public final class DaemonMonitor
 						Intents.DAEMON_STATE_STARTUP
 				)
 		);
-		
-		if( !(Util.hasTunSupport()) ) // only load the driver if it's not yet available
-		{
-			if (Preferences.getDoModprobeTun( PreferenceManager.getDefaultSharedPreferences(mContext) ) )  // LATER remove the preferences setting
-			{
-				Shell insmod = new Shell( 
-						mTagDaemonMonitor + "-daemon",
-						Preferences.getLoadTunModuleCommand( PreferenceManager.getDefaultSharedPreferences(mContext) ),
-						Shell.SU
-				);
-				insmod.start();
-				try {
-					insmod.join();
-				} catch (InterruptedException e) {
-					throw new RuntimeException( "waiting for insmod to finish", e );
-				}
-				
-				if ( Util.hasTunSupport() )
-				{
-					shareTunModule();
-				}
-				else
-				{
-					Toast.makeText(mContext, "Failed to load tun module. Device node /dev/tun or dev/net/tun did not show up.", Toast.LENGTH_LONG).show();
-					//TODO: bail out, dont start openvpn as tun support is not given
-				}
-			}
-		}
-		
-		mDaemonProcess = new Shell( 
+
+        TunInfo tunInfo = IocContext.get().getTunInfo( mContext );
+        if (!tunInfo.isDeviceNodeAvailable()) // only load the driver if it's not yet available
+        {
+            if (tunInfo.hasTunLoader())
+            {
+                tunInfo.getTunLoader().loadModule();
+
+                if (tunInfo.isDeviceNodeAvailable())
+                {
+                    shareTunModule();
+                }
+                else
+                {
+                    Toast.makeText( mContext, "Failed to load tun module. Device node /dev/tun or /dev/net/tun did not show up.", Toast.LENGTH_LONG ).show();
+                    //TODO: bail out, don't start openvpn as tun support is not given
+                }
+            }
+            else
+            {
+                Toast.makeText( mContext, "No TUN loader defined.", Toast.LENGTH_LONG ).show();
+                //TODO: bail out, don't start openvpn as tun support is not given
+            }
+        }
+
+        mDaemonProcess = new Shell(
 				mTagDaemonMonitor + "-daemon",
 				String.format( 
 						"%s --cd %s --config %s --writepid %s --script-security %d --management 127.0.0.1 %d --management-query-passwords --verb 3",
