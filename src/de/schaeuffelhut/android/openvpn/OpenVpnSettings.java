@@ -138,7 +138,12 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 
 		if ( Util.applicationWasUpdated( this ) )
 			showDialog( DIALOG_CHANGELOG );
+        else
+            openPrerequisitesActivityIfNeeded();
+    }
 
+    private void openPrerequisitesActivityIfNeeded()
+    {
         if (!IocContext.get().fulfilsPrerequisites())
         {
             new AsyncTask<Void, Void, ProbePrerequisites>()
@@ -161,7 +166,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
     }
 
 
-	private void initToggles() {
+    private void initToggles() {
 		initToggles( Preferences.getConfigDir( this, PreferenceManager.getDefaultSharedPreferences(this) ) );
 	}
 
@@ -461,6 +466,13 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 			break;
 		case DIALOG_CHANGELOG:
 			dialog = HtmlDialog.makeChangeLogDialog(this);
+            dialog.setOnDismissListener( new DialogInterface.OnDismissListener()
+            {
+                public void onDismiss(DialogInterface dialogInterface)
+                {
+                    openPrerequisitesActivityIfNeeded();
+                }
+            });
 			break;
 		case DIALOG_PLEASE_RESTART:
 			dialog = new AlertDialog.Builder( this ).setIcon(android.R.drawable.ic_dialog_info).
