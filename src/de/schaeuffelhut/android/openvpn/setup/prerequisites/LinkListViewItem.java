@@ -28,6 +28,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 import de.schaeuffelhut.android.openvpn.R;
 
@@ -43,19 +44,27 @@ import java.util.List;
 */
 class LinkListViewItem implements ListViewItem
 {
-
     private Uri uri;
+    private int title;
+
+    LinkListViewItem(int title, Uri uri)
+    {
+        this.uri = uri;
+        this.title = title;
+    }
+
 
     public View configureView(Context context)
     {
         LayoutInflater inflater = LayoutInflater.from( context );
-        return inflater.inflate( R.layout.prerequisites_link, null, true );
+        View view = inflater.inflate( R.layout.prerequisites_link, null, true );
+        ((TextView)view.findViewById( R.id.prerequisites_item_title )).setText( title );
+        return view;
     }
 
     public void onClick(PrerequisitesActivity activity, View v)
     {
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        uri = Uri.parse( "market://details?id=stericson.busybox" );
         intent.setData( uri );
         try
         {

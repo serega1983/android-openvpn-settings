@@ -23,6 +23,7 @@
 package de.schaeuffelhut.android.openvpn.setup.prerequisites;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -30,6 +31,7 @@ import android.widget.TextView;
 import de.schaeuffelhut.android.openvpn.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -45,13 +47,20 @@ public class ProbeResult implements ListViewItem
     final String title;
     final String subtitle;
     final String log;
+    private List<ListViewItem> childItems;
 
     ProbeResult(PrerequisitesActivity.Status status, String title, String subtitle, String log)
+    {
+        this( status, title, subtitle, log, Collections.<ListViewItem>emptyList() );
+    }
+
+    ProbeResult(PrerequisitesActivity.Status status, String title, String subtitle, String log, List<ListViewItem> childItems)
     {
         this.status = status;
         this.title = title;
         this.subtitle = subtitle;
         this.log = log;
+        this.childItems = childItems;
     }
 
     public View configureView(Context context)
@@ -94,10 +103,7 @@ public class ProbeResult implements ListViewItem
 
     public List<ListViewItem> getChildItems()
     {
-        List<ListViewItem> l = new ArrayList<ListViewItem>();
-        l.add( new LinkListViewItem()
-        );
-        return l;
+        return new ArrayList<ListViewItem>( childItems );
     }
 
 }
