@@ -23,7 +23,9 @@
 package de.schaeuffelhut.android.openvpn.setup.prerequisites;
 
 import android.app.ListActivity;
+import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,11 +60,21 @@ public class PrerequisitesActivity extends ListActivity
         }
     }
 
-    List<ProbeResult> probeResults = Collections.emptyList();
+    List<ListViewItem> probeResults = Collections.emptyList();
 
     public void probe()
     {
-        probeResults = IocContext.get().probePrerequisites( getApplicationContext() ).getProbeResults();
+        probeResults = new ArrayList<ListViewItem>();
+        addRecursivley( IocContext.get().probePrerequisites( getApplicationContext() ).getProbeResults() );
+    }
+
+    private void addRecursivley(List<? extends ListViewItem> listViewItems)
+    {
+        for(ListViewItem i : listViewItems)
+        {
+            probeResults.add( i );
+            addRecursivley( i.getChildItems() );
+        }
     }
 
     public void onCreate(Bundle savedInstanceState)
@@ -77,7 +89,7 @@ public class PrerequisitesActivity extends ListActivity
                         return probeResults.size();
                     }
 
-                    public ProbeResult getItem(int i)
+                    public ListViewItem getItem(int i)
                     {
                         return probeResults.get( i );
                     }
@@ -89,10 +101,7 @@ public class PrerequisitesActivity extends ListActivity
 
                     public View getView(int i, View view, ViewGroup viewGroup)
                     {
-                        LayoutInflater inflater = LayoutInflater.from( viewGroup.getContext() );
-                        View v = inflater.inflate( R.layout.prerequisites_probe, null, true );
-                        getItem( i ).configureView( v );
-                        return v;
+                        return getItem( i ).configureView( viewGroup.getContext() );
                     }
                 }
         );
@@ -101,17 +110,6 @@ public class PrerequisitesActivity extends ListActivity
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id)
     {
-        View view = v.findViewById( R.id.prerequisites_item_log_text );
-        View view2 = v.findViewById( R.id.prerequisites_item_unhide_details );
-        if (view.getVisibility() == View.VISIBLE)
-        {
-            view.setVisibility( View.GONE );
-            view2.setVisibility( View.VISIBLE );
-        }
-        else
-        {
-            view.setVisibility( View.VISIBLE );
-            view2.setVisibility( View.GONE );
-        }
+        ((ListViewItem)l.getItemAtPosition( position )).onClick( this, v );
     }
 }

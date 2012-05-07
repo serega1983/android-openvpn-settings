@@ -22,10 +22,15 @@
 
 package de.schaeuffelhut.android.openvpn.setup.prerequisites;
 
+import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import de.schaeuffelhut.android.openvpn.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -34,7 +39,7 @@ import de.schaeuffelhut.android.openvpn.R;
  * Time: 9:19 AM
  * To change this template use File | Settings | File Templates.
  */
-public class ProbeResult
+public class ProbeResult implements ListViewItem
 {
     final PrerequisitesActivity.Status status;
     final String title;
@@ -49,8 +54,11 @@ public class ProbeResult
         this.log = log;
     }
 
-    public void configureView(View v)
+    public View configureView(Context context)
     {
+        LayoutInflater inflater = LayoutInflater.from( context );
+        View v = inflater.inflate( R.layout.prerequisites_probe, null, true );
+
         ImageView statusIcon = (ImageView) v.findViewById( R.id.prerequisites_item_status_icon );
         statusIcon.setImageResource( status.imageResource );
         TextView statusText = (TextView) v.findViewById( R.id.prerequisites_item_status_text );
@@ -63,5 +71,33 @@ public class ProbeResult
         logText.setText( log );
 //        logText.setVisibility( log == null || log.isEmpty() ? View.GONE : View.VISIBLE );
         logText.setVisibility( View.GONE );
+
+        return v;
     }
+
+    public void onClick(PrerequisitesActivity prerequisitesActivity, View v)
+    {
+        View view = v.findViewById( R.id.prerequisites_item_log_text );
+        View view2 = v.findViewById( R.id.prerequisites_item_unhide_details );
+        if (view.getVisibility() == View.VISIBLE)
+        {
+            view.setVisibility( View.GONE );
+            view2.setVisibility( View.VISIBLE );
+        }
+        else
+        {
+            view.setVisibility( View.VISIBLE );
+            view2.setVisibility( View.GONE );
+        }
+
+    }
+
+    public List<ListViewItem> getChildItems()
+    {
+        List<ListViewItem> l = new ArrayList<ListViewItem>();
+        l.add( new LinkListViewItem()
+        );
+        return l;
+    }
+
 }
