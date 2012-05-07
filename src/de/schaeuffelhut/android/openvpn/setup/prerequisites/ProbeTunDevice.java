@@ -24,9 +24,11 @@ package de.schaeuffelhut.android.openvpn.setup.prerequisites;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import de.schaeuffelhut.android.openvpn.IocContext;
+import de.schaeuffelhut.android.openvpn.R;
 import de.schaeuffelhut.android.openvpn.util.tun.*;
 
 import java.io.File;
@@ -47,6 +49,7 @@ class ProbeTunDevice
     private final SharedPreferences sharedPreferences;
     private TunLoaderFactory tunLoaderFactory = new TunLoaderFactoryImpl();
     private List<String> messages = new ArrayList<String>();
+    private List<ListViewItem> childItems = new ArrayList<ListViewItem>();
 
     ProbeTunDevice(Context context)
     {
@@ -76,6 +79,8 @@ class ProbeTunDevice
 
         //5 suggest TUN Installer
         message( "Could not load the tun module. Please try the TUN Installer from the market." );
+
+        childItems.add( new LinkListViewItem( R.string.prerequisites_item_title_getTunLoader, Uri.parse( "market://details?id=stericson.busybox" ) ) );
 
         return failedProbeResult();
     }
@@ -154,7 +159,8 @@ class ProbeTunDevice
                 status,
                 "TUN Device Driver",
                 "Exchange network packets with kernel.",
-                TextUtils.join( "\n", messages )
+                TextUtils.join( "\n", messages ),
+                childItems
         );
     }
 
