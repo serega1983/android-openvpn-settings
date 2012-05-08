@@ -79,8 +79,9 @@
 	<string name="view_logfile_content">Log file is empty!</string>
 	<string name="view_logfile_refresh">Refresh</string>
 
-	<string name="prerequisites_item_title_getTunLoader">Get TUN Loader from the market</string>
-
+	<string name="prerequisites_item_title_getTunInstaller">→ <u>Try: TUN Installer</u></string>
+	<string name="prerequisites_item_title_getOpenVpn">→ <u>Try: OpenVPN Installer</u></string>
+	<string name="prerequisites_item_title_getBusyBox">→ <u>Try: BusyBox Installer</u></string>
 
     <!--
      <string name="start">Start</string>

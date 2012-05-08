@@ -22,6 +22,8 @@
 
 package de.schaeuffelhut.android.openvpn.setup.prerequisites;
 
+import android.net.Uri;
+import de.schaeuffelhut.android.openvpn.R;
 import de.schaeuffelhut.android.util.FakeFile;
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -42,7 +44,7 @@ public class ProbeExecutableTest extends TestCase
 
     public void test_probe_returns_not_null()
     {
-        ProbeExecutable probe = new ProbeExecutable( "Title1", "", (File)XBIN );
+        ProbeExecutable probe = new ProbeExecutable( "Title1", "", R.string.prerequisites_item_title_getTunInstaller, Uri.parse( "market://details?id=stericson.busybox" ), (File)XBIN );
         ProbeResult result = probe.probe();
         Assert.assertNotNull( result );
     }
@@ -50,7 +52,7 @@ public class ProbeExecutableTest extends TestCase
     public void test_probe_returns_failure_when_not_exists()
     {
         XBIN.setExists( false );
-        ProbeExecutable probe = new ProbeExecutable( "Title1", "", XBIN );
+        ProbeExecutable probe = new ProbeExecutable( "Title1", "", R.string.prerequisites_item_title_getTunInstaller, Uri.parse( "market://details?id=stericson.busybox" ), XBIN );
         ProbeResult result = probe.probe();
         Assert.assertEquals( PrerequisitesActivity.Status.FAILED, result.status );
     }
@@ -58,7 +60,7 @@ public class ProbeExecutableTest extends TestCase
     public void test_probe_returns_success_when_exists()
     {
         XBIN.setExists( true );
-        ProbeExecutable probe = new ProbeExecutable( "Title1", "", XBIN );
+        ProbeExecutable probe = new ProbeExecutable( "Title1", "", R.string.prerequisites_item_title_getTunInstaller, Uri.parse( "market://details?id=stericson.busybox" ), XBIN );
         ProbeResult result = probe.probe();
         Assert.assertEquals( PrerequisitesActivity.Status.SUCCESS, result.status );
     }
@@ -67,35 +69,35 @@ public class ProbeExecutableTest extends TestCase
     {
         XBIN.setExists( false );
         BIN.setExists( true );
-        ProbeExecutable probe = new ProbeExecutable( "Title1", "", (File)XBIN,  (File)BIN );
+        ProbeExecutable probe = new ProbeExecutable( "Title1", "", R.string.prerequisites_item_title_getTunInstaller, Uri.parse( "market://details?id=stericson.busybox" ), (File)XBIN,  (File)BIN );
         ProbeResult result = probe.probe();
         Assert.assertEquals( PrerequisitesActivity.Status.SUCCESS, result.status );
     }
 
     public void test_probe_returns_title1()
     {
-        ProbeExecutable probe = new ProbeExecutable( "Title1", "", (File)XBIN,  (File)BIN );
+        ProbeExecutable probe = new ProbeExecutable( "Title1", "", R.string.prerequisites_item_title_getTunInstaller, Uri.parse( "market://details?id=stericson.busybox" ), (File)XBIN,  (File)BIN );
         ProbeResult result = probe.probe();
         Assert.assertEquals( "Title1", result.title );
     }
 
     public void test_probe_returns_title2()
     {
-        ProbeExecutable probe = new ProbeExecutable( "Title2", "", (File)XBIN,  (File)BIN );
+        ProbeExecutable probe = new ProbeExecutable( "Title2", "", R.string.prerequisites_item_title_getTunInstaller, Uri.parse( "market://details?id=stericson.busybox" ), (File)XBIN,  (File)BIN );
         ProbeResult result = probe.probe();
         Assert.assertEquals( "Title2", result.title );
     }
 
     public void test_probe_returns_subtitle1()
     {
-        ProbeExecutable probe = new ProbeExecutable( "Title1", "Subtitle1", (File)XBIN,  (File)BIN );
+        ProbeExecutable probe = new ProbeExecutable( "Title1", "Subtitle1", R.string.prerequisites_item_title_getTunInstaller, Uri.parse( "market://details?id=stericson.busybox" ), (File)XBIN,  (File)BIN );
         ProbeResult result = probe.probe();
         Assert.assertEquals( "Subtitle1", result.subtitle );
     }
 
     public void test_probe_returns_subtitle2()
     {
-        ProbeExecutable probe = new ProbeExecutable( "Title2", "Subtitle2", (File)XBIN,  (File)BIN );
+        ProbeExecutable probe = new ProbeExecutable( "Title2", "Subtitle2", R.string.prerequisites_item_title_getTunInstaller, Uri.parse( "market://details?id=stericson.busybox" ), (File)XBIN,  (File)BIN );
         ProbeResult result = probe.probe();
         Assert.assertEquals( "Subtitle2", result.subtitle );
     }

@@ -26,16 +26,16 @@
               android:layout_width="fill_parent"
               android:layout_height="wrap_content"
               android:orientation="horizontal"
-              android:padding="10dip"
+              android:padding="20dip"
         >
     <TextView
-            android:layout_height="25dip"
+            android:layout_height="fill_parent"
             android:layout_width="fill_parent"
             android:layout_weight="1"
             android:text="Find it online"
             android:textStyle="bold"
             android:textSize="15dip"
-            android:paddingLeft="24dip"
+            android:paddingLeft="8dip"
             android:id="@+id/prerequisites_item_title"
             />
 </LinearLayout>

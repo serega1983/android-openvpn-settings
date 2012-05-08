@@ -48,7 +48,7 @@ class ProbeTunDevice
     private final TunLoaderPreferences tunLoaderPreferences;
     private final SharedPreferences sharedPreferences;
     private TunLoaderFactory tunLoaderFactory = new TunLoaderFactoryImpl();
-    private List<String> messages = new ArrayList<String>();
+    List<String> messages = new ArrayList<String>();
     private List<ListViewItem> childItems = new ArrayList<ListViewItem>();
 
     ProbeTunDevice(Context context)
@@ -80,7 +80,10 @@ class ProbeTunDevice
         //5 suggest TUN Installer
         message( "Could not load the tun module. Please try the TUN Installer from the market." );
 
-        childItems.add( new LinkListViewItem( R.string.prerequisites_item_title_getTunLoader, Uri.parse( "market://details?id=stericson.busybox" ) ) );
+        childItems.add( new LinkListViewItem(
+                R.string.prerequisites_item_title_getTunInstaller,
+                Uri.parse( "market://details?id=com.aed.tun.installer" ) )
+        );
 
         return failedProbeResult();
     }

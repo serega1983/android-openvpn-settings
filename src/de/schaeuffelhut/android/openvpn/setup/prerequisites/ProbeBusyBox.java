@@ -22,6 +22,9 @@
 
 package de.schaeuffelhut.android.openvpn.setup.prerequisites;
 
+import android.net.Uri;
+import de.schaeuffelhut.android.openvpn.R;
+
 import java.io.File;
 
 /**
@@ -35,6 +38,11 @@ class ProbeBusyBox extends ProbeExecutable
 {
     ProbeBusyBox()
     {
-        super( "BusyBox binary", "Used to configure the network interface.", new File("/system/xbin/busybox"), new File("/system/bin/busybox") );
+        super( "BusyBox binary",
+                "Used to configure the network interface.",
+                R.string.prerequisites_item_title_getBusyBox,
+                Uri.parse( "market://details?id=stericson.busybox" ),
+                new File("/system/xbin/busybox"), new File("/system/bin/busybox")
+        );
     }
 }
