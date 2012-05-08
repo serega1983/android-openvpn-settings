@@ -35,6 +35,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import de.schaeuffelhut.android.openvpn.util.AdUtil;
+import de.schaeuffelhut.android.openvpn.util.tun.TunLoaderPreferences;
 
 public class AdvancedSettings extends PreferenceActivity
 {
@@ -69,37 +70,8 @@ public class AdvancedSettings extends PreferenceActivity
 		//				});
 		//	}
 
-		{
-			CheckBoxPreference pref = (CheckBoxPreference) findPreference( Preferences.KEY_OPENVPN_DO_MODPROBE_TUN );
-			pref.setSummary( getString( R.string.advanced_settings_do_modprobe_tun, Preferences.getLoadTunModuleCommand( pref.getSharedPreferences()) ) );
-		}
-		
-		{
-			ListPreference pref = (ListPreference) findPreference( Preferences.KEY_OPENVPN_MODPROBE_ALTERNATIVE );
-			pref.setOnPreferenceChangeListener(
-					new Preference.OnPreferenceChangeListener() {
-						public boolean onPreferenceChange( Preference pref, Object newValue ) {
-							pref.setSummary( (String)newValue );
-							updateSummary( newValue + " " + Preferences.getPathToTun(pref.getSharedPreferences()) );
-							return true;
-						}
-					});
-			pref.setSummary( Preferences.getModprobeAlternative( pref.getSharedPreferences() ) );
-		}
-
-		{
-			EditTextPreference pref = (EditTextPreference) findPreference( Preferences.KEY_OPENVPN_PATH_TO_TUN );
-			pref.setOnPreferenceChangeListener(
-					new Preference.OnPreferenceChangeListener() {
-						public boolean onPreferenceChange( Preference pref, Object newValue ) {
-//							pref.setSummary( ( TextUtils.isEmpty( (String)newValue ) ? "tun" : (String)newValue  ) );
-							pref.setSummary( (String)newValue );
-							updateSummary( (Preferences.getModprobeAlternative(pref.getSharedPreferences()) + " " + newValue ) );
-							return true;
-						}
-					});
-			pref.setSummary( Preferences.getPathToTun( pref.getSharedPreferences() ) );
-		}
+        configureTunProperties();
+        hideTunProperties();
 
 
 		{
@@ -197,7 +169,52 @@ public class AdvancedSettings extends PreferenceActivity
 
 	}
 
-	private void updateSummary(String cmd) {
+    private void configureTunProperties()
+    {
+        {
+            CheckBoxPreference pref = (CheckBoxPreference) findPreference( Preferences.KEY_OPENVPN_DO_MODPROBE_TUN );
+            pref.setSummary( getString( R.string.advanced_settings_do_modprobe_tun, Preferences.getLoadTunModuleCommand( pref.getSharedPreferences()) ) );
+        }
+
+        {
+            ListPreference pref = (ListPreference) findPreference( Preferences.KEY_OPENVPN_MODPROBE_ALTERNATIVE );
+            pref.setOnPreferenceChangeListener(
+                    new Preference.OnPreferenceChangeListener() {
+                        public boolean onPreferenceChange( Preference pref, Object newValue ) {
+                            pref.setSummary( (String)newValue );
+                            updateSummary( newValue + " " + Preferences.getPathToTun(pref.getSharedPreferences()) );
+                            return true;
+                        }
+                    });
+            pref.setSummary( Preferences.getModprobeAlternative( pref.getSharedPreferences() ) );
+        }
+
+        {
+            EditTextPreference pref = (EditTextPreference) findPreference( Preferences.KEY_OPENVPN_PATH_TO_TUN );
+            pref.setOnPreferenceChangeListener(
+                    new Preference.OnPreferenceChangeListener() {
+                        public boolean onPreferenceChange( Preference pref, Object newValue ) {
+//							pref.setSummary( ( TextUtils.isEmpty( (String)newValue ) ? "tun" : (String)newValue  ) );
+                            pref.setSummary( (String)newValue );
+                            updateSummary( (Preferences.getModprobeAlternative(pref.getSharedPreferences()) + " " + newValue ) );
+                            return true;
+                        }
+                    });
+            pref.setSummary( Preferences.getPathToTun( pref.getSharedPreferences() ) );
+        }
+    }
+
+    // starting with 0.4.11 tun is loaded using tun loaders
+    private void hideTunProperties()
+    {
+        if ( !new TunLoaderPreferences( this ).getType().needsLegacySettings )
+        {
+            getPreferenceScreen().removePreference( findPreference( Preferences.KEY_OPENVPN_DO_MODPROBE_TUN ) );
+            getPreferenceScreen().removePreference( findPreference( Preferences.KEY_OPENVPN_TUN_SETTINGS ) );
+        }
+    }
+
+    private void updateSummary(String cmd) {
 		CheckBoxPreference pref = (CheckBoxPreference) findPreference( Preferences.KEY_OPENVPN_DO_MODPROBE_TUN );
 		pref.setSummary( getString( R.string.advanced_settings_do_modprobe_tun, cmd ) );
 	}

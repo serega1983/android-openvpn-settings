@@ -262,7 +262,7 @@ public class TunLoaderFactoryImpl implements TunLoaderFactory
 
     public enum Types
     {
-        NONE( false )
+        NONE( false, false )
                 {
                     @Override
                     public TunLoader createTunLoader(TunLoaderPreferences tunLoaderPreferences, SharedPreferences sharedPreferences)
@@ -270,7 +270,7 @@ public class TunLoaderFactoryImpl implements TunLoaderFactory
                         return new NullTunLoader();
                     }
                 },
-        MODPROBE( true )
+        MODPROBE( true, false )
                 {
                     @Override
                     public TunLoader createTunLoader(TunLoaderPreferences tunLoaderPreferences, SharedPreferences sharedPreferences)
@@ -278,7 +278,7 @@ public class TunLoaderFactoryImpl implements TunLoaderFactory
                         return new LoadTunViaModprobe();
                     }
                 },
-        INSMOD( true )
+        INSMOD( true, false )
                 {
                     @Override
                     public TunLoader createTunLoader(TunLoaderPreferences tunLoaderPreferences, SharedPreferences sharedPreferences)
@@ -286,7 +286,7 @@ public class TunLoaderFactoryImpl implements TunLoaderFactory
                         return new LoadTunViaInsmod( tunLoaderPreferences.getPathToModule() );
                     }
                 },
-        LEGACY( true )
+        LEGACY( true, true )
                 {
                     @Override
                     public TunLoader createTunLoader(TunLoaderPreferences tunLoaderPreferences, SharedPreferences sharedPreferences)
@@ -298,10 +298,12 @@ public class TunLoaderFactoryImpl implements TunLoaderFactory
                     }
                 };
         public final boolean canLoadTun;
+        public final boolean needsLegacySettings;
 
-        private Types(boolean canLoadTun)
+        private Types(boolean canLoadTun, boolean needsLegacySettings)
         {
             this.canLoadTun = canLoadTun;
+            this.needsLegacySettings = needsLegacySettings;
         }
 
         public abstract TunLoader createTunLoader(TunLoaderPreferences tunLoaderPreferences, SharedPreferences sharedPreferences);
