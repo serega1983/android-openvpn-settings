@@ -285,14 +285,13 @@ public class Util
 
 	public final static boolean applicationWasUpdated(Context context)
 	{
-        return true;
-//		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-//		int applicationVersionCode = applicationVersionCode( context );
-//		int storedVersionCode = sharedPreferences.getInt( Preferences.KEY_OPENVPN_VERSION_CODE, -1 );
-//		final boolean wasUpdated = applicationVersionCode > storedVersionCode;
-//		if ( wasUpdated )
-//			sharedPreferences.edit().putInt( Preferences.KEY_OPENVPN_VERSION_CODE, applicationVersionCode ).commit();
-//		return wasUpdated;
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		int applicationVersionCode = applicationVersionCode( context );
+		int storedVersionCode = sharedPreferences.getInt( Preferences.KEY_OPENVPN_VERSION_CODE, -1 );
+		final boolean wasUpdated = applicationVersionCode > storedVersionCode;
+		if ( wasUpdated )
+			sharedPreferences.edit().putInt( Preferences.KEY_OPENVPN_VERSION_CODE, applicationVersionCode ).commit();
+		return wasUpdated;
 	}
 	
 	public final static String getAssetAsString(Context context, String asset) {
