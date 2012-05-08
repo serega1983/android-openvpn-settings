@@ -22,7 +22,12 @@
 
 package de.schaeuffelhut.android.openvpn.setup.prerequisites;
 
+import android.net.Uri;
+
 import java.io.File;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -36,19 +41,26 @@ class ProbeExecutable
     private final String title;
     private final File[] files;
     private final String subtitle;
+    private int subItemTitle;
+    private final Uri subItemUri;
 
-    ProbeExecutable(String title, String subtitle, File... files)
+    ProbeExecutable(String title, String subtitle, int subItemTitle, Uri subItemUri, File... files)
     {
         this.title = title;
         this.files = files;
         this.subtitle = subtitle;
+        this.subItemTitle = subItemTitle;
+        this.subItemUri = subItemUri;
     }
 
     public ProbeResult probe()
     {
         StringBuffer details = new StringBuffer();
         PrerequisitesActivity.Status status = probeFiles( details );
-        return new ProbeResult( status, title, subtitle, details.toString().trim() );
+        List<ListViewItem> childItems = Collections.emptyList();
+        if (!PrerequisitesActivity.Status.SUCCESS.equals(status))
+            childItems = Arrays.asList( (ListViewItem)new LinkListViewItem( subItemTitle, subItemUri ) );
+        return new ProbeResult( status, title, subtitle, details.toString().trim(), childItems );
     }
 
     private PrerequisitesActivity.Status probeFiles(StringBuffer details)

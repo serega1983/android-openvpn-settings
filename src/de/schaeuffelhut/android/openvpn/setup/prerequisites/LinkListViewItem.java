@@ -58,7 +58,8 @@ class LinkListViewItem implements ListViewItem
     {
         LayoutInflater inflater = LayoutInflater.from( context );
         View view = inflater.inflate( R.layout.prerequisites_link, null, true );
-        ((TextView)view.findViewById( R.id.prerequisites_item_title )).setText( title );
+        TextView textView = (TextView) view.findViewById( R.id.prerequisites_item_title );
+        textView.setText( title );
         return view;
     }
 

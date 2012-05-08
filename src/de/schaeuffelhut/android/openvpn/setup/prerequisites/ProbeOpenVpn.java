@@ -22,6 +22,9 @@
 
 package de.schaeuffelhut.android.openvpn.setup.prerequisites;
 
+import android.net.Uri;
+import de.schaeuffelhut.android.openvpn.R;
+
 import java.io.File;
 
 /**
@@ -35,6 +38,11 @@ class ProbeOpenVpn extends ProbeExecutable
 {
     ProbeOpenVpn()
     {
-        super( "OpenVPN binary", "The actual VPN program.", new File("/system/xbin/openvpn"), new File("/system/bin/openvpn") );
+        super( "OpenVPN binary",
+                "The actual VPN program.",
+                R.string.prerequisites_item_title_getOpenVpn,
+                Uri.parse( "market://details?id=de.schaeuffelhut.android.openvpn.installer" ),
+                new File("/system/xbin/openvpn"), new File("/system/bin/openvpn")
+        );
     }
 }
