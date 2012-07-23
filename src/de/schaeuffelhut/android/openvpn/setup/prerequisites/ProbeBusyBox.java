@@ -42,7 +42,7 @@ class ProbeBusyBox extends ProbeExecutable
                 "Used to configure the network interface.",
                 R.string.prerequisites_item_title_getBusyBox,
                 Uri.parse( "market://details?id=stericson.busybox" ),
-                new File("/system/xbin/busybox"), new File("/system/bin/busybox")
+                new File("/system/xbin/busybox"), new File("/system/bin/busybox"), new File("/sbin/busybox")
         );
     }
 }
