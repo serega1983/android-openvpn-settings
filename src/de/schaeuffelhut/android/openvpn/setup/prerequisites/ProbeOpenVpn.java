@@ -42,7 +42,7 @@ class ProbeOpenVpn extends ProbeExecutable
                 "The actual VPN program.",
                 R.string.prerequisites_item_title_getOpenVpn,
                 Uri.parse( "market://details?id=de.schaeuffelhut.android.openvpn.installer" ),
-                new File("/system/xbin/openvpn"), new File("/system/bin/openvpn")
+                new File("/system/xbin/openvpn"), new File("/system/bin/openvpn"), new File("/sbin/openvpn")
         );
     }
 }
