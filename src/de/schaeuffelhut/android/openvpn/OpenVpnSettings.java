@@ -61,8 +61,9 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 
 	ArrayList<DaemonEnabler> mDaemonEnablers = new ArrayList<DaemonEnabler>(4);
 	OpenVpnService mOpenVpnService = null;
+    BroadcastReceiver broadcastReceiver;
 
-	private int mCurrentContentView;
+    private int mCurrentContentView;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState)
@@ -121,20 +122,17 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 			Log.w(TAG, "Could not bind to ControlShell" );
         }
 
-// was never unregistered and leaked a reference
-// is it really necessary?
-//		registerReceiver( 
-//				new BroadcastReceiver() {
-//					@Override public void onReceive(Context context, Intent intent) 
-//					{
-//						if ( !OpenVpnSettings.this.bindService( new Intent( OpenVpnSettings.this, OpenVpnService.class ), OpenVpnSettings.this, 0 ) )
-//				        {
-//							Log.w(TAG, "Could not bind to ControlShell" );
-//				        }
-//					}
-//				},
-//				new IntentFilter( Intents.OPEN_VPN_SERVICE_STARTED )
-//		);
+        registerReceiver(
+                broadcastReceiver = new BroadcastReceiver()
+                {
+                    @Override
+                    public void onReceive(Context context, Intent intent)
+                    {
+                        startActivity( (Intent) intent.getParcelableExtra( "ACTION" ) );
+                    }
+                },
+				new IntentFilter( Intents.BROADCAST_NEED_PASSWORD )
+		);
 
 		if ( Util.applicationWasUpdated( this ) )
 			showDialog( DIALOG_CHANGELOG );
@@ -289,6 +287,8 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
     	Log.d(TAG, "onDestroy()" );
     	if ( mOpenVpnService != null )
     		unbindService( this );
+        unregisterReceiver( broadcastReceiver );
+        broadcastReceiver = null;
     }
 
 	/*

@@ -29,12 +29,13 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.text.TextUtils;
 import de.schaeuffelhut.android.openvpn.tun.ShareTunActivity;
 
 public final class Notifications {
 
-	private Notifications(){}
+    private Notifications(){}
 	
 	private static final int SHARE_TUN_ID = 1000;
 	public static final int FIRST_CONFIG_ID = 1000000;
@@ -128,9 +129,11 @@ public final class Notifications {
 		);
 	
 		notificationManager.notify( id, notification);
-	}
-	
-	public static void sendUsernamePasswordRequired(int id, Context context, File configFile, NotificationManager notificationManager) {
+
+        sendNeedPassword( context, intent );
+    }
+
+    public static void sendUsernamePasswordRequired(int id, Context context, File configFile, NotificationManager notificationManager) {
 		Notification notification = new Notification(
 				R.drawable.vpn_disconnected_attention,
 				"Username/Password required",
@@ -154,9 +157,20 @@ public final class Notifications {
 		);
 	
 		notificationManager.notify( id, notification);
+
+        sendNeedPassword( context, notification );
 	}
-	
-	public static void cancel(int id, Context context)
+
+
+    private static void sendNeedPassword(Context context, Parcelable intent)
+    {
+        Intent needPassword = new Intent( Intents.BROADCAST_NEED_PASSWORD );
+        needPassword.setPackage( Intents.NS );
+        needPassword.putExtra( "ACTION", intent );
+        context.sendBroadcast( needPassword );
+    }
+
+    public static void cancel(int id, Context context)
 	{
 		getNotificationManager(context).cancel( id );
 	}
