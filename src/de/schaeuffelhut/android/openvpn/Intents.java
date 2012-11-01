@@ -26,8 +26,8 @@ import android.content.Intent;
 public final class Intents
 {
 	public final static String NS = Intents.class.getName();
-	
-	public final static String OPEN_VPN_SERVICE_STARTED = NS + ".OPEN_VPN_SERVICE_STARTED";
+
+    public final static String OPEN_VPN_SERVICE_STARTED = NS + ".OPEN_VPN_SERVICE_STARTED";
 	
 	public final static String DEAMON_STATE_CHANGED = NS + ".DAEMON_STATE_CHANGED";
 	public final static String NETWORK_STATE_CHANGED = NS + ".NETWORK_STATE_CHANGED";
@@ -59,7 +59,9 @@ public final class Intents
 	public static final int NETWORK_STATE_ADD_ROUTES = 9;		
 	public final static int NETWORK_STATE_EXITING = 10;
 
-	public final static Intent daemonStateChanged(String config, int state){
+    public static final String BROADCAST_NEED_PASSWORD = NS + ".NEED_PASSWORD";
+
+    public final static Intent daemonStateChanged(String config, int state){
 		return new Intent(DEAMON_STATE_CHANGED)
 		.putExtra(EXTRA_CONFIG, config)
 		.putExtra(EXTRA_DAEMON_STATE, state);

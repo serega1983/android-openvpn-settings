@@ -65,10 +65,12 @@
 		<activity
 			android:name="EnterPassphrase" 
 			android:label="@string/enter_passphrase_category"
+            android:launchMode="singleTask"
 			/>
 		<activity
-			android:name="EnterUserPassword" 
+			android:name="EnterUserPassword"
 			android:label="@string/enter_user_password_category"
+            android:launchMode="singleTask"
 			/>
 
 		<activity
