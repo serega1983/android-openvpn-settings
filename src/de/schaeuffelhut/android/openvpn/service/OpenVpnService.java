@@ -36,7 +36,6 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
-import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.util.NetworkConnectivityListener;
 
@@ -334,7 +333,7 @@ public final class OpenVpnService extends Service
     private final synchronized boolean isVpnDnsActive()
     {
         for( DaemonMonitor monitor : mRegistry.values() )
-            if ( monitor.isAlive() && monitor.getVpnDnsEnabled() )
+            if ( monitor.isVpnDnsActive() )
                 return true;
         return false;
     }

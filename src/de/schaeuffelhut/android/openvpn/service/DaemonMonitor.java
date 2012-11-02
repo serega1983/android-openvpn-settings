@@ -39,7 +39,7 @@ import de.schaeuffelhut.android.openvpn.util.tun.TunInfo;
  * @author fries
  *
  */
-public final class DaemonMonitor
+final class DaemonMonitor
 {
 	private final OpenVpnService mContext;
 	private final File mConfigFile;
@@ -53,7 +53,7 @@ public final class DaemonMonitor
 	private ManagementThread mManagementThread;
 
 
-    public DaemonMonitor(OpenVpnService context, File configFile, Notification2 notification2)
+    DaemonMonitor(OpenVpnService context, File configFile, Notification2 notification2)
 	{
 		mContext = context;
 		mConfigFile = configFile;
@@ -293,7 +293,7 @@ public final class DaemonMonitor
 		}
 	}
 
-	public void supplyPassphrase(String passphrase)
+	void supplyPassphrase(String passphrase)
 	{
 		if ( !isAlive() )
 		{
@@ -305,7 +305,7 @@ public final class DaemonMonitor
 		}
 	}
 
-	public void supplyUsernamePassword(String username, String password)
+	void supplyUsernamePassword(String username, String password)
 	{
 		if ( !isAlive() )
 		{
@@ -322,12 +322,14 @@ public final class DaemonMonitor
 		return mManagementThread != null && mManagementThread.isAlive();
 	}
 
-	void startLogging() {
+	void startLogging()
+    {
 		Log.d( mTagDaemonMonitor, "Start logging" );
 		mLog.open();
 	}
 
-	void stopLogging() {
+	void stopLogging()
+    {
 		Log.d( mTagDaemonMonitor, "Stop logging" );
 		mLog.close();
 	}
@@ -337,8 +339,8 @@ public final class DaemonMonitor
         return mDaemonProcess != null && mDaemonProcess.isAlive();
     }
 
-    public boolean getVpnDnsEnabled()
+    boolean isVpnDnsActive()
     {
-        return mPreferences2.getVpnDnsEnabled();
+        return isAlive() && mPreferences2.getVpnDnsEnabled();
     }
 }
