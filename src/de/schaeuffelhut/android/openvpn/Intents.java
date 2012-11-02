@@ -27,8 +27,6 @@ public final class Intents
 {
 	public final static String NS = Intents.class.getName();
 
-    public final static String OPEN_VPN_SERVICE_STARTED = NS + ".OPEN_VPN_SERVICE_STARTED";
-	
 	public final static String DEAMON_STATE_CHANGED = NS + ".DAEMON_STATE_CHANGED";
 	public final static String NETWORK_STATE_CHANGED = NS + ".NETWORK_STATE_CHANGED";
 	
