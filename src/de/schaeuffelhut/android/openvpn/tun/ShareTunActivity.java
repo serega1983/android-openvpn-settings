@@ -30,6 +30,7 @@ import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import de.schaeuffelhut.android.openvpn.service.Notification2;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
@@ -62,7 +63,6 @@ import android.widget.TextView;
 import com.bugsense.trace.BugSenseHandler;
 
 import de.schaeuffelhut.android.openvpn.Configuration;
-import de.schaeuffelhut.android.openvpn.Notifications;
 import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.R;
 import de.schaeuffelhut.android.openvpn.util.Util;
@@ -268,7 +268,7 @@ public class ShareTunActivity extends Activity
 		
 		cancelButton().setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				Notifications.cancelShareTunModule(getApplicationContext());
+                Notification2.cancelShareTunModule( getApplicationContext() );
 				// TODO: remember user did cancel and don't call again (ar ask
 				// user if we should call him again)
 				finish();
@@ -312,7 +312,7 @@ public class ShareTunActivity extends Activity
 		updateShareButtonState();
 	}
 
-	private void updateShareButtonState() {
+    private void updateShareButtonState() {
 		shareButton().setEnabled( yesIShareCheckBox().isChecked() && includeDetailsCheckBox().isChecked() );
 	}
 

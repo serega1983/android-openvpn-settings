@@ -24,12 +24,9 @@ package de.schaeuffelhut.android.openvpn.service;
 import java.io.File;
 import java.io.IOException;
 
-import android.app.NotificationManager;
-import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 import de.schaeuffelhut.android.openvpn.IocContext;
-import de.schaeuffelhut.android.openvpn.Notifications;
 import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.util.Preconditions;
 import de.schaeuffelhut.android.openvpn.util.Shell;
@@ -228,10 +225,8 @@ public final class DaemonMonitor
         if ( mPreferences2.getSendDeviceDetailWasSuccessfull() )
 			return;
 
-        // shareTunModule is rarely called, so looking up NotificationManager on demand is ok.
-        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService( Context.NOTIFICATION_SERVICE );
-        Notifications.sendShareTunModule(mContext, notificationManager );
-	}
+        mNotification2.sendShareTunModule();
+    }
 
     @Deprecated//TODO: move some where in TunSharing code
     private boolean isTunSharingExpired()
