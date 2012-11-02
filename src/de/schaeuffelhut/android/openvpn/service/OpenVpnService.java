@@ -255,7 +255,7 @@ public final class OpenVpnService extends Service
 		{
 			Log.v(TAG, config +": trying to attach");
 
-            DaemonMonitor daemonMonitor = new DaemonMonitor(
+            DaemonMonitor daemonMonitor = new DaemonMonitorImpl(
 					this,
 					config,
                     newNotification2( config )
@@ -357,7 +357,7 @@ public final class OpenVpnService extends Service
 		}
 		else
 		{
-			DaemonMonitor daemonMonitor = new DaemonMonitor(
+			DaemonMonitor daemonMonitor = new DaemonMonitorImpl(
 					this,
 					config,
                     newNotification2( config )
