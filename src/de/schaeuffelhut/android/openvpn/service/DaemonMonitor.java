@@ -67,7 +67,6 @@ public final class DaemonMonitor
         mLog = new LogFile( Preferences.logFileFor( configFile ) );
 		 
 		//TODO: need a unique config identifie, or remove pid writing fetaure
-
         mPidFile = new File( comDir(), configFile.getAbsolutePath().replace( "_", "__").replace( '/', '_') + "-pid" );
 
 		mTagDaemonMonitor = String.format("OpenVPN-DaemonMonitor[%s]", mConfigFile);
