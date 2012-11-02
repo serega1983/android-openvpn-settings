@@ -81,7 +81,7 @@ final class ManagementThread extends Thread
 		// try to attach to OpenVPN management interface port,
 		// keep trying while startup shell is alive 
 		boolean attached;
-		for(int i=0; !(attached = attach()) && mDaemonMonitor.mDaemonProcess != null && mDaemonMonitor.mDaemonProcess.isAlive()  && i < 10 ; i++ )
+        for(int i=0; !(attached = attach()) && mDaemonMonitor.isDaemonProcessAlive() && i < 10; i++ )
 		{
 			try {sleep(1000);} catch (InterruptedException e) {}
 		}
@@ -111,7 +111,7 @@ final class ManagementThread extends Thread
 		}
 	}
 
-	boolean attach()
+    boolean attach()
 	{
 		int mgmtPort = Preferences.getMgmtPort(mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile);
 		Log.d( mTAG_MT, "attach(): using management port at " + mgmtPort );

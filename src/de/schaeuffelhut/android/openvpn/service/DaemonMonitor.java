@@ -51,9 +51,9 @@ public final class DaemonMonitor
 	final OpenVpnService mContext;
 	final File mConfigFile;
     private final Notification2 notification2;
-	final LogFile mLog;
+	private final LogFile mLog;
 
-	Shell mDaemonProcess;
+	private Shell mDaemonProcess;
 	private ManagementThread mManagementThread;
 
 
@@ -337,4 +337,8 @@ public final class DaemonMonitor
 		mLog.close();
 	}
 
+    boolean isDaemonProcessAlive()
+    {
+        return mDaemonProcess != null && mDaemonProcess.isAlive();
+    }
 }
