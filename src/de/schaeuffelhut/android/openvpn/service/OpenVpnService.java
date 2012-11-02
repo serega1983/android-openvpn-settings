@@ -264,12 +264,13 @@ public final class OpenVpnService extends Service
 		{
 			Log.v(TAG, config +": trying to attach");
 
-			DaemonMonitor daemonMonitor = new DaemonMonitor(
+            DaemonMonitor daemonMonitor = new DaemonMonitor(
 					this,
-					config
+					config,
+                    newNotification2( config )
             );
-			
-			if ( daemonMonitor.isAlive() ) // daemon was already running
+
+            if ( daemonMonitor.isAlive() ) // daemon was already running
 			{
 				Log.v(TAG, config +": successfully attached");
 				mRegistry.put( config, daemonMonitor );
@@ -322,25 +323,26 @@ public final class OpenVpnService extends Service
 		{
 			Log.i( TAG, config + " only one VPN DNS may be active at a time, aborting" );
 			Toast.makeText( this , "VPN DNS is only supported in one tunnel!", Toast.LENGTH_LONG).show();
-			sendStickyBroadcast( 
-					Intents.daemonStateChanged(
-							config.getAbsolutePath(),
-							Intents.DAEMON_STATE_DISABLED
-					)
-			);
+            newNotification2( config ).daemonStateChangedToDisabled();
 		}
 		else
 		{
 			DaemonMonitor daemonMonitor = new DaemonMonitor(
 					this,
-					config
+					config,
+                    newNotification2( config )
             );
-			daemonMonitor.start();
+            daemonMonitor.start();
 			mRegistry.put( config, daemonMonitor );
 		}
 	}
 
-	public final synchronized void daemonRestart(File config)
+    private Notification2 newNotification2(File config)
+    {
+        return new Notification2( this, config, Preferences.getNotificationId( this, config ) );
+    }
+
+    public final synchronized void daemonRestart(File config)
 	{
 		if ( !isDaemonStarted(config) )
 		{
