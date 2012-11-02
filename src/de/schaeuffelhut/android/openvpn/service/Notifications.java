@@ -19,7 +19,7 @@
  * Report bugs or new features at: http://code.google.com/p/android-openvpn-settings/
  * Contact the author at:          android.openvpn@schaeuffelhut.de
  */
-package de.schaeuffelhut.android.openvpn;
+package de.schaeuffelhut.android.openvpn.service;
 
 import java.io.File;
 
@@ -31,9 +31,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Parcelable;
 import android.text.TextUtils;
+import de.schaeuffelhut.android.openvpn.*;
 import de.schaeuffelhut.android.openvpn.tun.ShareTunActivity;
 
-public final class Notifications {
+final class Notifications {
 
     private Notifications(){}
 	
@@ -47,7 +48,7 @@ public final class Notifications {
 	public static void notifyConnected(int id, Context context, NotificationManager notificationManager, File configFile, String msg) {
 		Notification notification = new Notification(
 				R.drawable.vpn_connected,
-				Preferences.getConfigName(context, configFile) + ": Connected",
+				Preferences.getConfigName( context, configFile ) + ": Connected",
 				System.currentTimeMillis()
 		);
 		notification.flags |= Notification.FLAG_NO_CLEAR;
