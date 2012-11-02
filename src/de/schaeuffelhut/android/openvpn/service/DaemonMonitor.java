@@ -26,7 +26,6 @@ import java.io.IOException;
 
 import android.app.NotificationManager;
 import android.content.Context;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 import de.schaeuffelhut.android.openvpn.IocContext;
@@ -45,34 +44,36 @@ import de.schaeuffelhut.android.openvpn.util.tun.TunInfo;
  */
 public final class DaemonMonitor
 {
-//	private final boolean LOCAL_LOGD = true;
-	final String mTagDaemonMonitor;
-
 	final OpenVpnService mContext;
 	final File mConfigFile;
     private final Notification2 mNotification2;
+    private final Preferences2 mPreferences2;
+
 	private final LogFile mLog;
+	final String mTagDaemonMonitor;
 
 	private Shell mDaemonProcess;
 	private ManagementThread mManagementThread;
 
 
-
-	public DaemonMonitor(OpenVpnService context, File configFile, Notification2 notification2)
+    public DaemonMonitor(OpenVpnService context, File configFile, Notification2 notification2)
 	{
 		mContext = context;
 		mConfigFile = configFile;
         mNotification2 = notification2;
-        mLog = new LogFile( Preferences.logFileFor( configFile ) );
+        mPreferences2 = new Preferences2( this );
+
+        mLog = new LogFile( mPreferences2.logFileFor() );
 		mTagDaemonMonitor = String.format("OpenVPN-DaemonMonitor[%s]", mConfigFile);
-		reattach();
+
+        reattach();
     }
 
     private boolean reattach()
 	{
 		mDaemonProcess = null;
 
-        mManagementThread = new ManagementThread( this, mNotification2 );
+        mManagementThread = new ManagementThread( DaemonMonitor.this, mNotification2, mPreferences2 );
 		if ( mManagementThread.attach() )
 			mManagementThread.start();
 		else
@@ -81,7 +82,7 @@ public final class DaemonMonitor
 		return mManagementThread != null && mManagementThread.isAlive();
 	}
 
-	void start()
+    void start()
 	{
 		if ( isAlive() ) {
 			Log.w( mTagDaemonMonitor, "start(): ManagementThread is already alive!" );
@@ -92,8 +93,8 @@ public final class DaemonMonitor
             mNotification2.daemonStateChangedToDisabled();
 			return;
 		}
-		
-		final File openvpnBinary = Preferences.getPathToBinaryAsFile( PreferenceManager.getDefaultSharedPreferences( mContext ) );
+
+        final File openvpnBinary = mPreferences2.getPathToBinaryAsFile();
 		if ( openvpnBinary == null ) {
 			Log.w( mTagDaemonMonitor, "start(): openvpn binary not found" );
 			return;//TODO: send Intents.DAEMON_STATE_DISABLED
@@ -109,12 +110,12 @@ public final class DaemonMonitor
 		}
 
 		// reset saved dns state
-		Preferences.setDns1( mContext, mConfigFile, 0, "" );
+        mPreferences2.setDns1( 0, "" );
 
 		final int mgmtPort = 10000 + (int)(Math.random() * 50000); 
 		Log.w( mTagDaemonMonitor, "start(): choosing random port for management interface: " + mgmtPort );
-		Preferences.setMgmtPort( mContext, mConfigFile, mgmtPort );
-		
+        mPreferences2.setMgmtPort( mgmtPort );
+
         mNotification2.daemonStateChangedToStartUp();
 
         TunInfo tunInfo = IocContext.get().getTunInfo( mContext );
@@ -148,7 +149,7 @@ public final class DaemonMonitor
 						openvpnBinary.getAbsolutePath(),				
 						Util.shellEscape(mConfigFile.getParentFile().getAbsolutePath()),
 						Util.shellEscape(mConfigFile.getName()),
-						Preferences.getScriptSecurityLevel( mContext, mConfigFile ),
+                        mPreferences2.getScriptSecurityLevel(),
 						mgmtPort
 				),
 				Shell.SU
@@ -157,7 +158,7 @@ public final class DaemonMonitor
 
 			protected void onBeforeExecute()
 			{
-				if ( Preferences.getLogStdoutEnable( mContext, mConfigFile ) )
+				if ( mPreferences2.getLogStdoutEnable() )
 					mLog.open();
 			}
 
@@ -169,7 +170,7 @@ public final class DaemonMonitor
 				if ( waitForMgmt && line.indexOf( "MANAGEMENT: TCP Socket listening on" ) != -1 )
 				{
 					waitForMgmt = false;
-                    mManagementThread = new ManagementThread( DaemonMonitor.this, mNotification2 );
+                    mManagementThread = new ManagementThread( DaemonMonitor.this, mNotification2, mPreferences2 );
 					mManagementThread.start();
 				}
 			}
@@ -219,20 +220,26 @@ public final class DaemonMonitor
 		mDaemonProcess.start();
 	}
 
-	private void shareTunModule()
+    private void shareTunModule()
 	{
-		if ( Preferences.isTunSharingExpired()  )
+		if (isTunSharingExpired())
 			return;
-		
-		if ( Preferences.getSendDeviceDetailWasSuccessfull( mContext ) )
+
+        if ( mPreferences2.getSendDeviceDetailWasSuccessfull() )
 			return;
 
         // shareTunModule is rarely called, so looking up NotificationManager on demand is ok.
         NotificationManager notificationManager = (NotificationManager) mContext.getSystemService( Context.NOTIFICATION_SERVICE );
         Notifications.sendShareTunModule(mContext, notificationManager );
 	}
-	
-	void restart()
+
+    @Deprecated//TODO: move some where in TunSharing code
+    private boolean isTunSharingExpired()
+    {
+        return Preferences.isTunSharingExpired();
+    }
+
+    void restart()
 	{
 		if ( !isAlive() )
 		{

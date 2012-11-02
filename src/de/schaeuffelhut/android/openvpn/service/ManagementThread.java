@@ -42,18 +42,16 @@ import de.schaeuffelhut.android.openvpn.util.Util;
 
 final class ManagementThread extends Thread
 {
+	private final DaemonMonitor mDaemonMonitor;
     private final Notification2 mNotification2;
     private final Preferences2  mPreferences2;
-    @Deprecated
-	private final DaemonMonitor mDaemonMonitor;
 	private final String mTAG_MT;
-//	private final String mTAG_MT = mDaemonMonitor.mTagDaemonMonitor + "-mgmt";
 
-	ManagementThread(DaemonMonitor daemonMonitor, Notification2 notification2)
+	ManagementThread(DaemonMonitor daemonMonitor, Notification2 notification2, Preferences2 preferences2)
 	{
-        mNotification2 = notification2;
-        mPreferences2 = new Preferences2( daemonMonitor );
 		mDaemonMonitor = daemonMonitor;
+        mNotification2 = notification2;
+        mPreferences2 = preferences2;
 		mTAG_MT = daemonMonitor.mTagDaemonMonitor + "-mgmt";
 	}
 	
