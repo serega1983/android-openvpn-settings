@@ -38,9 +38,8 @@ public final class Notifications {
     private Notifications(){}
 	
 	private static final int SHARE_TUN_ID = 1000;
-	public static final int FIRST_CONFIG_ID = 1000000;
 
-	public static void notifyConnected(int id, Context context, NotificationManager notificationManager, File configFile) 
+    public static void notifyConnected(int id, Context context, NotificationManager notificationManager, File configFile)
 	{
 		notifyConnected(id, context, notificationManager, configFile, null);
 	}

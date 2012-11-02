@@ -58,7 +58,9 @@ public final class Preferences {
 	public static final String KEY_NEXT_NOTIFICATION_ID = "openvpn_next_notification_id";
 	public static final String KEY_FIX_HTC_ROUTES = "fix_htc_routes"; 	// see issue #35: http://code.google.com/p/android-openvpn-settings/issues/detail?id=35
 
-	public final static String KEY_CONFIG(String config){
+    private static final int FIRST_CONFIG_ID = 1000000;
+
+    public final static String KEY_CONFIG(String config){
 		return String.format( "%s[%s]", KEY_OPENVPN_CONFIGURATIONS, config );
 	}
 
@@ -260,7 +262,7 @@ public final class Preferences {
 		int id = sharedPreferences.getInt( Preferences.KEY_CONFIG_NOTIFICATION_ID(configFile), -1 );
 		if ( id == -1 ) {
 			synchronized ( KEY_NEXT_NOTIFICATION_ID ) {
-				id = sharedPreferences.getInt( KEY_NEXT_NOTIFICATION_ID, Notifications.FIRST_CONFIG_ID);
+				id = sharedPreferences.getInt( KEY_NEXT_NOTIFICATION_ID, FIRST_CONFIG_ID);
 				Editor edit = sharedPreferences.edit();
 				edit.putInt( Preferences.KEY_CONFIG_NOTIFICATION_ID(configFile), id );
 				edit.putInt( KEY_NEXT_NOTIFICATION_ID, id + 1);
