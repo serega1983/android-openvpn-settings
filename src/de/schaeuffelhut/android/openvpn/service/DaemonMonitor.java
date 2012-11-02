@@ -50,7 +50,7 @@ public final class DaemonMonitor
 
 	final OpenVpnService mContext;
 	final File mConfigFile;
-    private final Notification2 notification2;
+    private final Notification2 mNotification2;
 	private final LogFile mLog;
 
 	private Shell mDaemonProcess;
@@ -58,20 +58,13 @@ public final class DaemonMonitor
 
 
 
-	public DaemonMonitor(OpenVpnService context, File configFile)
+	public DaemonMonitor(OpenVpnService context, File configFile, Notification2 notification2)
 	{
 		mContext = context;
 		mConfigFile = configFile;
+        mNotification2 = notification2;
         mLog = new LogFile( Preferences.logFileFor( configFile ) );
-
 		mTagDaemonMonitor = String.format("OpenVPN-DaemonMonitor[%s]", mConfigFile);
-
-        notification2 = new Notification2(
-                this.mContext,
-                this.mConfigFile,
-                Preferences.getNotificationId( mContext, mConfigFile )
-        );
-
 		reattach();
     }
 
@@ -79,7 +72,7 @@ public final class DaemonMonitor
 	{
 		mDaemonProcess = null;
 
-        mManagementThread = new ManagementThread( this, notification2 );
+        mManagementThread = new ManagementThread( this, mNotification2 );
 		if ( mManagementThread.attach() )
 			mManagementThread.start();
 		else
@@ -96,7 +89,7 @@ public final class DaemonMonitor
 		}
 
 		if ( !Preconditions.check( mContext ) ){
-            notification2.daemonStateChangedToDisabled();
+            mNotification2.daemonStateChangedToDisabled();
 			return;
 		}
 		
@@ -122,7 +115,7 @@ public final class DaemonMonitor
 		Log.w( mTagDaemonMonitor, "start(): choosing random port for management interface: " + mgmtPort );
 		Preferences.setMgmtPort( mContext, mConfigFile, mgmtPort );
 		
-        notification2.daemonStateChangedToStartUp();
+        mNotification2.daemonStateChangedToStartUp();
 
         TunInfo tunInfo = IocContext.get().getTunInfo( mContext );
         if (!tunInfo.isDeviceNodeAvailable()) // only load the driver if it's not yet available
@@ -176,7 +169,7 @@ public final class DaemonMonitor
 				if ( waitForMgmt && line.indexOf( "MANAGEMENT: TCP Socket listening on" ) != -1 )
 				{
 					waitForMgmt = false;
-                    mManagementThread = new ManagementThread( DaemonMonitor.this, notification2 );
+                    mManagementThread = new ManagementThread( DaemonMonitor.this, mNotification2 );
 					mManagementThread.start();
 				}
 			}
@@ -218,7 +211,7 @@ public final class DaemonMonitor
 				// while mManagementThread == null, system is in startup phase
 				// and a DAEMON_STATE_DISABLED message is expected
 				if ( mManagementThread == null )
-                    notification2.daemonStateChangedToDisabled();
+                    mNotification2.daemonStateChangedToDisabled();
 				mDaemonProcess = null;
 				mLog.close();
 			}
