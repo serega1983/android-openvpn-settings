@@ -21,10 +21,7 @@
  */
 package de.schaeuffelhut.android.openvpn.service;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -33,11 +30,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.CountDownLatch;
 
-import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
 import de.schaeuffelhut.android.openvpn.Intents;
-import de.schaeuffelhut.android.openvpn.Notifications;
 import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.util.DnsUtil;
 import de.schaeuffelhut.android.openvpn.util.Shell;
@@ -48,12 +43,20 @@ import de.schaeuffelhut.android.openvpn.util.Util;
 
 final class ManagementThread extends Thread
 {
+    private final Notification2 mNotification2;
+    @Deprecated
 	private final DaemonMonitor mDaemonMonitor;
 	private final String mTAG_MT;
 //	private final String mTAG_MT = mDaemonMonitor.mTagDaemonMonitor + "-mgmt";
-	
+
 	ManagementThread(DaemonMonitor daemonMonitor)
 	{
+        mNotification2 = new Notification2(
+                daemonMonitor.mContext,
+                daemonMonitor.mNotificationId,
+                daemonMonitor.mConfigFile,
+                daemonMonitor.mNotificationManager
+        );
 		mDaemonMonitor = daemonMonitor;
 		mTAG_MT = daemonMonitor.mTagDaemonMonitor + "-mgmt";
 	}
@@ -74,7 +77,6 @@ final class ManagementThread extends Thread
 	private boolean mWaitingForPassphrase = false;
 	private boolean mWaitingForUserPassword = false;
 
-	
 
 	@Override
 	public void run()
@@ -88,20 +90,14 @@ final class ManagementThread extends Thread
 		{
 			try {sleep(1000);} catch (InterruptedException e) {}
 		}
-		
+
 		try
 		{
 			if ( attached )
 			{
 				Log.v(mTAG_MT, "Successfully attached to OpenVPN monitor port");
-				mDaemonMonitor.mContext.sendStickyBroadcast( 
-						Intents.daemonStateChanged(
-								mDaemonMonitor.mConfigFile.getAbsolutePath(),
-								Intents.DAEMON_STATE_ENABLED
-						)
-				);
-				
-				monitor();
+                mNotification2.daemonStateChangedToEnabled();
+                monitor();
 			}
 			else
 			{
@@ -110,21 +106,16 @@ final class ManagementThread extends Thread
 		}
 		finally
 		{
-			mDaemonMonitor.mContext.sendStickyBroadcast( 
-					Intents.daemonStateChanged(
-							mDaemonMonitor.mConfigFile.getAbsolutePath(),
-							Intents.DAEMON_STATE_DISABLED
-					)
-			);
+            mNotification2.daemonStateChangedToDisabled();
 
-			Notifications.cancel( mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext );
+            mNotification2.cancel();
 
-			mTerminated.countDown();
+            mTerminated.countDown();
 			
 			Log.d( mTAG_MT, "terminated");
 		}
 	}
-	
+
 	boolean attach()
 	{
 		int mgmtPort = Preferences.getMgmtPort(mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile);
@@ -393,10 +384,10 @@ final class ManagementThread extends Thread
 		protected void handleMultilineResponse(ArrayList<String> multilineResponse)
 		{
 			trafficStats.setStats( multilineResponse );
-			Notifications.notifyBytes( mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mNotificationManager, mDaemonMonitor.mConfigFile, trafficStats.toSmallInOutPerSecString() );
-		}
+            mNotification2.notifyBytes( trafficStats.toSmallInOutPerSecString() );
+        }
 	}
-	
+
 	/*
 	 * Send commands to management interface, may be invoked by any thread.
 	 */
@@ -579,8 +570,8 @@ final class ManagementThread extends Thread
 	private void onFatal(String line) {
 		// There is nothing we can do. OpenVPN will exit anyway. 
 		Log.d(mTAG_MT, line );
-		mDaemonMonitor.mContext.mToastHandler.obtainMessage(0, line.substring(1)).sendToTarget();
-		//TODO: use handler to communicate back to context
+        mNotification2.toastMessage( line.substring( 1 ) );
+        //TODO: use handler to communicate back to context
 	}
 
 	private void onHold(String line) {
@@ -602,23 +593,23 @@ final class ManagementThread extends Thread
 		if ( line.equals( ">PASSWORD:Need 'Private Key' password" ) )
 		{
 			mWaitingForPassphrase = true;
-			Notifications.sendPassphraseRequired(mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mNotificationManager, mDaemonMonitor.mConfigFile);
-		}
+            mNotification2.sendPassphraseRequired();
+        }
 		else if ( line.equals( ">PASSWORD:Need 'Auth' username/password" ) )
 		{
 			mWaitingForUserPassword = true;
-			Notifications.sendUsernamePasswordRequired(mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile, mDaemonMonitor.mNotificationManager);
-		}
+            mNotification2.sendUsernamePasswordRequired();
+        }
 		else if ( line.equals( ">PASSWORD:Verification Failed: 'Private Key'" ) )
 		{
 			mWaitingForPassphrase = true;
-			Notifications.sendPassphraseRequired(mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mNotificationManager, mDaemonMonitor.mConfigFile);
-		}
+            mNotification2.sendPassphraseRequired();
+        }
 		else if ( line.equals( ">PASSWORD:Verification Failed: 'Auth'" ) )
 		{
 			mWaitingForUserPassword = true;
-			Notifications.sendUsernamePasswordRequired(mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile, mDaemonMonitor.mNotificationManager);
-		}
+            mNotification2.sendUsernamePasswordRequired();
+        }
 		else
 		{
 			Log.w(mTAG_MT, "unexpected 'PASSWORD:' notification" + line );
@@ -646,104 +637,83 @@ final class ManagementThread extends Thread
 	{
 		Log.v(mTAG_MT, String.format("onState(\"%s\")", line ) );
 		
-		String fieldString = line.startsWith(RTMSG_STATE) ? line.substring( RTMSG_STATE.length() ) : line;
-		String[] stateFields = fieldString.split( "," );
-		String state = stateFields[STATE_FIELD_STATE];
+		final String fieldString = line.startsWith(RTMSG_STATE) ? line.substring( RTMSG_STATE.length() ) : line;
+		final String[] stateFields = fieldString.split( "," );
+		final String state = stateFields[STATE_FIELD_STATE];
 
 		if (STATE_CONNECTED.equals(state)) {
 			onConnected();
 		} else {
 			onDisconnected();
 		}
-			
 
-		final int newState;
-		String info0Extra = null;
-		String info1Extra = null;
-		String info2Extra = null;
-		
-		if (STATE_CONNECTING.equals(state)) {
-			newState = Intents.NETWORK_STATE_CONNECTING;
-		} else if (STATE_RECONNECTING.equals(state)) {
-			newState = Intents.NETWORK_STATE_RECONNECTING;
-			info0Extra = Intents.EXTRA_NETWORK_CAUSE;
-		} else if (STATE_RESOLVE.equals(state)) {
-			newState = Intents.NETWORK_STATE_RESOLVE;
-		} else if (STATE_WAIT.equals(state)) {
-			newState = Intents.NETWORK_STATE_WAIT;
-		} else if (STATE_AUTH.equals(state)) {
-			newState = Intents.NETWORK_STATE_AUTH;
-		} else if (STATE_GET_CONFIG.equals(state)) {
-			newState = Intents.NETWORK_STATE_GET_CONFIG;
-		} else if (STATE_CONNECTED.equals(state)) {
-			newState = Intents.NETWORK_STATE_CONNECTED;
-			info1Extra = Intents.EXTRA_NETWORK_LOCALIP;
-			info2Extra = Intents.EXTRA_NETWORK_REMOTEIP;
-		} else if (STATE_ASSIGN_IP.equals(state)) {
-			newState = Intents.NETWORK_STATE_ASSIGN_IP;
-			info1Extra = Intents.EXTRA_NETWORK_LOCALIP;
-		} else if (STATE_ADD_ROUTES.equals(state)) {
-			newState = Intents.NETWORK_STATE_ADD_ROUTES;
-		} else if (STATE_EXITING.equals(state)) {
-			newState = Intents.NETWORK_STATE_EXITING;
-			info0Extra = Intents.EXTRA_NETWORK_CAUSE;
-		} else {
-			Log.d(mTAG_MT, "unknown state: " + state);
-			newState = Intents.NETWORK_STATE_UNKNOWN;
-		}
-		
-		Intent intent = Intents.networkStateChanged(
-				mDaemonMonitor.mConfigFile.getAbsolutePath(),
-				newState,
-				mCurrentState,
-				Long.parseLong( stateFields[STATE_FIELD_TIME] ) * 1000
-		);
-		if ( info0Extra != null )
-			intent.putExtra( info0Extra, stateFields[STATE_FIELD_INFO0] );
-		if ( info1Extra != null )
-			intent.putExtra( info1Extra, stateFields[STATE_FIELD_INFO1] );
-		if ( info2Extra != null )
-			intent.putExtra( info2Extra, stateFields[STATE_FIELD_INFO2] );
+        final int newState;
+        {
+            String info0ExtraName  = null;
+            String info0ExtraValue = null;
+            String info1ExtraName  = null;
+            String info1ExtraValue = null;
+            String info2ExtraName  = null;
+            String info2ExtraValue = null;
 
-		mDaemonMonitor.mContext.sendStickyBroadcast( intent );
-		
-		mCurrentState = newState;
+            //TODO: introduce STATE enum, then Replace Conditional with Polymorphism
+            if (STATE_CONNECTING.equals( state )) {
+                newState = Intents.NETWORK_STATE_CONNECTING;
+            } else if (STATE_RECONNECTING.equals( state )) {
+                newState = Intents.NETWORK_STATE_RECONNECTING;
+                info0ExtraName = Intents.EXTRA_NETWORK_CAUSE;
+                info0ExtraValue = stateFields[STATE_FIELD_INFO0];
+            } else if (STATE_RESOLVE.equals( state )) {
+                newState = Intents.NETWORK_STATE_RESOLVE;
+            } else if (STATE_WAIT.equals( state )) {
+                newState = Intents.NETWORK_STATE_WAIT;
+            } else if (STATE_AUTH.equals( state )) {
+                newState = Intents.NETWORK_STATE_AUTH;
+            } else if (STATE_GET_CONFIG.equals( state )) {
+                newState = Intents.NETWORK_STATE_GET_CONFIG;
+            } else if (STATE_CONNECTED.equals( state )) {
+                newState = Intents.NETWORK_STATE_CONNECTED;
+                info1ExtraName = Intents.EXTRA_NETWORK_LOCALIP;
+                info1ExtraValue = stateFields[STATE_FIELD_INFO1];
+                info2ExtraName = Intents.EXTRA_NETWORK_REMOTEIP;
+                info2ExtraValue = stateFields[STATE_FIELD_INFO2];
+            } else if (STATE_ASSIGN_IP.equals( state )) {
+                newState = Intents.NETWORK_STATE_ASSIGN_IP;
+                info1ExtraName = Intents.EXTRA_NETWORK_LOCALIP;
+                info1ExtraValue = stateFields[STATE_FIELD_INFO1];
+            } else if (STATE_ADD_ROUTES.equals( state )) {
+                newState = Intents.NETWORK_STATE_ADD_ROUTES;
+            } else if (STATE_EXITING.equals( state )) {
+                newState = Intents.NETWORK_STATE_EXITING;
+                info0ExtraName = Intents.EXTRA_NETWORK_CAUSE;
+                info0ExtraValue = stateFields[STATE_FIELD_INFO0];
+            } else {
+                Log.d( mTAG_MT, "unknown state: " + state );
+                newState = Intents.NETWORK_STATE_UNKNOWN;
+            }
+
+            final long time = Long.parseLong( stateFields[STATE_FIELD_TIME] ) * 1000;
+
+            mNotification2.networkStateChanged(
+                    mCurrentState, newState, time,
+                    info0ExtraName, info0ExtraValue,
+                    info1ExtraName, info1ExtraValue,
+                    info2ExtraName, info2ExtraValue
+            );
+        }
+
+        mCurrentState = newState;
 		
 		// notification
 		if ( mWaitingForPassphrase || mWaitingForUserPassword ) {
 			// noop,there is already a notification out there
 		} else if (STATE_CONNECTED.equals(state)) {
-			Notifications.notifyConnected( mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mNotificationManager, mDaemonMonitor.mConfigFile );
-		} else if (STATE_EXITING.equals(state)) {
-			Notifications.cancel( mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext );
-		} else {
-			Notifications.notifyDisconnected( mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mNotificationManager, mDaemonMonitor.mConfigFile, "Connecting");
-		}
-//		if ( mWaitingForPassphrase || mWaitingForUserPassword ) {
-//			// noop,there is already a notification out there
-//		} else if (STATE_CONNECTING.equals(state)) {
-//			Notifications.notifyDisconnected( mContext, mConfigFile, "Connecting");
-//		} else if (STATE_RECONNECTING.equals(state)) {
-//			Notifications.notifyDisconnected( mContext, mConfigFile, "Reconnecting");
-//		} else if (STATE_RESOLVE.equals(state)) {
-//			Notifications.notifyDisconnected( mContext, mConfigFile, "Resolve");
-//		} else if (STATE_WAIT.equals(state)) {
-//			Notifications.notifyDisconnected( mContext, mConfigFile, "Wait");
-//		} else if (STATE_AUTH.equals(state)) {
-//			Notifications.notifyDisconnected( mContext, mConfigFile, "Auth");
-//		} else if (STATE_GET_CONFIG.equals(state)) {
-//			Notifications.notifyDisconnected( mContext, mConfigFile, "Get Config");
-//		} else if (STATE_CONNECTED.equals(state)) {
-//			Notifications.notifyConnected( mContext, mConfigFile, "Connected");
-//		} else if (STATE_ASSIGN_IP.equals(state)) {
-//			Notifications.notifyDisconnected( mContext, mConfigFile, "Assign IP");
-//		} else if (STATE_ADD_ROUTES.equals(state)) {
-//			Notifications.notifyDisconnected( mContext, mConfigFile, "Add Routes");
-//		} else if (STATE_EXITING.equals(state)) {
-//			Notifications.notifyDisconnected( mContext, mConfigFile, "Exiting");
-//		} else {
-//			//..
-//		}
+            mNotification2.notifyConnected();
+        } else if (STATE_EXITING.equals(state)) {
+            mNotification2.cancel();
+        } else {
+            mNotification2.notifyDisconnected();
+        }
 	}
 
 	// invoked through onState
@@ -832,8 +802,8 @@ final class ManagementThread extends Thread
 		mTrafficStats.setStats(out, in);
 		String msg = mTrafficStats.toSmallInOutPerSecString();
 		Log.d(mTAG_MT, msg );
-		Notifications.notifyBytes( mDaemonMonitor.mNotificationId, mDaemonMonitor.mContext, mDaemonMonitor.mNotificationManager, mDaemonMonitor.mConfigFile, msg );
-	}
+        mNotification2.notifyBytes( msg );
+    }
 
 	/*
 	 * broadcasting intents 
@@ -841,17 +811,12 @@ final class ManagementThread extends Thread
 	
 	private void networkStateChanged(int newState)
 	{
-		int oldState = mCurrentState;
-		mCurrentState = newState;
-		mDaemonMonitor.mContext.sendStickyBroadcast( Intents.networkStateChanged(
-				mDaemonMonitor.mConfigFile.getAbsolutePath(),
-				newState,
-				oldState,
-				System.currentTimeMillis()
-		) );
-	}
-	
-	// see issue #35: http://code.google.com/p/android-openvpn-settings/issues/detail?id=35
+        int oldState = mCurrentState;
+        mCurrentState = newState;
+        mNotification2.networkStateChanged( oldState, newState );
+    }
+
+    // see issue #35: http://code.google.com/p/android-openvpn-settings/issues/detail?id=35
 	protected void updateHTCRoutes()
 	{
 		new Shell( 
