@@ -33,7 +33,6 @@ import java.util.concurrent.CountDownLatch;
 import android.text.TextUtils;
 import android.util.Log;
 import de.schaeuffelhut.android.openvpn.Intents;
-import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.util.DnsUtil;
 import de.schaeuffelhut.android.openvpn.util.Shell;
 import de.schaeuffelhut.android.openvpn.util.SystemPropertyUtil;
@@ -44,6 +43,7 @@ import de.schaeuffelhut.android.openvpn.util.Util;
 final class ManagementThread extends Thread
 {
     private final Notification2 mNotification2;
+    private final Preferences2  mPreferences2;
     @Deprecated
 	private final DaemonMonitor mDaemonMonitor;
 	private final String mTAG_MT;
@@ -52,6 +52,7 @@ final class ManagementThread extends Thread
 	ManagementThread(DaemonMonitor daemonMonitor, Notification2 notification2)
 	{
         mNotification2 = notification2;
+        mPreferences2 = new Preferences2( daemonMonitor );
 		mDaemonMonitor = daemonMonitor;
 		mTAG_MT = daemonMonitor.mTagDaemonMonitor + "-mgmt";
 	}
@@ -113,7 +114,7 @@ final class ManagementThread extends Thread
 
     boolean attach()
 	{
-		int mgmtPort = Preferences.getMgmtPort(mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile);
+        int mgmtPort = mPreferences2.getMgmtPort();
 		Log.d( mTAG_MT, "attach(): using management port at " + mgmtPort );
 		
 		if ( mgmtPort == -1 )
@@ -140,7 +141,7 @@ final class ManagementThread extends Thread
 		return mSocket != null && mSocket.isConnected();
 	}
 
-	private void monitor()
+    private void monitor()
 	{
 		LineNumberReader lnr = null;
 		try {
@@ -718,8 +719,8 @@ final class ManagementThread extends Thread
 		sendCommandImmediately( new SimpleCommand( String.format("bytecount %d", TrafficStats.mPollInterval )) );
 		
 		// change the DNS server if necessary
-		String vpnDns = Preferences.getVpnDns(mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile);
-		boolean enabled = Preferences.getVpnDnsEnabled(mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile);
+        String vpnDns = mPreferences2.getVpnDns();
+        boolean enabled = mPreferences2.getVpnDnsEnabled();
 
 		if ( enabled && TextUtils.isEmpty( vpnDns ) )
 		{
@@ -730,7 +731,7 @@ final class ManagementThread extends Thread
 			HashMap<String, String> properties = SystemPropertyUtil.getProperties();
 
 			Integer systemDnsChange = SystemPropertyUtil.getIntProperty( SystemPropertyUtil.NET_DNSCHANGE );
-			int myDnsChange = Preferences.getDnsChange(mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile);
+            int myDnsChange = mPreferences2.getDnsChange();
 			Log.d(mTAG_MT, "=============> " + myDnsChange  + " == " + systemDnsChange );
 			if ( systemDnsChange == null )
 			{
@@ -747,28 +748,23 @@ final class ManagementThread extends Thread
 				// Apply our DNS settings
 				Log.d(mTAG_MT, "=============> applying new dns server" );
 				Integer newDnsChange = DnsUtil.setDns1( vpnDns );
-				Preferences.setDns1(
-						mDaemonMonitor.mContext,
-						mDaemonMonitor.mConfigFile,
-						newDnsChange,
-						properties.get( SystemPropertyUtil.NET_DNS1 )
-				);
-			}
+                mPreferences2.setDns1( newDnsChange, properties.get( SystemPropertyUtil.NET_DNS1 ) );
+            }
 		}
 		//Fix HTC routes if needed
-		if(Preferences.getFixHtcRoutes(mDaemonMonitor.mContext))
+        if( mPreferences2.getFixHtcRoutes() )
 			updateHTCRoutes();
 		
 	}
 
-	// invoked through onState
+    // invoked through onState
 	private void onDisconnected()
 	{
 		// stop traffic statistics  TODO chri - option in settings to activate/deactivate traffic stats 
 		sendCommandImmediately( new SimpleCommand( "bytecount 0") );
 		
 		Integer systemDnsChange = SystemPropertyUtil.getIntProperty( SystemPropertyUtil.NET_DNSCHANGE );
-		int myDnsChange = Preferences.getDnsChange(mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile);
+        int myDnsChange = mPreferences2.getDnsChange();
 		if ( systemDnsChange == null )
 		{
 			// DNS is not yet setup, leave it alone
@@ -778,7 +774,7 @@ final class ManagementThread extends Thread
 		{
 			// This is our change, revert it.
 			Log.d(mTAG_MT, "=============> " + myDnsChange  + " == " + systemDnsChange + " resetting dns" );
-			DnsUtil.setDns1(Preferences.getDns1(mDaemonMonitor.mContext, mDaemonMonitor.mConfigFile));
+            DnsUtil.setDns1( mPreferences2.getDns1() );
 		}
 		else
 		{
@@ -787,7 +783,7 @@ final class ManagementThread extends Thread
 		}
 	}
 
-	TrafficStats mTrafficStats; 
+    TrafficStats mTrafficStats;
 	private void onByteCount(String line) {
 		int startOfOut = line.indexOf(',');
 		int startOfIn = RTMSG_BYTECOUNT.length();
