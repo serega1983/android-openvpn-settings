@@ -47,7 +47,7 @@ final class ManagementThread extends Thread
     private final Preferences2  mPreferences2;
 	private final String mTAG_MT;
 
-	ManagementThread(DaemonMonitor daemonMonitor, Notification2 notification2, Preferences2 preferences2)
+	ManagementThread(DaemonMonitorImpl daemonMonitor, Notification2 notification2, Preferences2 preferences2)
 	{
 		mDaemonMonitor = daemonMonitor;
         mNotification2 = notification2;
