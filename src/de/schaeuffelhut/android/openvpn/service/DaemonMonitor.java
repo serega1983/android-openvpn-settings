@@ -60,14 +60,16 @@ public final class DaemonMonitor
 
 
 
-	public DaemonMonitor(OpenVpnService context, File configFile, File comDir )
+	public DaemonMonitor(OpenVpnService context, File configFile)
 	{
 		mContext = context;
 		mConfigFile = configFile;
         mLog = new LogFile( Preferences.logFileFor( configFile ) );
 		 
 		//TODO: need a unique config identifie, or remove pid writing fetaure
-		mPidFile = new File( comDir, configFile.getAbsolutePath().replace( "_", "__").replace( '/', '_') + "-pid" );
+
+        mPidFile = new File( comDir(), configFile.getAbsolutePath().replace( "_", "__").replace( '/', '_') + "-pid" );
+
 		mTagDaemonMonitor = String.format("OpenVPN-DaemonMonitor[%s]", mConfigFile);
 
         notification2 = new Notification2(
@@ -78,8 +80,16 @@ public final class DaemonMonitor
 
 		reattach();
     }
-	
-	private boolean reattach()
+
+    private File comDir()
+    {
+        File comDir = new File( mContext.getFilesDir(), "com.d" );
+        if ( !comDir.exists() )
+            comDir.mkdirs();
+        return comDir;
+    }
+
+    private boolean reattach()
 	{
 		mDaemonProcess = null;
 

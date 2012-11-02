@@ -179,10 +179,9 @@ public final class OpenVpnService extends Service
 	private NetworkConnectivityListener mConnectivity;
 	
 	private File mConfigDir;
-	private File mComDir;	
 
 	private final HashMap<File, DaemonMonitor> mRegistry = new HashMap<File, DaemonMonitor>(4);
-	
+
 	private synchronized void startup()
 	{
 		Log.i(TAG, "starting");
@@ -198,11 +197,6 @@ public final class OpenVpnService extends Service
 				Log.w( TAG, "configuration directory not found: " + mConfigDir );
 		}
 
-		mComDir = new File( getFilesDir(), "com.d" );
-		if ( !mComDir.exists() )
-			mComDir.mkdirs();
-		Log.d( TAG, "mComDir=" + mComDir );
-		
 		daemonAttach();
 		
 		mConnectivity = new NetworkConnectivityListener();
@@ -272,9 +266,8 @@ public final class OpenVpnService extends Service
 
 			DaemonMonitor daemonMonitor = new DaemonMonitor(
 					this,
-					config,
-					mComDir
-			);
+					config
+            );
 			
 			if ( daemonMonitor.isAlive() ) // daemon was already running
 			{
@@ -340,9 +333,8 @@ public final class OpenVpnService extends Service
 		{
 			DaemonMonitor daemonMonitor = new DaemonMonitor(
 					this,
-					config,
-					mComDir
-			);
+					config
+            );
 			daemonMonitor.start();
 			mRegistry.put( config, daemonMonitor );
 		}
