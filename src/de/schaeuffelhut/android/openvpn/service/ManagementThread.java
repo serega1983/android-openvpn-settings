@@ -49,14 +49,9 @@ final class ManagementThread extends Thread
 	private final String mTAG_MT;
 //	private final String mTAG_MT = mDaemonMonitor.mTagDaemonMonitor + "-mgmt";
 
-	ManagementThread(DaemonMonitor daemonMonitor)
+	ManagementThread(DaemonMonitor daemonMonitor, Notification2 notification2)
 	{
-        mNotification2 = new Notification2(
-                daemonMonitor.mContext,
-                daemonMonitor.mNotificationId,
-                daemonMonitor.mConfigFile,
-                daemonMonitor.mNotificationManager
-        );
+        mNotification2 = notification2;
 		mDaemonMonitor = daemonMonitor;
 		mTAG_MT = daemonMonitor.mTagDaemonMonitor + "-mgmt";
 	}

@@ -48,6 +48,17 @@ public class Notification2
         this.mNotificationManager = mNotificationManager;
     }
 
+
+    public void daemonStateChangedToStartUp()
+    {
+        mContext.sendStickyBroadcast(
+                Intents.daemonStateChanged(
+                        mConfigFile.getAbsolutePath(),
+                        Intents.DAEMON_STATE_STARTUP
+                )
+        );
+    }
+
     void daemonStateChangedToEnabled()
     {
         mContext.sendStickyBroadcast(
