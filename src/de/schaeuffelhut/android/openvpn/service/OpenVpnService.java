@@ -85,9 +85,6 @@ public final class OpenVpnService extends Service
 	 * Service API
 	 */
 
-	public OpenVpnService() {
-	}
-	
 	private final OnSharedPreferenceChangeListenerImplementation onSharedPreferenceChangeListener = new OnSharedPreferenceChangeListenerImplementation();
 	private final class OnSharedPreferenceChangeListenerImplementation implements SharedPreferences.OnSharedPreferenceChangeListener {
 		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
@@ -304,6 +301,45 @@ public final class OpenVpnService extends Service
 			);
 	}
 
+    private Notification2 newNotification2(File config)
+    {
+        return new Notification2( this, config, Preferences.getNotificationId( this, config ) );
+    }
+
+    private final synchronized void daemonRestart()
+    {
+        for ( File config : Preferences.configs(this) )
+            if ( isDaemonStarted( config ) )
+                daemonRestart( config );
+    }
+
+    private final synchronized void daemonRestart(File config)
+    {
+        if ( !isDaemonStarted(config) )
+        {
+            Log.i( TAG, config + " is not running" );
+        }
+        else
+        {
+            Log.i( TAG, config + " restarting" );
+            DaemonMonitor monitor = mRegistry.get( config );
+            monitor.restart();
+        }
+    }
+
+    private final synchronized boolean isVpnDnsActive()
+    {
+        for( DaemonMonitor monitor : mRegistry.values() )
+            if ( monitor.isAlive() && monitor.getVpnDnsEnabled() )
+                return true;
+        return false;
+    }
+
+    /* ========================================
+     *          public API starts here
+     * ========================================
+     */
+
 	public final synchronized void daemonStart(File config)
 	{
 		if ( isDaemonStarted(config) )
@@ -328,32 +364,6 @@ public final class OpenVpnService extends Service
 		}
 	}
 
-    private Notification2 newNotification2(File config)
-    {
-        return new Notification2( this, config, Preferences.getNotificationId( this, config ) );
-    }
-
-    public final synchronized void daemonRestart(File config)
-	{
-		if ( !isDaemonStarted(config) )
-		{
-			Log.i( TAG, config + " is not running" );
-		}
-		else 
-		{
-			Log.i( TAG, config + " restarting" );
-			DaemonMonitor monitor = mRegistry.get( config );
-			monitor.restart();
-		}
-	}
-
-	private final synchronized void daemonRestart()
-	{
-		for ( File config : Preferences.configs(this) )
-			if ( isDaemonStarted( config ) )
-				daemonRestart( config );
-	}
-	
 	public final synchronized void daemonStop(File config)
 	{
 		if ( !isDaemonStarted(config) )
@@ -415,14 +425,6 @@ public final class OpenVpnService extends Service
 	{
 		for( DaemonMonitor monitor : mRegistry.values() )
 			if ( monitor.isAlive() )
-				return true;
-		return false;
-	}
-
-	private final synchronized boolean isVpnDnsActive()
-	{
-		for( DaemonMonitor monitor : mRegistry.values() )
-			if ( monitor.isAlive() && monitor.getVpnDnsEnabled() )
 				return true;
 		return false;
 	}
