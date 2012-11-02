@@ -47,7 +47,7 @@ import de.schaeuffelhut.android.openvpn.util.NetworkConnectivityListener;
 //TODO: expose interface through aidl
 public final class OpenVpnService extends Service
 {
-	final static String TAG = "OpenVPN-ControlShell";
+	private final static String TAG = "OpenVPN-ControlShell";
 	
 	/* This is a hack
 	 * see http://www.mail-archive.com/android-developers@googlegroups.com/msg18298.html
@@ -136,7 +136,7 @@ public final class OpenVpnService extends Service
         }
 	}
 
-	final IBinder mBinder = new ServiceBinder();
+	private final IBinder mBinder = new ServiceBinder();
 	
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -250,7 +250,7 @@ public final class OpenVpnService extends Service
 		mConnectivity = null;
 	}
 
-	synchronized void daemonAttach(File config, boolean start)
+	private synchronized void daemonAttach(File config, boolean start)
 	{
 		if ( isDaemonStarted(config) )
 		{
@@ -356,7 +356,7 @@ public final class OpenVpnService extends Service
 		}
 	}
 
-	public final synchronized void daemonRestart()
+	private final synchronized void daemonRestart()
 	{
 		for ( File config : Preferences.configs(this) )
 			if ( isDaemonStarted( config ) )
@@ -428,7 +428,7 @@ public final class OpenVpnService extends Service
 		return false;
 	}
 
-	public final synchronized boolean isVpnDnsActive()
+	private final synchronized boolean isVpnDnsActive()
 	{
 		for( DaemonMonitor monitor : mRegistry.values() )
 			if ( monitor.isAlive() && monitor.getVpnDnsEnabled() )
