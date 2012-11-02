@@ -26,7 +26,6 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import de.schaeuffelhut.android.openvpn.Intents;
-import de.schaeuffelhut.android.openvpn.Notifications;
 
 import java.io.File;
 
