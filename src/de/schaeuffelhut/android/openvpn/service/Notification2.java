@@ -139,4 +139,14 @@ public class Notification2
     {
         mContext.mToastHandler.obtainMessage(0, message ).sendToTarget();
     }
+
+    void sendShareTunModule()
+    {
+        Notifications.sendShareTunModule( mContext, mNotificationManager );
+    }
+
+    public static void cancelShareTunModule(Context context)
+    {
+        Notifications.cancelShareTunModule( context );
+    }
 }
