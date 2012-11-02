@@ -431,7 +431,7 @@ public final class OpenVpnService extends Service
 	public final synchronized boolean isVpnDnsActive()
 	{
 		for( DaemonMonitor monitor : mRegistry.values() )
-			if ( monitor.isAlive() && Preferences.getVpnDnsEnabled(this, monitor.mConfigFile) )
+			if ( monitor.isAlive() && monitor.getVpnDnsEnabled() )
 				return true;
 		return false;
 	}

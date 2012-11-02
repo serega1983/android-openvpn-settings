@@ -44,8 +44,8 @@ import de.schaeuffelhut.android.openvpn.util.tun.TunInfo;
  */
 public final class DaemonMonitor
 {
-	final OpenVpnService mContext;
-	final File mConfigFile;
+	private final OpenVpnService mContext;
+	private final File mConfigFile;
     private final Notification2 mNotification2;
     private final Preferences2 mPreferences2;
 
@@ -61,7 +61,7 @@ public final class DaemonMonitor
 		mContext = context;
 		mConfigFile = configFile;
         mNotification2 = notification2;
-        mPreferences2 = new Preferences2( this );
+        mPreferences2 = new Preferences2( this.mContext, this.mConfigFile );
 
         mLog = new LogFile( mPreferences2.logFileFor() );
 		mTagDaemonMonitor = String.format("OpenVPN-DaemonMonitor[%s]", mConfigFile);
@@ -340,5 +340,10 @@ public final class DaemonMonitor
     boolean isDaemonProcessAlive()
     {
         return mDaemonProcess != null && mDaemonProcess.isAlive();
+    }
+
+    public boolean getVpnDnsEnabled()
+    {
+        return mPreferences2.getVpnDnsEnabled();
     }
 }
