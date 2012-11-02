@@ -255,11 +255,7 @@ public final class OpenVpnService extends Service
 		{
 			Log.v(TAG, config +": trying to attach");
 
-            DaemonMonitor daemonMonitor = new DaemonMonitorImpl(
-					this,
-					config,
-                    newNotification2( config )
-            );
+            DaemonMonitor daemonMonitor = newDaemonMonitor( config );
 
             if ( daemonMonitor.isAlive() ) // daemon was already running
 			{
@@ -288,7 +284,7 @@ public final class OpenVpnService extends Service
 		}
 	}
 
-	/**
+    /**
 	 * Try to attach to already running OpenVPN daemons, starting them if they
 	 * are enabled.
 	 */
@@ -307,6 +303,13 @@ public final class OpenVpnService extends Service
     private Notification2 newNotification2(File config)
     {
         return new Notification2( this, config, Preferences.getNotificationId( this, config ) );
+    }
+
+
+    // hook to be overwritten in unit test
+    DaemonMonitorImpl newDaemonMonitor(File config)
+    {
+        return new DaemonMonitorImpl( this, config, newNotification2( config ) );
     }
 
     private final synchronized void daemonRestart()
@@ -357,11 +360,7 @@ public final class OpenVpnService extends Service
 		}
 		else
 		{
-			DaemonMonitor daemonMonitor = new DaemonMonitorImpl(
-					this,
-					config,
-                    newNotification2( config )
-            );
+			DaemonMonitor daemonMonitor = newDaemonMonitor( config );
             daemonMonitor.start();
 			mRegistry.put( config, daemonMonitor );
 		}
