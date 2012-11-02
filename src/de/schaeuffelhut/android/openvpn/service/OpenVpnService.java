@@ -85,15 +85,6 @@ public final class OpenVpnService extends Service
 	 * Service API
 	 */
 
-	final Handler mToastHandler = new Handler(){
-		@Override
-		public void handleMessage(Message msg) {
-			Toast.makeText(OpenVpnService.this, (String)msg.obj, Toast.LENGTH_LONG).show();
-		}
-	};
-
-	
-
 	public OpenVpnService() {
 	}
 	
