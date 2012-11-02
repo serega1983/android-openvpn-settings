@@ -51,8 +51,6 @@ public final class DaemonMonitor
 	final OpenVpnService mContext;
 	final File mConfigFile;
     private final Notification2 notification2;
-
-    final File mPidFile;
 	final LogFile mLog;
 
 	Shell mDaemonProcess;
@@ -65,9 +63,6 @@ public final class DaemonMonitor
 		mContext = context;
 		mConfigFile = configFile;
         mLog = new LogFile( Preferences.logFileFor( configFile ) );
-		 
-		//TODO: need a unique config identifie, or remove pid writing fetaure
-        mPidFile = new File( comDir(), configFile.getAbsolutePath().replace( "_", "__").replace( '/', '_') + "-pid" );
 
 		mTagDaemonMonitor = String.format("OpenVPN-DaemonMonitor[%s]", mConfigFile);
 
@@ -78,14 +73,6 @@ public final class DaemonMonitor
         );
 
 		reattach();
-    }
-
-    private File comDir()
-    {
-        File comDir = new File( mContext.getFilesDir(), "com.d" );
-        if ( !comDir.exists() )
-            comDir.mkdirs();
-        return comDir;
     }
 
     private boolean reattach()
@@ -135,8 +122,6 @@ public final class DaemonMonitor
 		Log.w( mTagDaemonMonitor, "start(): choosing random port for management interface: " + mgmtPort );
 		Preferences.setMgmtPort( mContext, mConfigFile, mgmtPort );
 		
-		if ( mPidFile.exists() )      mPidFile.delete();
-
         notification2.daemonStateChangedToStartUp();
 
         TunInfo tunInfo = IocContext.get().getTunInfo( mContext );
@@ -166,11 +151,10 @@ public final class DaemonMonitor
         mDaemonProcess = new Shell(
 				mTagDaemonMonitor + "-daemon",
 				String.format( 
-						"%s --cd %s --config %s --writepid %s --script-security %d --management 127.0.0.1 %d --management-query-passwords --verb 3",
+						"%s --cd %s --config %s --script-security %d --management 127.0.0.1 %d --management-query-passwords --verb 3",
 						openvpnBinary.getAbsolutePath(),				
 						Util.shellEscape(mConfigFile.getParentFile().getAbsolutePath()),
 						Util.shellEscape(mConfigFile.getName()),
-						Util.shellEscape(mPidFile.getAbsolutePath()),
 						Preferences.getScriptSecurityLevel( mContext, mConfigFile ),
 						mgmtPort
 				),
