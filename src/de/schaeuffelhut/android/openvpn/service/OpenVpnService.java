@@ -135,8 +135,9 @@ public final class OpenVpnService extends Service
 	public void onCreate()
 	{
 		super.onCreate();
+
 		startup();
-		sendBroadcast( new Intent( Intents.OPEN_VPN_SERVICE_STARTED ) );
+
 		PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(
 				Preferences.KEY_OPENVPN_ENABLED, true
 		).commit();
@@ -147,16 +148,19 @@ public final class OpenVpnService extends Service
 	}
 	
 	@Override
-	public void onDestroy() {
+	public void onDestroy()
+    {
 		super.onDestroy();
 		
 		PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener( onSharedPreferenceChangeListener );
 
 		markServiceStopped();
+
 		PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(
 				Preferences.KEY_OPENVPN_ENABLED, false
 		).commit();
-		shutdown();
+
+        shutdown();
 	}
 
 	
