@@ -29,7 +29,6 @@ import android.content.Context;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
-import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.IocContext;
 import de.schaeuffelhut.android.openvpn.Notifications;
 import de.schaeuffelhut.android.openvpn.Preferences;
@@ -53,9 +52,6 @@ public final class DaemonMonitor
 	final File mConfigFile;
     private final Notification2 notification2;
 
-    @Deprecated
-	private final NotificationManager mNotificationManager;
-
     final File mPidFile;
 	final LogFile mLog;
 
@@ -68,8 +64,7 @@ public final class DaemonMonitor
 	{
 		mContext = context;
 		mConfigFile = configFile;
-		mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-		mLog = new LogFile( Preferences.logFileFor( configFile ) );
+        mLog = new LogFile( Preferences.logFileFor( configFile ) );
 		 
 		//TODO: need a unique config identifie, or remove pid writing fetaure
 		mPidFile = new File( comDir, configFile.getAbsolutePath().replace( "_", "__").replace( '/', '_') + "-pid" );
@@ -77,9 +72,8 @@ public final class DaemonMonitor
 
         notification2 = new Notification2(
                 this.mContext,
-                Preferences.getNotificationId( mContext, mConfigFile ),
                 this.mConfigFile,
-                this.mNotificationManager
+                Preferences.getNotificationId( mContext, mConfigFile )
         );
 
 		reattach();
@@ -246,8 +240,10 @@ public final class DaemonMonitor
 		
 		if ( Preferences.getSendDeviceDetailWasSuccessfull( mContext ) )
 			return;
-		
-		Notifications.sendShareTunModule(mContext, mNotificationManager);
+
+        // shareTunModule is rarely called, so looking up NotificationManager on demand is ok.
+        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService( Context.NOTIFICATION_SERVICE );
+        Notifications.sendShareTunModule(mContext, notificationManager );
 	}
 	
 	void restart()

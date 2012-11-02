@@ -23,6 +23,7 @@
 package de.schaeuffelhut.android.openvpn.service;
 
 import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.Notifications;
@@ -40,12 +41,12 @@ public class Notification2
     private final int mNotificationId;
     private final NotificationManager mNotificationManager;
 
-    public Notification2(OpenVpnService mContext, int mNotificationId, File mConfigFile, NotificationManager mNotificationManager)
+    public Notification2(OpenVpnService mContext, File mConfigFile, int mNotificationId)
     {
-        this.mNotificationId = mNotificationId;
         this.mContext = mContext;
         this.mConfigFile = mConfigFile;
-        this.mNotificationManager = mNotificationManager;
+        this.mNotificationId = mNotificationId;
+        this.mNotificationManager = (NotificationManager) mContext.getSystemService( Context.NOTIFICATION_SERVICE);
     }
 
 
