@@ -55,10 +55,8 @@ public final class DaemonMonitor
 
     @Deprecated
 	private final NotificationManager mNotificationManager;
-    @Deprecated
-	final int mNotificationId;
 
-	final File mPidFile;
+    final File mPidFile;
 	final LogFile mLog;
 
 	Shell mDaemonProcess;
@@ -76,12 +74,10 @@ public final class DaemonMonitor
 		//TODO: need a unique config identifie, or remove pid writing fetaure
 		mPidFile = new File( comDir, configFile.getAbsolutePath().replace( "_", "__").replace( '/', '_') + "-pid" );
 		mTagDaemonMonitor = String.format("OpenVPN-DaemonMonitor[%s]", mConfigFile);
-			
-		mNotificationId = Preferences.getNotificationId( mContext, mConfigFile );
-		
+
         notification2 = new Notification2(
                 this.mContext,
-                this.mNotificationId,
+                Preferences.getNotificationId( mContext, mConfigFile ),
                 this.mConfigFile,
                 this.mNotificationManager
         );
