@@ -33,50 +33,40 @@ import java.io.File;
  */
 public class Preferences2
 {
-    private final DaemonMonitor mDaemonMonitor;
+    private final OpenVpnService mContext;
+    private final File mConfigFile;
 
-    public Preferences2(DaemonMonitor daemonMonitor)
+    public Preferences2(OpenVpnService context, File configFile)
     {
-        this.mDaemonMonitor = daemonMonitor;
-    }
-
-    @Deprecated
-    OpenVpnService x_getContext()
-    {
-        return mDaemonMonitor.mContext;
-    }
-
-    @Deprecated
-    File x_getConfigFile()
-    {
-        return mDaemonMonitor.mConfigFile;
+        this.mContext = context;
+        this.mConfigFile = configFile;
     }
 
     int getMgmtPort()
     {
-        return Preferences.getMgmtPort( x_getContext(), x_getConfigFile() );
+        return Preferences.getMgmtPort( mContext, mConfigFile );
     }
 
     String getVpnDns()
     {
-        return Preferences.getVpnDns( x_getContext(), x_getConfigFile() );
+        return Preferences.getVpnDns( mContext, mConfigFile );
     }
 
     boolean getVpnDnsEnabled()
     {
-        return Preferences.getVpnDnsEnabled( x_getContext(), x_getConfigFile() );
+        return Preferences.getVpnDnsEnabled( mContext, mConfigFile );
     }
 
     int getDnsChange()
     {
-        return Preferences.getDnsChange( x_getContext(), x_getConfigFile() );
+        return Preferences.getDnsChange( mContext, mConfigFile );
     }
 
     void setDns1(Integer newDnsChange, String dns1)
     {
         Preferences.setDns1(
-                x_getContext(),
-                x_getConfigFile(),
+                mContext,
+                mConfigFile,
                 newDnsChange,
                 dns1
         );
@@ -84,27 +74,27 @@ public class Preferences2
 
     String getDns1()
     {
-        return Preferences.getDns1( x_getContext(), x_getConfigFile() );
+        return Preferences.getDns1( mContext, mConfigFile );
     }
 
     void setMgmtPort(int mgmtPort)
     {
-        Preferences.setMgmtPort( x_getContext(), x_getConfigFile(), mgmtPort );
+        Preferences.setMgmtPort( mContext, mConfigFile, mgmtPort );
     }
 
     int getScriptSecurityLevel()
     {
-        return Preferences.getScriptSecurityLevel( x_getContext(), x_getConfigFile() );
+        return Preferences.getScriptSecurityLevel( mContext, mConfigFile );
     }
 
     boolean getLogStdoutEnable()
     {
-        return Preferences.getLogStdoutEnable( x_getContext(), x_getConfigFile() );
+        return Preferences.getLogStdoutEnable( mContext, mConfigFile );
     }
 
     File logFileFor()
     {
-        return Preferences.logFileFor( x_getConfigFile() );
+        return Preferences.logFileFor( mConfigFile );
     }
 
 
@@ -112,16 +102,16 @@ public class Preferences2
 
     boolean getFixHtcRoutes()
     {
-        return Preferences.getFixHtcRoutes( x_getContext() );
+        return Preferences.getFixHtcRoutes( mContext );
     }
 
     boolean getSendDeviceDetailWasSuccessfull()
     {
-        return Preferences.getSendDeviceDetailWasSuccessfull( x_getContext() );
+        return Preferences.getSendDeviceDetailWasSuccessfull( mContext );
     }
 
     File getPathToBinaryAsFile()
     {
-        return Preferences.getPathToBinaryAsFile( PreferenceManager.getDefaultSharedPreferences( x_getContext() ) );
+        return Preferences.getPathToBinaryAsFile( PreferenceManager.getDefaultSharedPreferences( mContext ) );
     }
 }
