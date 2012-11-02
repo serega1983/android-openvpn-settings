@@ -22,6 +22,7 @@
 
 package de.schaeuffelhut.android.openvpn.service;
 
+import android.preference.PreferenceManager;
 import de.schaeuffelhut.android.openvpn.Preferences;
 
 import java.io.File;
@@ -81,13 +82,46 @@ public class Preferences2
         );
     }
 
+    String getDns1()
+    {
+        return Preferences.getDns1( x_getContext(), x_getConfigFile() );
+    }
+
+    void setMgmtPort(int mgmtPort)
+    {
+        Preferences.setMgmtPort( x_getContext(), x_getConfigFile(), mgmtPort );
+    }
+
+    int getScriptSecurityLevel()
+    {
+        return Preferences.getScriptSecurityLevel( x_getContext(), x_getConfigFile() );
+    }
+
+    boolean getLogStdoutEnable()
+    {
+        return Preferences.getLogStdoutEnable( x_getContext(), x_getConfigFile() );
+    }
+
+    File logFileFor()
+    {
+        return Preferences.logFileFor( x_getConfigFile() );
+    }
+
+
+
+
     boolean getFixHtcRoutes()
     {
         return Preferences.getFixHtcRoutes( x_getContext() );
     }
 
-    String getDns1()
+    boolean getSendDeviceDetailWasSuccessfull()
     {
-        return Preferences.getDns1( x_getContext(), x_getConfigFile() );
+        return Preferences.getSendDeviceDetailWasSuccessfull( x_getContext() );
+    }
+
+    File getPathToBinaryAsFile()
+    {
+        return Preferences.getPathToBinaryAsFile( PreferenceManager.getDefaultSharedPreferences( x_getContext() ) );
     }
 }
