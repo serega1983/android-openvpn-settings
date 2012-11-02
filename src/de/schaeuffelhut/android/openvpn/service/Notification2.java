@@ -25,6 +25,8 @@ package de.schaeuffelhut.android.openvpn.service;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.widget.Toast;
 import de.schaeuffelhut.android.openvpn.Intents;
 
 import java.io.File;
@@ -39,6 +41,7 @@ public class Notification2
     private final File mConfigFile;
     private final int mNotificationId;
     private final NotificationManager mNotificationManager;
+    private final Handler mUiThreadHandler;
 
     public Notification2(OpenVpnService mContext, File mConfigFile, int mNotificationId)
     {
@@ -46,6 +49,7 @@ public class Notification2
         this.mConfigFile = mConfigFile;
         this.mNotificationId = mNotificationId;
         this.mNotificationManager = (NotificationManager) mContext.getSystemService( Context.NOTIFICATION_SERVICE);
+        this.mUiThreadHandler = new Handler();
     }
 
 
@@ -134,9 +138,15 @@ public class Notification2
         mContext.sendStickyBroadcast( intent );
     }
 
-    void toastMessage(String message)
+    void toastMessage(final String message)
     {
-        mContext.mToastHandler.obtainMessage(0, message ).sendToTarget();
+        mUiThreadHandler.post( new Runnable()
+        {
+            public void run()
+            {
+                Toast.makeText( mContext, message, Toast.LENGTH_LONG ).show();
+            }
+        } );
     }
 
     void sendShareTunModule()
