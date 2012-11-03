@@ -13,7 +13,7 @@ ant debug || exit 1
 export ANDROID_SERIAL=emulator-5582
 
 echo Starting emulator
-$ANDROID_SDK_HOME/tools/emulator-arm -avd android-1.6-normal -netspeed full -netdelay none -no-window -port 5582 &
+$ANDROID_SDK_HOME/tools/emulator-arm -avd android-2.2 -netspeed full -netdelay none -no-window -port 5582 &
 echo Waiting for emulator
 $ANDROID_SDK_HOME/platform-tools/adb wait-for-device
 
