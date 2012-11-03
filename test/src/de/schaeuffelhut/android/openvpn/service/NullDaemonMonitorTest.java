@@ -22,37 +22,16 @@
 
 package de.schaeuffelhut.android.openvpn.service;
 
-import java.io.File;
+import junit.framework.TestCase;
 
 /**
  * @author Friedrich Schäuffelhut
- * @since 2012-11-02
+ * @since 2012-11-03
  */
-interface DaemonMonitor
+public class NullDaemonMonitorTest extends TestCase
 {
-    void start();
-
-    void restart();
-
-    void stop();
-
-    void waitForTermination() throws InterruptedException;
-
-    void queryState();
-
-    void supplyPassphrase(String passphrase);
-
-    void supplyUsernamePassword(String username, String password);
-
-    boolean isAlive();
-
-    void startLogging();
-
-    void stopLogging();
-
-    boolean isDaemonProcessAlive();
-
-    boolean isVpnDnsActive();
-
-    File getConfigFile();
+    public void testIsAlive() throws Exception
+    {
+        assertFalse( NullDaemonMonitor.getInstance().isAlive() );
+    }
 }

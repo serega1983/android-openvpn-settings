@@ -343,4 +343,9 @@ final class DaemonMonitorImpl implements DaemonMonitor
     {
         return isAlive() && mPreferences2.getVpnDnsEnabled();
     }
+
+    public File getConfigFile()
+    {
+        return mConfigFile;
+    }
 }
