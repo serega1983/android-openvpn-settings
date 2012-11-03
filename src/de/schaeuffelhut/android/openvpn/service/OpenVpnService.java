@@ -175,17 +175,6 @@ public class OpenVpnService extends Service
 	{
 		Log.i(TAG, "starting");
 
-		{
-			SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-			mConfigDir = Preferences.getConfigDir(this, sharedPreferences);
-			Log.d( TAG, "mConfigDir=" + mConfigDir );
-			if ( mConfigDir == null )
-				Log.w( TAG, "Missing path to configuration directory!" );
-			if ( !mConfigDir.exists() )
-				Log.w( TAG, "configuration directory not found: " + mConfigDir );
-		}
-
 		daemonAttach();
 		
 		mConnectivity = new NetworkConnectivityListener();
