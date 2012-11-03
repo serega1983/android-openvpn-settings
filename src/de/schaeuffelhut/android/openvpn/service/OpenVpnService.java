@@ -25,6 +25,7 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import android.app.Service;
 import android.content.Intent;
@@ -176,7 +177,7 @@ public class OpenVpnService extends Service
 		Log.i(TAG, "starting");
 
 		daemonAttach();
-		
+
 		mConnectivity = new NetworkConnectivityListener();
 		mConnectivity.registerHandler(new Handler(){
 			boolean isFirstMessage = true;
@@ -278,7 +279,7 @@ public class OpenVpnService extends Service
 	private final void daemonAttach()
 	{
 		Log.d( TAG, "trying to attach to already running daemons" );
-		for ( File config : Preferences.configs(this) )
+		for ( File config : listConfigs())
 			daemonAttach(
 					config,
 					PreferenceManager.getDefaultSharedPreferences( getApplicationContext() ).getBoolean(
@@ -294,14 +295,21 @@ public class OpenVpnService extends Service
 
 
     // hook to be overwritten in unit test
-    DaemonMonitor newDaemonMonitor(File config)
+    protected DaemonMonitor newDaemonMonitor(File config)
     {
         return new DaemonMonitorImpl( this, config, newNotification2( config ) );
     }
 
+    // hook to be overwritten in unit test
+    protected List<File> listConfigs()
+    {
+        return Preferences.configs( this );
+    }
+
+
     private final synchronized void daemonRestart()
     {
-        for ( File config : Preferences.configs(this) )
+        for ( File config : listConfigs())
             if ( isDaemonStarted( config ) )
                 daemonRestart( config );
     }
