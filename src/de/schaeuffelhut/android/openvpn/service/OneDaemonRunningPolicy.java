@@ -44,12 +44,12 @@ import java.util.List;
  * @author Friedrich Schäuffelhut
  * @since 2012-11-03
  */
-public abstract class OneDaemonPolicy
+public abstract class OneDaemonRunningPolicy
 {
     private final List<File> configFiles;
     private List<DaemonMonitor> daemonMonitors;
 
-    public OneDaemonPolicy(List<File> configFiles)
+    public OneDaemonRunningPolicy(List<File> configFiles)
     {
         this.configFiles = configFiles;
     }

@@ -40,39 +40,39 @@ import static org.mockito.Mockito.verify;
  * @author Friedrich Schäuffelhut
  * @since 2012-11-03
  */
-public class OneDaemonPolicyTest extends TestCase
+public class OneDaemonRunningPolicyTest extends TestCase
 {
     public void test_getCurrent__with_no_configs()
     {
-        OneDaemonPolicy oneDaemonPolicy = new MyOneDaemonPolicy( Collections.<File>emptyList() );
-        oneDaemonPolicy.initialize();
+        OneDaemonRunningPolicy oneDaemonRunningPolicy = new MyOneDaemonRunningPolicy( Collections.<File>emptyList() );
+        oneDaemonRunningPolicy.initialize();
 
-        assertTrue( oneDaemonPolicy.getCurrent() instanceof NullDaemonMonitor );
-        assertFalse( oneDaemonPolicy.getCurrent().isAlive() );
+        assertTrue( oneDaemonRunningPolicy.getCurrent() instanceof NullDaemonMonitor );
+        assertFalse( oneDaemonRunningPolicy.getCurrent().isAlive() );
     }
 
     public void test_getCurrent__with_one_alive_config()
     {
-        OneDaemonPolicy oneDaemonPolicy = new MyOneDaemonPolicy( Arrays.asList( new File( "/sdcard/openvpn/test1-ALIVE.conf" ) ) );
-        oneDaemonPolicy.initialize();
+        OneDaemonRunningPolicy oneDaemonRunningPolicy = new MyOneDaemonRunningPolicy( Arrays.asList( new File( "/sdcard/openvpn/test1-ALIVE.conf" ) ) );
+        oneDaemonRunningPolicy.initialize();
 
-        assertFalse( oneDaemonPolicy.getCurrent() instanceof NullDaemonMonitor );
-        assertTrue( oneDaemonPolicy.getCurrent().isAlive() );
-        assertEquals( new File( "/sdcard/openvpn/test1-ALIVE.conf" ), oneDaemonPolicy.getCurrent().getConfigFile() );
+        assertFalse( oneDaemonRunningPolicy.getCurrent() instanceof NullDaemonMonitor );
+        assertTrue( oneDaemonRunningPolicy.getCurrent().isAlive() );
+        assertEquals( new File( "/sdcard/openvpn/test1-ALIVE.conf" ), oneDaemonRunningPolicy.getCurrent().getConfigFile() );
     }
 
     public void test_getCurrent__with_one_dead_config()
     {
-        OneDaemonPolicy oneDaemonPolicy = new MyOneDaemonPolicy( Arrays.asList( new File( "/sdcard/openvpn/test1-DEAD.conf" ) ) );
-        oneDaemonPolicy.initialize();
+        OneDaemonRunningPolicy oneDaemonRunningPolicy = new MyOneDaemonRunningPolicy( Arrays.asList( new File( "/sdcard/openvpn/test1-DEAD.conf" ) ) );
+        oneDaemonRunningPolicy.initialize();
 
-        assertTrue( oneDaemonPolicy.getCurrent() instanceof NullDaemonMonitor );
-        assertFalse( oneDaemonPolicy.getCurrent().isAlive() );
+        assertTrue( oneDaemonRunningPolicy.getCurrent() instanceof NullDaemonMonitor );
+        assertFalse( oneDaemonRunningPolicy.getCurrent().isAlive() );
     }
 
     public void test_getCurrent__with_one_dead_and_one_alive_config()
     {
-        MyOneDaemonPolicy findDaemons = new MyOneDaemonPolicy( Arrays.asList(
+        MyOneDaemonRunningPolicy findDaemons = new MyOneDaemonRunningPolicy( Arrays.asList(
                 new File( "/sdcard/openvpn/test1-DEAD.conf" ),
                 new File( "/sdcard/openvpn/test2-ALIVE.conf" )
         ) );
@@ -85,7 +85,7 @@ public class OneDaemonPolicyTest extends TestCase
 
     public void test_getCurrent__with_two_alive_configs()
     {
-        MyOneDaemonPolicy findDaemons = new MyOneDaemonPolicy( Arrays.asList(
+        MyOneDaemonRunningPolicy findDaemons = new MyOneDaemonRunningPolicy( Arrays.asList(
                 new File( "/sdcard/openvpn/test1-ALIVE.conf" ),
                 new File( "/sdcard/openvpn/test2-ALIVE.conf" )
         ) );
@@ -98,7 +98,7 @@ public class OneDaemonPolicyTest extends TestCase
 
     public void test_getCurrent__with_two_dead_configs()
     {
-        MyOneDaemonPolicy findDaemons = new MyOneDaemonPolicy( Arrays.asList(
+        MyOneDaemonRunningPolicy findDaemons = new MyOneDaemonRunningPolicy( Arrays.asList(
                 new File( "/sdcard/openvpn/test1-DEAD.conf" ),
                 new File( "/sdcard/openvpn/test2-DEAD.conf" )
         ) );
@@ -110,7 +110,7 @@ public class OneDaemonPolicyTest extends TestCase
 
     public void test_init__with_two_alive_configs_stops_daemons()
     {
-        MyOneDaemonPolicy findDaemons = new MyOneDaemonPolicy( Arrays.asList(
+        MyOneDaemonRunningPolicy findDaemons = new MyOneDaemonRunningPolicy( Arrays.asList(
                 new File( "/sdcard/openvpn/test1-ALIVE.conf" ),
                 new File( "/sdcard/openvpn/test2-ALIVE.conf" )
         ) );
@@ -122,7 +122,7 @@ public class OneDaemonPolicyTest extends TestCase
 
     public void test_init__with_alive_dead_alive_configs_stops_daemons()
     {
-        MyOneDaemonPolicy findDaemons = new MyOneDaemonPolicy( Arrays.asList(
+        MyOneDaemonRunningPolicy findDaemons = new MyOneDaemonRunningPolicy( Arrays.asList(
                 new File( "/sdcard/openvpn/test1-ALIVE.conf" ),
                 new File( "/sdcard/openvpn/test2-DEAD.conf" ),
                 new File( "/sdcard/openvpn/test3-ALIVE.conf" )
@@ -137,35 +137,35 @@ public class OneDaemonPolicyTest extends TestCase
 
     public void test_MyFindDaemons_newDaemonMonitor_isAlive()
     {
-        OneDaemonPolicy oneDaemonPolicy = new MyOneDaemonPolicy( Collections.<File>emptyList() );
-        assertTrue( oneDaemonPolicy.newDaemonMonitor( new File( "/sdcard/openvpn/test1-ALIVE.conf" ) ).isAlive() );
-        assertFalse( oneDaemonPolicy.newDaemonMonitor( new File( "/sdcard/openvpn/test1-DEAD.conf" ) ).isAlive() );
-        assertTrue( oneDaemonPolicy.newDaemonMonitor( new File( "/sdcard/openvpn/test2-ALIVE.conf" ) ).isAlive() );
-        assertFalse( oneDaemonPolicy.newDaemonMonitor( new File( "/sdcard/openvpn/test2-DEAD.conf" ) ).isAlive() );
+        OneDaemonRunningPolicy oneDaemonRunningPolicy = new MyOneDaemonRunningPolicy( Collections.<File>emptyList() );
+        assertTrue( oneDaemonRunningPolicy.newDaemonMonitor( new File( "/sdcard/openvpn/test1-ALIVE.conf" ) ).isAlive() );
+        assertFalse( oneDaemonRunningPolicy.newDaemonMonitor( new File( "/sdcard/openvpn/test1-DEAD.conf" ) ).isAlive() );
+        assertTrue( oneDaemonRunningPolicy.newDaemonMonitor( new File( "/sdcard/openvpn/test2-ALIVE.conf" ) ).isAlive() );
+        assertFalse( oneDaemonRunningPolicy.newDaemonMonitor( new File( "/sdcard/openvpn/test2-DEAD.conf" ) ).isAlive() );
     }
 
     public void test_MyFindDaemons_newDaemonMonitor_getConfigFile()
     {
-        OneDaemonPolicy oneDaemonPolicy = new MyOneDaemonPolicy( Collections.<File>emptyList() );
-        assertEquals( new File( "/sdcard/openvpn/test1-DEAD.conf" ), oneDaemonPolicy.newDaemonMonitor( new File( "/sdcard/openvpn/test1-DEAD.conf" ) ).getConfigFile() );
-        assertEquals( new File( "/sdcard/openvpn/test2-ALIVE.conf" ), oneDaemonPolicy.newDaemonMonitor( new File( "/sdcard/openvpn/test2-ALIVE.conf" ) ).getConfigFile() );
+        OneDaemonRunningPolicy oneDaemonRunningPolicy = new MyOneDaemonRunningPolicy( Collections.<File>emptyList() );
+        assertEquals( new File( "/sdcard/openvpn/test1-DEAD.conf" ), oneDaemonRunningPolicy.newDaemonMonitor( new File( "/sdcard/openvpn/test1-DEAD.conf" ) ).getConfigFile() );
+        assertEquals( new File( "/sdcard/openvpn/test2-ALIVE.conf" ), oneDaemonRunningPolicy.newDaemonMonitor( new File( "/sdcard/openvpn/test2-ALIVE.conf" ) ).getConfigFile() );
     }
 
 
     public void test_MyFindDaemons_newDaemonMonitor_stop_cancels_isAlive()
     {
-        OneDaemonPolicy oneDaemonPolicy = new MyOneDaemonPolicy( Collections.<File>emptyList() );
-        DaemonMonitor daemonMonitor = oneDaemonPolicy.newDaemonMonitor( new File( "/sdcard/openvpn/test1-ALIVE.conf" ) );
+        OneDaemonRunningPolicy oneDaemonRunningPolicy = new MyOneDaemonRunningPolicy( Collections.<File>emptyList() );
+        DaemonMonitor daemonMonitor = oneDaemonRunningPolicy.newDaemonMonitor( new File( "/sdcard/openvpn/test1-ALIVE.conf" ) );
         assertTrue( daemonMonitor.isAlive() );
         daemonMonitor.stop();
         assertFalse( daemonMonitor.isAlive() );
     }
 
-    private static class MyOneDaemonPolicy extends OneDaemonPolicy
+    private static class MyOneDaemonRunningPolicy extends OneDaemonRunningPolicy
     {
         final List<DaemonMonitor> mockDaemonMonitors = new ArrayList<DaemonMonitor>();
 
-        public MyOneDaemonPolicy(List<File> configFiles)
+        public MyOneDaemonRunningPolicy(List<File> configFiles)
         {
             super( configFiles );
         }
