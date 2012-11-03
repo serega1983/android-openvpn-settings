@@ -44,7 +44,7 @@ import de.schaeuffelhut.android.openvpn.util.NetworkConnectivityListener;
  *
  */
 //TODO: expose interface through aidl
-public final class OpenVpnService extends Service
+public class OpenVpnService extends Service
 {
 	private final static String TAG = "OpenVPN-ControlShell";
 	
@@ -79,7 +79,7 @@ public final class OpenVpnService extends Service
 	private void markServiceStopped(){
 		sRunningInstance = null;
 	}
-	
+
 	/*
 	 * Service API
 	 */
@@ -149,8 +149,6 @@ public final class OpenVpnService extends Service
 	@Override
 	public void onDestroy()
     {
-		super.onDestroy();
-		
 		PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener( onSharedPreferenceChangeListener );
 
 		markServiceStopped();
@@ -210,7 +208,7 @@ public final class OpenVpnService extends Service
 	
 	private synchronized void shutdown()
 	{
-		Log.i(TAG, "shuting down");
+		Log.i(TAG, "shutting down");
 				
 		final ArrayList<DaemonMonitor> daemonMonitors = new ArrayList<DaemonMonitor>( mRegistry.values() );
 		
@@ -307,7 +305,7 @@ public final class OpenVpnService extends Service
 
 
     // hook to be overwritten in unit test
-    DaemonMonitorImpl newDaemonMonitor(File config)
+    DaemonMonitor newDaemonMonitor(File config)
     {
         return new DaemonMonitorImpl( this, config, newNotification2( config ) );
     }
