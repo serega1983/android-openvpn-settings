@@ -174,7 +174,7 @@ public class OpenVpnService extends Service
 
 	private final HashMap<File, DaemonMonitor> mRegistry = new HashMap<File, DaemonMonitor>(4);
 
-    private final DaemonMonitorFactory daemonMonitorFactory = new DaemonMonitorImplFactory( this );
+    private DaemonMonitorFactory daemonMonitorFactory = new DaemonMonitorImplFactory( this );
 
     private synchronized void startup()
 	{
@@ -446,4 +446,15 @@ public class OpenVpnService extends Service
 				return true;
 		return false;
 	}
+
+    /**
+     * Unit tests use this method to inject a different {@code DaemonMonitorFactory}.
+     *
+     * @param daemonMonitorFactory the {@code DaemonMonitorFactory} to be used.
+     */
+    void setDaemonMonitorFactory(DaemonMonitorFactory daemonMonitorFactory)
+    {
+        this.daemonMonitorFactory = daemonMonitorFactory;
+    }
+
 }

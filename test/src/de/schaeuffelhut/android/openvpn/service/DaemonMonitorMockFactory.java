@@ -68,4 +68,9 @@ public class DaemonMonitorMockFactory implements DaemonMonitorFactory
 
         return daemonMonitor;
     }
+
+    public DaemonMonitor getLastMockDaemonMonitorCreated()
+    {
+        return mockDaemonMonitors.get( mockDaemonMonitors.size() - 1 );
+    }
 }

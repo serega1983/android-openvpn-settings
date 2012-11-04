@@ -57,4 +57,13 @@ public class DaemonMonitorMockFactoryTest extends TestCase
         daemonMonitor.stop();
         assertFalse( daemonMonitor.isAlive() );
     }
+
+    public void test_getLastMockDaemonMonitorCreated()
+    {
+        DaemonMonitorMockFactory daemonMonitorMockFactory = new DaemonMonitorMockFactory();
+        daemonMonitorMockFactory.createDaemonMonitorFor( new File("A") );
+        DaemonMonitor expected = daemonMonitorMockFactory.createDaemonMonitorFor( new File( "B" ) );
+
+        assertSame( expected, daemonMonitorMockFactory.getLastMockDaemonMonitorCreated() );
+    }
 }
