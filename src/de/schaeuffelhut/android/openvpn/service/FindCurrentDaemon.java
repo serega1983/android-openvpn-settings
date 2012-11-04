@@ -42,6 +42,7 @@ import java.util.List;
 public abstract class FindCurrentDaemon
 {
     //TODO: inject dependencies
+    abstract OpenVpnService getContext();
     abstract SharedPreferences getSharedPreferences();
     abstract List<File> listConfigs();
     abstract DaemonMonitor newDaemonMonitor(File current);
@@ -50,14 +51,7 @@ public abstract class FindCurrentDaemon
     private DaemonMonitor todo_code_outline()
     {
         // If more than one daemon is running, stop all
-        OneDaemonRunningPolicy oneDaemonRunningPolicy = new OneDaemonRunningPolicy( listConfigs() )
-        {
-            @Override
-            DaemonMonitor newDaemonMonitor(File config)
-            {
-                return FindCurrentDaemon.this.newDaemonMonitor( config );
-            }
-        };
+        OneDaemonRunningPolicy oneDaemonRunningPolicy = new OneDaemonRunningPolicy( new DaemonMonitorImplFactory( getContext() ), listConfigs() );
         oneDaemonRunningPolicy.initialize();
 
         // If more than one config has intended_state=true, disable all
