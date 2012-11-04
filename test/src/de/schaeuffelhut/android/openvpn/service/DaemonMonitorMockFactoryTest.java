@@ -58,6 +58,15 @@ public class DaemonMonitorMockFactoryTest extends TestCase
         assertFalse( daemonMonitor.isAlive() );
     }
 
+    public void test_newDaemonMonitor_start_sets_isAlive()
+    {
+        DaemonMonitorMockFactory daemonMonitorMockFactory = new DaemonMonitorMockFactory();
+        DaemonMonitor daemonMonitor = daemonMonitorMockFactory.createDaemonMonitorFor( new File( "/sdcard/openvpn/test1-DEAD.conf" ) );
+        assertFalse( daemonMonitor.isAlive() );
+        daemonMonitor.start();
+        assertTrue( daemonMonitor.isAlive() );
+    }
+
     public void test_getLastMockDaemonMonitorCreated()
     {
         DaemonMonitorMockFactory daemonMonitorMockFactory = new DaemonMonitorMockFactory();
