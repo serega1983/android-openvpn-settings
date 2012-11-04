@@ -29,6 +29,7 @@ import java.util.List;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.Handler;
@@ -37,6 +38,7 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
+import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.util.NetworkConnectivityListener;
 
@@ -172,7 +174,9 @@ public class OpenVpnService extends Service
 
 	private final HashMap<File, DaemonMonitor> mRegistry = new HashMap<File, DaemonMonitor>(4);
 
-	private synchronized void startup()
+    private final DaemonMonitorFactory daemonMonitorFactory = new DaemonMonitorImplFactory( this );
+
+    private synchronized void startup()
 	{
 		Log.i(TAG, "starting");
 
@@ -297,7 +301,7 @@ public class OpenVpnService extends Service
     // hook to be overwritten in unit test
     protected DaemonMonitor newDaemonMonitor(File config)
     {
-        return new DaemonMonitorImpl( this, config, newNotification2( config ) );
+        return daemonMonitorFactory.createDaemonMonitorFor( config );
     }
 
     // hook to be overwritten in unit test
