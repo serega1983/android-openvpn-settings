@@ -204,6 +204,22 @@ public class OpenVpnServiceTest extends ServiceTestCase<OpenVpnServiceTest.MockO
         assertEquals( configFile, getService().getCurrent().getConfigFile() );
     }
 
+    public void test_daemonStart_A_then_daemonStart_B() throws InterruptedException
+    {
+        File configFileA = new File( "/sdcard/openvpn/test-A" + System.currentTimeMillis() + ".conf" );
+        File configFileB = new File( "/sdcard/openvpn/test-B" + System.currentTimeMillis() + ".conf" );
+        startService( new Intent( getContext(), MockOpenVpnService.class ) );
+
+        getService().daemonStart( configFileA );
+        DaemonMonitor daemonMonitorA = getService().getCurrent();
+        getService().daemonStart( configFileB );
+        DaemonMonitor daemonMonitorB = getService().getCurrent();
+
+        assertFalse( daemonMonitorA.isAlive() );
+        assertEquals( configFileA, daemonMonitorA.getConfigFile() );
+        assertTrue( daemonMonitorB.isAlive() );
+        assertEquals( configFileB, daemonMonitorB.getConfigFile() );
+    }
 
     public void test_daemonStop() throws InterruptedException
     {

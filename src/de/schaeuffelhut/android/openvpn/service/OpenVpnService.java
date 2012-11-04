@@ -382,7 +382,14 @@ public class OpenVpnService extends Service
         if ( getCurrent().isAlive() && !getCurrent().getConfigFile().equals( config ) )
         {
             Log.i( TAG, "Stopping current daemon " + getCurrent().getConfigFile() );
-            daemonStop( getCurrent().getConfigFile() );
+            getCurrent().stop();
+            try
+            {
+                getCurrent().waitForTermination();
+            }
+            catch (InterruptedException e)
+            {
+            }
         }
 
 		if ( isDaemonStarted(config) )

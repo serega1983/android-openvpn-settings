@@ -278,6 +278,7 @@ final class DaemonMonitorImpl implements DaemonMonitor
 		else
 		{
 			mManagementThread.mTerminated.await();
+            mManagementThread.join();// make sure mManagementThread is dead, so next call to isAlive() returns false!
 		}
 	}
 	
