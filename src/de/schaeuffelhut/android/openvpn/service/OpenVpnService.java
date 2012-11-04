@@ -25,6 +25,7 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import android.app.Service;
@@ -306,7 +307,22 @@ public class OpenVpnService extends Service
 
     private void setCurrent(DaemonMonitor daemonMonitor)
     {
+        for(Iterator<DaemonMonitor> it = mRegistry.values().iterator(); it.hasNext(); )
+            if ( it.next().isAlive() )
+                it.remove();
+
+        if ( !mRegistry.isEmpty() )
+            throw new IllegalStateException( "Trying to register a second daemon!" );
+
         mRegistry.put( daemonMonitor.getConfigFile(), daemonMonitor );
+    }
+
+    private DaemonMonitor getCurrent()
+    {
+        Iterator<DaemonMonitor> iterator = mRegistry.values().iterator();
+        if ( iterator.hasNext() )
+            return iterator.next();
+        return NullDaemonMonitor.getInstance();
     }
 
     private Notification2 newNotification2(File config)
@@ -315,8 +331,7 @@ public class OpenVpnService extends Service
     }
 
 
-    // hook to be overwritten in unit test
-    protected DaemonMonitor newDaemonMonitor(File config)
+    private DaemonMonitor newDaemonMonitor(File config)
     {
         return daemonMonitorFactory.createDaemonMonitorFor( config );
     }
@@ -364,6 +379,12 @@ public class OpenVpnService extends Service
 
 	public final synchronized void daemonStart(File config)
 	{
+        if ( getCurrent().isAlive() && !getCurrent().getConfigFile().equals( config ) )
+        {
+            Log.i( TAG, "Stopping current daemon " + getCurrent().getConfigFile() );
+            daemonStop( getCurrent().getConfigFile() );
+        }
+
 		if ( isDaemonStarted(config) )
 		{
 			Log.i( TAG, config + " is already running" );
@@ -377,8 +398,8 @@ public class OpenVpnService extends Service
 		else
 		{
 			DaemonMonitor daemonMonitor = newDaemonMonitor( config );
-            daemonMonitor.start();
 			mRegistry.put( config, daemonMonitor );
+            daemonMonitor.start();
 		}
 	}
 
