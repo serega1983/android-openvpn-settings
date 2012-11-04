@@ -44,13 +44,15 @@ import java.util.List;
  * @author Friedrich Schäuffelhut
  * @since 2012-11-03
  */
-public abstract class OneDaemonRunningPolicy
+public class OneDaemonRunningPolicy
 {
+    private final DaemonMonitorFactory daemonMonitorFactory;
     private final List<File> configFiles;
     private List<DaemonMonitor> daemonMonitors;
 
-    public OneDaemonRunningPolicy(List<File> configFiles)
+    public OneDaemonRunningPolicy(DaemonMonitorFactory daemonMonitorFactory, List<File> configFiles)
     {
+        this.daemonMonitorFactory = daemonMonitorFactory;
         this.configFiles = configFiles;
     }
 
@@ -75,7 +77,10 @@ public abstract class OneDaemonRunningPolicy
                 daemonMonitor.stop();
     }
 
-    abstract DaemonMonitor newDaemonMonitor(File config);
+    private DaemonMonitor newDaemonMonitor(File configFile)
+    {
+        return daemonMonitorFactory.createDaemonMonitorFor( configFile );
+    }
 
     public DaemonMonitor getCurrent()
     {
