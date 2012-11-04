@@ -31,7 +31,7 @@ import java.util.List;
 
 /**
  * Enforces the 'One OpenVPN daemon only policy'.
- * Checks the {@code Preferences.KEY_CONFIG_ENABLED()} for each configuration file.
+ * Checks the {@code Preferences.KEY_CONFIG_INTENDED_STATE()} for each configuration file.
  * If more than one config is enabled, all configs will be set to disabled.
  * <p/>
  * If only one config is enabled a call to {@code OneDaemonEnabledPolicy.hasEnabledConfig())}
@@ -88,7 +88,7 @@ public class OneDaemonEnabledPolicy
     {
         ArrayList<File> enabledConfigs = new ArrayList<File>();
         for (File configFile : configFiles)
-            if (sharedPreferences.getBoolean( Preferences.KEY_CONFIG_ENABLED( configFile ), false ))
+            if (sharedPreferences.getBoolean( intendedStateOf( configFile ), false ))
                 enabledConfigs.add( configFile );
         return enabledConfigs;
     }
@@ -97,7 +97,12 @@ public class OneDaemonEnabledPolicy
     {
         SharedPreferences.Editor edit = sharedPreferences.edit();
         for (File enabledConfig : configFiles)
-            edit.putBoolean( Preferences.KEY_CONFIG_ENABLED( enabledConfig ), false );
+            edit.putBoolean( intendedStateOf( enabledConfig ), false );
         edit.commit();
+    }
+
+    private String intendedStateOf(File configFile)
+    {
+        return Preferences.KEY_CONFIG_INTENDED_STATE( configFile );
     }
 }

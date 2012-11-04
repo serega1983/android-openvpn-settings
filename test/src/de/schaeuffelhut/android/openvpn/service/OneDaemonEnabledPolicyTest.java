@@ -53,7 +53,7 @@ public class OneDaemonEnabledPolicyTest extends InstrumentationTestCase
     {
         SharedPreferences.Editor edit = sharedPreferences.edit();
         for (File configFile : configFiles)
-            edit.putBoolean( Preferences.KEY_CONFIG_ENABLED( configFile ), configFile.getName().contains( "ALIVE" ) );
+            edit.putBoolean( intendedStateOf( configFile ), configFile.getName().contains( "ALIVE" ) );
         edit.commit();
     }
 
@@ -148,13 +148,13 @@ public class OneDaemonEnabledPolicyTest extends InstrumentationTestCase
                 new File( "/sdcard/openvpn/test2-ALIVE.conf" )
         ) );
 
-        assertTrue( sharedPreferences.getBoolean( Preferences.KEY_CONFIG_ENABLED( new File( "/sdcard/openvpn/test1-ALIVE.conf" ) ), false ) );
-        assertTrue( sharedPreferences.getBoolean( Preferences.KEY_CONFIG_ENABLED( new File( "/sdcard/openvpn/test2-ALIVE.conf" ) ), false ) );
+        assertTrue( sharedPreferences.getBoolean( intendedStateOf( new File( "/sdcard/openvpn/test1-ALIVE.conf" ) ), false ) );
+        assertTrue( sharedPreferences.getBoolean( intendedStateOf( new File( "/sdcard/openvpn/test2-ALIVE.conf" ) ), false ) );
 
         oneDaemonEnabledPolicy.initialize();
 
-        assertFalse( sharedPreferences.getBoolean( Preferences.KEY_CONFIG_ENABLED( new File( "/sdcard/openvpn/test1-ALIVE.conf" ) ), false ) );
-        assertFalse( sharedPreferences.getBoolean( Preferences.KEY_CONFIG_ENABLED( new File( "/sdcard/openvpn/test2-ALIVE.conf" ) ), false ) );
+        assertFalse( sharedPreferences.getBoolean( intendedStateOf( new File( "/sdcard/openvpn/test1-ALIVE.conf" ) ), false ) );
+        assertFalse( sharedPreferences.getBoolean( intendedStateOf( new File( "/sdcard/openvpn/test2-ALIVE.conf" ) ), false ) );
     }
 
     public void test_init__with_alive_dead_alive_configs_stops_daemons()
@@ -165,14 +165,19 @@ public class OneDaemonEnabledPolicyTest extends InstrumentationTestCase
                 new File( "/sdcard/openvpn/test3-ALIVE.conf" )
         ) );
 
-        assertTrue( sharedPreferences.getBoolean( Preferences.KEY_CONFIG_ENABLED( new File( "/sdcard/openvpn/test1-ALIVE.conf" ) ), false ) );
-        assertFalse( sharedPreferences.getBoolean( Preferences.KEY_CONFIG_ENABLED( new File( "/sdcard/openvpn/test2-DEAD.conf" ) ), false ) );
-        assertTrue( sharedPreferences.getBoolean( Preferences.KEY_CONFIG_ENABLED( new File( "/sdcard/openvpn/test3-ALIVE.conf" ) ), false ) );
+        assertTrue( sharedPreferences.getBoolean( intendedStateOf( new File( "/sdcard/openvpn/test1-ALIVE.conf" ) ), false ) );
+        assertFalse( sharedPreferences.getBoolean( intendedStateOf( new File( "/sdcard/openvpn/test2-DEAD.conf" ) ), false ) );
+        assertTrue( sharedPreferences.getBoolean( intendedStateOf( new File( "/sdcard/openvpn/test3-ALIVE.conf" ) ), false ) );
 
         oneDaemonEnabledPolicy.initialize();
 
-        assertFalse( sharedPreferences.getBoolean( Preferences.KEY_CONFIG_ENABLED( new File( "/sdcard/openvpn/test1-ALIVE.conf" ) ), false ) );
-        assertFalse( sharedPreferences.getBoolean( Preferences.KEY_CONFIG_ENABLED( new File( "/sdcard/openvpn/test2-DEAD.conf" ) ), false ) );
-        assertFalse( sharedPreferences.getBoolean( Preferences.KEY_CONFIG_ENABLED( new File( "/sdcard/openvpn/test3-ALIVE.conf" ) ), false ) );
+        assertFalse( sharedPreferences.getBoolean( intendedStateOf( new File( "/sdcard/openvpn/test1-ALIVE.conf" ) ), false ) );
+        assertFalse( sharedPreferences.getBoolean( intendedStateOf( new File( "/sdcard/openvpn/test2-DEAD.conf" ) ), false ) );
+        assertFalse( sharedPreferences.getBoolean( intendedStateOf( new File( "/sdcard/openvpn/test3-ALIVE.conf" ) ), false ) );
+    }
+
+    private String intendedStateOf(File config)
+    {
+        return Preferences.KEY_CONFIG_INTENDED_STATE( config );
     }
 }
