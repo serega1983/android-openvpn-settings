@@ -348,4 +348,12 @@ final class DaemonMonitorImpl implements DaemonMonitor
     {
         return mConfigFile;
     }
+
+    public void switchToIntendedState()
+    {
+        if ( mPreferences2.getIntendedState() )
+            start();
+        else
+            stop();
+    }
 }

@@ -114,4 +114,9 @@ public class Preferences2
     {
         return Preferences.getPathToBinaryAsFile( PreferenceManager.getDefaultSharedPreferences( mContext ) );
     }
+
+    boolean getIntendedState()
+    {
+        return Preferences.getIntendedState( mContext, mConfigFile );
+    }
 }

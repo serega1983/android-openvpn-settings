@@ -25,6 +25,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
 import org.apache.commons.io.FilenameUtils;
 
 import android.content.Context;
@@ -318,8 +319,14 @@ public final class Preferences {
 		return new File( config.getParentFile(), FilenameUtils.getBaseName( config.getAbsolutePath() ) + ".log" );
 	}
 
-	
-	public final static boolean getDoModprobeTun(SharedPreferences sharedPreferences) {
+    public static boolean getIntendedState(Context context, File configFile)
+    {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getBoolean( Preferences.KEY_CONFIG_INTENDED_STATE(configFile), false );
+    }
+
+
+    public final static boolean getDoModprobeTun(SharedPreferences sharedPreferences) {
 		return sharedPreferences.getBoolean( Preferences.KEY_OPENVPN_DO_MODPROBE_TUN, false);
 	}
 	public final static void setDoModprobeTun(Context context, boolean value) {
@@ -411,5 +418,4 @@ public final class Preferences {
 		final long T_2012_04_01 = 1333231200000L;
 		return System.currentTimeMillis() >= T_2012_04_01;
 	}
-
 }
