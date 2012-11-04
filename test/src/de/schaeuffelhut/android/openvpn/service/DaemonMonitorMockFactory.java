@@ -66,6 +66,15 @@ public class DaemonMonitorMockFactory implements DaemonMonitorFactory
             }
         }).when( daemonMonitor ).stop();
 
+        Mockito.doAnswer( new Answer()
+        {
+            public Object answer(InvocationOnMock invocation) throws Throwable
+            {
+                state.isStarted = true;
+                return null;
+            }
+        }).when( daemonMonitor ).start();
+
         return daemonMonitor;
     }
 

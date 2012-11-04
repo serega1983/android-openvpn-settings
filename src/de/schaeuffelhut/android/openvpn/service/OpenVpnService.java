@@ -308,7 +308,7 @@ public class OpenVpnService extends Service
     private void setCurrent(DaemonMonitor daemonMonitor)
     {
         for(Iterator<DaemonMonitor> it = mRegistry.values().iterator(); it.hasNext(); )
-            if ( it.next().isAlive() )
+            if ( !it.next().isAlive() )
                 it.remove();
 
         if ( !mRegistry.isEmpty() )
@@ -317,7 +317,7 @@ public class OpenVpnService extends Service
         mRegistry.put( daemonMonitor.getConfigFile(), daemonMonitor );
     }
 
-    private DaemonMonitor getCurrent()
+    DaemonMonitor getCurrent()
     {
         Iterator<DaemonMonitor> iterator = mRegistry.values().iterator();
         if ( iterator.hasNext() )
@@ -398,7 +398,7 @@ public class OpenVpnService extends Service
 		else
 		{
 			DaemonMonitor daemonMonitor = newDaemonMonitor( config );
-			mRegistry.put( config, daemonMonitor );
+            setCurrent( daemonMonitor );
             daemonMonitor.start();
 		}
 	}
