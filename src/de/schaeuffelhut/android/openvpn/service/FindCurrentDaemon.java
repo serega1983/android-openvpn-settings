@@ -61,11 +61,11 @@ class FindCurrentDaemon
         return daemonMonitorFactory.createDaemonMonitorFor( configFile );
     }
 
-    //TODO: TDD outlined code
+    //TODO: write unit tests for FindCurrentDaemon.getTheOneRunningDaemonOrTheNullDaemonMonitor()
     DaemonMonitor getTheOneRunningDaemonOrTheNullDaemonMonitor()
     {
         // If more than one daemon is running, stop all
-        OneDaemonRunningPolicy oneDaemonRunningPolicy = new OneDaemonRunningPolicy( new DaemonMonitorImplFactory( context ), configFiles );
+        OneDaemonRunningPolicy oneDaemonRunningPolicy = new OneDaemonRunningPolicy( daemonMonitorFactory, configFiles );
         oneDaemonRunningPolicy.initialize();
 
         // If more than one config has intended_state=true, disable all

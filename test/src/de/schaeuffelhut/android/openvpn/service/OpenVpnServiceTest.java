@@ -27,6 +27,8 @@ import android.preference.PreferenceManager;
 import android.test.ServiceTestCase;
 import de.schaeuffelhut.android.openvpn.Preferences;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import java.io.File;
 import java.util.Arrays;
@@ -39,16 +41,11 @@ import java.util.List;
  */
 public class OpenVpnServiceTest extends ServiceTestCase<OpenVpnServiceTest.MockOpenVpnService>
 {
-    private static DaemonMonitor mockDaemonMonitor;
+    private static DaemonMonitor lastMockDaemonMonitorCreated;
     private static List<File> configs;
 
     public static class MockOpenVpnService extends OpenVpnService
     {
-        @Override
-        protected DaemonMonitor newDaemonMonitor(File config)
-        {
-            return mockDaemonMonitor = Mockito.mock( DaemonMonitor.class );
-        }
 
         @Override
         protected List<File> listConfigs()
@@ -66,8 +63,16 @@ public class OpenVpnServiceTest extends ServiceTestCase<OpenVpnServiceTest.MockO
     protected void setUp() throws Exception
     {
         super.setUp();
-        mockDaemonMonitor = null;
+        lastMockDaemonMonitorCreated = null;
         configs = Collections.emptyList();
+        setupService();
+        getService().setDaemonMonitorFactory( new DaemonMonitorFactory()
+        {
+            public DaemonMonitor createDaemonMonitorFor(File configFile)
+            {
+                return lastMockDaemonMonitorCreated = Mockito.mock( DaemonMonitor.class );
+            }
+        } );
     }
 
     private boolean shutdownServiceCalled = false;
@@ -124,19 +129,78 @@ public class OpenVpnServiceTest extends ServiceTestCase<OpenVpnServiceTest.MockO
         assertFalse( PreferenceManager.getDefaultSharedPreferences( getContext() ).getBoolean( Preferences.KEY_OPENVPN_ENABLED, true ) );
     }
 
-    public void test_onCreate_attaches()
+    /**
+     * Assert service attached to the only one running daemon which is enabled.
+     */
+    public void test_onCreate_attaches_with_dead_alive_configs()
     {
-//        PreferenceManager.getDefaultSharedPreferences( getContext() ).edit().putString(
-//                Preferences.KEY_OPENVPN_EXTERNAL_STORAGE, file.getAbsolutePath()
-//        ).commit();
 
+        File configFile0 = new File( "/sdcard/openvpn/test0-DEAD.conf" );
+        File configFile1 = new File( "/sdcard/openvpn/test1-ALIVE.conf" );
         configs = Arrays.asList( new File[]{
-                new File( "/sdcard/openvpn/test1.conf" ),
-                new File( "/sdcard/openvpn/test2.conf" )
+                configFile1,
         } );
+        PreferenceManager.getDefaultSharedPreferences( getContext() )
+                .edit()
+                .putBoolean( Preferences.KEY_CONFIG_INTENDED_STATE( configFile0 ), false )
+                .putBoolean( Preferences.KEY_CONFIG_INTENDED_STATE( configFile1 ), true )
+                .commit();
+
+        DaemonMonitorMockFactory daemonMonitorFactory = new DaemonMonitorMockFactory();
+        getService().setDaemonMonitorFactory( daemonMonitorFactory );
 
         startService( new Intent( getContext(), MockOpenVpnService.class ) );
 
-        Mockito.verify( mockDaemonMonitor ).isAlive();
+        assertTrue( daemonMonitorFactory.getLastMockDaemonMonitorCreated().isAlive() );
+        assertEquals( configFile1, daemonMonitorFactory.getLastMockDaemonMonitorCreated().getConfigFile() );
+    }
+
+    /**
+     * Assert multiple running daemons with multiple enabled configs will be disabled.
+     */
+    public void test_onCreate_attaches_with_dead_alive_alive_configs()
+    {
+        File configFile0 = new File( "/sdcard/openvpn/test0-DEAD.conf" );
+        File configFile1 = new File( "/sdcard/openvpn/test1-ALIVE.conf" );
+        final File configFile2 = new File( "/sdcard/openvpn/test2-ALIVE.conf" );
+        configs = Arrays.asList( new File[]{
+                configFile0,
+                configFile1,
+                configFile2,
+        } );
+        PreferenceManager.getDefaultSharedPreferences( getContext() )
+                .edit()
+                .putBoolean( Preferences.KEY_CONFIG_INTENDED_STATE( configFile0 ), false )
+                .putBoolean( Preferences.KEY_CONFIG_INTENDED_STATE( configFile1 ), true )
+                .putBoolean( Preferences.KEY_CONFIG_INTENDED_STATE( configFile2 ), true )
+                .commit();
+
+        DaemonMonitorMockFactory daemonMonitorFactory = new DaemonMonitorMockFactory(){
+            @Override
+            public DaemonMonitor createDaemonMonitorFor(final File configFile)
+            {
+                final DaemonMonitor daemonMonitor = super.createDaemonMonitorFor( configFile );
+                Mockito.doAnswer( new Answer()
+                {
+                    public Object answer(InvocationOnMock invocation) throws Throwable
+                    {
+                        if ( PreferenceManager.getDefaultSharedPreferences( getContext() ).getBoolean(
+                             Preferences.KEY_CONFIG_INTENDED_STATE( configFile ), false
+                        ) )
+                            daemonMonitor.start();
+                        else
+                            daemonMonitor.stop();
+                        return null;
+                    }
+                }).when( daemonMonitor ).switchToIntendedState();
+                return daemonMonitor;
+            }
+        };
+        getService().setDaemonMonitorFactory( daemonMonitorFactory );
+
+        startService( new Intent( getContext(), MockOpenVpnService.class ) );
+
+        assertFalse( daemonMonitorFactory.getLastMockDaemonMonitorCreated().isAlive() );
+        assertEquals( configFile2, daemonMonitorFactory.getLastMockDaemonMonitorCreated().getConfigFile() );
     }
 }
