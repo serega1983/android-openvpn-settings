@@ -116,4 +116,9 @@ public class NullDaemonMonitor implements DaemonMonitor
     {
         return null;
     }
+
+    public void switchToIntendedState()
+    {
+        //TODO: implement method stub
+    }
 }

@@ -55,4 +55,6 @@ interface DaemonMonitor
     boolean isVpnDnsActive();
 
     File getConfigFile();
+
+    void switchToIntendedState();
 }
