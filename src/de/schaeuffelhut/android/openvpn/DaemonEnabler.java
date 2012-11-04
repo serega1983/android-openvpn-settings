@@ -46,28 +46,37 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 	private final CharSequence mOriginalSummary;
 
 	private final IntentFilter mDaemonStateFilter;
-	private BroadcastReceiver mDaemonStateReceiver = new BroadcastReceiver(){
-		@Override
-		public void onReceive(Context context, Intent intent)
-		{
-			//TODO: move into IntentFilter, or dispatch from OpenVPNSettings to DaemonEnabler.receive()
-			if ( mConfigFile.getAbsolutePath().equals( intent.getStringExtra( Intents.EXTRA_CONFIG ) ) )
-			{
-				if ( Intents.DEAMON_STATE_CHANGED.equals( intent.getAction() ) ) {
-					handleDaemonStateChanged(
-							intent.getIntExtra(Intents.EXTRA_DAEMON_STATE, Intents.DAEMON_STATE_UNKNOWN),
-							intent.getIntExtra(Intents.EXTRA_PREVIOUS_DAEMON_STATE, Intents.DAEMON_STATE_UNKNOWN)
-					);
-				} else if ( Intents.NETWORK_STATE_CHANGED.equals( intent.getAction() ) ) {
-					handleNetworkStateChanged( intent );
-				}	
-			}
-		}
-	};
+    private BroadcastReceiver mDaemonStateReceiver = new BroadcastReceiver()
+    {
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+            //TODO: move into IntentFilter, or dispatch from OpenVPNSettings to DaemonEnabler.receive()
+            if (!intentAddressesThisDaemonEnabler( intent ))
+                return;
 
-	public DaemonEnabler(Context contex, OpenVpnService openVpnServiceShell, CheckBoxPreference daemonCheckBoxPreference, File configFile)
+            if (Intents.DEAMON_STATE_CHANGED.equals( intent.getAction() ))
+            {
+                handleDaemonStateChanged(
+                        intent.getIntExtra( Intents.EXTRA_PREVIOUS_DAEMON_STATE, Intents.DAEMON_STATE_UNKNOWN ),
+                        intent.getIntExtra( Intents.EXTRA_DAEMON_STATE, Intents.DAEMON_STATE_UNKNOWN )
+                );
+            }
+            else if (Intents.NETWORK_STATE_CHANGED.equals( intent.getAction() ))
+            {
+                handleNetworkStateChanged( intent );
+            }
+        }
+
+        private boolean intentAddressesThisDaemonEnabler(Intent intent)
+        {
+            return mConfigFile.getAbsolutePath().equals( intent.getStringExtra( Intents.EXTRA_CONFIG ) );
+        }
+    };
+
+    public DaemonEnabler(Context context, OpenVpnService openVpnServiceShell, CheckBoxPreference daemonCheckBoxPreference, File configFile)
 	{
-		mContext = contex;
+		mContext = context;
 		mDaemonCheckBoxPref = daemonCheckBoxPreference;
 		mConfigFile = configFile;
 
@@ -83,27 +92,15 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 	public void setOpenVpnService(OpenVpnService openVpnService)
 	{
 		mOpenVpnService = openVpnService;
-		mDaemonCheckBoxPref.setEnabled( isEnabledByDependency() && mOpenVpnService != null );
-		if ( mOpenVpnService != null )
-			mOpenVpnService.daemonQueryState(mConfigFile);
-	}
+		mDaemonCheckBoxPref.setEnabled( isEnabledByDependency() && isOpenVpnServiceEnabled() );
+        daemonQueryState();
+    }
 
-	boolean isRegistered = false;
+    boolean isRegistered = false;
 	public void resume()
 	{
-		//    	int state;
-		//    	if ( mControlShell == null )
-		//    	{
-		//    		state = Intents.EXTRA_STATE_UNKNOWN;
-		//    	}
-		//    	else
-		//    	{
-		//    		state = mControlShell.daemonState( mConfigfileName );
-		//    	}
-		// This is the widget enabled state, not the preference toggled state
-
 		mContext.registerReceiver(mDaemonStateReceiver, mDaemonStateFilter);
-		isRegistered = true;
+		isRegistered = true; //TODO: is this flag really necessary?
 		mDaemonCheckBoxPref.setOnPreferenceChangeListener(this);
 	}
 
@@ -121,16 +118,15 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 		final boolean updateGui;
 		
 		// Turn on/off OpenVPN daemon
-		if ( mOpenVpnService == null )
-		{
+        if (isOpenVpnServiceDisabled())
+        {
 			mDaemonCheckBoxPref.setSummary( "Error: not bound to OpenVPN service!" );
 			updateGui = false; // Don't update UI to opposite
 		}
 		else
 		{
-
-			boolean currentState = mOpenVpnService.isDaemonStarted( mConfigFile );
-			boolean newState = (Boolean) value;
+			final boolean currentState = isDaemonStarted();
+			final boolean newState = (Boolean) value;
 			
 			if ( currentState == newState )
 			{
@@ -143,14 +139,15 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 			}
 			else
 			{
-				mDaemonCheckBoxPref.setEnabled(false);
-				
-				if (newState)
-					mOpenVpnService.daemonStart(mConfigFile);
-				else
-					mOpenVpnService.daemonStop(mConfigFile);
-				updateGui = false; // Don't update UI to opposite state until we're sure
-			}
+                // Disable checkbox until we receive DEAMON_STATE_CHANGED from service
+                mDaemonCheckBoxPref.setEnabled( false );
+
+                if (newState)
+                    daemonStart();
+                else
+                    daemonStop();
+                updateGui = false; // Don't update UI to opposite state until we're sure
+            }
 			
 			PreferenceManager.getDefaultSharedPreferences(mContext).edit().putBoolean(
 					Preferences.KEY_CONFIG_INTENDED_STATE( mConfigFile ), newState
@@ -160,19 +157,18 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 		return updateGui;
 	}
 
-
-	protected void handleDaemonStateChanged(int daemonState, int previousDeamonState)
+    protected void handleDaemonStateChanged(int previousDaemonState, int daemonState)
 	{
 		if (LOCAL_LOGD)
 			Log.d(TAG, "Received OpenVPN daemon state changed from "
-					+ getHumanReadableDaemonState(previousDeamonState) + " to "
+					+ getHumanReadableDaemonState(previousDaemonState) + " to "
 					+ getHumanReadableDaemonState(daemonState));
 
 
 		switch ( daemonState ) {
 		case Intents.DAEMON_STATE_ENABLED:
 			mDaemonCheckBoxPref.setChecked( true );
-			mDaemonCheckBoxPref.setSummary( null );
+			mDaemonCheckBoxPref.setSummary( getLatestSummary() ); //TODO: get message from latest sticky NETWORK_STATE_CHANGED broadcast
 			break;
 		case Intents.DAEMON_STATE_DISABLED:
 			mDaemonCheckBoxPref.setChecked( false );
@@ -188,80 +184,29 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 			break;
 
 		default:
-			mDaemonCheckBoxPref.setSummary( "unkwnown daemon state: " + daemonState );
+			mDaemonCheckBoxPref.setSummary( "unknown daemon state: " + daemonState );
 		}		
-		mDaemonCheckBoxPref.setEnabled( isEnabledByDependency() && mOpenVpnService != null );
+		mDaemonCheckBoxPref.setEnabled( isEnabledByDependency() && isOpenVpnServiceEnabled() );
 	}
 
-	protected void handleNetworkStateChanged(Intent intent)
+    protected void handleNetworkStateChanged(Intent intent)
 	{
-		int networkState = intent.getIntExtra(Intents.EXTRA_NETWORK_STATE, Intents.NETWORK_STATE_UNKNOWN);
-		int previousNetworkState = intent.getIntExtra(Intents.EXTRA_PREVIOUS_NETWORK_STATE, Intents.NETWORK_STATE_UNKNOWN);
+        {
+            final int previousNetworkState = intent.getIntExtra( Intents.EXTRA_PREVIOUS_NETWORK_STATE, Intents.NETWORK_STATE_UNKNOWN );
+            final int networkState = intent.getIntExtra( Intents.EXTRA_NETWORK_STATE, Intents.NETWORK_STATE_UNKNOWN );
 
-		if (LOCAL_LOGD)
-			Log.d(TAG, "Received OpenVPN network state changed from "
-					+ getHumanReadableNetworkState(previousNetworkState) + " to "
-					+ getHumanReadableNetworkState(networkState));
+            if (LOCAL_LOGD)
+                Log.d( TAG, "Received OpenVPN network state changed from "
+                        + getHumanReadableNetworkState( previousNetworkState ) + " to "
+                        + getHumanReadableNetworkState( networkState ) );
+        }
 
-		if ( mOpenVpnService != null && mOpenVpnService.isDaemonStarted( mConfigFile ) )
-		{
-			final String summary;
-			switch (networkState) {
-			case Intents.NETWORK_STATE_UNKNOWN:
-				summary = "Unknown";
-				break;
-			case Intents.NETWORK_STATE_CONNECTING:
-				summary = "Connecting";
-				break;
-			case Intents.NETWORK_STATE_RECONNECTING:
-				String cause = intent.getStringExtra( Intents.EXTRA_NETWORK_CAUSE );
-				if ( cause == null )
-					summary = "Reconnecting";
-				else
-					summary = String.format(
-							"Reconnecting (caused by %s)",
-							cause
-					);
-				break;
-			case Intents.NETWORK_STATE_RESOLVE:
-				summary = "Resolve";
-				break;
-			case Intents.NETWORK_STATE_WAIT:
-				summary = "Wait";
-				break;
-			case Intents.NETWORK_STATE_AUTH:
-				summary = "Auth";
-				break;
-			case Intents.NETWORK_STATE_GET_CONFIG:
-				summary = "Get Config";
-				break;
-			case Intents.NETWORK_STATE_CONNECTED:
-				summary = String.format(
-						"Connected to %s as %s",
-						intent.getStringExtra( Intents.EXTRA_NETWORK_REMOTEIP ),
-						intent.getStringExtra( Intents.EXTRA_NETWORK_LOCALIP )
-				);
-				break;
-			case Intents.NETWORK_STATE_ASSIGN_IP:
-				summary = String.format(
-						"Assign IP %s",
-						intent.getStringExtra( Intents.EXTRA_NETWORK_LOCALIP )
-				);
-				break;
-			case Intents.NETWORK_STATE_ADD_ROUTES:
-				summary = "Add Routes";
-				break;
-			case Intents.NETWORK_STATE_EXITING:
-				summary = "Exiting";
-				break;
-			default:
-				summary = String.format( "Some other state (%d)!", networkState );    
-			}
-			mDaemonCheckBoxPref.setSummary( summary );
-		}
+        if (isDaemonStarted()) // TODO: why is this condition necessary? Remove it if possible
+            mDaemonCheckBoxPref.setSummary( getHumanReadableSummaryForNetworkStateChanged( intent ) );
 	}
 
-	// what are dependencies??
+
+    // what are dependencies??
 	// copied from com.android.settings.wifi.WifiEnabler
 	private boolean isEnabledByDependency() {
 		Preference dep = getDependencyPreference();
@@ -328,4 +273,110 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 		}
 	}
 
+    private String getHumanReadableSummaryForNetworkStateChanged(Intent intent)
+    {
+        final String summary;
+        final int networkState = intent.getIntExtra( Intents.EXTRA_NETWORK_STATE, Intents.NETWORK_STATE_UNKNOWN );
+        switch (networkState)
+        {
+            case Intents.NETWORK_STATE_UNKNOWN:
+                summary = "Unknown";
+                break;
+            case Intents.NETWORK_STATE_CONNECTING:
+                summary = "Connecting";
+                break;
+            case Intents.NETWORK_STATE_RECONNECTING:
+                final String cause = intent.getStringExtra( Intents.EXTRA_NETWORK_CAUSE );
+                if (cause == null)
+                    summary = "Reconnecting";
+                else
+                    summary = String.format( "Reconnecting (caused by %s)", cause );
+                break;
+            case Intents.NETWORK_STATE_RESOLVE:
+                summary = "Resolve";
+                break;
+            case Intents.NETWORK_STATE_WAIT:
+                summary = "Wait";
+                break;
+            case Intents.NETWORK_STATE_AUTH:
+                summary = "Auth";
+                break;
+            case Intents.NETWORK_STATE_GET_CONFIG:
+                summary = "Get Config";
+                break;
+            case Intents.NETWORK_STATE_CONNECTED:
+                summary = String.format(
+                        "Connected to %s as %s",
+                        intent.getStringExtra( Intents.EXTRA_NETWORK_REMOTEIP ),
+                        intent.getStringExtra( Intents.EXTRA_NETWORK_LOCALIP )
+                );
+                break;
+            case Intents.NETWORK_STATE_ASSIGN_IP:
+                summary = String.format(
+                        "Assign IP %s",
+                        intent.getStringExtra( Intents.EXTRA_NETWORK_LOCALIP )
+                );
+                break;
+            case Intents.NETWORK_STATE_ADD_ROUTES:
+                summary = "Add Routes";
+                break;
+            case Intents.NETWORK_STATE_EXITING:
+                summary = "Exiting";
+                break;
+            default:
+                summary = String.format( "Some other state (%d)!", networkState );
+        }
+        return summary;
+    }
+
+
+
+
+    private boolean isDaemonStarted()
+    {
+        if ( mOpenVpnService == null )
+            return false;
+        return mOpenVpnService.isDaemonStarted( mConfigFile );
+    }
+
+    private boolean isOpenVpnServiceDisabled()
+    {
+        return mOpenVpnService == null;
+    }
+
+    private boolean isOpenVpnServiceEnabled()
+    {
+        return mOpenVpnService != null; // should we check OpenVpnService.isOpenVpnServiceEnabled()? Or should we just rely on Prefernce openvpn_enabled?
+    }
+
+    private void daemonStart()
+    {
+        mOpenVpnService.daemonStart( mConfigFile );
+    }
+
+    private void daemonStop()
+    {
+        mOpenVpnService.daemonStop( mConfigFile );
+    }
+
+    private void daemonQueryState()
+    {
+//        if (isOpenVpnServiceEnabled())
+//            mOpenVpnService.daemonQueryState(mConfigFile);
+    }
+
+    public CharSequence getLatestSummary()
+    {
+        Intent intent = mDaemonCheckBoxPref.getContext().registerReceiver( null, new IntentFilter( Intents.NETWORK_STATE_CHANGED ) );
+        if ( intent == null )
+            return "State is unknown";  // TODO: should we issue a 'state' command to the openvpn daemon to update the sticky broadcast?
+
+        /* TODO: should we check if the intent is for this config (EXTRA_CONFIG)?
+         *       If not we could remove the sticky broadcast and
+         *       issue a 'state' command to the openvpn daemon,
+         *       to generate a new sticky broadcast
+         */
+
+        return getHumanReadableSummaryForNetworkStateChanged( intent );
+    }
 }
