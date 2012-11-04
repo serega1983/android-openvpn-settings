@@ -290,7 +290,15 @@ public class OpenVpnService extends Service
 							Preferences.KEY_CONFIG_INTENDED_STATE( config ), false
 					)
 			);
-	}
+
+        // clean up sticky broadcasts
+        //TODO: review this code it might not be correct
+        Intent intent = registerReceiver( null, new IntentFilter( Intents.DEAMON_STATE_CHANGED ) );
+        if (intent != null && !isDaemonStarted( new File( intent.getStringExtra( Intents.EXTRA_CONFIG ) ) ))
+            newNotification2(
+                    new File( intent.getStringExtra( Intents.EXTRA_CONFIG ) )
+            ).daemonStateChangedToDisabled();
+    }
 
     private Notification2 newNotification2(File config)
     {
