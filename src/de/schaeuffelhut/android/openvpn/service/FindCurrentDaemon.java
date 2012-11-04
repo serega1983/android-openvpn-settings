@@ -24,7 +24,6 @@ package de.schaeuffelhut.android.openvpn.service;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import de.schaeuffelhut.android.openvpn.Preferences;
 
 import java.io.File;
 import java.util.List;
@@ -39,23 +38,38 @@ import java.util.List;
  * @author Friedrich Schäuffelhut
  * @since 2012-11-03
  */
-public abstract class FindCurrentDaemon
+class FindCurrentDaemon
 {
-    //TODO: inject dependencies
-    abstract OpenVpnService getContext();
-    abstract SharedPreferences getSharedPreferences();
-    abstract List<File> listConfigs();
-    abstract DaemonMonitor newDaemonMonitor(File current);
+    private final OpenVpnService context;
+    private final DaemonMonitorFactory daemonMonitorFactory;
+    private final List<File> configFiles;
+
+    FindCurrentDaemon(OpenVpnService context, DaemonMonitorFactory daemonMonitorFactory, List<File> configFiles)
+    {
+        this.context = context;
+        this.daemonMonitorFactory = daemonMonitorFactory;
+        this.configFiles = configFiles;
+    }
+
+    private SharedPreferences getSharedPreferences()
+    {
+        return PreferenceManager.getDefaultSharedPreferences( context );
+    }
+
+    private DaemonMonitor newDaemonMonitor(File configFile)
+    {
+        return daemonMonitorFactory.createDaemonMonitorFor( configFile );
+    }
 
     //TODO: TDD outlined code
-    private DaemonMonitor todo_code_outline()
+    DaemonMonitor getTheOneRunningDaemonOrTheNullDaemonMonitor()
     {
         // If more than one daemon is running, stop all
-        OneDaemonRunningPolicy oneDaemonRunningPolicy = new OneDaemonRunningPolicy( new DaemonMonitorImplFactory( getContext() ), listConfigs() );
+        OneDaemonRunningPolicy oneDaemonRunningPolicy = new OneDaemonRunningPolicy( new DaemonMonitorImplFactory( context ), configFiles );
         oneDaemonRunningPolicy.initialize();
 
         // If more than one config has intended_state=true, disable all
-        OneDaemonEnabledPolicy oneDaemonEnabledPolicy = new OneDaemonEnabledPolicy( getSharedPreferences(), listConfigs() );
+        OneDaemonEnabledPolicy oneDaemonEnabledPolicy = new OneDaemonEnabledPolicy( getSharedPreferences(), configFiles );
         oneDaemonEnabledPolicy.initialize();
 
         // from here on only one config should be in intended_state = true
