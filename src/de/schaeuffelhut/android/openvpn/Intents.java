@@ -28,7 +28,7 @@ public final class Intents
 	public final static String NS = Intents.class.getName();
 
     // broadcasted intents
-	public final static String DEAMON_STATE_CHANGED = NS + ".DAEMON_STATE_CHANGED";
+	public final static String DAEMON_STATE_CHANGED = NS + ".DAEMON_STATE_CHANGED";
 	public final static String NETWORK_STATE_CHANGED = NS + ".NETWORK_STATE_CHANGED";
     public static final String BROADCAST_NEED_PASSWORD = NS + ".NEED_PASSWORD";
 
@@ -72,7 +72,7 @@ public final class Intents
 
 
     public final static Intent daemonStateChanged(String config, int state){
-		return new Intent(DEAMON_STATE_CHANGED)
+		return new Intent( DAEMON_STATE_CHANGED )
 		.putExtra(EXTRA_CONFIG, config)
 		.putExtra(EXTRA_DAEMON_STATE, state);
 	}

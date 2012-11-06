@@ -313,7 +313,7 @@ public class OpenVpnService extends Service
 
         // clean up sticky broadcasts
         //TODO: review this code it might not be correct
-        Intent intent = registerReceiver( null, new IntentFilter( Intents.DEAMON_STATE_CHANGED ) );
+        Intent intent = registerReceiver( null, new IntentFilter( Intents.DAEMON_STATE_CHANGED ) );
         if (intent != null && !isDaemonStarted( new File( intent.getStringExtra( Intents.EXTRA_CONFIG ) ) ))
             newNotification2(
                     new File( intent.getStringExtra( Intents.EXTRA_CONFIG ) )
