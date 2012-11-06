@@ -141,9 +141,9 @@ final class Notifications {
 		);
 		notification.flags |= Notification.FLAG_NO_CLEAR;
 		notification.flags |= Notification.FLAG_ONGOING_EVENT;
-		
+
 		Intent intent = new Intent(null, Uri.fromFile(configFile), context, EnterUserPassword.class );
-		
+
 		notification.setLatestEventInfo(
 				context,
 				"Username/Password required",
@@ -158,7 +158,7 @@ final class Notifications {
 	
 		notificationManager.notify( id, notification);
 
-        sendNeedPassword( context, notification );
+        sendNeedPassword( context, intent );
 	}
 
 
