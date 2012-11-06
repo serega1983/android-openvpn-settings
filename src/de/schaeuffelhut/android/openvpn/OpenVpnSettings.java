@@ -377,6 +377,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 	final static int CONTEXT_CONFIG_EDIT = 3;
 	final static int CONTEXT_CONFIG_EDIT_PREFERENCES = 4;
 	final static int CONTEXT_CONFIG_VIEW_LOG = 5;
+	final static int CONTEXT_CONFIG_FORGET_PASSPHRASE_OR_CREDENTIALS = 6;
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
@@ -397,6 +398,11 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 			if ( Preferences.logFileFor( configFilePref.mConfig ).exists() )
 				menu.add( ContextMenu.NONE, CONTEXT_CONFIG_VIEW_LOG, 2, "View Log File" );
 			menu.add( ContextMenu.NONE, CONTEXT_CONFIG_EDIT_PREFERENCES, 2, "Preferences" );
+
+            if ( Preferences.hasPassphrase( getApplicationContext(), configFilePref.mConfig ) )
+			    menu.add( ContextMenu.NONE, CONTEXT_CONFIG_FORGET_PASSPHRASE_OR_CREDENTIALS, 2, "Forget Password" );
+            if ( Preferences.hasCredentials( getApplicationContext(), configFilePref.mConfig ) )
+			    menu.add( ContextMenu.NONE, CONTEXT_CONFIG_FORGET_PASSPHRASE_OR_CREDENTIALS, 2, "Forget Credentials" );
 
 			//Delete
 		}
@@ -432,6 +438,9 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 			i.putExtra( EditConfigPreferences.EXTRA_FILENAME, configFilePref.mConfig.getAbsolutePath() );
 	        startActivityForResult(i, REQUEST_CODE_EDIT_CONFIG_PREFERENCES );
 		} return true;
+        case CONTEXT_CONFIG_FORGET_PASSPHRASE_OR_CREDENTIALS: {
+            Preferences.clearPassphraseOrCredentials( getApplicationContext(), configFilePref.mConfig );
+        } return true;
 
 		default:
 			return false;
