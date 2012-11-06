@@ -55,7 +55,7 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
             if (!intentAddressesThisDaemonEnabler( intent ))
                 return;
 
-            if (Intents.DEAMON_STATE_CHANGED.equals( intent.getAction() ))
+            if (Intents.DAEMON_STATE_CHANGED.equals( intent.getAction() ))
             {
                 handleDaemonStateChanged(
                         intent.getIntExtra( Intents.EXTRA_PREVIOUS_DAEMON_STATE, Intents.DAEMON_STATE_UNKNOWN ),
@@ -83,7 +83,7 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 		mOriginalSummary = mDaemonCheckBoxPref.getSummary();
 		mDaemonCheckBoxPref.setPersistent( false );
 
-		mDaemonStateFilter = new IntentFilter(Intents.DEAMON_STATE_CHANGED);
+		mDaemonStateFilter = new IntentFilter(Intents.DAEMON_STATE_CHANGED );
 		mDaemonStateFilter.addAction(Intents.NETWORK_STATE_CHANGED);
 
 		setOpenVpnService( openVpnServiceShell );
