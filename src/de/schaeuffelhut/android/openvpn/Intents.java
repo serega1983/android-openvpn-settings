@@ -58,6 +58,8 @@ public final class Intents
 	public final static int NETWORK_STATE_EXITING = 10;
 
     public static final String BROADCAST_NEED_PASSWORD = NS + ".NEED_PASSWORD";
+    public static final String START_DAEMON = NS+".start-daemon";
+    public static final String STOP_DAEMON = NS+".stop-daemon";
 
     public final static Intent daemonStateChanged(String config, int state){
 		return new Intent(DEAMON_STATE_CHANGED)
@@ -75,7 +77,7 @@ public final class Intents
 		return intent;
 	}
 
-	public final static String DATA_TYPE_CONFIG = NS+"/config";
+//	public final static String DATA_TYPE_CONFIG = NS+"/config";
 	
 	private Intents() {}
 

@@ -149,8 +149,23 @@ public class OpenVpnService extends Service
 
 		PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener( onSharedPreferenceChangeListener );
 	}
-	
-	@Override
+
+    @Override
+    //TODO: implement onStartCommand instead, when updated to API level 5 or higher.
+    public void onStart(Intent intent, int startId)
+    {
+        super.onStart( intent, startId );
+        if ( intent == null )
+            return;
+        if ( !intent.hasExtra( Intents.EXTRA_CONFIG ) )
+            return;
+        if ( Intents.START_DAEMON.equals( intent.getAction() ) )
+            daemonStart( new File( intent.getStringExtra( Intents.EXTRA_CONFIG ) ) );
+        else if ( Intents.STOP_DAEMON.equals( intent.getAction() ) )
+            daemonStop( new File( intent.getStringExtra( Intents.EXTRA_CONFIG ) ) );
+    }
+
+    @Override
 	public void onDestroy()
     {
 		PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener( onSharedPreferenceChangeListener );
