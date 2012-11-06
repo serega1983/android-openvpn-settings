@@ -157,6 +157,7 @@ public class OpenVpnService extends Service
         super.onStart( intent, startId );
         if ( intent == null )
             return;
+        Log.d(TAG, "onStart: " + intent.getAction() );
         if ( !intent.hasExtra( Intents.EXTRA_CONFIG ) )
             return;
         if ( Intents.START_DAEMON.equals( intent.getAction() ) )

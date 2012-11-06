@@ -119,4 +119,29 @@ public class Preferences2
     {
         return Preferences.getIntendedState( mContext, mConfigFile );
     }
+
+    public boolean hasPassphrase()
+    {
+        return Preferences.hasPassphrase( mContext, mConfigFile );
+    }
+
+    public String getPassphrase()
+    {
+        return Preferences.getPassphrase( mContext, mConfigFile );
+    }
+
+    public boolean hasCredentials()
+    {
+        return Preferences.hasCredentials( mContext, mConfigFile );
+    }
+
+    public String getUsername()
+    {
+        return Preferences.getUsername( mContext, mConfigFile );
+    }
+
+    public String getPassword()
+    {
+        return Preferences.getPassword( mContext, mConfigFile );
+    }
 }
