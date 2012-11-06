@@ -27,24 +27,33 @@ public final class Intents
 {
 	public final static String NS = Intents.class.getName();
 
+    // broadcasted intents
 	public final static String DEAMON_STATE_CHANGED = NS + ".DAEMON_STATE_CHANGED";
 	public final static String NETWORK_STATE_CHANGED = NS + ".NETWORK_STATE_CHANGED";
-	
-	public final static String EXTRA_CONFIG = "config";
+    public static final String BROADCAST_NEED_PASSWORD = NS + ".NEED_PASSWORD";
+
+    // extras used by multiple intents
+    public final static String EXTRA_CONFIG = "config";
+
+    // extras used by DEAMON_STATE_CHANGED
 	public final static String EXTRA_DAEMON_STATE = "daemon-state";
 	public final static String EXTRA_PREVIOUS_DAEMON_STATE = "previous-daemon-state";
-	public final static String EXTRA_NETWORK_STATE = "network-state";
-	public final static String EXTRA_PREVIOUS_NETWORK_STATE = "previous-network-state";
-	public final static String EXTRA_NETWORK_TIME = "network-time";
-	public final static String EXTRA_NETWORK_LOCALIP = "network-localip";
-	public final static String EXTRA_NETWORK_REMOTEIP = "network-remoteip";
-	public final static String EXTRA_NETWORK_CAUSE = "network-cause";
-	
+
+    // values for EXTRA_DAEMON_STATE and EXTRA_PREVIOUS_DAEMON_STATE
 	public final static int DAEMON_STATE_UNKNOWN = 0;
 	public final static int DAEMON_STATE_STARTUP = 1;
 	public final static int DAEMON_STATE_ENABLED = 2;
 	public final static int DAEMON_STATE_DISABLED = 3;
 
+    // extras used by NETWORK_STATE_CHANGED
+    public final static String EXTRA_NETWORK_STATE = "network-state";
+	public final static String EXTRA_PREVIOUS_NETWORK_STATE = "previous-network-state";
+	public final static String EXTRA_NETWORK_TIME = "network-time";
+	public final static String EXTRA_NETWORK_LOCALIP = "network-localip";
+	public final static String EXTRA_NETWORK_REMOTEIP = "network-remoteip";
+	public final static String EXTRA_NETWORK_CAUSE = "network-cause";
+
+    // values for EXTRA_NETWORK_STATE and EXTRA_PREVIOUS_NETWORK_STATE
 	public final static int NETWORK_STATE_UNKNOWN = 0;
 	public final static int NETWORK_STATE_CONNECTING = 1;
 	public final static int NETWORK_STATE_RECONNECTING = 2;
@@ -57,9 +66,10 @@ public final class Intents
 	public static final int NETWORK_STATE_ADD_ROUTES = 9;		
 	public final static int NETWORK_STATE_EXITING = 10;
 
-    public static final String BROADCAST_NEED_PASSWORD = NS + ".NEED_PASSWORD";
+    // startService intents
     public static final String START_DAEMON = NS+".start-daemon";
     public static final String STOP_DAEMON = NS+".stop-daemon";
+
 
     public final static Intent daemonStateChanged(String config, int state){
 		return new Intent(DEAMON_STATE_CHANGED)
