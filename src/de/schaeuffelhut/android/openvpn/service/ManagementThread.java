@@ -587,12 +587,18 @@ final class ManagementThread extends Thread
 		if ( line.equals( ">PASSWORD:Need 'Private Key' password" ) )
 		{
 			mWaitingForPassphrase = true;
-            mNotification2.sendPassphraseRequired();
+            if ( mPreferences2.hasPassphrase() )
+                sendPassphrase( mPreferences2.getPassphrase() );
+            else
+                mNotification2.sendPassphraseRequired();
         }
 		else if ( line.equals( ">PASSWORD:Need 'Auth' username/password" ) )
 		{
 			mWaitingForUserPassword = true;
-            mNotification2.sendUsernamePasswordRequired();
+            if ( mPreferences2.hasCredentials() )
+                sendUserPassword( mPreferences2.getUsername(), mPreferences2.getPassword() );
+            else
+                mNotification2.sendUsernamePasswordRequired();
         }
 		else if ( line.equals( ">PASSWORD:Verification Failed: 'Private Key'" ) )
 		{
