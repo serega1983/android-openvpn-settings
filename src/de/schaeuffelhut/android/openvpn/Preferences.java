@@ -110,9 +110,21 @@ public final class Preferences {
 	public final static String KEY_SCRIPT_SECURITY_LEVEL(File config){
 		return KEY_CONFIG(config.getAbsolutePath())+".script_security.level";
 	}
-	
-	
-	private Preferences() {
+    private static String KEY_CONFIG_USERNAME(File config)
+    {
+		return KEY_CONFIG(config.getAbsolutePath())+".username";
+    }
+    private static String KEY_CONFIG_PASSWORD(File config)
+    {
+		return KEY_CONFIG(config.getAbsolutePath())+".password";
+    }
+    private static String KEY_CONFIG_PASSPHRASE(File config)
+    {
+		return KEY_CONFIG(config.getAbsolutePath())+".passphrase";
+    }
+
+
+    private Preferences() {
 	}
 
 	public static boolean getOpenVpnEnabled(Context context) {
@@ -322,7 +334,66 @@ public final class Preferences {
     public static boolean getIntendedState(Context context, File configFile)
     {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return sharedPreferences.getBoolean( Preferences.KEY_CONFIG_INTENDED_STATE(configFile), false );
+        return sharedPreferences.getBoolean( Preferences.KEY_CONFIG_INTENDED_STATE( configFile ), false );
+    }
+
+    public static void clearPassphraseOrCredentials(Context context, File configFile)
+    {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( context );
+        sharedPreferences.edit()
+                .remove( Preferences.KEY_CONFIG_USERNAME( configFile ) )
+                .remove( Preferences.KEY_CONFIG_PASSWORD( configFile ) )
+                .remove( Preferences.KEY_CONFIG_PASSPHRASE( configFile) )
+                .commit();
+    }
+    public static void setCredentials(Context context, File configFile, String username, String password)
+    {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( context );
+        sharedPreferences.edit()
+                .putString( Preferences.KEY_CONFIG_USERNAME( configFile ), username )
+                .putString( Preferences.KEY_CONFIG_PASSWORD( configFile ), password )
+                .remove( Preferences.KEY_CONFIG_PASSPHRASE( configFile ) )
+                .commit();
+    }
+
+    public static boolean hasCredentials(Context context, File configFile)
+    {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.contains( Preferences.KEY_CONFIG_USERNAME( configFile ) ) && sharedPreferences.contains( Preferences.KEY_CONFIG_PASSWORD( configFile ) );
+    }
+
+    public static String getUsername(Context context, File configFile)
+    {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getString( Preferences.KEY_CONFIG_USERNAME( configFile ), "" );
+    }
+
+    public static String getPassword(Context context, File configFile)
+    {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getString( Preferences.KEY_CONFIG_PASSWORD( configFile ), "" );
+    }
+
+    public static void setPassphrase(Context context, File configFile, String passphrase)
+    {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( context );
+        sharedPreferences.edit()
+                .remove( Preferences.KEY_CONFIG_USERNAME( configFile ) )
+                .remove( Preferences.KEY_CONFIG_PASSWORD( configFile ) )
+                .putString( Preferences.KEY_CONFIG_PASSPHRASE( configFile ), passphrase )
+                .commit();
+    }
+
+    public static boolean hasPassphrase(Context context, File configFile)
+    {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.contains( Preferences.KEY_CONFIG_PASSPHRASE( configFile ) );
+    }
+
+    public static String getPassphrase(Context context, File configFile)
+    {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getString( Preferences.KEY_CONFIG_PASSPHRASE( configFile ), "" );
     }
 
 
