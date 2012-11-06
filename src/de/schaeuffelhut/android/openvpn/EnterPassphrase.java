@@ -35,6 +35,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
@@ -73,16 +75,28 @@ public class EnterPassphrase extends Activity implements ServiceConnection {
 	protected Dialog onCreateDialog(int id) {
 		DialogInterface.OnClickListener ok = new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
-				EditText passphrase = (EditText)((AlertDialog)dialog).findViewById( R.id.enter_passphrase_passphrase );
-				mOpenVpnService.daemonPassphrase( getConfigFile(), passphrase.getText().toString() );
+                View view = ((AlertDialog) dialog).getWindow().getDecorView();
+                CheckBox remember = (CheckBox) view.findViewById( R.id.enter_passphrase_remember );
+				EditText passphrase = (EditText) view.findViewById( R.id.enter_passphrase_passphrase );
+                if ( remember.isChecked() )
+                    Preferences.setPassphrase( getApplicationContext(), getConfigFile(), passphrase.getText().toString() );
+                else
+                    Preferences.clearPassphraseOrCredentials( getApplicationContext(), getConfigFile() );
+
+                mOpenVpnService.daemonPassphrase( getConfigFile(), passphrase.getText().toString() );
 				finish();
 			}
 		};
 		
 		//TODO: find out how to access dialog without field mDialog 
-		mDialog = new AlertDialog.Builder(this)
+        View view = LayoutInflater.from( this ).inflate( R.layout.enter_passphrase, null );
+        EditText passphrase = (EditText) view.findViewById( R.id.enter_passphrase_passphrase );
+        CheckBox remember = (CheckBox) view.findViewById( R.id.enter_passphrase_remember );
+        passphrase.setText( Preferences.getPassphrase( this, getConfigFile() ) );
+        remember.setChecked( Preferences.hasPassphrase( this, getConfigFile() ) );
+        mDialog = new AlertDialog.Builder(this)
 		.setTitle( "Passphrase required" )
-		.setView( LayoutInflater.from(this).inflate( R.layout.enter_passphrase, null) )
+		.setView( view )
 		.setNeutralButton("OK", ok).create();
 		
 

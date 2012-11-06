@@ -35,6 +35,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
@@ -73,8 +75,14 @@ public class EnterUserPassword extends Activity implements ServiceConnection {
 	protected Dialog onCreateDialog(int id) {
 		DialogInterface.OnClickListener ok = new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
-				EditText username = (EditText)((AlertDialog)dialog).findViewById( R.id.enter_user_password_user);
-				EditText password = (EditText)((AlertDialog)dialog).findViewById( R.id.enter_user_password_password );
+				View view = ((AlertDialog) dialog).getWindow().getDecorView();
+                CheckBox remember = (CheckBox) view.findViewById( R.id.enter_user_password_remember );
+                EditText username = (EditText)view.findViewById( R.id.enter_user_password_user);
+				EditText password = (EditText)view.findViewById( R.id.enter_user_password_password );
+                if ( remember.isChecked() )
+                    Preferences.setCredentials( getApplicationContext(), getConfigFile(), username.getText().toString(), password.getText().toString() );
+                else
+                    Preferences.clearPassphraseOrCredentials( getApplicationContext(), getConfigFile() );
 				mOpenVpnService.daemonUsernamePassword( 
 						getConfigFile(),
 						username.getText().toString(), 
@@ -85,9 +93,16 @@ public class EnterUserPassword extends Activity implements ServiceConnection {
 		};
 		
 		//TODO: find out how to access dialog without field 
-		mDialog = new AlertDialog.Builder(this)
+        View view = LayoutInflater.from( this ).inflate( R.layout.enter_user_password, null );
+        EditText username = (EditText)view.findViewById( R.id.enter_user_password_user);
+        EditText password = (EditText)view.findViewById( R.id.enter_user_password_password );
+        CheckBox remember = (CheckBox) view.findViewById( R.id.enter_user_password_remember );
+        username.setText( Preferences.getUsername( this, getConfigFile() ) );
+        password.setText( Preferences.getPassword( this, getConfigFile() ) );
+        remember.setChecked( Preferences.hasCredentials( this, getConfigFile() ) );
+        mDialog = new AlertDialog.Builder(this)
 		.setTitle( "Password required" )
-		.setView( LayoutInflater.from(this).inflate( R.layout.enter_user_password, null) )
+		.setView( view )
 		.setNeutralButton("OK", ok).create();
 		
 
