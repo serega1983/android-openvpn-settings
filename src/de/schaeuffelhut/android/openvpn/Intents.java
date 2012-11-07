@@ -67,8 +67,8 @@ public final class Intents
 	public final static int NETWORK_STATE_EXITING = 10;
 
     // startService intents
-    public static final String START_DAEMON = NS+".start-daemon";
-    public static final String STOP_DAEMON = NS+".stop-daemon";
+    public static final String START_DAEMON = NS+".START_DAEMON";
+    public static final String STOP_DAEMON = NS+".STOP_DAEMON";
 
 
     public final static Intent daemonStateChanged(String config, int state){
