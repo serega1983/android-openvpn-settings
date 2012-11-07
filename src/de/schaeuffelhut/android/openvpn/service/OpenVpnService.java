@@ -220,31 +220,10 @@ public class OpenVpnService extends Service
 	private synchronized void shutdown()
 	{
 		Log.i(TAG, "shutting down");
-				
-		final ArrayList<DaemonMonitor> daemonMonitors = new ArrayList<DaemonMonitor>( mRegistry.values() );
-		
-		// sending shutdown signal to all running daemons
-		for( DaemonMonitor daemonMonitor : daemonMonitors )
-		{
-			if( daemonMonitor.isAlive() )
-			{
-				daemonMonitor.stop();
-//				try {
-//					daemonMonitor.stopAndWaitForTermination();
-//				} catch (InterruptedException e) {
-//					Log.e(TAG, "shutdown", e);
-//				}
-			}
-		}
 
-		// wait for shutdown to finish
-		for( DaemonMonitor daemonMonitor : daemonMonitors ){
-			try {
-				daemonMonitor.waitForTermination();
-			} catch (InterruptedException e) {
-				Log.e(TAG, "shutdown", e);
-			}
-		}
+        if ( getCurrent().isAlive() ) {
+            getCurrent().stop();
+        }
 
 		mConnectivity.stopListening();
 		mConnectivity = null;
