@@ -53,12 +53,12 @@ final class DaemonMonitorImpl implements DaemonMonitor
 	private ManagementThread mManagementThread;
 
 
-    DaemonMonitorImpl(OpenVpnService context, File configFile, Notification2 notification2)
+    DaemonMonitorImpl(OpenVpnService context, File configFile, Notification2 notification2, Preferences2 preferences2)
 	{
 		mContext = context;
 		mConfigFile = configFile;
         mNotification2 = notification2;
-        mPreferences2 = new Preferences2( this.mContext, this.mConfigFile );
+        mPreferences2 = preferences2;
 
         mLog = new LogFile( mPreferences2.logFileFor() );
 		mTagDaemonMonitor = String.format("OpenVPN-DaemonMonitor[%s]", mConfigFile);

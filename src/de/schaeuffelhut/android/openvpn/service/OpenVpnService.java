@@ -343,7 +343,7 @@ public class OpenVpnService extends Service
 
     private Notification2 newNotification2(File config)
     {
-        return new Notification2( this, config, Preferences.getNotificationId( this, config ) );
+        return new Notification2( this, config, new Preferences2( this, config ).getNotificationId() );
     }
 
 
