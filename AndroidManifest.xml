@@ -100,7 +100,12 @@
 			android:label="@string/openvpn_service"
 			android:exported="false"
 			android:enabled="true"
-			/>
+			>
+            <intent-filter>
+                <action android:name="de.schaeuffelhut.android.openvpn.Intents.start-daemon"/>
+                <action android:name="de.schaeuffelhut.android.openvpn.Intents.stop-daemon"/>
+            </intent-filter>
+        </service>
 
 		<receiver
 			android:name="de.schaeuffelhut.android.openvpn.util.BootCompletedReceiver"
