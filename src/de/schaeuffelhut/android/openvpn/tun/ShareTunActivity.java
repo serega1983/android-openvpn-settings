@@ -63,7 +63,6 @@ import android.widget.TextView;
 import com.bugsense.trace.BugSenseHandler;
 
 import de.schaeuffelhut.android.openvpn.Configuration;
-import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.R;
 import de.schaeuffelhut.android.openvpn.util.Util;
 
@@ -89,12 +88,12 @@ public class ShareTunActivity extends Activity
 		{
 			try {
 				sendDeviceDeatils();
-				Preferences.setSendDeviceDetailWasSuccessfull( getApplicationContext(), postWasSuccessfull() );
+				TunPreferences.setSendDeviceDetailWasSuccessfull( getApplicationContext(), postWasSuccessfull() );
 			} catch (OperationFailed e) {
 				Log.e( "OpenVPN-Settings", "Uploading device dteails failed", e );
 				// TODO: log via ACRA
 				BugSenseHandler.log( "Uploading device dteails failed", e );
-				Preferences.setSendDeviceDetailWasSuccessfull( getApplicationContext(), false );
+				TunPreferences.setSendDeviceDetailWasSuccessfull( getApplicationContext(), false );
 			} catch (Exception e) {
 				BugSenseHandler.log( "Uploading device dteails failed", e );
 			}			

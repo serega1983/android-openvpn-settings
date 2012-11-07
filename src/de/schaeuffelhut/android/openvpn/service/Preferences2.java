@@ -105,11 +105,6 @@ public class Preferences2
         return Preferences.getFixHtcRoutes( mContext );
     }
 
-    boolean getSendDeviceDetailWasSuccessfull()
-    {
-        return Preferences.getSendDeviceDetailWasSuccessfull( mContext );
-    }
-
     File getPathToBinaryAsFile()
     {
         return Preferences.getPathToBinaryAsFile( PreferenceManager.getDefaultSharedPreferences( mContext ) );

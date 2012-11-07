@@ -26,8 +26,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.test.InstrumentationTestCase;
+import de.schaeuffelhut.android.openvpn.tun.TunPreferences;
 import junit.framework.Assert;
-import junit.framework.TestCase;
 
 import java.io.File;
 
@@ -51,25 +51,25 @@ public class PreferencesTest extends InstrumentationTestCase
 
     public void test_doModprobeTun()
     {
-        Preferences.setDoModprobeTun( context, true );
-        Assert.assertTrue( Preferences.getDoModprobeTun( preferences ) );
+        TunPreferences.setDoModprobeTun( context, true );
+        Assert.assertTrue( TunPreferences.getDoModprobeTun( preferences ) );
 
-        Preferences.setDoModprobeTun( context, false );
-        Assert.assertFalse( Preferences.getDoModprobeTun( preferences ) );
+        TunPreferences.setDoModprobeTun( context, false );
+        Assert.assertFalse( TunPreferences.getDoModprobeTun( preferences ) );
     }
 
     public void test_getLoadTunModulCommand_modprobe_tun()
     {
-        Preferences.setModprobeAlternativeToModprobe( preferences );
-        Preferences.setPathToTun( preferences, new File( "tun" ) );
-        Assert.assertEquals( "modprobe 'tun'", Preferences.getLoadTunModuleCommand( preferences ) );
+        TunPreferences.setModprobeAlternativeToModprobe( preferences );
+        TunPreferences.setPathToTun( preferences, new File( "tun" ) );
+        Assert.assertEquals( "modprobe 'tun'", TunPreferences.getLoadTunModuleCommand( preferences ) );
     }
 
     public void test_getLoadTunModulCommand_insmod_system_lib_modules_tun_ko()
     {
-        Preferences.setModprobeAlternativeToInsmod( preferences );
-        Preferences.setPathToTun( preferences, new File( "/system/lib/modules/tun.ko" ) );
-        Assert.assertEquals( "insmod '/system/lib/modules/tun.ko'", Preferences.getLoadTunModuleCommand( preferences ) );
+        TunPreferences.setModprobeAlternativeToInsmod( preferences );
+        TunPreferences.setPathToTun( preferences, new File( "/system/lib/modules/tun.ko" ) );
+        Assert.assertEquals( "insmod '/system/lib/modules/tun.ko'", TunPreferences.getLoadTunModuleCommand( preferences ) );
     }
 
 }

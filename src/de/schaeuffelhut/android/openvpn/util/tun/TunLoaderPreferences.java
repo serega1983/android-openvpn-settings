@@ -25,7 +25,7 @@ package de.schaeuffelhut.android.openvpn.util.tun;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import de.schaeuffelhut.android.openvpn.Preferences;
+import de.schaeuffelhut.android.openvpn.tun.TunPreferences;
 
 import java.io.File;
 
@@ -103,7 +103,7 @@ public class TunLoaderPreferences
     private String getDefaultType()
     {
         final String defaultType;
-        if (Preferences.getDoModprobeTun( preferences ))
+        if (TunPreferences.getDoModprobeTun( preferences ))
             defaultType = VALUE_TYPE_LEGACY;
         else
             defaultType = VALUE_TYPE_NONE;

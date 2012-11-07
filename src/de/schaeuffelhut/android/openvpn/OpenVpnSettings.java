@@ -37,6 +37,7 @@ import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
 import de.schaeuffelhut.android.openvpn.setup.prerequisites.PrerequisitesActivity;
 import de.schaeuffelhut.android.openvpn.setup.prerequisites.ProbePrerequisites;
 import de.schaeuffelhut.android.openvpn.tun.ShareTunActivity;
+import de.schaeuffelhut.android.openvpn.tun.TunPreferences;
 import de.schaeuffelhut.android.openvpn.util.*;
 
 import java.io.File;
@@ -303,7 +304,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		menu.findItem( R.id.settings_menu_share_tun ).setVisible( Preferences.isTunSharingEnabled( getApplicationContext() ) );
+		menu.findItem( R.id.settings_menu_share_tun ).setVisible( TunPreferences.isTunSharingEnabled( getApplicationContext() ) );
 
 
 //	    menu.findItem( R.id.configs_options_startall ).setVisible( configs.length > 0 );
