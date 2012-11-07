@@ -27,7 +27,7 @@ import java.io.IOException;
 import android.util.Log;
 import android.widget.Toast;
 import de.schaeuffelhut.android.openvpn.IocContext;
-import de.schaeuffelhut.android.openvpn.Preferences;
+import de.schaeuffelhut.android.openvpn.tun.TunPreferences;
 import de.schaeuffelhut.android.openvpn.util.Preconditions;
 import de.schaeuffelhut.android.openvpn.util.Shell;
 import de.schaeuffelhut.android.openvpn.util.Util;
@@ -222,7 +222,7 @@ final class DaemonMonitorImpl implements DaemonMonitor
 		if (isTunSharingExpired())
 			return;
 
-        if ( mPreferences2.getSendDeviceDetailWasSuccessfull() )
+        if (TunPreferences.getSendDeviceDetailWasSuccessfull( mPreferences2.mContext ))
 			return;
 
         mNotification2.sendShareTunModule();
@@ -231,7 +231,7 @@ final class DaemonMonitorImpl implements DaemonMonitor
     @Deprecated//TODO: move some where in TunSharing code
     private boolean isTunSharingExpired()
     {
-        return Preferences.isTunSharingExpired();
+        return TunPreferences.isTunSharingExpired();
     }
 
     public void restart()

@@ -36,7 +36,6 @@ import org.apache.commons.io.FileUtils;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.util.Log;
-import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.util.SystemPropertyUtil;
 
 public class DeviceDetails
@@ -71,7 +70,7 @@ public class DeviceDetails
 	}
 
 	private static String findPathToTun(SharedPreferences pref) {
-		String pathToTun = Preferences.getPathToTun( pref );
+		String pathToTun = TunPreferences.getPathToTun( pref );
 		if ( !TextUtils.isEmpty( pathToTun ) && new File( pathToTun ).exists() )
 			return pathToTun;
 		

@@ -27,10 +27,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.test.InstrumentationTestCase;
 import android.test.MoreAsserts;
-import de.schaeuffelhut.android.openvpn.Preferences;
-import de.schaeuffelhut.android.openvpn.util.tun.TunLoader;
-import de.schaeuffelhut.android.openvpn.util.tun.TunLoaderFactoryImpl;
-import de.schaeuffelhut.android.openvpn.util.tun.TunLoaderPreferences;
+import de.schaeuffelhut.android.openvpn.tun.TunPreferences;
 import junit.framework.Assert;
 
 import java.io.File;
@@ -57,82 +54,82 @@ public class TunLoaderFactoryImplTest extends InstrumentationTestCase
 
     public void test_createFromLegacyDefinition__should_return_LoadTunViaModprobe()
     {
-        Preferences.setDoModprobeTun( context, true );
-        Preferences.setModprobeAlternativeToModprobe( preferences );
-        Preferences.setPathToTun( preferences, new File( "tun" ) );
+        TunPreferences.setDoModprobeTun( context, true );
+        TunPreferences.setModprobeAlternativeToModprobe( preferences );
+        TunPreferences.setPathToTun( preferences, new File( "tun" ) );
         MoreAsserts.assertAssignableFrom( TunLoaderFactoryImpl.LoadTunViaModprobe.class, TunLoaderFactoryImpl.createFromLegacyDefinition( preferences ) );
     }
 
     public void test_createFromLegacyDefinition__should_return_LoadTunViaModprobeWithParameter()
     {
-        Preferences.setDoModprobeTun( context, true );
-        Preferences.setModprobeAlternativeToModprobe( preferences );
-        Preferences.setPathToTun( preferences, PATH1 );
+        TunPreferences.setDoModprobeTun( context, true );
+        TunPreferences.setModprobeAlternativeToModprobe( preferences );
+        TunPreferences.setPathToTun( preferences, PATH1 );
         MoreAsserts.assertAssignableFrom( TunLoaderFactoryImpl.LoadTunViaModprobeWithParameter.class, TunLoaderFactoryImpl.createFromLegacyDefinition( preferences ) );
     }
 
     public void test_createFromLegacyDefinition__should_return_LoadTunViaInsmod()
     {
-        Preferences.setDoModprobeTun( context, true );
-        Preferences.setModprobeAlternativeToInsmod( preferences );
+        TunPreferences.setDoModprobeTun( context, true );
+        TunPreferences.setModprobeAlternativeToInsmod( preferences );
         MoreAsserts.assertAssignableFrom( TunLoaderFactoryImpl.LoadTunViaInsmod.class, TunLoaderFactoryImpl.createFromLegacyDefinition( preferences ) );
     }
 
     public void test_createFromLegacyDefinition__should_return_LoadTunViaInsmod_getPathToModule_equals_path1()
     {
-        Preferences.setDoModprobeTun( context, true );
-        Preferences.setModprobeAlternativeToInsmod( preferences );
-        Preferences.setPathToTun( preferences, PATH1 );
+        TunPreferences.setDoModprobeTun( context, true );
+        TunPreferences.setModprobeAlternativeToInsmod( preferences );
+        TunPreferences.setPathToTun( preferences, PATH1 );
         Assert.assertEquals( PATH1, TunLoaderFactoryImpl.createFromLegacyDefinition( preferences ).getPathToModule() );
     }
 
     public void test_createFromLegacyDefinition__should_return_LoadTunViaInsmod_getPathToModule_equals_path2()
     {
-        Preferences.setDoModprobeTun( context, true );
-        Preferences.setModprobeAlternativeToInsmod( preferences );
-        Preferences.setPathToTun( preferences, PATH2 );
+        TunPreferences.setDoModprobeTun( context, true );
+        TunPreferences.setModprobeAlternativeToInsmod( preferences );
+        TunPreferences.setPathToTun( preferences, PATH2 );
         Assert.assertEquals( PATH2, TunLoaderFactoryImpl.createFromLegacyDefinition( preferences ).getPathToModule() );
     }
 
     public void test_createFromLegacyDefinition__should_return_LoadTunViaModprobe_hasPathToModule_equals_true()
     {
-        Preferences.setDoModprobeTun( context, true );
-        Preferences.setModprobeAlternativeToModprobe( preferences );
-        Preferences.setPathToTun( preferences, new File( "some-tun" ) );
+        TunPreferences.setDoModprobeTun( context, true );
+        TunPreferences.setModprobeAlternativeToModprobe( preferences );
+        TunPreferences.setPathToTun( preferences, new File( "some-tun" ) );
         Assert.assertTrue( TunLoaderFactoryImpl.createFromLegacyDefinition( preferences ).hasPathToModule() );
     }
 
     public void test_createFromLegacyDefinition__should_return_LoadTunViaModprobe_hasPathToModule_equals_false()
     {
-        Preferences.setDoModprobeTun( context, true );
-        Preferences.setModprobeAlternativeToModprobe( preferences );
-        Preferences.setPathToTun( preferences, new File( "tun" ) );
+        TunPreferences.setDoModprobeTun( context, true );
+        TunPreferences.setModprobeAlternativeToModprobe( preferences );
+        TunPreferences.setPathToTun( preferences, new File( "tun" ) );
         Assert.assertFalse( TunLoaderFactoryImpl.createFromLegacyDefinition( preferences ).hasPathToModule() );
     }
 
     public void test_createFromLegacyDefinition__should_return_LoadTunViaModprobe_getPathToModule()
     {
-        Preferences.setDoModprobeTun( context, true );
-        Preferences.setModprobeAlternativeToModprobe( preferences );
-        Preferences.setPathToTun( preferences, new File( "some-tun" ) );
+        TunPreferences.setDoModprobeTun( context, true );
+        TunPreferences.setModprobeAlternativeToModprobe( preferences );
+        TunPreferences.setPathToTun( preferences, new File( "some-tun" ) );
         Assert.assertEquals( new File( "some-tun" ), TunLoaderFactoryImpl.createFromLegacyDefinition( preferences ).getPathToModule() );
     }
 
     public void test_hasLegacyDefinition_returns_true()
     {
-        Preferences.setDoModprobeTun( context, true );
+        TunPreferences.setDoModprobeTun( context, true );
         Assert.assertTrue( TunLoaderFactoryImpl.hasLegacyDefinition( preferences ) );
     }
 
     public void test_hasLegacyDefinition_returns_false()
     {
-        Preferences.setDoModprobeTun( context, false );
+        TunPreferences.setDoModprobeTun( context, false );
         Assert.assertFalse( TunLoaderFactoryImpl.hasLegacyDefinition( preferences ) );
     }
 
     public void test_createFromLegacyDefinition_throws_when_hasLegacyDefinition_returns_false()
     {
-        Preferences.setDoModprobeTun( context, false );
+        TunPreferences.setDoModprobeTun( context, false );
         try
         {
             TunLoaderFactoryImpl.createFromLegacyDefinition( preferences );

@@ -23,7 +23,7 @@
 package de.schaeuffelhut.android.openvpn.util.tun;
 
 import android.content.SharedPreferences;
-import de.schaeuffelhut.android.openvpn.Preferences;
+import de.schaeuffelhut.android.openvpn.tun.TunPreferences;
 import de.schaeuffelhut.android.openvpn.util.Shell;
 import de.schaeuffelhut.android.openvpn.util.UnexpectedSwitchValueException;
 import de.schaeuffelhut.android.openvpn.util.Util;
@@ -70,8 +70,8 @@ public class TunLoaderFactoryImpl implements TunLoaderFactory
     {
         if (!hasLegacyDefinition( preferences ))
             throw new IllegalStateException( "No legacy tun loading method defined" );
-        final String modprobeAlternative = Preferences.getModprobeAlternative( preferences );
-        final File pathToModule = new File( Preferences.getPathToTun( preferences ) );
+        final String modprobeAlternative = TunPreferences.getModprobeAlternative( preferences );
+        final File pathToModule = new File( TunPreferences.getPathToTun( preferences ) );
         if ("modprobe".equals( modprobeAlternative ))
         {
             if ("tun".equals( pathToModule.getPath() ))
@@ -86,7 +86,7 @@ public class TunLoaderFactoryImpl implements TunLoaderFactory
 
     public static boolean hasLegacyDefinition(SharedPreferences preferences)
     {
-        return Preferences.getDoModprobeTun( preferences );
+        return TunPreferences.getDoModprobeTun( preferences );
     }
 
     public static class NullTunLoader implements TunLoader

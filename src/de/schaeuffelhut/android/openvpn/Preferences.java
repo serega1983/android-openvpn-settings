@@ -25,7 +25,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
+import de.schaeuffelhut.android.openvpn.tun.TunPreferences;
 import org.apache.commons.io.FilenameUtils;
 
 import android.content.Context;
@@ -45,18 +45,13 @@ public final class Preferences {
 	public static final String KEY_OPENVPN_ENABLED = "openvpn_enabled";
 	public static final String KEY_OPENVPN_CONFIGURATIONS = "openvpn_configurations";
 	public static final String KEY_OPENVPN_USE_INTERNAL_STORAGE = "openvpn_use_internal_storage";
-	public static final String KEY_OPENVPN_TUN_SETTINGS = "openvpn_tun_settings";
-	public static final String KEY_OPENVPN_MODPROBE_ALTERNATIVE = "openvpn_modprobe_alternative";
-	public static final String KEY_OPENVPN_PATH_TO_TUN = "openvpn_path_to_tun";
-	public static final String KEY_OPENVPN_EXTERNAL_STORAGE = "openvpn_external_storage";
+    public static final String KEY_OPENVPN_EXTERNAL_STORAGE = "openvpn_external_storage";
 	public static final String KEY_OPENVPN_PATH_TO_BINARY = "openvpn_path_to_binary";
 	public static final String KEY_OPENVPN_PATH_TO_SU = "openvpn_path_to_su";
 	public static final String KEY_OPENVPN_SU_ARGUMENTS = "openvpn_su_arguments";
-	public static final String KEY_OPENVPN_DO_MODPROBE_TUN = "openvpn_do_modprobe_tun";
-	public static final String KEY_OPENVPN_SHOW_ADS = "show_ads";
-	public static final String KEY_SEND_DEVICE_DETAIL_WAS_SUCCESSFULL = "send_device_detail_was_successfull";
-	
-	public static final String KEY_NEXT_NOTIFICATION_ID = "openvpn_next_notification_id";
+    public static final String KEY_OPENVPN_SHOW_ADS = "show_ads";
+
+    public static final String KEY_NEXT_NOTIFICATION_ID = "openvpn_next_notification_id";
 	public static final String KEY_FIX_HTC_ROUTES = "fix_htc_routes"; 	// see issue #35: http://code.google.com/p/android-openvpn-settings/issues/detail?id=35
 
     private static final int FIRST_CONFIG_ID = 1000000;
@@ -144,34 +139,7 @@ public final class Preferences {
 		edit.commit();
 	}
 
-	public final static String getModprobeAlternative(SharedPreferences sharedPreferences)
-	{
-		return sharedPreferences.getString( Preferences.KEY_OPENVPN_MODPROBE_ALTERNATIVE, "modprobe" );
-	}
-	public final static void setModprobeAlternativeToModprobe(SharedPreferences sharedPreferences)
-	{
-		sharedPreferences.edit().putString( Preferences.KEY_OPENVPN_MODPROBE_ALTERNATIVE, "modprobe" ).commit();
-	}
-	public final static void setModprobeAlternativeToInsmod(SharedPreferences sharedPreferences)
-	{
-		sharedPreferences.edit().putString( Preferences.KEY_OPENVPN_MODPROBE_ALTERNATIVE, "insmod" ).commit();
-	}
-
-	public final static String getPathToTun(SharedPreferences sharedPreferences)
-	{
-		return sharedPreferences.getString( Preferences.KEY_OPENVPN_PATH_TO_TUN, "tun" );
-	}
-	public final static void setPathToTun(SharedPreferences sharedPreferences, File path)
-	{
-		sharedPreferences.edit().putString( Preferences.KEY_OPENVPN_PATH_TO_TUN, path.getPath() ).commit();
-	}
-
-	public final static String getLoadTunModuleCommand(SharedPreferences sharedPreferences)
-	{
-		return getModprobeAlternative(sharedPreferences) + " " + Util.shellEscape( getPathToTun(sharedPreferences) );
-	}
-
-	public static boolean getShowAds(Context context) {
+    public static boolean getShowAds(Context context) {
 		return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(KEY_OPENVPN_SHOW_ADS, true );
 	}
 	
@@ -397,16 +365,6 @@ public final class Preferences {
     }
 
 
-    public final static boolean getDoModprobeTun(SharedPreferences sharedPreferences) {
-		return sharedPreferences.getBoolean( Preferences.KEY_OPENVPN_DO_MODPROBE_TUN, false);
-	}
-	public final static void setDoModprobeTun(Context context, boolean value) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( context );
-        sharedPreferences.edit().putBoolean( Preferences.KEY_OPENVPN_DO_MODPROBE_TUN, value ).commit();
-	}
-
-
-
     public final static ArrayList<File> configs(Context context)
 	{
 		return configs(getConfigDir( context, PreferenceManager.getDefaultSharedPreferences(context) ));
@@ -467,26 +425,4 @@ public final class Preferences {
 		return name;
 	}
 
-	
-	public static boolean getSendDeviceDetailWasSuccessfull(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);	
-		return sharedPreferences.getBoolean( Preferences.KEY_SEND_DEVICE_DETAIL_WAS_SUCCESSFULL, false );
-	}
-
-	public static void setSendDeviceDetailWasSuccessfull(Context context, boolean success){
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);	
-		sharedPreferences.edit().putBoolean( Preferences.KEY_SEND_DEVICE_DETAIL_WAS_SUCCESSFULL, success ).commit();
-	}
-
-	public static boolean isTunSharingEnabled(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return !isTunSharingExpired() && getDoModprobeTun( sharedPreferences ) && Util.hasTunSupport();
-	}
-
-	public static boolean isTunSharingExpired() {
-//		final long T_2012_01_01 = 1325372400000L;
-//		System.err.println( new GregorianCalendar( 2012, Calendar.APRIL, 1).getTimeInMillis() );
-		final long T_2012_04_01 = 1333231200000L;
-		return System.currentTimeMillis() >= T_2012_04_01;
-	}
 }
