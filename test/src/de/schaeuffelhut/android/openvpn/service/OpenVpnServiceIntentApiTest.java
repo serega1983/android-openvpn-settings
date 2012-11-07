@@ -25,7 +25,7 @@ package de.schaeuffelhut.android.openvpn.service;
 import android.content.Intent;
 import android.test.ServiceTestCase;
 import de.schaeuffelhut.android.openvpn.Intents;
-import junit.framework.TestCase;
+import de.schaeuffelhut.android.util.MockitoSupport;
 
 import java.io.File;
 
@@ -46,6 +46,7 @@ public class OpenVpnServiceIntentApiTest extends ServiceTestCase<OpenVpnService>
     public void setUp() throws Exception
     {
         super.setUp();
+        MockitoSupport.workaroundMockitoClassloaderIssue();
         setupService();
         getService().setDaemonMonitorFactory( daemonMonitorFactory );
     }

@@ -22,6 +22,7 @@
 
 package de.schaeuffelhut.android.openvpn.service;
 
+import de.schaeuffelhut.android.util.MockitoSupport;
 import junit.framework.TestCase;
 
 import java.io.File;
@@ -32,6 +33,13 @@ import java.io.File;
  */
 public class DaemonMonitorMockFactoryTest extends TestCase
 {
+    @Override
+    public void setUp() throws Exception
+    {
+        super.setUp();
+        MockitoSupport.workaroundMockitoClassloaderIssue();
+    }
+
     public void test_newDaemonMonitor_isAlive()
     {
         DaemonMonitorMockFactory daemonMonitorMockFactory = new DaemonMonitorMockFactory();
