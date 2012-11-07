@@ -22,8 +22,6 @@
 
 package de.schaeuffelhut.android.openvpn.service;
 
-import de.schaeuffelhut.android.openvpn.Preferences;
-
 import java.io.File;
 
 /**
@@ -41,12 +39,9 @@ public class DaemonMonitorImplFactory implements DaemonMonitorFactory
 
     public DaemonMonitor createDaemonMonitorFor(File configFile)
     {
-        return new DaemonMonitorImpl( context, configFile, newNotification2( configFile ) );
-    }
-
-    private Notification2 newNotification2(File configFile)
-    {
-        return new Notification2( context, configFile, Preferences.getNotificationId( context, configFile ) );
+        Preferences2 preferences2 = new Preferences2( context, configFile );
+        Notification2 notification2 = new Notification2( context, configFile, preferences2.getNotificationId() );
+        return new DaemonMonitorImpl( context, configFile, notification2, preferences2 );
     }
 
 }

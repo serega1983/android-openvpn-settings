@@ -33,8 +33,8 @@ import java.io.File;
  */
 public class Preferences2
 {
-    private final OpenVpnService mContext;
-    private final File mConfigFile;
+    public final OpenVpnService mContext;
+    public final File mConfigFile;
 
     public Preferences2(OpenVpnService context, File configFile)
     {
@@ -143,5 +143,10 @@ public class Preferences2
     public String getPassword()
     {
         return Preferences.getPassword( mContext, mConfigFile );
+    }
+
+    int getNotificationId()
+    {
+        return Preferences.getNotificationId( mContext, mConfigFile );
     }
 }
