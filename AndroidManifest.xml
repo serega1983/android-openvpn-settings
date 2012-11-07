@@ -25,7 +25,6 @@
 	package="de.schaeuffelhut.android.openvpn"
 	android:versionCode="34"
 	android:versionName="0.4.13test1"
-    android:sharedUserId="de.schaeuffelhut.android.openvpn"
     >
 
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
