@@ -161,8 +161,8 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 	{
 		if (LOCAL_LOGD)
 			Log.d(TAG, "Received OpenVPN daemon state changed from "
-					+ getHumanReadableDaemonState(previousDaemonState) + " to "
-					+ getHumanReadableDaemonState(daemonState));
+					+ Intents.getHumanReadableDaemonState( previousDaemonState ) + " to "
+					+ Intents.getHumanReadableDaemonState( daemonState ));
 
 
 		switch ( daemonState ) {
@@ -197,12 +197,12 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 
             if (LOCAL_LOGD)
                 Log.d( TAG, "Received OpenVPN network state changed from "
-                        + getHumanReadableNetworkState( previousNetworkState ) + " to "
-                        + getHumanReadableNetworkState( networkState ) );
+                        + Intents.getHumanReadableNetworkState( previousNetworkState ) + " to "
+                        + Intents.getHumanReadableNetworkState( networkState ) );
         }
 
         if (isDaemonStarted()) // TODO: why is this condition necessary? Remove it if possible
-            mDaemonCheckBoxPref.setSummary( getHumanReadableSummaryForNetworkStateChanged( intent ) );
+            mDaemonCheckBoxPref.setSummary( Intents.getHumanReadableSummaryForNetworkStateChanged( intent ) );
 	}
 
 
@@ -227,110 +227,6 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 
 		return mDaemonCheckBoxPref.getPreferenceManager().findPreference(depKey);
 	}
-
-
-	private String getHumanReadableDaemonState(int daemonState) {
-		switch (daemonState) {
-		case Intents.DAEMON_STATE_STARTUP:
-			return "Startup";
-		case Intents.DAEMON_STATE_ENABLED:
-			return "Enabled";
-		case Intents.DAEMON_STATE_DISABLED:
-			return "Disabled";
-		case Intents.DAEMON_STATE_UNKNOWN:
-			return "Unknown";
-		default:
-			return String.format( "Some other state (%d)!", daemonState );    
-		}
-	}
-
-	private String getHumanReadableNetworkState(int networkState) {
-		switch (networkState) {
-		case Intents.NETWORK_STATE_UNKNOWN:
-			return "Unknown";
-		case Intents.NETWORK_STATE_CONNECTING:
-			return "Connecting";
-		case Intents.NETWORK_STATE_RECONNECTING:
-			return "Reconnecting";
-		case Intents.NETWORK_STATE_RESOLVE:
-			return "Resolve";
-		case Intents.NETWORK_STATE_WAIT:
-			return "Wait";
-		case Intents.NETWORK_STATE_AUTH:
-			return "Auth";
-		case Intents.NETWORK_STATE_GET_CONFIG:
-			return "Get Config";
-		case Intents.NETWORK_STATE_CONNECTED:
-			return "Connected";
-		case Intents.NETWORK_STATE_ASSIGN_IP:
-			return "Assign IP";
-		case Intents.NETWORK_STATE_ADD_ROUTES:
-			return "Add Routes";
-		case Intents.NETWORK_STATE_EXITING:
-			return "Exiting";
-		default:
-			return String.format( "Some other state (%d)!", networkState );    
-		}
-	}
-
-    private String getHumanReadableSummaryForNetworkStateChanged(Intent intent)
-    {
-        final String summary;
-        final int networkState = intent.getIntExtra( Intents.EXTRA_NETWORK_STATE, Intents.NETWORK_STATE_UNKNOWN );
-        switch (networkState)
-        {
-            case Intents.NETWORK_STATE_UNKNOWN:
-                summary = "Unknown";
-                break;
-            case Intents.NETWORK_STATE_CONNECTING:
-                summary = "Connecting";
-                break;
-            case Intents.NETWORK_STATE_RECONNECTING:
-                final String cause = intent.getStringExtra( Intents.EXTRA_NETWORK_CAUSE );
-                if (cause == null)
-                    summary = "Reconnecting";
-                else
-                    summary = String.format( "Reconnecting (caused by %s)", cause );
-                break;
-            case Intents.NETWORK_STATE_RESOLVE:
-                summary = "Resolve";
-                break;
-            case Intents.NETWORK_STATE_WAIT:
-                summary = "Wait";
-                break;
-            case Intents.NETWORK_STATE_AUTH:
-                summary = "Auth";
-                break;
-            case Intents.NETWORK_STATE_GET_CONFIG:
-                summary = "Get Config";
-                break;
-            case Intents.NETWORK_STATE_CONNECTED:
-                summary = String.format(
-                        "Connected to %s as %s",
-                        intent.getStringExtra( Intents.EXTRA_NETWORK_REMOTEIP ),
-                        intent.getStringExtra( Intents.EXTRA_NETWORK_LOCALIP )
-                );
-                break;
-            case Intents.NETWORK_STATE_ASSIGN_IP:
-                summary = String.format(
-                        "Assign IP %s",
-                        intent.getStringExtra( Intents.EXTRA_NETWORK_LOCALIP )
-                );
-                break;
-            case Intents.NETWORK_STATE_ADD_ROUTES:
-                summary = "Add Routes";
-                break;
-            case Intents.NETWORK_STATE_EXITING:
-                summary = "Exiting";
-                break;
-            default:
-                summary = String.format( "Some other state (%d)!", networkState );
-        }
-        return summary;
-    }
-
-
-
 
     private boolean isDaemonStarted()
     {
@@ -377,6 +273,6 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
          *       to generate a new sticky broadcast
          */
 
-        return getHumanReadableSummaryForNetworkStateChanged( intent );
+        return Intents.getHumanReadableSummaryForNetworkStateChanged( intent );
     }
 }

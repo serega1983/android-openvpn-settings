@@ -98,4 +98,104 @@ public final class Intents
 //	public final static String URI2config(Uri uri) {
 //		return uri.getLastPathSegment();
 //	}
+
+    public static String getHumanReadableSummaryForNetworkStateChanged(Intent intent)
+    {
+        final String summary;
+        final int networkState = intent.getIntExtra( EXTRA_NETWORK_STATE, NETWORK_STATE_UNKNOWN );
+        switch (networkState)
+        {
+            case NETWORK_STATE_UNKNOWN:
+                summary = "Unknown";
+                break;
+            case NETWORK_STATE_CONNECTING:
+                summary = "Connecting";
+                break;
+            case NETWORK_STATE_RECONNECTING:
+                final String cause = intent.getStringExtra( EXTRA_NETWORK_CAUSE );
+                if (cause == null)
+                    summary = "Reconnecting";
+                else
+                    summary = String.format( "Reconnecting (caused by %s)", cause );
+                break;
+            case NETWORK_STATE_RESOLVE:
+                summary = "Resolve";
+                break;
+            case NETWORK_STATE_WAIT:
+                summary = "Wait";
+                break;
+            case NETWORK_STATE_AUTH:
+                summary = "Auth";
+                break;
+            case NETWORK_STATE_GET_CONFIG:
+                summary = "Get Config";
+                break;
+            case NETWORK_STATE_CONNECTED:
+                summary = String.format(
+                        "Connected to %s as %s",
+                        intent.getStringExtra( EXTRA_NETWORK_REMOTEIP ),
+                        intent.getStringExtra( EXTRA_NETWORK_LOCALIP )
+                );
+                break;
+            case NETWORK_STATE_ASSIGN_IP:
+                summary = String.format(
+                        "Assign IP %s",
+                        intent.getStringExtra( EXTRA_NETWORK_LOCALIP )
+                );
+                break;
+            case NETWORK_STATE_ADD_ROUTES:
+                summary = "Add Routes";
+                break;
+            case NETWORK_STATE_EXITING:
+                summary = "Exiting";
+                break;
+            default:
+                summary = String.format( "Some other state (%d)!", networkState );
+        }
+        return summary;
+    }
+
+    public static String getHumanReadableNetworkState(int networkState) {
+        switch (networkState) {
+        case NETWORK_STATE_UNKNOWN:
+            return "Unknown";
+        case NETWORK_STATE_CONNECTING:
+            return "Connecting";
+        case NETWORK_STATE_RECONNECTING:
+            return "Reconnecting";
+        case NETWORK_STATE_RESOLVE:
+            return "Resolve";
+        case NETWORK_STATE_WAIT:
+            return "Wait";
+        case NETWORK_STATE_AUTH:
+            return "Auth";
+        case NETWORK_STATE_GET_CONFIG:
+            return "Get Config";
+        case NETWORK_STATE_CONNECTED:
+            return "Connected";
+        case NETWORK_STATE_ASSIGN_IP:
+            return "Assign IP";
+        case NETWORK_STATE_ADD_ROUTES:
+            return "Add Routes";
+        case NETWORK_STATE_EXITING:
+            return "Exiting";
+        default:
+            return String.format( "Some other state (%d)!", networkState );
+        }
+    }
+
+    public static String getHumanReadableDaemonState(int daemonState) {
+        switch (daemonState) {
+        case DAEMON_STATE_STARTUP:
+            return "Startup";
+        case DAEMON_STATE_ENABLED:
+            return "Enabled";
+        case DAEMON_STATE_DISABLED:
+            return "Disabled";
+        case DAEMON_STATE_UNKNOWN:
+            return "Unknown";
+        default:
+            return String.format( "Some other state (%d)!", daemonState );
+        }
+    }
 }
