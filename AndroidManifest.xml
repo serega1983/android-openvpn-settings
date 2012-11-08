@@ -100,10 +100,12 @@
 			android:exported="false"
 			android:enabled="true"
 			>
+            <!--
             <intent-filter>
                 <action android:name="de.schaeuffelhut.android.openvpn.Intents.START_DAEMON"/>
                 <action android:name="de.schaeuffelhut.android.openvpn.Intents.STOP_DAEMON"/>
             </intent-filter>
+            -->
         </service>
 
 		<receiver
