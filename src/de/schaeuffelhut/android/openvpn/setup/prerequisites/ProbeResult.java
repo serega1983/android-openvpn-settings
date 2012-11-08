@@ -23,12 +23,11 @@
 package de.schaeuffelhut.android.openvpn.setup.prerequisites;
 
 import android.content.Context;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import de.schaeuffelhut.android.openvpn.R;
+import de.schaeuffelhut.android.openvpn.lib.app.R;
 
 import java.util.ArrayList;
 import java.util.Collections;

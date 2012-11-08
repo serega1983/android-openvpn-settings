@@ -23,7 +23,7 @@
 package de.schaeuffelhut.android.openvpn.setup.prerequisites;
 
 import android.net.Uri;
-import de.schaeuffelhut.android.openvpn.R;
+import de.schaeuffelhut.android.openvpn.lib.app.R;
 
 import java.io.File;
 

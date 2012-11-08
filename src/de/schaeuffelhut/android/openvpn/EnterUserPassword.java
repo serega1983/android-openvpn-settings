@@ -39,6 +39,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import de.schaeuffelhut.android.openvpn.lib.app.R;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
 
 public class EnterUserPassword extends Activity implements ServiceConnection {
