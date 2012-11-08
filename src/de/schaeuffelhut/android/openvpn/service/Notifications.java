@@ -32,6 +32,7 @@ import android.net.Uri;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import de.schaeuffelhut.android.openvpn.*;
+import de.schaeuffelhut.android.openvpn.lib.app.R;
 import de.schaeuffelhut.android.openvpn.tun.ShareTunActivity;
 
 final class Notifications {

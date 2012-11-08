@@ -24,7 +24,7 @@ package de.schaeuffelhut.android.openvpn.util;
 
 import android.content.Context;
 import de.schaeuffelhut.android.openvpn.Preferences;
-import de.schaeuffelhut.android.openvpn.R;
+import de.schaeuffelhut.android.openvpn.lib.app.R;
 
 public class AdUtil {
 	private AdUtil() {

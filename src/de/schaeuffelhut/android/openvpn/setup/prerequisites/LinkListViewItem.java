@@ -30,7 +30,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-import de.schaeuffelhut.android.openvpn.R;
+import de.schaeuffelhut.android.openvpn.lib.app.R;
 
 import java.util.Collections;
 import java.util.List;

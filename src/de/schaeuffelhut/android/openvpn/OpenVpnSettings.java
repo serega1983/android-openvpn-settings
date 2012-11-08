@@ -33,6 +33,7 @@ import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import com.bugsense.trace.BugSenseHandler;
+import de.schaeuffelhut.android.openvpn.lib.app.R;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
 import de.schaeuffelhut.android.openvpn.setup.prerequisites.PrerequisitesActivity;
 import de.schaeuffelhut.android.openvpn.setup.prerequisites.ProbePrerequisites;
@@ -316,38 +317,45 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch ( item.getItemId() ) {
-		case R.id.settings_menu_refresh:
-			initToggles();
-			for(DaemonEnabler daemonEnabler : mDaemonEnablers )
-				daemonEnabler.resume();
-			return true;
-
-		case R.id.settings_menu_advanced: {
-			Intent intent = new Intent(this, AdvancedSettings.class );
-			intent.putExtra(AdvancedSettings.HAS_DAEMONS_STARTED, mOpenVpnService == null ? false : mOpenVpnService.hasDaemonsStarted() );
-			startActivityForResult( intent, REQUEST_CODE_ADVANCED_SETTINGS );
-			return true; }
-
-		case R.id.settings_menu_fix_dns: {
-			showDialog( DIALOG_FIX_DNS );
-			return true; }
-
-		case R.id.settings_menu_contact_author: {
-			showDialog( DIALOG_CONTACT_AUTHOR );
-			return true; }
-
-		case R.id.settings_menu_share_tun: {
-			startActivity( new Intent(this, ShareTunActivity.class ) );
-			return true; }
-
-		case R.id.settings_menu_help:
-			showDialog( DIALOG_HELP );
-			return true;
-
-        case R.id.settings_menu_prerequisites: {
+        final int id = item.getItemId();
+        if (id == R.id.settings_menu_refresh)
+        {
+            initToggles();
+            for (DaemonEnabler daemonEnabler : mDaemonEnablers)
+                daemonEnabler.resume();
+            return true;
+        }
+        else if (id == R.id.settings_menu_advanced)
+        {
+            Intent intent = new Intent( this, AdvancedSettings.class );
+            intent.putExtra( AdvancedSettings.HAS_DAEMONS_STARTED, mOpenVpnService == null ? false : mOpenVpnService.hasDaemonsStarted() );
+            startActivityForResult( intent, REQUEST_CODE_ADVANCED_SETTINGS );
+            return true;
+        }
+        else if (id == R.id.settings_menu_fix_dns)
+        {
+            showDialog( DIALOG_FIX_DNS );
+            return true;
+        }
+        else if (id == R.id.settings_menu_contact_author)
+        {
+            showDialog( DIALOG_CONTACT_AUTHOR );
+            return true;
+        }
+        else if (id == R.id.settings_menu_share_tun)
+        {
+            startActivity( new Intent( this, ShareTunActivity.class ) );
+            return true;
+        }
+        else if (id == R.id.settings_menu_help)
+        {
+            showDialog( DIALOG_HELP );
+            return true;
+        }
+        else if (id == R.id.settings_menu_prerequisites)
+        {
             startActivity( new Intent( this, PrerequisitesActivity.class ) );
-            return true; }
+            return true;
 
 //		case R.id.configs_options_import:
 //			Intent intent = new Intent( getApplicationContext(), ImportFiles.class );
@@ -364,9 +372,11 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 //			return true;
 //		case R.id.configs_options_settings:
 //			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
+        }
+        else
+        {
+            return super.onOptionsItemSelected( item );
+        }
 	}
 
 	/*

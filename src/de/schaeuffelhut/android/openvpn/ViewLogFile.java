@@ -29,6 +29,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import de.schaeuffelhut.android.openvpn.lib.app.R;
 import de.schaeuffelhut.android.openvpn.util.Util;
 
 public class ViewLogFile extends Activity
@@ -45,7 +46,7 @@ public class ViewLogFile extends Activity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		setContentView(R.layout.view_logfile );
+		setContentView( R.layout.view_logfile );
 
 		mLogFileName = (TextView) findViewById(R.id.view_logfile_name);
 		mLogFileName.setEnabled(false);

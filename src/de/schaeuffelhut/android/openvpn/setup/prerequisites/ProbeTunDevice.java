@@ -28,7 +28,7 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import de.schaeuffelhut.android.openvpn.IocContext;
-import de.schaeuffelhut.android.openvpn.R;
+import de.schaeuffelhut.android.openvpn.lib.app.R;
 import de.schaeuffelhut.android.openvpn.util.tun.*;
 
 import java.io.File;

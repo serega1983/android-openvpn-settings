@@ -36,6 +36,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import de.schaeuffelhut.android.openvpn.lib.app.R;
 import de.schaeuffelhut.android.openvpn.util.Util;
 
 public class EditConfig extends Activity
@@ -53,7 +54,7 @@ public class EditConfig extends Activity
 		// always return config name to caller
 		setResult( 0, new Intent().putExtra(EXTRA_FILENAME, getIntent().getStringExtra( EXTRA_FILENAME ) ) );
 
-		setContentView(R.layout.edit_config);
+		setContentView( R.layout.edit_config);
 
 		mConfigName = (EditText) findViewById(R.id.edit_config_name);
 		mConfigName.setEnabled(false);

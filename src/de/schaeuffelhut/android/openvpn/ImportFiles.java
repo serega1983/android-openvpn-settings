@@ -40,6 +40,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+import de.schaeuffelhut.android.openvpn.lib.app.R;
 import de.schaeuffelhut.android.openvpn.util.UnexpectedSwitchValueException;
 import de.schaeuffelhut.android.openvpn.util.Util;
 
@@ -211,25 +212,29 @@ public class ImportFiles extends Activity
 			final boolean replace;
 			final boolean merge;
 			final boolean add;
-			switch (importType_rg.getCheckedRadioButtonId()) {
-			case R.id.import_files_replace:
-				replace = true;
-				merge = false;
-				add = false;
-				break;
-			case R.id.import_files_merge:
-				replace = false;
-				merge = true;
-				add = false;
-				break;
-			case R.id.import_files_add:
-				replace = false;
-				merge = false;
-				add = true;
-				break;
-			default:
-				throw new UnexpectedSwitchValueException( importType_rg.getCheckedRadioButtonId() );
-			}
+            final int id = importType_rg.getCheckedRadioButtonId();
+            if (id == R.id.import_files_replace)
+            {
+                replace = true;
+                merge = false;
+                add = false;
+            }
+            else if (id == R.id.import_files_merge)
+            {
+                replace = false;
+                merge = true;
+                add = false;
+            }
+            else if (id == R.id.import_files_add)
+            {
+                replace = false;
+                merge = false;
+                add = true;
+            }
+            else
+            {
+                throw new UnexpectedSwitchValueException( id );
+            }
 			Log.v("OpenVPN", "replace="+replace );
 			Log.v("OpenVPN", "merge="+merge );
 			Log.v("OpenVPN", "add="+add );

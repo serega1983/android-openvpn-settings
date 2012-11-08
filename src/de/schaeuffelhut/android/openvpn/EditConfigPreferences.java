@@ -32,6 +32,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.text.TextUtils;
+import de.schaeuffelhut.android.openvpn.lib.app.R;
 import de.schaeuffelhut.android.openvpn.util.AdUtil;
 
 public class EditConfigPreferences extends PreferenceActivity
