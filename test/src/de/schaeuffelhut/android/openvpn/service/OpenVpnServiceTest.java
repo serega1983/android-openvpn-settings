@@ -232,17 +232,6 @@ public class OpenVpnServiceTest extends ServiceTestCase<OpenVpnServiceTest.MockO
         assertFalse( getService().getCurrent().isAlive() );
     }
 
-    public void test_daemonQueryState() throws InterruptedException
-    {
-        File configFile = new File( "/sdcard/openvpn/test-" + System.currentTimeMillis() + ".conf" );
-        startService( new Intent( getContext(), MockOpenVpnService.class ) );
-        getService().daemonStart( configFile );
-
-        getService().daemonQueryState( configFile );
-
-        Mockito.verify( getService().getCurrent() ).queryState();
-    }
-
     public void test_daemonPassphrase() throws InterruptedException
     {
         File configFile = new File( "/sdcard/openvpn/test-" + System.currentTimeMillis() + ".conf" );

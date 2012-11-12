@@ -418,19 +418,6 @@ public class OpenVpnService extends Service
 		}
 	}
 
-	public final synchronized void daemonQueryState(File config)
-	{
-		if ( !isDaemonStarted(config) )
-		{
-			Log.i( TAG, config + " is not running" );
-		}
-		else 
-		{
-			DaemonMonitor monitor = mRegistry.get( config );
-			monitor.queryState();
-		}
-	}
-
 	public void daemonPassphrase(File config, String passphrase)
 	{
 		if ( !isDaemonStarted(config) )
@@ -457,17 +444,16 @@ public class OpenVpnService extends Service
 		}
 	}
 
+    @Deprecated //TODO: use Intents.DAEMON_STATE_CHANGED instead
 	public final synchronized boolean isDaemonStarted(File config)
 	{
-		return mRegistry.containsKey( config ) && mRegistry.get( config ).isAlive();
+        return getCurrent().isAlive() && config.equals( getCurrent().getConfigFile() );
 	}
-	
+
+    @Deprecated //TODO: use Intents.DAEMON_STATE_CHANGED instead
 	public final synchronized boolean hasDaemonsStarted()
 	{
-		for( DaemonMonitor monitor : mRegistry.values() )
-			if ( monitor.isAlive() )
-				return true;
-		return false;
+        return getCurrent().isAlive();
 	}
 
     /**
