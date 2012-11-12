@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~ This file is part of OpenVPN-Settings.
+  ~
+  ~ Copyright © 2009-2012  Friedrich Schäuffelhut
+  ~
+  ~ OpenVPN-Settings is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ OpenVPN-Settings is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with OpenVPN-Settings.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~ Report bugs or new features at: http://code.google.com/p/android-openvpn-settings/ 
+  ~ Contact the author at:          android.openvpn@schaeuffelhut.de
+  -->
+
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_height="fill_parent"
+        android:layout_width="fill_parent"
+        android:orientation="vertical"
+        >
+
+    <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="TUN Kernel Interface"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:padding="15dip"
+            />
+
+    <TableLayout
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_gravity="center"
+            android:padding="15dip"
+            >
+        <TableRow
+            android:padding="3dip"
+            >
+            <TextView
+                    android:text="Status:"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    />
+            <TextView
+                    android:text="Available/Missing"
+                    android:layout_height="fill_parent"
+                    android:layout_gravity="right"
+                    android:id="@+id/setup_wizard_tun_module_has_device_node"
+                    />
+        </TableRow>
+        <TableRow
+            android:padding="3dip"
+            >
+            <TextView
+                    android:text="TUN loader:"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    />
+            <TextView
+                    android:text="none/modprobe"
+                    android:layout_height="fill_parent"
+                    android:layout_gravity="right"
+                    android:id="@+id/setup_wizard_tun_module_tun_loader"
+                    />
+        </TableRow>
+        <TableRow
+            android:padding="3dip"
+            android:id="@+id/setup_wizard_tun_module_path_to_module_table_row"
+            >
+            <TextView
+                    android:text="Path to Module:"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    />
+            <TextView
+                    android:text="/system/lib/modules/tun.ko"
+                    android:layout_height="fill_parent"
+                    android:layout_gravity="right"
+                    android:id="@+id/setup_wizard_tun_module_path_to_module"
+                    />
+        </TableRow>
+    </TableLayout>
+
+    <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:orientation="vertical"
+            android:padding="15dip"
+            android:id="@+id/setup_wizard_tun_module_section_load_module"
+            >
+
+        <CheckBox
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Try current TUN Loader"
+            android:checked="true"
+            android:id="@+id/setup_wizard_tun_module_option_try_current_tun_loader"
+            />
+        <CheckBox
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Scan device for tun.ko"
+            android:checked="true"
+            android:id="@+id/setup_wizard_tun_module_option_scan_device_for_tun"
+            />
+        <CheckBox
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:checked="false"
+            android:text="Also try /sdcard/tun.ko"
+            android:id="@+id/setup_wizard_tun_module_option_try_sdcard"
+            />
+        <Button
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:text="Try to Load the Module"
+            android:id="@+id/setup_wizard_tun_module_try_to_load_module"
+            />
+
+<!--
+        <CheckBox
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Find a tun.ko online"
+            />
+-->
+<!--
+        <CheckBox
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Yes, I want to share the module"
+            />
+-->
+
+    </LinearLayout>
+
+</LinearLayout>

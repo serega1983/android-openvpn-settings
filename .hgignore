@@ -1,0 +1,10 @@
+syntax: glob
+bin
+gen
+.idea
+out
+*.iml
+tmp
+local.properties
+*/local.properties
+

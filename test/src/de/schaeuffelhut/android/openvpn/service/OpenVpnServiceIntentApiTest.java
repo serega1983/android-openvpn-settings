@@ -1,0 +1,115 @@
+/*
+ * This file is part of OpenVPN-Settings.
+ *
+ * Copyright © 2009-2012  Friedrich Schäuffelhut
+ *
+ * OpenVPN-Settings is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * OpenVPN-Settings is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with OpenVPN-Settings.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Report bugs or new features at: http://code.google.com/p/android-openvpn-settings/
+ * Contact the author at:          android.openvpn@schaeuffelhut.de
+ */
+
+package de.schaeuffelhut.android.openvpn.service;
+
+import android.content.Intent;
+import android.test.ServiceTestCase;
+import de.schaeuffelhut.android.openvpn.Intents;
+import de.schaeuffelhut.android.util.MockitoSupport;
+
+import java.io.File;
+
+/**
+ * @author Friedrich Schäuffelhut
+ * @since 2012-11-05
+ */
+public class OpenVpnServiceIntentApiTest extends ServiceTestCase<OpenVpnService>
+{
+    final DaemonMonitorMockFactory daemonMonitorFactory = new DaemonMonitorMockFactory();
+
+    public OpenVpnServiceIntentApiTest()
+    {
+        super( OpenVpnService.class );
+    }
+
+    @Override
+    public void setUp() throws Exception
+    {
+        super.setUp();
+        MockitoSupport.workaroundMockitoClassloaderIssue();
+        setupService();
+        getService().setDaemonMonitorFactory( daemonMonitorFactory );
+    }
+
+    public void test_startService_daemon_with_null_intent()
+    {
+        try
+        {
+            startService( null );
+            assertFalse( getService().getCurrent().isAlive() );
+            // no action expected
+        }
+        catch (NullPointerException e)
+        {
+            fail( "Should avoid NullPointerException" );
+        }
+    }
+
+    public void test_startService_daemonStart()
+    {
+        File configFile = new File( "/sdcard/openvpn/test-" + System.currentTimeMillis() + ".conf" );
+        Intent intent = new Intent( Intents.START_DAEMON );
+        intent.putExtra( Intents.EXTRA_CONFIG, configFile.getAbsolutePath() );
+        startService( intent );
+
+        assertTrue( getService().getCurrent().isAlive() );
+        assertEquals( configFile, getService().getCurrent().getConfigFile() );
+    }
+
+    public void test_startService_daemon_start_without_EXTRA_CONFIG()
+    {
+        try
+        {
+            startService( new Intent( Intents.START_DAEMON ) );
+            assertFalse( getService().getCurrent().isAlive() );
+            // no action expected
+        }
+        catch (NullPointerException e)
+        {
+            fail( "Should avoid NullPointerException" );
+        }
+    }
+
+    public void test_startService_daemonStop()
+    {
+        File configFile = new File( "/sdcard/openvpn/test-" + System.currentTimeMillis() + ".conf" );
+
+        startService( null );
+        {
+            Intent intent = new Intent( Intents.START_DAEMON );
+            intent.putExtra( Intents.EXTRA_CONFIG, configFile.getAbsolutePath() );
+            getService().onStart( intent, 0 );
+        }
+        assertTrue( getService().getCurrent().isAlive() );
+        assertEquals( configFile, getService().getCurrent().getConfigFile() );
+
+        {
+            Intent intent = new Intent( Intents.STOP_DAEMON );
+            intent.putExtra( Intents.EXTRA_CONFIG, configFile.getAbsolutePath() );
+            getService().onStart( intent, 0 );
+        }
+        assertFalse( getService().getCurrent().isAlive() );
+        assertEquals( configFile, getService().getCurrent().getConfigFile() );
+    }
+
+}

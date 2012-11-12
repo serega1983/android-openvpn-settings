@@ -1,0 +1,144 @@
+<!--
+  ~ This file is part of OpenVPN-Settings.
+  ~
+  ~ Copyright © 2009-2012  Friedrich Schäuffelhut
+  ~
+  ~ OpenVPN-Settings is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ OpenVPN-Settings is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with OpenVPN-Settings.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~ Report bugs or new features at: http://code.google.com/p/android-openvpn-settings/
+  ~ Contact the author at:          android.openvpn@schaeuffelhut.de
+  -->
+
+<html><body>
+<u><b>Disclaimer</b></u><br/>
+<i>OpenVPN Settings</i> comes without any warranty and is beta software.
+It might drain your battery quickly or otherwise influence the performance of your phone.<br/>
+Use it at your own risk.
+<p/>
+
+<u><b>Prerequisites</b></u><br/>
+- installed openvpn binary<br/>
+- <i>tun</i> in kernel or <i>tun.ko</i><br/>
+- busybox<br/>
+</ul>
+<p/>
+
+<u><b>Usage</b></u><br/>
+- To edit the config file and config dependent properties, touch config entry long (this will open the context menu).<br/>
+<p/>
+
+<u><b>On the Web</b></u><br/>
+- Subscribe to <a href="mailto:android-openvpn-settings+subscribe@googlegroups.com">Mailing List</a><br/>
+- Visit <a href="http://code.google.com/p/android-openvpn-settings/">Home Page</a><br/>
+<p/>
+
+<u><b>Features</b></u><br/>
+- <i>since 0.4.9</i><br/>
+- Log file viewer<br/>
+- <i>since 0.4.1</i><br/>
+- DNS support.<br/>
+- Send mail to author<br/>
+- <i>since 0.2</i><br/>
+- UI similar to Wi-Fi settings.<br/>
+- Restart tunnel when network connectivity changes (e.g. from wifi to 3g).<br/>
+- Start tunnel on boot, according to last state.<br/>
+- Turn on/off openvpn service, saving individual tunnel state.<br/> 
+- Passphrase support.<br/>
+- Username/Password support (untested, please report any problems).<br/>
+- Uses Management Interface.<br/>
+- Edit config file in text editor,<br/>
+- Notification support.<br/>
+- No log written to file system, to save your flash memory.<br/>
+- Should support multiple independent tunnels (reported to work fine).<br/>
+<p/>
+
+<u><b>Missing Features</b></u><br/>
+- Display more details about ongoing connection in notification area.<br/> 
+<p/>
+
+<u><b>Logging</b></u><br/>
+Use <i>adb logcat</i> on your host.
+<i>OpenVPN Settings</i> currently relies heavily on <i>adb logcat</i>
+to give you all information about what's going on.
+This comes in handy especially when setting up a new tunnel.
+<p/>
+
+<u><b>Setup</b></u><br/>
+1. Connect your phone via USB to your computer and mount the sdcard.<br/>
+2. Create a directory named <i>openvpn</i> at the root of your sdcard.<br/>
+3. Copy your certificates and <i>*.conf</i> files into that directory (The config files need to end in <i>.conf</i> or <i>.ovpn</i> ).<br/>
+4. Unmount the sdcard.
+5. You might need to hit refresh from the menu if you started <i>OpenVPN Settings</i> already.<br/>
+6. Start <i>adb logcat</i> on your computer to monitor activity.<br/>
+7. Open activity <i>OpenVPN Settings</i> and enable your tunnel.<br/>
+
+In general it would be best to get your config running from a shell, e.g. using <i>adb shell</i>.
+<p/>
+
+<u><b>DNS Support</b></u><br/>
+DNS Support is somewhat tricky to get right. Nevertheless it should work.
+If you experience hanging connections for no obvious reason,
+please try 'Fix DNS' from the main options menu. This will make a public DNS server the default.
+The next time network connectivity changes defaults provided by your ISP will be set.
+This is a new feature, please report any problems but also success.
+<p/>
+
+<u><b>Links</b></u><br/>
+Download the
+<a href="http://github.com/fries/android-external-openvpn/downloads">openvpn binary</a> (choose openvpn-static.bz2) or view the
+<a href="http://github.com/fries/android-external-openvpn">source code</a>.
+OpenVPN-Settings is now open source, few the source <a href="http://code.google.com/p/android-openvpn-settings">here</a>. 
+<p/>
+
+<u><b>Credits</b></u><br/>
+- Christophe Vandelpas: merging with TunnelDroid.<br/>
+- Jesse: for good bug reports and patches.<br/>
+<p/>
+
+<u><b>Contact</b></u><br/>
+<a href="mailto:android.openvpn@schaeuffelhut.de">android.openvpn@schaeuffelhut.de</a><br/>
+Suggestions and bug reports are welcome. Please include the output of <i>adb logcat</i> in your bug report.
+<p/>
+
+<u><b>Trademarks</b></u><br/>
+OpenVPN is a registered trademark of <a href="http://openvpn.net">OpenVPN Technologies, Inc</a>.
+The launcher icon is derived from the official OpenVPN logo available 
+<a href="http://openvpn.net/index.php/miscellaneous/473-openvpn-logos-and-icons.html">here</a>.
+<p/>
+
+<u><b>About</b></u><br/>
+<i>OpenVPN Settings</i> $version<br/>
+&copy; 2009-2012 Friedrich Schäuffelhut,<br/>
+2010 Christophe Vandeplas<br/>
+<p/>
+
+<u><b>License</b></u><br/>
+OpenVPN-Settings is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+<p/>
+
+OpenVPN-Settings is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+<p/>
+
+You should have received a copy of the GNU General Public License
+along with OpenVPN-Settings.  If not, see
+<a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.
+<p/>
+
+</body></html>

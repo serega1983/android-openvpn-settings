@@ -1,0 +1,95 @@
+<!--
+  ~ This file is part of OpenVPN-Settings.
+  ~
+  ~ Copyright © 2009-2012  Friedrich Schäuffelhut
+  ~
+  ~ OpenVPN-Settings is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ OpenVPN-Settings is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with OpenVPN-Settings.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~ Report bugs or new features at: http://code.google.com/p/android-openvpn-settings/
+  ~ Contact the author at:          android.openvpn@schaeuffelhut.de
+  -->
+
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:title="@string/openvpn_settings_category">
+	
+	<!-- 
+	<CheckBoxPreference
+		android:key="openvpn_use_internal_storage"
+		android:title="Use private storage"
+		android:defaultValue="true"
+		/>
+	 -->
+
+	<CheckBoxPreference
+		android:key="openvpn_do_modprobe_tun"
+		android:title="Load tun kernel module"
+		android:summary="Issue 'modprobe tun' before starting openvpn."
+		android:defaultValue="false"
+		/>
+
+	<PreferenceScreen
+		android:key="openvpn_tun_settings"
+		android:title="TUN module settings"
+		android:summary="Setup module loading method and location of tun module"
+		>
+		<ListPreference
+			android:key="openvpn_modprobe_alternative"
+			android:title="Load module using"
+			android:entries="@array/openvpn_modprobe_alternative_text"
+			android:entryValues="@array/openvpn_modprobe_alternative_value"
+			android:defaultValue="modprobe"
+			/>
+		<EditTextPreference
+			android:key="openvpn_path_to_tun"
+			android:title="Path to tun module"
+			android:persistent="true"
+			android:defaultValue="tun"
+			/>
+	</PreferenceScreen>
+
+	<EditTextPreference
+		android:key="openvpn_external_storage"
+		android:title="Path to configurations"
+		android:defaultValue="/sdcard/openvpn"
+		android:persistent="true"
+		/>
+
+	<EditTextPreference
+		android:key="openvpn_path_to_binary"
+		android:title="Path to openvpn binary"
+		android:persistent="true"
+		/>
+
+	<!-- see issue #35: http://code.google.com/p/android-openvpn-settings/issues/detail?id=35 -->
+	<CheckBoxPreference
+		android:key="fix_htc_routes"
+		android:title="Fix HTC Routes"
+		android:summary="Fix HTC routes with Froyo ROMs"/>
+
+	<CheckBoxPreference
+		android:key="show_ads"
+		android:title="Show Ads"
+		android:summary="Thank you for your support"
+		android:defaultValue="true"/>
+		
+	<!-- 
+	<EditTextPreference
+		android:key="openvpn_path_to_su"
+		android:title="Path to su binary"
+		android:persistent="true"
+		/>
+	 -->
+	
+</PreferenceScreen>

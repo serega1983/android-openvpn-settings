@@ -1,0 +1,61 @@
+<!--
+  ~ This file is part of OpenVPN-Settings.
+  ~
+  ~ Copyright © 2009-2012  Friedrich Schäuffelhut
+  ~
+  ~ OpenVPN-Settings is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ OpenVPN-Settings is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with OpenVPN-Settings.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~ Report bugs or new features at: http://code.google.com/p/android-openvpn-settings/
+  ~ Contact the author at:          android.openvpn@schaeuffelhut.de
+  -->
+
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:title="@string/openvpn_settings_category">
+	
+	<EditTextPreference
+		android:key="openvpn_config_name"
+		android:title="Custom Name"
+		android:persistent="true"
+		android:singleLine="true"
+		/>
+
+	<CheckBoxPreference
+		android:key="openvpn_config_use_vpn_dns"
+		android:title="Use VPN DNS Server"
+		android:persistent="true"
+		/>
+	<EditTextPreference
+		android:key="openvpn_config_dns1"
+		android:title="VPN DNS Server"
+		android:persistent="true"
+		android:singleLine="true"
+		android:inputType="phone"
+		/>
+	
+	<ListPreference
+		android:key="openvpn_config_script_security_level"
+		android:title="Script Security Level"
+		android:persistent="true"
+		android:entries="@array/openvpn_param_script_security_level_text"
+		android:entryValues="@array/openvpn_param_script_security_level_value" android:defaultValue="1"
+		/>
+	
+	<CheckBoxPreference
+		android:key="openvpn_config_log_stdout_enable"
+		android:title="Enable Logging"
+		android:persistent="true"
+		/>
+	
+</PreferenceScreen>
