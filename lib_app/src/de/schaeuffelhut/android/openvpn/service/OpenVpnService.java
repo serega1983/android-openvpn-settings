@@ -229,48 +229,6 @@ public class OpenVpnService extends Service
 		mConnectivity = null;
 	}
 
-//	private synchronized void daemonAttach(File config, boolean start)
-//	{
-//		if ( isDaemonStarted(config) )
-//		{
-//			Log.v( TAG, config + ": is running and already attached" );
-//		}
-//		else if ( start && Preferences.getVpnDnsEnabled(this, config) && isVpnDnsActive() )
-//		{
-//			Log.i( TAG, config + " only one VPN DNS may be active at a time, aborting" );
-//		}
-//		else
-//		{
-//			Log.v(TAG, config +": trying to attach");
-//
-//            DaemonMonitor daemonMonitor = newDaemonMonitor( config );
-//
-//            if ( daemonMonitor.isAlive() ) // daemon was already running
-//			{
-//				Log.v(TAG, config +": successfully attached");
-//				mRegistry.put( config, daemonMonitor );
-//				if ( !start )
-//				{
-//					Log.v(TAG, config +": daemon is disabled in settings, stopping");
-//					daemonStop( config );
-//				}
-//			}
-//			else if ( start ) // daemon is not running, but should be started
-//			{
-//				Log.v(TAG, config +": not attached");
-//				Log.v(TAG, config +": daemon is enabled in settings, starting");
-//				daemonMonitor.start();
-//				// ManagementThread might not be alive yet,
-//				// so daemonMonitor.isAlive() might return false here.
-//				mRegistry.put( config, daemonMonitor );
-//			}
-//			else
-//			{
-//				Log.v(TAG, config +": not attached");
-//				Log.v(TAG, config +": daemon is disabled in settings, not starting");
-//			}
-//		}
-//	}
 
     /**
 	 * Try to attach to already running OpenVPN daemons, starting them if they
@@ -279,13 +237,6 @@ public class OpenVpnService extends Service
 	private final void daemonAttach()
 	{
 		Log.d( TAG, "trying to attach to already running daemons" );
-//		for ( File config : listConfigs())
-//			daemonAttach(
-//					config,
-//					PreferenceManager.getDefaultSharedPreferences( getApplicationContext() ).getBoolean(
-//							Preferences.KEY_CONFIG_INTENDED_STATE( config ), false
-//					)
-//			);
 
         mRegistry.clear();
         DaemonMonitor daemonMonitor = new FindCurrentDaemon( this, daemonMonitorFactory, listConfigs() ).getTheOneRunningDaemonOrTheNullDaemonMonitor();
