@@ -24,14 +24,21 @@ package de.schaeuffelhut.android.openvpn.service;
 
 import junit.framework.TestCase;
 
+import java.io.File;
+
 /**
  * @author Friedrich Schäuffelhut
  * @since 2012-11-03
  */
 public class NullDaemonMonitorTest extends TestCase
 {
-    public void testIsAlive() throws Exception
+    public void test_isAlive() throws Exception
     {
         assertFalse( NullDaemonMonitor.getInstance().isAlive() );
+    }
+
+    public void test_getConfigFile()
+    {
+        assertEquals( new File( "/dev/null" ), NullDaemonMonitor.getInstance().getConfigFile() );
     }
 }
