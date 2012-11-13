@@ -35,6 +35,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import com.bugsense.trace.BugSenseHandler;
 import de.schaeuffelhut.android.openvpn.lib.app.R;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnServiceImpl;
+import de.schaeuffelhut.android.openvpn.services.OpenVpnService;
 import de.schaeuffelhut.android.openvpn.setup.prerequisites.PrerequisitesActivity;
 import de.schaeuffelhut.android.openvpn.setup.prerequisites.ProbePrerequisites;
 import de.schaeuffelhut.android.openvpn.tun.ShareTunActivity;
@@ -94,15 +95,15 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 					}
 					else if ( (Boolean)newValue )
 					{
-						startService( new Intent(OpenVpnSettings.this, OpenVpnServiceImpl.class) );
-						if ( !bindService( new Intent( OpenVpnSettings.this, OpenVpnServiceImpl.class ), OpenVpnSettings.this, 0 ) )
+						startService( new Intent(OpenVpnSettings.this, OpenVpnService.class) );
+						if ( !bindService( new Intent( OpenVpnSettings.this, OpenVpnService.class ), OpenVpnSettings.this, 0 ) )
 				        {
 							Log.w(TAG, "Could not bind to ControlShell" );
 				        }
 					}
 					else
 					{
-						stopService( new Intent(OpenVpnSettings.this, OpenVpnServiceImpl.class) );
+						stopService( new Intent(OpenVpnSettings.this, OpenVpnService.class) );
 					}
 					return false;
 				}
@@ -117,9 +118,9 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 		// On next restart we will detect that the service should run but is actually stopped.
 		// There is no clean way to determine if the service has been started.
 		if ( Preferences.getOpenVpnEnabled(this) && !OpenVpnServiceImpl.isServiceStarted() )
-			startService( new Intent( this, OpenVpnServiceImpl.class ) );
+			startService( new Intent( this, OpenVpnService.class ) );
 
-		if ( !bindService( new Intent( this, OpenVpnServiceImpl.class ), this, 0 ) )
+		if ( !bindService( new Intent( this, OpenVpnService.class ), this, 0 ) )
         {
 			Log.w(TAG, "Could not bind to ControlShell" );
         }

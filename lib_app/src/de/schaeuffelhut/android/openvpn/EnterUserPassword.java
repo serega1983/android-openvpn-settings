@@ -41,6 +41,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import de.schaeuffelhut.android.openvpn.lib.app.R;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnServiceImpl;
+import de.schaeuffelhut.android.openvpn.services.OpenVpnService;
 
 public class EnterUserPassword extends Activity implements ServiceConnection {
 
@@ -56,7 +57,7 @@ public class EnterUserPassword extends Activity implements ServiceConnection {
 		showDialog( 1 );
 
 		if ( !bindService(
-				new Intent( this, OpenVpnServiceImpl.class ),
+				new Intent( this, OpenVpnService.class ),
 				this,
 				Context.BIND_AUTO_CREATE
 			) )
