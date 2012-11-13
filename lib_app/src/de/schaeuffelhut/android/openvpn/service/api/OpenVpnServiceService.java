@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.util.Log;
 
 /**
  * @author Friedrich Schäuffelhut
@@ -18,7 +17,7 @@ public class OpenVpnServiceService extends Service
         return mBinder;
     }
 
-    private final OpenVpnService.Stub mBinder = new OpenVpnService.Stub()
+    private final IfcOpenVpnService.Stub mBinder = new IfcOpenVpnService.Stub()
     {
         OpenVpnState[] states = new OpenVpnState[]{
                 new OpenVpnState.Started( "CONNECTING", "USA3", "", 0, 0, 0 ),
