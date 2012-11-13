@@ -84,6 +84,26 @@ public class OpenVpnServiceWrapperTest extends TestCase
         assertEquals( "de.schaeuffelhut.android.openvpn.services.OpenVpnService", intentCaptor.getValue().getAction() );
     }
 
+    public void test_bindService_fails() throws RemoteException
+    {
+        Context context = Mockito.mock( Context.class );
+        Mockito.when( context.bindService(  Mockito.any( Intent.class ), Mockito.same( wrapper ), Mockito.eq( 0 )  ) ).thenReturn( false );
+
+        boolean success = wrapper.bindService( context );
+
+        assertFalse( success );
+    }
+
+    public void test_bindService_succeeds() throws RemoteException
+    {
+        Context context = Mockito.mock( Context.class );
+        Mockito.when( context.bindService(  Mockito.any( Intent.class ), Mockito.same( wrapper ), Mockito.eq( 0 )  ) ).thenReturn( true );
+
+        boolean success = wrapper.bindService( context );
+
+        assertTrue( success );
+    }
+
     public void test_unbindService() throws RemoteException
     {
         Context context = Mockito.mock( Context.class );
