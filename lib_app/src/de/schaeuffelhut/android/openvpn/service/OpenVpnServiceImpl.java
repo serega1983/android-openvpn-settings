@@ -31,15 +31,13 @@ import android.app.Service;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.os.Binder;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
+import android.os.*;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.Preferences;
+import de.schaeuffelhut.android.openvpn.service.api.*;
 import de.schaeuffelhut.android.openvpn.util.NetworkConnectivityListener;
 
 /**
@@ -120,13 +118,67 @@ public class OpenVpnServiceImpl extends Service
 
 	
 	@Deprecated //TODO: aidl?
-	public final class ServiceBinder extends Binder {
-		public final OpenVpnServiceImpl getService() {
+    public final class ServiceBinder extends IOpenVpnService.Stub
+    {
+        private Handler handler = new Handler( Looper.getMainLooper() );
+
+
+        public final OpenVpnServiceImpl getService()
+        {
             return OpenVpnServiceImpl.this;
         }
-	}
 
-	private final IBinder mBinder = new ServiceBinder();
+        public void connect(final OpenVpnConfig config) throws RemoteException
+        {
+            handler.post( new Runnable()
+            {
+                public void run()
+                {
+                    daemonStart( config.getFile() );
+                }
+            } );
+        }
+
+        public void supplyCredentials(final OpenVpnCredentials credentials) throws RemoteException
+        {
+            handler.post( new Runnable()
+            {
+                public void run()
+                {
+                    daemonUsernamePassword( getCurrent().getConfigFile(), credentials.getUsername(), credentials.getPassword() );
+                }
+            } );
+        }
+
+        public void supplyPassphrase(final OpenVpnPassphrase passphrase) throws RemoteException
+        {
+            handler.post( new Runnable()
+            {
+                public void run()
+                {
+                    daemonPassphrase( getCurrent().getConfigFile(), passphrase.getPassphrase() );
+                }
+            } );
+        }
+
+        public OpenVpnState getStatus() throws RemoteException
+        {
+            return OpenVpnState.fromStickyBroadcast( OpenVpnServiceImpl.this );
+        }
+
+        public void disconnect() throws RemoteException
+        {
+            handler.post( new Runnable()
+            {
+                public void run()
+                {
+                    daemonStop( getCurrent().getConfigFile() );
+                }
+            } );
+        }
+    }
+
+    private final IBinder mBinder = new ServiceBinder();
 	
 	@Override
 	public IBinder onBind(Intent intent) {
