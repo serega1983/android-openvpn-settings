@@ -263,7 +263,7 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 
     public CharSequence getLatestSummary()
     {
-        Intent intent = mDaemonCheckBoxPref.getContext().registerReceiver( null, new IntentFilter( Intents.NETWORK_STATE_CHANGED ) );
+        Intent intent = Intents.getLatestNetworkStateChangedIntent( mDaemonCheckBoxPref.getContext() );
         if ( intent == null )
             return "State is unknown";  // TODO: should we issue a 'state' command to the openvpn daemon to update the sticky broadcast?
 
