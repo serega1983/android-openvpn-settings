@@ -11,6 +11,7 @@ import java.io.File;
  */
 public class OpenVpnConfig implements Parcelable
 {
+    private static final byte PROTOCOL_VERSION_1 = 1;
     private final File pathToConfigFile;
 
     public OpenVpnConfig(File pathToConfigFile)
@@ -31,6 +32,7 @@ public class OpenVpnConfig implements Parcelable
 
     public void writeToParcel(Parcel parcel, int flags)
     {
+        parcel.writeByte( PROTOCOL_VERSION_1 );
         parcel.writeString( pathToConfigFile.getPath() );
     }
 
@@ -38,7 +40,15 @@ public class OpenVpnConfig implements Parcelable
     {
         public OpenVpnConfig createFromParcel(Parcel in)
         {
-            return new OpenVpnConfig( new File( in.readString() ) );
+            final byte protocolVersion = in.readByte();
+            switch (protocolVersion)
+            {
+                case 1:
+                    return new OpenVpnConfig( new File( in.readString() ) );
+                default:
+                    throw new RuntimeException( "Unexpected protocol version: " + protocolVersion ); // should be UnexpectedSwitchValueException
+            }
+
         }
 
         public OpenVpnConfig[] newArray(int size)

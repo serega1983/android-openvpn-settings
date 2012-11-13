@@ -1,3 +1,25 @@
+/*
+ * This file is part of OpenVPN-Settings.
+ *
+ * Copyright © 2009-2012  Friedrich Schäuffelhut
+ *
+ * OpenVPN-Settings is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * OpenVPN-Settings is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with OpenVPN-Settings.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Report bugs or new features at: http://code.google.com/p/android-openvpn-settings/
+ * Contact the author at:          android.openvpn@schaeuffelhut.de
+ */
+
 package de.schaeuffelhut.android.openvpn.service.api;
 
 import android.app.Service;
@@ -9,7 +31,7 @@ import android.os.RemoteException;
  * @author Friedrich Schäuffelhut
  * @since 2012-10-27
  */
-public class OpenVpnServiceService extends Service
+public class OpenVpnServiceFake extends Service
 {
     @Override
     public IBinder onBind(Intent intent)
@@ -17,7 +39,7 @@ public class OpenVpnServiceService extends Service
         return mBinder;
     }
 
-    private final IfcOpenVpnService.Stub mBinder = new IfcOpenVpnService.Stub()
+    private final IOpenVpnService.Stub mBinder = new IOpenVpnService.Stub()
     {
         OpenVpnState[] states = new OpenVpnState[]{
                 new OpenVpnState.Started( "CONNECTING", "USA3", "", 0, 0, 0 ),
@@ -63,7 +85,7 @@ public class OpenVpnServiceService extends Service
         };
         Thread t = null;
 
-        public void connectTo(OpenVpnConfig config) throws RemoteException
+        public void connect(OpenVpnConfig config) throws RemoteException
         {
             if (t == null || !t.isAlive())
             {
@@ -73,7 +95,13 @@ public class OpenVpnServiceService extends Service
 
         }
 
-        public void authenticate(String username, String password) throws RemoteException
+        public void supplyPassphrase(OpenVpnPassphrase passphrase) throws RemoteException
+        {
+            //TODO: implement method stub
+
+        }
+
+        public void supplyCredentials(OpenVpnCredentials credentials) throws RemoteException
         {
             //TODO: implement method stub
 

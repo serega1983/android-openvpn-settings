@@ -40,4 +40,22 @@ public abstract class OpenVpnStateTestBase<T extends OpenVpnState> extends TestC
         return (T)OpenVpnState.CREATOR.createFromParcel( parcel );
     }
 
+    public void test_read_protocol_version_unexpected()
+    {
+        byte unexpectedProtocolVersion = (byte) 3;
+
+        Parcel parcel = Parcel.obtain();
+        parcel.writeByte( unexpectedProtocolVersion );
+
+        parcel.setDataPosition( 0 );
+        try
+        {
+            OpenVpnState.CREATOR.createFromParcel( parcel );
+            fail( "RuntimeException expected" );
+        }
+        catch (RuntimeException e)
+        {
+            assertEquals( "Unexpected protocol version: " + unexpectedProtocolVersion, e.getMessage() );
+        }
+    }
 }
