@@ -19,7 +19,7 @@ public class OpenVpnServiceServiceTest extends ServiceTestCase<OpenVpnServiceSer
     {
         IBinder iBinder = bindService( new Intent() );
         assertNotNull( iBinder );
-        assertTrue( iBinder instanceof OpenVpnService );
-        assertTrue( OpenVpnService.Stub.asInterface( iBinder ) instanceof OpenVpnService );
+        assertTrue( iBinder instanceof IfcOpenVpnService );
+        assertTrue( IfcOpenVpnService.Stub.asInterface( iBinder ) instanceof IfcOpenVpnService );
     }
 }
