@@ -33,13 +33,13 @@ import java.io.File;
  * @author Friedrich Schäuffelhut
  * @since 2012-11-05
  */
-public class OpenVpnServiceIntentApiTest extends ServiceTestCase<OpenVpnService>
+public class OpenVpnServiceIntentApiTest extends ServiceTestCase<OpenVpnServiceImpl>
 {
     final DaemonMonitorMockFactory daemonMonitorFactory = new DaemonMonitorMockFactory();
 
     public OpenVpnServiceIntentApiTest()
     {
-        super( OpenVpnService.class );
+        super( OpenVpnServiceImpl.class );
     }
 
     @Override

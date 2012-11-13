@@ -41,7 +41,7 @@ import de.schaeuffelhut.android.openvpn.util.tun.TunInfo;
  */
 final class DaemonMonitorImpl implements DaemonMonitor
 {
-	private final OpenVpnService mContext;
+	private final OpenVpnServiceImpl mContext;
 	private final File mConfigFile;
     private final Notification2 mNotification2;
     private final Preferences2 mPreferences2;
@@ -53,7 +53,7 @@ final class DaemonMonitorImpl implements DaemonMonitor
 	private ManagementThread mManagementThread;
 
 
-    DaemonMonitorImpl(OpenVpnService context, File configFile, Notification2 notification2, Preferences2 preferences2)
+    DaemonMonitorImpl(OpenVpnServiceImpl context, File configFile, Notification2 notification2, Preferences2 preferences2)
 	{
 		mContext = context;
 		mConfigFile = configFile;

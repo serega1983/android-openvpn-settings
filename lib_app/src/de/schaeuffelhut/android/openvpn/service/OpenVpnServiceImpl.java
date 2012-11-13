@@ -23,7 +23,6 @@ package de.schaeuffelhut.android.openvpn.service;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -48,7 +47,7 @@ import de.schaeuffelhut.android.openvpn.util.NetworkConnectivityListener;
  *
  */
 //TODO: expose interface through aidl
-public class OpenVpnService extends Service
+public class OpenVpnServiceImpl extends Service
 {
 	private final static String TAG = "OpenVPN-ControlShell";
 	
@@ -58,7 +57,7 @@ public class OpenVpnService extends Service
 	 * So we remember a week reference to it. We set it if we are running and clear it
 	 * if we are stopped. If anything goes wrong, the reference will hopefully vanish
 	 */	
-	private static WeakReference<OpenVpnService> sRunningInstance = null;
+	private static WeakReference<OpenVpnServiceImpl> sRunningInstance = null;
 	public final static boolean isServiceStarted()
 	{
 		final boolean isServiceStarted;
@@ -78,7 +77,7 @@ public class OpenVpnService extends Service
 		return isServiceStarted;
 	}
 	private void markServiceStarted(){
-		sRunningInstance = new WeakReference<OpenVpnService>( this );
+		sRunningInstance = new WeakReference<OpenVpnServiceImpl>( this );
 	}
 	private void markServiceStopped(){
 		sRunningInstance = null;
@@ -112,7 +111,7 @@ public class OpenVpnService extends Service
 			if ( !daemonMonitor.isAlive() )
 				return;
 			
-			if ( Preferences.getLogStdoutEnable( OpenVpnService.this, config ) )
+			if ( Preferences.getLogStdoutEnable( OpenVpnServiceImpl.this, config ) )
 				daemonMonitor.startLogging();
 			else
 				daemonMonitor.stopLogging();
@@ -122,8 +121,8 @@ public class OpenVpnService extends Service
 	
 	@Deprecated //TODO: aidl?
 	public final class ServiceBinder extends Binder {
-		public final OpenVpnService getService() {
-            return OpenVpnService.this;
+		public final OpenVpnServiceImpl getService() {
+            return OpenVpnServiceImpl.this;
         }
 	}
 

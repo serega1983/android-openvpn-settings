@@ -20,28 +20,11 @@
  * Contact the author at:          android.openvpn@schaeuffelhut.de
  */
 
-package de.schaeuffelhut.android.openvpn.service;
-
-import java.io.File;
-
 /**
- * @author Friedrich Schäuffelhut
- * @since 2012-11-03
+ * This package serves as a persistent namespace for services published by OpenVPN Settings.
+ * Services are looked up and found by their class names. Published services should place a
+ * empty subclass here to provide a persistent name. The actual implementation may then be
+ * refactored and freely moved around in the source code.
+ * Keep this package free of implementation details.
  */
-public class DaemonMonitorImplFactory implements DaemonMonitorFactory
-{
-    private final OpenVpnServiceImpl context;
-
-    public DaemonMonitorImplFactory(OpenVpnServiceImpl context)
-    {
-        this.context = context;
-    }
-
-    public DaemonMonitor createDaemonMonitorFor(File configFile)
-    {
-        Preferences2 preferences2 = new Preferences2( context, configFile );
-        Notification2 notification2 = new Notification2( context, configFile, preferences2.getNotificationId() );
-        return new DaemonMonitorImpl( context, configFile, notification2, preferences2 );
-    }
-
-}
+package de.schaeuffelhut.android.openvpn.services;

@@ -40,13 +40,13 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import de.schaeuffelhut.android.openvpn.lib.app.R;
-import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
+import de.schaeuffelhut.android.openvpn.service.OpenVpnServiceImpl;
 
 public class EnterPassphrase extends Activity implements ServiceConnection {
 
 	private static final String TAG = "OpenVPN-EnterPassphrase";
 	
-	private OpenVpnService mOpenVpnService;
+	private OpenVpnServiceImpl mOpenVpnService;
 
 	private AlertDialog mDialog;
 
@@ -56,7 +56,7 @@ public class EnterPassphrase extends Activity implements ServiceConnection {
 		showDialog( 1 );
 
 		if ( !bindService(
-				new Intent( this, OpenVpnService.class ),
+				new Intent( this, OpenVpnServiceImpl.class ),
 				this,
 				Context.BIND_AUTO_CREATE
 			) )
@@ -114,7 +114,7 @@ public class EnterPassphrase extends Activity implements ServiceConnection {
 	}
 	
 	public synchronized void onServiceConnected(ComponentName name, IBinder serviceBinder) {
-		mOpenVpnService = ((OpenVpnService.ServiceBinder)serviceBinder).getService();
+		mOpenVpnService = ((OpenVpnServiceImpl.ServiceBinder)serviceBinder).getService();
 		Log.d( TAG, "Connected to OpenVpnService" );
 		if ( mDialog != null && mDialog.getButton( AlertDialog.BUTTON_NEUTRAL ) != null )
 			mDialog.getButton( AlertDialog.BUTTON_NEUTRAL ).setEnabled( true );

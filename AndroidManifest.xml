@@ -95,9 +95,9 @@
 			/>
 
         <service
-			android:name="de.schaeuffelhut.android.openvpn.service.OpenVpnService"
-			android:label="@string/openvpn_service"
-			android:exported="false"
+			android:name="de.schaeuffelhut.android.openvpn.services.OpenVpnService"
+			android:label="@string/services_openvpn_service"
+			android:exported="true"
 			android:enabled="true"
 			>
             <!--
