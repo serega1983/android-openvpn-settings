@@ -114,7 +114,7 @@ public class NullDaemonMonitor implements DaemonMonitor
 
     public File getConfigFile()
     {
-        return null;
+        return new File( "/dev/null" );
     }
 
     public void switchToIntendedState()
