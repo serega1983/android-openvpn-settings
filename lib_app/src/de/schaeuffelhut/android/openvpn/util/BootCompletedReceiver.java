@@ -28,6 +28,7 @@ import android.content.Intent;
 import android.util.Log;
 import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnServiceImpl;
+import de.schaeuffelhut.android.openvpn.services.OpenVpnService;
 
 public class BootCompletedReceiver extends BroadcastReceiver
 {
@@ -43,7 +44,7 @@ public class BootCompletedReceiver extends BroadcastReceiver
 			  {
 				  Log.d(TAG, "OpenVPN-Service enabled in preferences, starting!" );
 
-				  ComponentName service = context.startService( new Intent( context, OpenVpnServiceImpl.class ) );
+				  ComponentName service = context.startService( new Intent( context, OpenVpnService.class ) );
 
 				  //Why so complicated?
 				  //			  ComponentName comp = new ComponentName(
