@@ -1,5 +1,9 @@
 package de.schaeuffelhut.android.openvpn.service.api;
 
+import android.os.Parcel;
+
+import java.io.File;
+
 /**
  * @author Friedrich Schäuffelhut
  * @since 2012-10-28
@@ -88,5 +92,49 @@ public class OpenVpnStateStartedTest extends OpenVpnStateTestBase<OpenVpnState.S
     protected OpenVpnState.Started createOpenVpnState()
     {
         return new OpenVpnState.Started();
+    }
+
+
+
+    /**
+     * Do NOT change this test, it ensures compatibility with older clients.
+     */
+    public void test_read_TYPE_STARTED_VERSION_1()
+    {
+        Parcel parcel = Parcel.obtain();
+        parcel.writeByte( (byte)1 );
+        parcel.writeString( "CONNECTED" );
+        parcel.writeString( "Server" );
+        parcel.writeString( "10.0.0.2" );
+        parcel.writeLong( 101 );
+        parcel.writeLong( 102 );
+        parcel.writeInt( 60 );
+
+        parcel.setDataPosition(0);
+        OpenVpnState copy = OpenVpnState.CREATOR.createFromParcel( parcel );
+
+        assertTrue( copy.isStarted() );
+        assertEquals( "CONNECTED", copy.getState() );
+        assertEquals( "Server", copy.getConnectedTo() );
+        assertEquals( "10.0.0.2", copy.getIp() );
+        assertEquals( 101, copy.getBytesSent() );
+        assertEquals( 102, copy.getBytesReceived() );
+        assertEquals( 60, copy.getConnectedSeconds() );
+    }
+
+    public void test_write_TYPE_STARTED_VERSION_1()
+    {
+        Parcel parcel = Parcel.obtain();
+        new OpenVpnState.Started( "CONNECTED", "Server", "10.0.0.2", 101, 102, 60 ).writeToParcel( parcel, 0 );
+
+        parcel.setDataPosition(0);
+
+        assertEquals( 1, parcel.readByte() );
+        assertEquals( "CONNECTED", parcel.readString() );
+        assertEquals( "Server", parcel.readString() );
+        assertEquals( "10.0.0.2", parcel.readString() );
+        assertEquals( 101, parcel.readLong() );
+        assertEquals( 102, parcel.readLong() );
+        assertEquals( 60, parcel.readInt() );
     }
 }

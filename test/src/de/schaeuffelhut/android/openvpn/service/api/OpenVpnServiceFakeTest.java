@@ -8,18 +8,18 @@ import android.test.ServiceTestCase;
  * @author Friedrich Schäuffelhut
  * @since 2012-10-28
  */
-public class OpenVpnServiceServiceTest extends ServiceTestCase<OpenVpnServiceService>
+public class OpenVpnServiceFakeTest extends ServiceTestCase<OpenVpnServiceFake>
 {
-    public OpenVpnServiceServiceTest()
+    public OpenVpnServiceFakeTest()
     {
-        super( OpenVpnServiceService.class );
+        super( OpenVpnServiceFake.class );
     }
 
     public void test_bind()
     {
         IBinder iBinder = bindService( new Intent() );
         assertNotNull( iBinder );
-        assertTrue( iBinder instanceof IfcOpenVpnService );
-        assertTrue( IfcOpenVpnService.Stub.asInterface( iBinder ) instanceof IfcOpenVpnService );
+        assertTrue( iBinder instanceof IOpenVpnService );
+        assertTrue( IOpenVpnService.Stub.asInterface( iBinder ) instanceof IOpenVpnService );
     }
 }

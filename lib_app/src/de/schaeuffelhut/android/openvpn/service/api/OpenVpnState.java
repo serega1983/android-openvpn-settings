@@ -13,8 +13,8 @@ import de.schaeuffelhut.android.openvpn.util.UnexpectedSwitchValueException;
  */
 public abstract class OpenVpnState implements Parcelable
 {
-    private static final byte TYPE_STARTED = (byte) 1;
-    private static final byte TYPE_STOPPED = (byte) 2;
+    private static final byte TYPE_STARTED_VERSION_1 = (byte) 1;
+    private static final byte TYPE_STOPPED_VERSION_1 = (byte) 2;
 
     private OpenVpnState()
     {
@@ -139,7 +139,7 @@ public abstract class OpenVpnState implements Parcelable
 
         public void writeToParcel(Parcel parcel, int flags)
         {
-            parcel.writeByte( TYPE_STARTED );
+            parcel.writeByte( TYPE_STARTED_VERSION_1 );
             parcel.writeString( state ); //TOOD: could also be an integer, e.g. enum.ordinal
             parcel.writeString( connectedTo );
             parcel.writeString( ip );
@@ -195,7 +195,7 @@ public abstract class OpenVpnState implements Parcelable
 
         public void writeToParcel(Parcel parcel, int flags)
         {
-            parcel.writeByte( TYPE_STOPPED );
+            parcel.writeByte( TYPE_STOPPED_VERSION_1 );
             //TODO: implement method stub
         }
     }
@@ -214,12 +214,12 @@ public abstract class OpenVpnState implements Parcelable
             final byte objectType = in.readByte();
             switch (objectType)
             {
-                case TYPE_STARTED:
+                case TYPE_STARTED_VERSION_1:
                     return new Started( in );
-                case TYPE_STOPPED:
+                case TYPE_STOPPED_VERSION_1:
                     return new Stopped();
                 default:
-                    throw new UnexpectedSwitchValueException( objectType );
+                    throw new RuntimeException( "Unexpected protocol version: " + objectType ); // should be UnexpectedSwitchValueException
             }
         }
 
