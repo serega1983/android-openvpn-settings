@@ -21,7 +21,9 @@
  */
 package de.schaeuffelhut.android.openvpn;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 
 public final class Intents
 {
@@ -86,6 +88,16 @@ public final class Intents
 			intent.putExtra(EXTRA_NETWORK_TIME, time);
 		return intent;
 	}
+
+    /**
+     * Returns the latest NETWORK_STATE_CHANGED broadcast or null if there is none.
+     * @param context
+     * @return the latest NETWORK_STATE_CHANGED broadcast or null if there is none.
+     */
+    public static Intent getLatestNetworkStateChangedIntent(Context context)
+    {
+        return context.registerReceiver( null, new IntentFilter( NETWORK_STATE_CHANGED ) );
+    }
 
 //	public final static String DATA_TYPE_CONFIG = NS+"/config";
 	
