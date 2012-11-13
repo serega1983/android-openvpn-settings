@@ -1,5 +1,18 @@
 #!/bin/bash
 
+#!/bin/bash
+
+if [ ! -x $ANDROID_SDK_HOME/tools/android ]; then
+	echo android too not found
+	echo did you set '$ANDROID_SDK_HOME'?
+	exit -1
+fi
+
+target=android-4
+
+$ANDROID_SDK_HOME/tools/android update project --subprojects --target $target --path . || exit -1
+
+
 # build main application
 ant clean
 ant debug || exit 1
