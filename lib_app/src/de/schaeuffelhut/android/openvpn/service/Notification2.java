@@ -37,13 +37,13 @@ import java.io.File;
  */
 public class Notification2
 {
-    private final OpenVpnService mContext; //TODO: convert to ApplicationContext
+    private final OpenVpnServiceImpl mContext; //TODO: convert to ApplicationContext
     private final File mConfigFile;
     private final int mNotificationId;
     private final NotificationManager mNotificationManager;
     private final Handler mUiThreadHandler;
 
-    public Notification2(OpenVpnService mContext, File mConfigFile, int mNotificationId)
+    public Notification2(OpenVpnServiceImpl mContext, File mConfigFile, int mNotificationId)
     {
         this.mContext = mContext;
         this.mConfigFile = mConfigFile;

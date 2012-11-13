@@ -32,7 +32,7 @@ import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
-import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
+import de.schaeuffelhut.android.openvpn.service.OpenVpnServiceImpl;
 
 public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 {
@@ -40,7 +40,7 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 	private static final String TAG = "OpenVPNDaemonEnabler";
 
 	private final Context mContext; 
-	private OpenVpnService mOpenVpnService;
+	private OpenVpnServiceImpl mOpenVpnService;
 	private final CheckBoxPreference mDaemonCheckBoxPref;
 	private final File mConfigFile;
 	private final CharSequence mOriginalSummary;
@@ -74,7 +74,7 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
         }
     };
 
-    public DaemonEnabler(Context context, OpenVpnService openVpnServiceShell, CheckBoxPreference daemonCheckBoxPreference, File configFile)
+    public DaemonEnabler(Context context, OpenVpnServiceImpl openVpnService, CheckBoxPreference daemonCheckBoxPreference, File configFile)
 	{
 		mContext = context;
 		mDaemonCheckBoxPref = daemonCheckBoxPreference;
@@ -86,10 +86,10 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 		mDaemonStateFilter = new IntentFilter(Intents.DAEMON_STATE_CHANGED );
 		mDaemonStateFilter.addAction(Intents.NETWORK_STATE_CHANGED);
 
-		setOpenVpnService( openVpnServiceShell );
+		setOpenVpnService( openVpnService );
 	}
 
-	public void setOpenVpnService(OpenVpnService openVpnService)
+	public void setOpenVpnService(OpenVpnServiceImpl openVpnService)
 	{
 		mOpenVpnService = openVpnService;
 		mDaemonCheckBoxPref.setEnabled( isEnabledByDependency() && isOpenVpnServiceEnabled() );

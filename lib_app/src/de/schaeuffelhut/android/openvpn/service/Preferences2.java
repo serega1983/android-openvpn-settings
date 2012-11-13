@@ -33,10 +33,10 @@ import java.io.File;
  */
 public class Preferences2
 {
-    public final OpenVpnService mContext;
+    public final OpenVpnServiceImpl mContext;
     public final File mConfigFile;
 
-    public Preferences2(OpenVpnService context, File configFile)
+    public Preferences2(OpenVpnServiceImpl context, File configFile)
     {
         this.mContext = context;
         this.mConfigFile = configFile;

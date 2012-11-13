@@ -40,11 +40,11 @@ import java.util.List;
  */
 class FindCurrentDaemon
 {
-    private final OpenVpnService context;
+    private final OpenVpnServiceImpl context;
     private final DaemonMonitorFactory daemonMonitorFactory;
     private final List<File> configFiles;
 
-    FindCurrentDaemon(OpenVpnService context, DaemonMonitorFactory daemonMonitorFactory, List<File> configFiles)
+    FindCurrentDaemon(OpenVpnServiceImpl context, DaemonMonitorFactory daemonMonitorFactory, List<File> configFiles)
     {
         this.context = context;
         this.daemonMonitorFactory = daemonMonitorFactory;

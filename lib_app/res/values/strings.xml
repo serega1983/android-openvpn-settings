@@ -30,7 +30,7 @@
 	<string name="openvpn_configurations">OpenVPN configurations</string>
 	<string name="openvpn_"></string>
 
-	<string name="openvpn_service">OpenVPN service</string>
+	<string name="services_openvpn_service">OpenVPN service</string>
 
 	<string name="settings_menu_add_config">Add</string>
 	<string name="settings_menu_refresh">Refresh</string>

@@ -34,7 +34,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import com.bugsense.trace.BugSenseHandler;
 import de.schaeuffelhut.android.openvpn.lib.app.R;
-import de.schaeuffelhut.android.openvpn.service.OpenVpnService;
+import de.schaeuffelhut.android.openvpn.service.OpenVpnServiceImpl;
 import de.schaeuffelhut.android.openvpn.setup.prerequisites.PrerequisitesActivity;
 import de.schaeuffelhut.android.openvpn.setup.prerequisites.ProbePrerequisites;
 import de.schaeuffelhut.android.openvpn.tun.ShareTunActivity;
@@ -62,7 +62,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 
 
 	ArrayList<DaemonEnabler> mDaemonEnablers = new ArrayList<DaemonEnabler>(4);
-	OpenVpnService mOpenVpnService = null;
+	OpenVpnServiceImpl mOpenVpnService = null;
     BroadcastReceiver broadcastReceiver;
 
     private int mCurrentContentView;
@@ -94,15 +94,15 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 					}
 					else if ( (Boolean)newValue )
 					{
-						startService( new Intent(OpenVpnSettings.this, OpenVpnService.class) );
-						if ( !bindService( new Intent( OpenVpnSettings.this, OpenVpnService.class ), OpenVpnSettings.this, 0 ) )
+						startService( new Intent(OpenVpnSettings.this, OpenVpnServiceImpl.class) );
+						if ( !bindService( new Intent( OpenVpnSettings.this, OpenVpnServiceImpl.class ), OpenVpnSettings.this, 0 ) )
 				        {
 							Log.w(TAG, "Could not bind to ControlShell" );
 				        }
 					}
 					else
 					{
-						stopService( new Intent(OpenVpnSettings.this, OpenVpnService.class) );
+						stopService( new Intent(OpenVpnSettings.this, OpenVpnServiceImpl.class) );
 					}
 					return false;
 				}
@@ -116,10 +116,10 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 		// this happens if OpenVPN-Settings is killed (e.g. due to a tight memory situation).
 		// On next restart we will detect that the service should run but is actually stopped.
 		// There is no clean way to determine if the service has been started.
-		if ( Preferences.getOpenVpnEnabled(this) && !OpenVpnService.isServiceStarted() )
-			startService( new Intent( this, OpenVpnService.class ) );
+		if ( Preferences.getOpenVpnEnabled(this) && !OpenVpnServiceImpl.isServiceStarted() )
+			startService( new Intent( this, OpenVpnServiceImpl.class ) );
 
-		if ( !bindService( new Intent( this, OpenVpnService.class ), this, 0 ) )
+		if ( !bindService( new Intent( this, OpenVpnServiceImpl.class ), this, 0 ) )
         {
 			Log.w(TAG, "Could not bind to ControlShell" );
         }
@@ -174,7 +174,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
     {
     	final File mConfig;
     	final DaemonEnabler mDaemonEnabler;
-		public ConfigFilePreference(Context context, OpenVpnService openVpnService, File config) {
+		public ConfigFilePreference(Context context, OpenVpnServiceImpl openVpnService, File config) {
 			super(context);
 			setKey( Preferences.KEY_CONFIG_ENABLED( config ) );
 			setTitle( Preferences.getConfigName(context, config) );
@@ -561,7 +561,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 	public void onServiceConnected(ComponentName name, IBinder serviceBinder) {
 		Log.d( TAG, "Connected to OpenVpnService" );
 
-		mOpenVpnService = ((OpenVpnService.ServiceBinder)serviceBinder).getService();
+		mOpenVpnService = ((OpenVpnServiceImpl.ServiceBinder)serviceBinder).getService();
 
 		for(DaemonEnabler daemonEnabler : mDaemonEnablers )
 			daemonEnabler.setOpenVpnService( mOpenVpnService );
