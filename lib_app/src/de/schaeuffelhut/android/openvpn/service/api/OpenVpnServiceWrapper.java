@@ -26,6 +26,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.nfc.Tag;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
@@ -46,9 +47,15 @@ public class OpenVpnServiceWrapper implements ServiceConnection
         invalidateRemoteInterface();
     }
 
-    public void bindService(Context context)
+    /**
+     * Bind to {@code IOpenVpnService}.
+     * @param context The context to use for binding.
+     * @return false if the service could not be bound, e.g. OpenVpnSettings is not installed and the service is not available
+     */
+    public boolean bindService(Context context)
     {
-        context.bindService( new Intent( "de.schaeuffelhut.android.openvpn.services.OpenVpnService" ), this, 0 );
+        boolean success = context.bindService( new Intent( "de.schaeuffelhut.android.openvpn.services.OpenVpnService" ), this, 0 );
+        return success;
     }
 
     public void unbindService(Context context)
