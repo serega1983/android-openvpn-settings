@@ -59,6 +59,11 @@ public class NullOpenVpnService implements IOpenVpnService
         return new OpenVpnState.Stopped();
     }
 
+    public OpenVpnState getStatusFor(OpenVpnConfig config) throws RemoteException
+    {
+        return new OpenVpnState.Stopped();
+    }
+
     public void disconnect() throws RemoteException
     {
     }

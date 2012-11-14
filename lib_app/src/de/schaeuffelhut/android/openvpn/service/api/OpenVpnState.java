@@ -15,6 +15,7 @@ public abstract class OpenVpnState implements Parcelable
 {
     private static final byte TYPE_STARTED_VERSION_1 = (byte) 1;
     private static final byte TYPE_STOPPED_VERSION_1 = (byte) 2;
+    private static final Stopped STOPPED_INSTANCE = new Stopped();
 
     private OpenVpnState()
     {
@@ -43,6 +44,12 @@ public abstract class OpenVpnState implements Parcelable
                 0, 0, 0
         );
     }
+
+    public static OpenVpnState stopped()
+    {
+        return STOPPED_INSTANCE;
+    }
+
 
     public abstract boolean isStarted();
     public abstract String  getState();

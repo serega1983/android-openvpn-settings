@@ -166,6 +166,14 @@ public class OpenVpnServiceImpl extends Service
             return OpenVpnState.fromStickyBroadcast( OpenVpnServiceImpl.this );
         }
 
+        public OpenVpnState getStatusFor(OpenVpnConfig config) throws RemoteException
+        {
+            if ( getCurrent().getConfigFile().equals( config.getFile() ) )
+                return OpenVpnState.fromStickyBroadcast( OpenVpnServiceImpl.this );
+            else
+                return OpenVpnState.stopped();
+        }
+
         public void disconnect() throws RemoteException
         {
             handler.post( new Runnable()

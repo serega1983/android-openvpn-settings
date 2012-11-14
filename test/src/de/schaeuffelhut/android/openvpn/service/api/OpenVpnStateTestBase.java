@@ -58,4 +58,9 @@ public abstract class OpenVpnStateTestBase<T extends OpenVpnState> extends TestC
             assertEquals( "Unexpected protocol version: " + unexpectedProtocolVersion, e.getMessage() );
         }
     }
+
+    public void test_stopped()
+    {
+        assertFalse( OpenVpnState.stopped().isStarted() );
+    }
 }

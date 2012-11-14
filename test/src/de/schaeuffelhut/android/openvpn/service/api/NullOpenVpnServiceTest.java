@@ -40,6 +40,11 @@ class NullOpenVpnServiceTest extends TestCase
         assertFalse( NullOpenVpnService.getInstance().getStatus().isStarted() );
     }
 
+    public void testGetStatusFor() throws Exception
+    {
+        assertFalse( NullOpenVpnService.getInstance().getStatusFor( null ).isStarted() );
+    }
+
     public void testAsBinder() throws Exception
     {
         try
