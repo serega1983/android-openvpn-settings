@@ -26,8 +26,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.util.Log;
-import junit.framework.Assert;
 import junit.framework.TestCase;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -50,6 +48,17 @@ public class OpenVpnServiceWrapperTest extends TestCase
     {
         super.setUp();
         Mockito.when( stub.queryLocalInterface( Mockito.anyString() ) ).thenReturn( stub );
+    }
+
+    public void test_createIntentAddressingOpenVpnService_has_no_action()
+    {
+        assertEquals( null, OpenVpnServiceWrapper.createIntentAddressingOpenVpnService().getAction() );
+    }
+
+    public void test_createIntentAddressingOpenVpnService_verify_componentName()
+    {
+        assertEquals( "de.schaeuffelhut.android.openvpn", OpenVpnServiceWrapper.createIntentAddressingOpenVpnService().getComponent().getPackageName() );
+        assertEquals( "de.schaeuffelhut.android.openvpn.services.OpenVpnService", OpenVpnServiceWrapper.createIntentAddressingOpenVpnService().getComponent().getClassName() );
     }
 
     public void test_isBound_after_init()
