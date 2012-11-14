@@ -4,6 +4,7 @@ import de.schaeuffelhut.android.openvpn.service.api.OpenVpnConfig;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnCredentials;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnPassphrase;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnState;
+import de.schaeuffelhut.android.openvpn.service.api.IOpenVpnStateListener;
 
 /** Interface to single OpenVPN  */
 interface IOpenVpnService
@@ -14,4 +15,7 @@ interface IOpenVpnService
     OpenVpnState getStatus();
     OpenVpnState getStatusFor(in OpenVpnConfig config);
     void disconnect();
+
+    void addOpenVpnStateListener(in IOpenVpnStateListener listener);
+    void removeOpenVpnStateListener(in IOpenVpnStateListener listener);
 }

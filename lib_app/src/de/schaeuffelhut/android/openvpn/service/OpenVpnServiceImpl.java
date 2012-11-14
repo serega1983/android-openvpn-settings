@@ -184,6 +184,16 @@ public class OpenVpnServiceImpl extends Service
                 }
             } );
         }
+
+        public void addOpenVpnStateListener(IOpenVpnStateListener listener) throws RemoteException
+        {
+            listenerDispatcher.addOpenVpnStateListener( listener );
+        }
+
+        public void removeOpenVpnStateListener(IOpenVpnStateListener listener)
+        {
+            listenerDispatcher.removeOpenVpnStateListener( listener );
+        }
     }
 
     private final IBinder mBinder = new ServiceBinder();
@@ -250,7 +260,9 @@ public class OpenVpnServiceImpl extends Service
 
 	private final HashMap<File, DaemonMonitor> mRegistry = new HashMap<File, DaemonMonitor>(4);
 
-    private DaemonMonitorFactory daemonMonitorFactory = new DaemonMonitorImplFactory( this );
+    private final OpenVpnStateListenerDispatcher listenerDispatcher = new OpenVpnStateListenerDispatcher();
+
+    private DaemonMonitorFactory daemonMonitorFactory = new DaemonMonitorImplFactory( this, listenerDispatcher );
 
     private synchronized void startup()
 	{
