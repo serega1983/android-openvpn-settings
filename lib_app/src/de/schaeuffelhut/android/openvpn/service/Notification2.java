@@ -28,6 +28,8 @@ import android.content.Intent;
 import android.os.Handler;
 import android.widget.Toast;
 import de.schaeuffelhut.android.openvpn.Intents;
+import de.schaeuffelhut.android.openvpn.service.api.OpenVpnDaemonState;
+import de.schaeuffelhut.android.openvpn.service.api.OpenVpnNetworkState;
 
 import java.io.File;
 
@@ -42,14 +44,21 @@ public class Notification2
     private final int mNotificationId;
     private final NotificationManager mNotificationManager;
     private final Handler mUiThreadHandler;
+    private final OpenVpnStateListenerDispatcher listenerDispatcher;
 
-    public Notification2(OpenVpnServiceImpl mContext, File mConfigFile, int mNotificationId)
+    @Deprecated
+    public Notification2(OpenVpnServiceImpl mContext, File mConfigFile, int mNotificationId) {
+        this(mContext, mConfigFile, mNotificationId, new OpenVpnStateListenerDispatcher());
+    }
+
+    public Notification2(OpenVpnServiceImpl mContext, File mConfigFile, int mNotificationId, OpenVpnStateListenerDispatcher listenerDispatcher)
     {
         this.mContext = mContext;
         this.mConfigFile = mConfigFile;
         this.mNotificationId = mNotificationId;
         this.mNotificationManager = (NotificationManager) mContext.getSystemService( Context.NOTIFICATION_SERVICE);
         this.mUiThreadHandler = new Handler();
+        this.listenerDispatcher = listenerDispatcher;
     }
 
 
@@ -61,6 +70,7 @@ public class Notification2
                         Intents.DAEMON_STATE_STARTUP
                 )
         );
+        listenerDispatcher.onDaemonStateChanged( OpenVpnDaemonState.STARTUP );
     }
 
     void daemonStateChangedToEnabled()
@@ -71,6 +81,7 @@ public class Notification2
                         Intents.DAEMON_STATE_ENABLED
                 )
         );
+        listenerDispatcher.onDaemonStateChanged( OpenVpnDaemonState.ENABLED );
     }
 
     void daemonStateChangedToDisabled()
@@ -81,16 +92,19 @@ public class Notification2
                         Intents.DAEMON_STATE_DISABLED
                 )
         );
+        listenerDispatcher.onDaemonStateChanged( OpenVpnDaemonState.DISABLED );
     }
 
     void sendPassphraseRequired()
     {
         Notifications.sendPassphraseRequired( mNotificationId, mContext, mNotificationManager, mConfigFile );
+        listenerDispatcher.onRequestPassphrase();
     }
 
     void sendUsernamePasswordRequired()
     {
         Notifications.sendUsernamePasswordRequired( mNotificationId, mContext, mConfigFile, mNotificationManager );
+        listenerDispatcher.onRequestCredentials();
     }
 
     void notifyConnected()
@@ -106,6 +120,7 @@ public class Notification2
     void notifyBytes(String smallInOutPerSecString)
     {
         Notifications.notifyBytes( mNotificationId, mContext, mNotificationManager, mConfigFile, smallInOutPerSecString );
+        listenerDispatcher.onByteCountChanged( 0, 0 ); //TODO: insert real byte count
     }
 
     void cancel()
@@ -136,6 +151,13 @@ public class Notification2
             intent.putExtra( info2ExtraName, info2ExtraValue );
 
         mContext.sendStickyBroadcast( intent );
+
+        listenerDispatcher.onNetworkStateChanged(
+                OpenVpnNetworkState.values()[oldState],
+                OpenVpnNetworkState.values()[newState],
+                System.currentTimeMillis(),
+                "TODO TIM","TODO LIP","TODO RIP"
+        ); //TODO: insert real cause, local IP, remote IP
     }
 
     void toastMessage(final String message)
