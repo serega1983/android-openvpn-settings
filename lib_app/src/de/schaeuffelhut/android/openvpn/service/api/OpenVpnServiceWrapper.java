@@ -31,37 +31,73 @@ import android.os.RemoteException;
 
 /**
  * Wraps a remote {@code IOpenVpnService} obtained with {@code bindService()}.
- * Takes care of
+ * Takes care of binding and unbinding to the service and deals with a vanished
+ * Service. Override the call back methods defined in {@code ServiceConnection} to
+ * act when the service becomes bound or unbound. This class can also issue
+ * {@code startService()} and {@code stopService()} messages.
  *
  * @author Friedrich Schäuffelhut
  * @since 2012-11-13
  */
 public class OpenVpnServiceWrapper implements ServiceConnection
 {
+    static final ComponentName COMPONENT_NAME = new ComponentName(
+            "de.schaeuffelhut.android.openvpn",
+            "de.schaeuffelhut.android.openvpn.services.OpenVpnService"
+    );
+
+    private final Context context;
     private IOpenVpnService openVpnService;
 
-    public OpenVpnServiceWrapper()
+    /**
+     * Creates an {@code OpenVpnServiceWrapper} using the specified context as
+     * the target for {@code bindService()}, {@code unbindService()} as well as
+     * {@code startService()} and {@code stopService()}. Keeps a reference to
+     * the {@code Context} object.
+     *
+     * @param context The {@code Context} to call {@code bindService()}, {@code unbindService()} as well as
+     * {@code startService()} and {@code stopService()} upon. A reference to this {@code Context} is kept.
+     */
+    public OpenVpnServiceWrapper(Context context)
     {
+        this.context = context;
         invalidateRemoteInterface();
     }
 
     public static Intent createIntentAddressingOpenVpnService()
     {
-        return new Intent().setComponent( new ComponentName( "de.schaeuffelhut.android.openvpn", "de.schaeuffelhut.android.openvpn.services.OpenVpnService" ) );
+        return new Intent().setComponent( COMPONENT_NAME );
+    }
+
+    /**
+     * Start the {@code IOpenVpnService}.
+     * @return false if the service could not be found, e.g. OpenVpnSettings is not installed and
+     *         the service is not available. Otherwise returns {@code true}.
+     */
+    public boolean startService()
+    {
+        ComponentName componentName = context.startService( createIntentAddressingOpenVpnService() );
+        // Since we already address the service by its component name we only need to know if we could reach it.
+        return null != componentName;
+    }
+
+    public void stopService()
+    {
+        context.stopService( createIntentAddressingOpenVpnService() );
     }
 
     /**
      * Bind to {@code IOpenVpnService}.
-     * @param context The context to use for binding.
-     * @return false if the service could not be bound, e.g. OpenVpnSettings is not installed and the service is not available
+     * @return false if the service could not be bound to, e.g. OpenVpnSettings is not installed and
+     *         the service is not available. Otherwise returns {@code true}.
      */
-    public boolean bindService(Context context)
+    public boolean bindService()
     {
         boolean success = context.bindService( createIntentAddressingOpenVpnService(), this, 0 );
         return success;
     }
 
-    public void unbindService(Context context)
+    public void unbindService()
     {
         context.unbindService( this );
     }

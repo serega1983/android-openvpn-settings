@@ -45,7 +45,7 @@ public class EnterPassphrase extends Activity {
 
 	private static final String TAG = "OpenVPN-EnterPassphrase";
 	
-	private OpenVpnServiceWrapper mOpenVpnService = new OpenVpnServiceWrapper() {
+	private OpenVpnServiceWrapper mOpenVpnService = new OpenVpnServiceWrapper( this ) {
 
         public synchronized void onServiceConnected(ComponentName name, IBinder serviceBinder) {
             super.onServiceConnected( name, serviceBinder );
@@ -81,7 +81,7 @@ public class EnterPassphrase extends Activity {
 		super.onCreate(savedInstanceState);
 		showDialog( 1 );
 
-		if ( !mOpenVpnService.bindService( this ) )
+		if ( !mOpenVpnService.bindService() )
 		{
             //TODO: service is not running and no username/password can be submitted, abort Activity
             Log.w(TAG, "Could not bind to ControlShell" );
@@ -91,7 +91,7 @@ public class EnterPassphrase extends Activity {
 	@Override
 	protected void onDestroy() {
 		super.onStop();
-        mOpenVpnService.unbindService( this );
+        mOpenVpnService.unbindService();
 	}
 
 	@Override

@@ -27,10 +27,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -41,16 +38,15 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import de.schaeuffelhut.android.openvpn.lib.app.R;
-import de.schaeuffelhut.android.openvpn.service.OpenVpnServiceImpl;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnCredentials;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnServiceWrapper;
-import de.schaeuffelhut.android.openvpn.services.OpenVpnService;
 
 public class EnterUserPassword extends Activity {
 
 	private static final String TAG = "OpenVPN-EnterPassphrase";
 	
-	private OpenVpnServiceWrapper mOpenVpnService = new OpenVpnServiceWrapper(){
+	private OpenVpnServiceWrapper mOpenVpnService = new OpenVpnServiceWrapper( this ) {
+
         public synchronized void onServiceConnected(ComponentName name, IBinder serviceBinder) {
             super.onServiceConnected( name, serviceBinder );
             Log.d( TAG, "Connected to OpenVpnService" );
@@ -85,7 +81,7 @@ public class EnterUserPassword extends Activity {
 		super.onCreate(savedInstanceState);
 		showDialog( 1 );
 
-		if ( !mOpenVpnService.bindService( this ) )
+		if ( !mOpenVpnService.bindService() )
 		{
             //TODO: service is not running and no username/password can be submitted, abort Activity
 			Log.w(TAG, "Could not bind to ControlShell" );
@@ -95,7 +91,7 @@ public class EnterUserPassword extends Activity {
 	@Override
 	protected void onDestroy() {
 		super.onStop();
-        mOpenVpnService.unbindService( this );
+        mOpenVpnService.unbindService();
 	}
 
 	@Override

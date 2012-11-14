@@ -40,7 +40,8 @@ public class OpenVpnServiceWrapperTest extends TestCase
 {
     private static interface Stub extends IOpenVpnService, IBinder {}
 
-    private OpenVpnServiceWrapper wrapper = new OpenVpnServiceWrapper();
+    private Context context = Mockito.mock( Context.class );
+    private OpenVpnServiceWrapper wrapper = new OpenVpnServiceWrapper( context );
     private Stub  stub = Mockito.mock( Stub.class );
 
     @Override
@@ -50,6 +51,20 @@ public class OpenVpnServiceWrapperTest extends TestCase
         Mockito.when( stub.queryLocalInterface( Mockito.anyString() ) ).thenReturn( stub );
     }
 
+    // ============================================================
+    // Test constants
+    // ============================================================
+
+    /**
+     * Verifies the component name of the {@code IOpenVpnService}.
+     * Do NOT change the component name. Clients connect to the {@code IOpenVpnService} using this name.
+     */
+    public void test_COMPONENT_NAME()
+    {
+        assertEquals( "de.schaeuffelhut.android.openvpn", OpenVpnServiceWrapper.COMPONENT_NAME.getPackageName() );
+        assertEquals( "de.schaeuffelhut.android.openvpn.services.OpenVpnService", OpenVpnServiceWrapper.COMPONENT_NAME.getClassName() );
+    }
+
     public void test_createIntentAddressingOpenVpnService_has_no_action()
     {
         assertEquals( null, OpenVpnServiceWrapper.createIntentAddressingOpenVpnService().getAction() );
@@ -57,9 +72,18 @@ public class OpenVpnServiceWrapperTest extends TestCase
 
     public void test_createIntentAddressingOpenVpnService_verify_componentName()
     {
-        assertEquals( "de.schaeuffelhut.android.openvpn", OpenVpnServiceWrapper.createIntentAddressingOpenVpnService().getComponent().getPackageName() );
-        assertEquals( "de.schaeuffelhut.android.openvpn.services.OpenVpnService", OpenVpnServiceWrapper.createIntentAddressingOpenVpnService().getComponent().getClassName() );
+        assertEquals( OpenVpnServiceWrapper.COMPONENT_NAME, OpenVpnServiceWrapper.createIntentAddressingOpenVpnService().getComponent() );
     }
+
+    private void assert_intentAddressesOpenVpnService_with_no_action(Intent intent)
+    {
+        assertEquals( null, intent.getAction() );
+        assertEquals( OpenVpnServiceWrapper.COMPONENT_NAME, intent.getComponent() );
+    }
+
+    // ============================================================
+    // Test wrapper status
+    // ============================================================
 
     public void test_isBound_after_init()
     {
@@ -73,7 +97,7 @@ public class OpenVpnServiceWrapperTest extends TestCase
         assertTrue( wrapper.isBound() );
     }
 
-    public void test_isBound_after_onServiceDisonnected()
+    public void test_isBound_after_onServiceDisconnected()
     {
         wrapper.onServiceConnected( null, stub );
         wrapper.onServiceDisconnected( null );
@@ -81,46 +105,90 @@ public class OpenVpnServiceWrapperTest extends TestCase
         assertFalse( wrapper.isBound() );
     }
 
+    // ============================================================
+    // Test startService(), stopService()
+    // ============================================================
+
+    public void test_startService() throws RemoteException
+    {
+        wrapper.startService();
+
+        ArgumentCaptor<Intent> intentCaptor = new ArgumentCaptor<Intent>();
+        Mockito.verify( context ).startService( intentCaptor.capture() );
+
+        assert_intentAddressesOpenVpnService_with_no_action( intentCaptor.getValue() );
+    }
+
+    public void test_startService_fails() throws RemoteException
+    {
+        Mockito.when( context.startService(  Mockito.any( Intent.class ) ) ).thenReturn( null );
+
+        boolean success = wrapper.startService();
+
+        assertFalse( success );
+    }
+
+    public void test_startService_succeeds() throws RemoteException
+    {
+        Mockito.when( context.startService(  Mockito.any( Intent.class ) ) ).thenReturn( OpenVpnServiceWrapper.COMPONENT_NAME );
+
+        boolean success = wrapper.startService();
+
+        assertTrue( success );
+    }
+
+    public void test_stopService() throws RemoteException
+    {
+        wrapper.stopService();
+
+        ArgumentCaptor<Intent> intentCaptor = new ArgumentCaptor<Intent>();
+        Mockito.verify( context ).stopService( intentCaptor.capture() );
+
+        assert_intentAddressesOpenVpnService_with_no_action( intentCaptor.getValue() );
+    }
+
+    // ============================================================
+    // Test bindService(), unbindService()
+    // ============================================================
 
     public void test_bindService() throws RemoteException
     {
-        Context context = Mockito.mock( Context.class );
-        wrapper.bindService( context );
+        wrapper.bindService();
 
         ArgumentCaptor<Intent> intentCaptor = new ArgumentCaptor<Intent>();
         Mockito.verify( context ).bindService( intentCaptor.capture(), Mockito.same( wrapper ), Mockito.eq( 0 ) );
 
-        assertEquals( "de.schaeuffelhut.android.openvpn.services.OpenVpnService", intentCaptor.getValue().getAction() );
+        assert_intentAddressesOpenVpnService_with_no_action( intentCaptor.getValue() );
     }
 
     public void test_bindService_fails() throws RemoteException
     {
-        Context context = Mockito.mock( Context.class );
         Mockito.when( context.bindService(  Mockito.any( Intent.class ), Mockito.same( wrapper ), Mockito.eq( 0 )  ) ).thenReturn( false );
 
-        boolean success = wrapper.bindService( context );
+        boolean success = wrapper.bindService();
 
         assertFalse( success );
     }
 
     public void test_bindService_succeeds() throws RemoteException
     {
-        Context context = Mockito.mock( Context.class );
         Mockito.when( context.bindService(  Mockito.any( Intent.class ), Mockito.same( wrapper ), Mockito.eq( 0 )  ) ).thenReturn( true );
 
-        boolean success = wrapper.bindService( context );
+        boolean success = wrapper.bindService();
 
         assertTrue( success );
     }
 
     public void test_unbindService() throws RemoteException
     {
-        Context context = Mockito.mock( Context.class );
-        wrapper.unbindService( context );
+        wrapper.unbindService();
 
         Mockito.verify( context ).unbindService( Mockito.same( wrapper ) );
     }
 
+    // ============================================================
+    // Test delegation to bound service
+    // ============================================================
 
     public void test_connect_delegates_to_stub() throws RemoteException
     {
