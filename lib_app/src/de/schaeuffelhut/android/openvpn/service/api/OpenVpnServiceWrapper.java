@@ -179,6 +179,20 @@ public class OpenVpnServiceWrapper implements ServiceConnection
         return new OpenVpnState.Stopped();
     }
 
+    public OpenVpnState getStatusFor(OpenVpnConfig config)
+    {
+        try
+        {
+            return openVpnService.getStatusFor( config );
+        }
+        catch (RemoteException e)
+        {
+            invalidateRemoteInterface();
+            //TODO: bind to the interface again?
+        }
+        return new OpenVpnState.Stopped();
+    }
+
     public void disconnect()
     {
         try

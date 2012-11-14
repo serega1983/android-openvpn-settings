@@ -264,7 +264,7 @@ public class OpenVpnServiceWrapperTest extends TestCase
 
     public void test_getStatus_RemoteException_disables_binding() throws RemoteException
     {
-        Mockito.doThrow( new RemoteException() ).when( stub ).getStatus();
+        Mockito.when( stub.getStatus() ).thenThrow( new RemoteException() );
         wrapper.onServiceConnected( null, stub );
 
         wrapper.getStatus();
@@ -274,10 +274,43 @@ public class OpenVpnServiceWrapperTest extends TestCase
 
     public void test_getStatus_RemoteException_returns_stopped() throws RemoteException
     {
-        Mockito.doThrow( new RemoteException() ).when( stub ).getStatus();
+        Mockito.when( stub.getStatus() ).thenThrow( new RemoteException() );
         wrapper.onServiceConnected( null, stub );
 
         OpenVpnState status = wrapper.getStatus();
+
+        assertFalse( status.isStarted() );
+    }
+
+
+    public void test_getStatusFor_delegates_to_stub() throws RemoteException
+    {
+        OpenVpnConfig config = new OpenVpnConfig( new File( "/dev/null" ) );
+        wrapper.onServiceConnected( null, stub );
+
+        wrapper.getStatusFor( config );
+
+        Mockito.verify( stub ).getStatusFor( Mockito.same( config ) );
+    }
+
+    public void test_getStatusFor_RemoteException_disables_binding() throws RemoteException
+    {
+        OpenVpnConfig config = new OpenVpnConfig( new File( "/dev/null" ) );
+        Mockito.when( stub.getStatusFor( config ) ).thenThrow( new RemoteException() );
+        wrapper.onServiceConnected( null, stub );
+
+        wrapper.getStatusFor( config );
+
+        assertFalse( wrapper.isBound() );
+    }
+
+    public void test_getStatusFor_RemoteException_returns_stopped() throws RemoteException
+    {
+        OpenVpnConfig config = new OpenVpnConfig( new File( "/dev/null" ) );
+        Mockito.when( stub.getStatusFor( config ) ).thenThrow( new RemoteException() );
+        wrapper.onServiceConnected( null, stub );
+
+        OpenVpnState status = wrapper.getStatusFor( config );
 
         assertFalse( status.isStarted() );
     }

@@ -112,6 +112,12 @@ public class OpenVpnServiceFake extends Service
             return t != null && t.isAlive() ? states[i % states.length] : new OpenVpnState.Stopped();
         }
 
+        public OpenVpnState getStatusFor(OpenVpnConfig config) throws RemoteException
+        {
+            //TODO: compare with config supplied to connect()
+            return t != null && t.isAlive() ? states[i % states.length] : new OpenVpnState.Stopped();
+        }
+
         public void disconnect() throws RemoteException
         {
             t.interrupt();

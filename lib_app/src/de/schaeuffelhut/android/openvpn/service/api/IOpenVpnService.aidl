@@ -12,5 +12,6 @@ interface IOpenVpnService
     void supplyCredentials(in OpenVpnCredentials credentials);
     void supplyPassphrase(in OpenVpnPassphrase passphrase);
     OpenVpnState getStatus();
+    OpenVpnState getStatusFor(in OpenVpnConfig config);
     void disconnect();
 }
