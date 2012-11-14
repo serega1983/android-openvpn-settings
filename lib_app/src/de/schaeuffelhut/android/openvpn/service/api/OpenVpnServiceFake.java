@@ -130,5 +130,15 @@ public class OpenVpnServiceFake extends Service
                 throw new RuntimeException( e ); //TODO: handle exception
             }
         }
+
+
+        public void addOpenVpnStateListener(IOpenVpnStateListener listener)
+        {
+        }
+
+        public void removeOpenVpnStateListener(IOpenVpnStateListener listener)
+        {
+        }
+
     };
 }

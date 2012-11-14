@@ -68,6 +68,15 @@ public class NullOpenVpnService implements IOpenVpnService
     {
     }
 
+
+    public void addOpenVpnStateListener(IOpenVpnStateListener listener)
+    {
+    }
+
+    public void removeOpenVpnStateListener(IOpenVpnStateListener listener)
+    {
+    }
+
     public IBinder asBinder()
     {
         throw new IllegalStateException( "NullOpenVpnService has no binder" );

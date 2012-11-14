@@ -31,16 +31,18 @@ import java.io.File;
 public class DaemonMonitorImplFactory implements DaemonMonitorFactory
 {
     private final OpenVpnServiceImpl context;
+    private final OpenVpnStateListenerDispatcher listenerDispatcher;
 
-    public DaemonMonitorImplFactory(OpenVpnServiceImpl context)
+    public DaemonMonitorImplFactory(OpenVpnServiceImpl context, OpenVpnStateListenerDispatcher listenerDispatcher)
     {
         this.context = context;
+        this.listenerDispatcher = listenerDispatcher;
     }
 
     public DaemonMonitor createDaemonMonitorFor(File configFile)
     {
         Preferences2 preferences2 = new Preferences2( context, configFile );
-        Notification2 notification2 = new Notification2( context, configFile, preferences2.getNotificationId() );
+        Notification2 notification2 = new Notification2( context, configFile, preferences2.getNotificationId(), listenerDispatcher );
         return new DaemonMonitorImpl( context, configFile, notification2, preferences2 );
     }
 
