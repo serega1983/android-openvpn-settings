@@ -36,32 +36,58 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import de.schaeuffelhut.android.openvpn.lib.app.R;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnServiceImpl;
+import de.schaeuffelhut.android.openvpn.service.api.OpenVpnCredentials;
+import de.schaeuffelhut.android.openvpn.service.api.OpenVpnServiceWrapper;
 import de.schaeuffelhut.android.openvpn.services.OpenVpnService;
 
-public class EnterUserPassword extends Activity implements ServiceConnection {
+public class EnterUserPassword extends Activity {
 
 	private static final String TAG = "OpenVPN-EnterPassphrase";
 	
-	private OpenVpnServiceImpl mOpenVpnService;
+	private OpenVpnServiceWrapper mOpenVpnService = new OpenVpnServiceWrapper(){
+        public synchronized void onServiceConnected(ComponentName name, IBinder serviceBinder) {
+            super.onServiceConnected( name, serviceBinder );
+            Log.d( TAG, "Connected to OpenVpnService" );
 
-	private AlertDialog mDialog;
+            Button button = getNeutralButtonFromDialog();
+            if ( button != null )
+                button.setEnabled( true );
+        }
+
+        public synchronized void onServiceDisconnected(ComponentName name) {
+            mOpenVpnService = null;
+            Log.d( TAG, "Disconnected from OpenVpnService" );
+
+            Button button = getNeutralButtonFromDialog();
+            if ( button != null )
+                button.setEnabled( false );
+        }
+
+    };
+
+    private Button getNeutralButtonFromDialog()
+    {
+        if ( mDialog == null )
+            return null;
+        return mDialog.getButton( AlertDialog.BUTTON_NEUTRAL );
+    }
+
+    private AlertDialog mDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		showDialog( 1 );
 
-		if ( !bindService(
-				new Intent( this, OpenVpnService.class ),
-				this,
-				Context.BIND_AUTO_CREATE
-			) )
+		if ( !mOpenVpnService.bindService( this ) )
 		{
+            //TODO: service is not running and no username/password can be submitted, abort Activity
 			Log.w(TAG, "Could not bind to ControlShell" );
 		}
 	}
@@ -69,8 +95,7 @@ public class EnterUserPassword extends Activity implements ServiceConnection {
 	@Override
 	protected void onDestroy() {
 		super.onStop();
-		if ( mOpenVpnService != null )
-			unbindService( this );
+        mOpenVpnService.unbindService( this );
 	}
 
 	@Override
@@ -85,12 +110,8 @@ public class EnterUserPassword extends Activity implements ServiceConnection {
                     Preferences.setCredentials( getApplicationContext(), getConfigFile(), username.getText().toString(), password.getText().toString() );
                 else
                     Preferences.clearPassphraseOrCredentials( getApplicationContext(), getConfigFile() );
-				mOpenVpnService.daemonUsernamePassword( 
-						getConfigFile(),
-						username.getText().toString(), 
-						password.getText().toString() 
-				);
-				finish();
+				mOpenVpnService.supplyCredentials( new OpenVpnCredentials( username.getText().toString(), password.getText().toString() ) );
+                finish();
 			}
 		};
 		
@@ -118,20 +139,6 @@ public class EnterUserPassword extends Activity implements ServiceConnection {
 		alertDialog.setTitle( "Password required" );
 		((TextView)alertDialog.findViewById( R.id.enter_user_password_config_name )).setText( Preferences.getConfigName( this, getConfigFile() ) );
 		alertDialog.getButton( AlertDialog.BUTTON_NEUTRAL ).setEnabled( mOpenVpnService != null );
-	}
-	
-	public synchronized void onServiceConnected(ComponentName name, IBinder serviceBinder) {
-		mOpenVpnService = ((OpenVpnServiceImpl.ServiceBinder)serviceBinder).getService();
-		Log.d( TAG, "Connected to OpenVpnService" );
-		if ( mDialog != null && mDialog.getButton( AlertDialog.BUTTON_NEUTRAL ) != null )
-			mDialog.getButton( AlertDialog.BUTTON_NEUTRAL ).setEnabled( true );
-	}
-	
-	public synchronized void onServiceDisconnected(ComponentName name) {
-		mOpenVpnService = null;
-		Log.d( TAG, "Disconnected from OpenVpnService" );
-		if ( mDialog != null && mDialog.getButton( AlertDialog.BUTTON_NEUTRAL ) != null )
-			mDialog.getButton( AlertDialog.BUTTON_NEUTRAL ).setEnabled( false );
 	}
 
 	private File getConfigFile()
