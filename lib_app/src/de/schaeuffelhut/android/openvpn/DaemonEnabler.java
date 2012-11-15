@@ -32,7 +32,8 @@ import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
-import de.schaeuffelhut.android.openvpn.service.OpenVpnServiceImpl;
+import de.schaeuffelhut.android.openvpn.service.api.OpenVpnConfig;
+import de.schaeuffelhut.android.openvpn.service.api.OpenVpnServiceWrapper;
 
 public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 {
@@ -40,43 +41,18 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 	private static final String TAG = "OpenVPNDaemonEnabler";
 
 	private final Context mContext; 
-	private OpenVpnServiceImpl mOpenVpnService;
+	private final OpenVpnServiceWrapper mOpenVpnService;
 	private final CheckBoxPreference mDaemonCheckBoxPref;
 	private final File mConfigFile;
 	private final CharSequence mOriginalSummary;
 
 	private final IntentFilter mDaemonStateFilter;
-    private BroadcastReceiver mDaemonStateReceiver = new BroadcastReceiver()
-    {
-        @Override
-        public void onReceive(Context context, Intent intent)
-        {
-            //TODO: move into IntentFilter, or dispatch from OpenVPNSettings to DaemonEnabler.receive()
-            if (!intentAddressesThisDaemonEnabler( intent ))
-                return;
+    private final BroadcastReceiver mDaemonStateReceiver = new MyBroadcastReceiver();
 
-            if (Intents.DAEMON_STATE_CHANGED.equals( intent.getAction() ))
-            {
-                handleDaemonStateChanged(
-                        intent.getIntExtra( Intents.EXTRA_PREVIOUS_DAEMON_STATE, Intents.DAEMON_STATE_UNKNOWN ),
-                        intent.getIntExtra( Intents.EXTRA_DAEMON_STATE, Intents.DAEMON_STATE_UNKNOWN )
-                );
-            }
-            else if (Intents.NETWORK_STATE_CHANGED.equals( intent.getAction() ))
-            {
-                handleNetworkStateChanged( intent );
-            }
-        }
-
-        private boolean intentAddressesThisDaemonEnabler(Intent intent)
-        {
-            return mConfigFile.getAbsolutePath().equals( intent.getStringExtra( Intents.EXTRA_CONFIG ) );
-        }
-    };
-
-    public DaemonEnabler(Context context, OpenVpnServiceImpl openVpnService, CheckBoxPreference daemonCheckBoxPreference, File configFile)
+    public DaemonEnabler(Context context, OpenVpnServiceWrapper openVpnService, CheckBoxPreference daemonCheckBoxPreference, File configFile)
 	{
 		mContext = context;
+        mOpenVpnService = openVpnService;
 		mDaemonCheckBoxPref = daemonCheckBoxPreference;
 		mConfigFile = configFile;
 
@@ -84,21 +60,22 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 		mDaemonCheckBoxPref.setPersistent( false );
 
 		mDaemonStateFilter = new IntentFilter(Intents.DAEMON_STATE_CHANGED );
-		mDaemonStateFilter.addAction(Intents.NETWORK_STATE_CHANGED);
+		mDaemonStateFilter.addAction( Intents.NETWORK_STATE_CHANGED );
 
-		setOpenVpnService( openVpnService );
+        refreshGui();
 	}
 
-	public void setOpenVpnService(OpenVpnServiceImpl openVpnService)
+	public void refreshGui()
 	{
-		mOpenVpnService = openVpnService;
 		mDaemonCheckBoxPref.setEnabled( isEnabledByDependency() && isOpenVpnServiceEnabled() );
         daemonQueryState();
     }
 
+    int resume = 0;
     boolean isRegistered = false;
 	public void resume()
 	{
+        resume++; Log.d(TAG, "=====> resume: " + resume );
 		mContext.registerReceiver(mDaemonStateReceiver, mDaemonStateFilter);
 		isRegistered = true; //TODO: is this flag really necessary?
 		mDaemonCheckBoxPref.setOnPreferenceChangeListener(this);
@@ -106,6 +83,7 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 
 	public void pause()
 	{
+        resume--; Log.d(TAG, "=====> resume: " + resume );
 		if ( isRegistered )
 		{
 			mContext.unregisterReceiver(mDaemonStateReceiver);
@@ -156,6 +134,35 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 
 		return updateGui;
 	}
+
+
+    private class MyBroadcastReceiver extends BroadcastReceiver
+    {
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+            //TODO: move into IntentFilter, or dispatch from OpenVPNSettings to DaemonEnabler.receive()
+            if (!intentAddressesThisDaemonEnabler( intent ))
+                return;
+
+            if (Intents.DAEMON_STATE_CHANGED.equals( intent.getAction() ))
+            {
+                handleDaemonStateChanged(
+                        intent.getIntExtra( Intents.EXTRA_PREVIOUS_DAEMON_STATE, Intents.DAEMON_STATE_UNKNOWN ),
+                        intent.getIntExtra( Intents.EXTRA_DAEMON_STATE, Intents.DAEMON_STATE_UNKNOWN )
+                );
+            }
+            else if (Intents.NETWORK_STATE_CHANGED.equals( intent.getAction() ))
+            {
+                handleNetworkStateChanged( intent );
+            }
+        }
+
+        private boolean intentAddressesThisDaemonEnabler(Intent intent)
+        {
+            return mConfigFile.getAbsolutePath().equals( intent.getStringExtra( Intents.EXTRA_CONFIG ) );
+        }
+    }
 
     protected void handleDaemonStateChanged(int previousDaemonState, int daemonState)
 	{
@@ -230,29 +237,27 @@ public class DaemonEnabler implements Preference.OnPreferenceChangeListener
 
     private boolean isDaemonStarted()
     {
-        if ( mOpenVpnService == null )
-            return false;
-        return mOpenVpnService.isDaemonStarted( mConfigFile );
+        return mOpenVpnService.getStatusFor( new OpenVpnConfig( mConfigFile ) ).isStarted();
     }
 
     private boolean isOpenVpnServiceDisabled()
     {
-        return mOpenVpnService == null;
+        return !mOpenVpnService.isBound();
     }
 
     private boolean isOpenVpnServiceEnabled()
     {
-        return mOpenVpnService != null; // should we check OpenVpnService.isOpenVpnServiceEnabled()? Or should we just rely on Prefernce openvpn_enabled?
+        return mOpenVpnService.isBound(); // should we check OpenVpnService.isOpenVpnServiceEnabled()? Or should we just rely on Prefernce openvpn_enabled?
     }
 
     private void daemonStart()
     {
-        mOpenVpnService.daemonStart( mConfigFile );
+        mOpenVpnService.connect( new OpenVpnConfig( mConfigFile ) );
     }
 
     private void daemonStop()
     {
-        mOpenVpnService.daemonStop( mConfigFile );
+        mOpenVpnService.disconnect();
     }
 
     private void daemonQueryState()

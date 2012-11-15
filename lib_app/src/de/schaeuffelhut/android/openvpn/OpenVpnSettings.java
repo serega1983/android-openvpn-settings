@@ -35,6 +35,8 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import com.bugsense.trace.BugSenseHandler;
 import de.schaeuffelhut.android.openvpn.lib.app.R;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnServiceImpl;
+import de.schaeuffelhut.android.openvpn.service.api.OpenVpnConfig;
+import de.schaeuffelhut.android.openvpn.service.api.OpenVpnServiceWrapper;
 import de.schaeuffelhut.android.openvpn.services.OpenVpnService;
 import de.schaeuffelhut.android.openvpn.setup.prerequisites.PrerequisitesActivity;
 import de.schaeuffelhut.android.openvpn.setup.prerequisites.ProbePrerequisites;
@@ -45,7 +47,7 @@ import de.schaeuffelhut.android.openvpn.util.*;
 import java.io.File;
 import java.util.ArrayList;
 
-public class OpenVpnSettings extends PreferenceActivity implements ServiceConnection
+public class OpenVpnSettings extends PreferenceActivity
 {
 	final static String TAG = "OpenVPN-Settings";
 
@@ -63,12 +65,40 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 
 
 	ArrayList<DaemonEnabler> mDaemonEnablers = new ArrayList<DaemonEnabler>(4);
-	OpenVpnServiceImpl mOpenVpnService = null;
     BroadcastReceiver broadcastReceiver;
-
     private int mCurrentContentView;
 
-	@Override
+	private final OpenVpnServiceWrapper mOpenVpnService = new OpenVpnServiceWrapper( this ){
+
+        public void onServiceConnected(ComponentName name, IBinder serviceBinder) {
+            super.onServiceConnected( name, serviceBinder );
+
+            Log.d( TAG, "Connected to OpenVpnService" );
+
+            for(DaemonEnabler daemonEnabler : mDaemonEnablers )
+                daemonEnabler.refreshGui();
+
+            CheckBoxPreference pref = (CheckBoxPreference) findPreference( Preferences.KEY_OPENVPN_ENABLED );
+            pref.setSummary( isServiceStarted() ? "Turn off OpenVPN" : "Turn on OpenVPN" );
+            pref.setChecked( isServiceStarted() );
+        }
+
+        public void onServiceDisconnected(ComponentName name) {
+            super.onServiceDisconnected( name );
+
+            Log.d( TAG, "Disconnected from OpenVpnService" );
+
+            for(DaemonEnabler daemonEnabler : mDaemonEnablers )
+                daemonEnabler.refreshGui();
+
+            CheckBoxPreference pref = (CheckBoxPreference) findPreference( Preferences.KEY_OPENVPN_ENABLED );
+            pref.setSummary( isServiceStarted() ? "Turn off OpenVPN" : "Turn on OpenVPN" );
+            pref.setChecked( isServiceStarted() );
+        }
+
+    };
+
+    @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -85,28 +115,30 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
         {
         	CheckBoxPreference pref = (CheckBoxPreference) findPreference( Preferences.KEY_OPENVPN_ENABLED );
         	pref.setSummary( "" );
-        	pref.setChecked( mOpenVpnService != null );
+        	pref.setChecked( isServiceStarted() );
 //        	pref.setSelectable( false );
         	pref.setOnPreferenceChangeListener( new Preference.OnPreferenceChangeListener() {
 				public boolean onPreferenceChange(Preference preference, Object newValue) {
 					if ( newValue == null )
-					{
-						/*noop*/;
-					}
-					else if ( (Boolean)newValue )
-					{
-						startService( new Intent(OpenVpnSettings.this, OpenVpnService.class) );
-						if ( !bindService( new Intent( OpenVpnSettings.this, OpenVpnService.class ), OpenVpnSettings.this, 0 ) )
-				        {
-							Log.w(TAG, "Could not bind to ControlShell" );
-				        }
-					}
-					else
-					{
-						stopService( new Intent(OpenVpnSettings.this, OpenVpnService.class) );
-					}
-					return false;
-				}
+					    return false;
+
+                    if ((Boolean) newValue)
+                    {
+                        mOpenVpnService.startService();
+
+                        if (!mOpenVpnService.bindService())
+                        {
+                            // should always success, as we bind to a local service.
+                            Log.w( TAG, "Could not bind to ControlShell" );
+                        }
+                    }
+                    else
+                    {
+                        mOpenVpnService.stopService();
+                    }
+
+                    return false;
+                }
 			});
         }
 
@@ -118,13 +150,15 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 		// On next restart we will detect that the service should run but is actually stopped.
 		// There is no clean way to determine if the service has been started.
 		if ( Preferences.getOpenVpnEnabled(this) && !OpenVpnServiceImpl.isServiceStarted() )
-			startService( new Intent( this, OpenVpnService.class ) );
+			mOpenVpnService.startService();
 
-		if ( !bindService( new Intent( this, OpenVpnService.class ), this, 0 ) )
+		if ( !mOpenVpnService.bindService() )
         {
+            // fails, when service is turned off. Otherwise should always succeed, as we bind to a local service.
 			Log.w(TAG, "Could not bind to ControlShell" );
         }
 
+        //TODO: use callback onRequestPassphrase() or onRequestCredentials() instead
         registerReceiver(
                 broadcastReceiver = new BroadcastReceiver()
                 {
@@ -167,15 +201,11 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
     }
 
 
-    private void initToggles() {
-		initToggles( Preferences.getConfigDir( this, PreferenceManager.getDefaultSharedPreferences(this) ) );
-	}
-
     static class ConfigFilePreference extends CheckBoxPreference
     {
     	final File mConfig;
     	final DaemonEnabler mDaemonEnabler;
-		public ConfigFilePreference(Context context, OpenVpnServiceImpl openVpnService, File config) {
+		public ConfigFilePreference(Context context, OpenVpnServiceWrapper openVpnService, File config) {
 			super(context);
 			setKey( Preferences.KEY_CONFIG_ENABLED( config ) );
 			setTitle( Preferences.getConfigName(context, config) );
@@ -185,12 +215,16 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 		}
 
     }
+
+    private void initToggles() {
+        initToggles( Preferences.getConfigDir( this, PreferenceManager.getDefaultSharedPreferences(this) ) );
+    }
+
     private void initToggles(File configDir)
 	{
-		for(DaemonEnabler daemonEnabler : mDaemonEnablers ) {
+		for(DaemonEnabler daemonEnabler : mDaemonEnablers )
 			daemonEnabler.pause();
-			daemonEnabler.setOpenVpnService( null );
-		}
+
 		mDaemonEnablers.clear();
 		PreferenceCategory configurations = (PreferenceCategory) findPreference(Preferences.KEY_OPENVPN_CONFIGURATIONS);
 		configurations.removeAll();
@@ -210,7 +244,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 			pref.setSummary( "Please copy your *.conf, *.ovpn, certificates, etc to\n" + Preferences.getExternalStorage(PreferenceManager.getDefaultSharedPreferences(this)) );
 			configurations.addPreference( pref );
 		}
-	}
+    }
 
 
 	@Override
@@ -233,7 +267,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 
 		case REQUEST_CODE_EDIT_CONFIG: {
 			String filename = data == null ? null : data.getStringExtra( EditConfig.EXTRA_FILENAME );
-			if ( filename != null && mOpenVpnService != null && mOpenVpnService.isDaemonStarted( new File(filename)) )
+            if (filename != null && isDaemonStarted( new File( filename ) ))
 				showDialog( DIALOG_PLEASE_RESTART );
 		} break;
 
@@ -242,7 +276,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 			if ( filename != null )
 			{
 				File config = new File(filename);
-				if ( mOpenVpnService != null && mOpenVpnService.isDaemonStarted(config) )
+				if ( isDaemonStarted(config) )
 					showDialog( DIALOG_PLEASE_RESTART );
 
 				// refresh ConfigFilePreference
@@ -256,7 +290,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 			// path to config might only be changed if no tunnel is up
 			if ( mCurrentContentView != AdUtil.getAdSupportedListView( getApplicationContext() ) )
 				setContentView( mCurrentContentView = AdUtil.getAdSupportedListView( getApplicationContext() ) );
-			if ( mOpenVpnService == null || !mOpenVpnService.hasDaemonsStarted() )
+			if ( hasDaemonsStarted() )
 				initToggles();
 		}
 
@@ -288,8 +322,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
     protected void onDestroy() {
     	super.onDestroy();
     	Log.d(TAG, "onDestroy()" );
-    	if ( mOpenVpnService != null )
-    		unbindService( this );
+    	mOpenVpnService.unbindService();
         unregisterReceiver( broadcastReceiver );
         broadcastReceiver = null;
     }
@@ -329,7 +362,7 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
         else if (id == R.id.settings_menu_advanced)
         {
             Intent intent = new Intent( this, AdvancedSettings.class );
-            intent.putExtra( AdvancedSettings.HAS_DAEMONS_STARTED, mOpenVpnService == null ? false : mOpenVpnService.hasDaemonsStarted() );
+            intent.putExtra( AdvancedSettings.HAS_DAEMONS_STARTED, hasDaemonsStarted() );
             startActivityForResult( intent, REQUEST_CODE_ADVANCED_SETTINGS );
             return true;
         }
@@ -558,30 +591,20 @@ public class OpenVpnSettings extends PreferenceActivity implements ServiceConnec
 		}
 	}
 
+    private boolean hasDaemonsStarted()
+    {
+        return mOpenVpnService.getStatus().isStarted();
+    }
 
-	public void onServiceConnected(ComponentName name, IBinder serviceBinder) {
-		Log.d( TAG, "Connected to OpenVpnService" );
+    private boolean isDaemonStarted(File file)
+    {
+        return mOpenVpnService.getStatusFor( new OpenVpnConfig( file ) ).isStarted();
+    }
 
-		mOpenVpnService = ((OpenVpnServiceImpl.ServiceBinder)serviceBinder).getService();
+    private boolean isServiceStarted()
+    {
+//        return mOpenVpnService != null;
+        return mOpenVpnService.isBound();
+    }
 
-		for(DaemonEnabler daemonEnabler : mDaemonEnablers )
-			daemonEnabler.setOpenVpnService( mOpenVpnService );
-
-		CheckBoxPreference pref = (CheckBoxPreference) findPreference( Preferences.KEY_OPENVPN_ENABLED );
-		pref.setSummary( "Turn off OpenVPN" );
-		pref.setChecked( mOpenVpnService != null );
-	}
-
-	public void onServiceDisconnected(ComponentName name) {
-		Log.d( TAG, "Disconnected from OpenVpnService" );
-
-		mOpenVpnService = null;
-
-		for(DaemonEnabler daemonEnabler : mDaemonEnablers )
-			daemonEnabler.setOpenVpnService( null );
-
-		CheckBoxPreference pref = (CheckBoxPreference) findPreference( Preferences.KEY_OPENVPN_ENABLED );
-		pref.setSummary( "Turn on OpenVPN" );
-		pref.setChecked( mOpenVpnService != null );
-	}
 }
