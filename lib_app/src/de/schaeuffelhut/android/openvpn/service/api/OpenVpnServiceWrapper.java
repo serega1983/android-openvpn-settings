@@ -22,10 +22,7 @@
 
 package de.schaeuffelhut.android.openvpn.service.api;
 
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
+import android.content.*;
 import android.os.IBinder;
 import android.os.RemoteException;
 
@@ -73,6 +70,10 @@ public class OpenVpnServiceWrapper implements ServiceConnection
         return new Intent().setComponent( COMPONENT_NAME );
     }
 
+    /*
+     * start/stop service
+     */
+
     /**
      * Start the {@code IOpenVpnService}.
      * @return false if the service could not be found, e.g. OpenVpnSettings is not installed and
@@ -90,19 +91,31 @@ public class OpenVpnServiceWrapper implements ServiceConnection
         context.stopService( createIntentAddressingOpenVpnService() );
     }
 
+    /*
+     * ServiceConnection
+     */
+
     /**
-     * Bind to {@code IOpenVpnService}.
+     * Bind to {@code IOpenVpnService}. Also installs a {@code BroadcastReceiver} listening for
+     * the OPENVPN_STATE_CHANGED intent. If the service is started, {@code OpenVpnServiceWrapper}
+     * will try to bind again to the service.
      * @return false if the service could not be bound to, e.g. OpenVpnSettings is not installed and
      *         the service is not available. Otherwise returns {@code true}.
      */
     public boolean bindService()
     {
-        boolean success = context.bindService( createIntentAddressingOpenVpnService(), this, 0 );
-        return success;
+        context.registerReceiver( broadcastReceiver, new IntentFilter( Intents.OPENVPN_STATE_CHANGED.getAction() ) );
+        return doBindService();
+    }
+
+    private boolean doBindService()
+    {
+        return context.bindService( createIntentAddressingOpenVpnService(), this, 0 );
     }
 
     public void unbindService()
     {
+        context.unregisterReceiver( broadcastReceiver );
         context.unbindService( this );
     }
 
@@ -127,6 +140,19 @@ public class OpenVpnServiceWrapper implements ServiceConnection
     {
         return !(openVpnService instanceof NullOpenVpnService);
     }
+
+    /*
+     * BroadcastReceiver
+     */
+
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver()
+    {
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+            doBindService();
+        }
+    };
 
     /*
      * Delegate to IOpenVpnService

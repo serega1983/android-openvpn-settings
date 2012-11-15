@@ -22,8 +22,10 @@
 
 package de.schaeuffelhut.android.openvpn.service.api;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.IBinder;
 import android.os.RemoteException;
 import junit.framework.TestCase;
@@ -164,9 +166,8 @@ public class OpenVpnServiceWrapperTest extends TestCase
     {
         wrapper.bindService();
 
-        ArgumentCaptor<Intent> intentCaptor = new ArgumentCaptor<Intent>();
+        ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass( Intent.class );
         Mockito.verify( context ).bindService( intentCaptor.capture(), Mockito.same( wrapper ), Mockito.eq( 0 ) );
-
         assert_intentAddressesOpenVpnService_with_no_action( intentCaptor.getValue() );
     }
 
@@ -561,5 +562,50 @@ public class OpenVpnServiceWrapperTest extends TestCase
         Mockito.verify( openVpnServiceStub ).addOpenVpnStateListener( param1 );
         Mockito.verify( openVpnServiceStub ).addOpenVpnStateListener( param2 );
         Mockito.verify( openVpnServiceStub ).addOpenVpnStateListener( param3 );
+    }
+
+    /**
+     * This tests also covers installment of the {@code BroadcastReceiver}.
+     */
+    public void test_bindService_installs_BroadcastReceiver()
+    {
+        wrapper.bindService();
+        ArgumentCaptor<BroadcastReceiver> broadcastReceiverArgumentCaptor = ArgumentCaptor.forClass( BroadcastReceiver.class );
+        ArgumentCaptor<IntentFilter> intentFilterArgumentCaptor = ArgumentCaptor.forClass( IntentFilter.class );
+
+        verify( context ).registerReceiver( broadcastReceiverArgumentCaptor.capture(), intentFilterArgumentCaptor.capture() );
+
+        BroadcastReceiver broadcastReceiver = broadcastReceiverArgumentCaptor.getValue();
+        assertNotNull( broadcastReceiver );
+
+        IntentFilter intentFilter = intentFilterArgumentCaptor.getValue();
+        assertTrue( intentFilter.hasAction( Intents.OPENVPN_STATE_CHANGED.getAction() ) );
+    }
+
+    public void test_binds_when_OPENVPN_STATE_CHANGED_broadcast_is_received()
+    {
+        wrapper.bindService();
+        ArgumentCaptor<BroadcastReceiver> broadcastReceiverArgumentCaptor = ArgumentCaptor.forClass( BroadcastReceiver.class );
+        verify( context ).registerReceiver( broadcastReceiverArgumentCaptor.capture(), any(IntentFilter.class) );
+        BroadcastReceiver broadcastReceiver = broadcastReceiverArgumentCaptor.getValue();
+        reset( context );
+
+        broadcastReceiver.onReceive( context, new Intent( Intents.OPENVPN_STATE_CHANGED.getAction() ) );
+
+        ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass( Intent.class );
+        Mockito.verify( context ).bindService( intentCaptor.capture(), Mockito.same( wrapper ), Mockito.eq( 0 ) );
+        assert_intentAddressesOpenVpnService_with_no_action( intentCaptor.getValue() );
+    }
+
+    public void test_unbindService_removes_BroadcastReceiver()
+    {
+        wrapper.bindService();
+        ArgumentCaptor<BroadcastReceiver> broadcastReceiverArgumentCaptor = ArgumentCaptor.forClass( BroadcastReceiver.class );
+        verify( context ).registerReceiver( broadcastReceiverArgumentCaptor.capture(), any( IntentFilter.class ) );
+        BroadcastReceiver broadcastReceiver = broadcastReceiverArgumentCaptor.getValue();
+
+        wrapper.unbindService();
+
+        verify( context ).unregisterReceiver( broadcastReceiver );
     }
 }
