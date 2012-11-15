@@ -28,50 +28,43 @@ import android.content.Intent;
 import android.util.Log;
 import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnServiceImpl;
+import de.schaeuffelhut.android.openvpn.service.api.OpenVpnServiceWrapper;
 import de.schaeuffelhut.android.openvpn.services.OpenVpnService;
 
 public class BootCompletedReceiver extends BroadcastReceiver
 {
-	public static final String TAG = "OpenVPN";
-	
-	@Override
-	public void onReceive(Context context, Intent intent)
-	{
-		// just make sure we are getting the right intent (better safe than sorry)
-		  if( Intent.ACTION_BOOT_COMPLETED.equals( intent.getAction() ) )
-		  {
-			  if ( Preferences.getOpenVpnEnabled(context) )
-			  {
-				  Log.d(TAG, "OpenVPN-Service enabled in preferences, starting!" );
+    public static final String TAG = "OpenVPN";
 
-				  ComponentName service = context.startService( new Intent( context, OpenVpnService.class ) );
+    @Override
+    public void onReceive(Context context, Intent intent)
+    {
+        // just make sure we are getting the right intent (better safe than sorry)
+        if (Intent.ACTION_BOOT_COMPLETED.equals( intent.getAction() ))
+        {
+            if (Preferences.getOpenVpnEnabled( context ))
+            {
+                Log.d( TAG, "OpenVPN-Service enabled in preferences, starting!" );
 
-				  //Why so complicated?
-				  //			  ComponentName comp = new ComponentName(
-				  //					  context.getPackageName(),
-				  //					  OpenVpnService.class.getName()
-				  //			  );
-				  //			  ComponentName service = context.startService(
-				  //					  new Intent().setComponent( comp )
-				  //			  );
-				  if ( service == null )
-				  {
-					  // something really wrong here
-					  Log.e(TAG, "Could not start service. Service object NULL ");
-				  }
-				  else
-				  {
-					  Log.i(TAG, service.toString() + "started" );
-				  }
-			  }
-			  else
-			  {
-				  Log.d(TAG, "OpenVPN-Service disabled in preferences, not starting!" );
-			  }
-		  }
-		  else
-		  {
-			  Log.e(TAG, "Received unexpected intent " + intent.toString());   
-		  }
-	}
+                ComponentName service = context.startService( OpenVpnServiceWrapper.createIntentAddressingOpenVpnService() );
+
+                if (service == null)
+                {
+                    // something really wrong here
+                    Log.e( TAG, "Could not start service. Service object NULL " );
+                }
+                else
+                {
+                    Log.i( TAG, service.toString() + "started" );
+                }
+            }
+            else
+            {
+                Log.d( TAG, "OpenVPN-Service disabled in preferences, not starting!" );
+            }
+        }
+        else
+        {
+            Log.e( TAG, "Received unexpected intent " + intent.toString() );
+        }
+    }
 }
