@@ -33,7 +33,7 @@ import java.io.File;
  * @author Friedrich Schäuffelhut
  * @since 2012-11-03
  */
-public interface DaemonMonitorFactory
+interface DaemonMonitorFactory
 {
     DaemonMonitor createDaemonMonitorFor(File configFile);
 }

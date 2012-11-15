@@ -31,7 +31,7 @@ import java.io.File;
  * @author Friedrich Schäuffelhut
  * @since 2012-11-03
  */
-public class NullDaemonMonitor implements DaemonMonitor
+class NullDaemonMonitor implements DaemonMonitor
 {
     private static final NullDaemonMonitor INSTANCE = new NullDaemonMonitor();
 

@@ -31,7 +31,7 @@ import org.apache.commons.io.IOUtils;
 
 import android.util.Log;
 
-public class LogFile {
+class LogFile {
 	
 	private final File logFile;
 	private FileOutputStream fileOutputStream;
