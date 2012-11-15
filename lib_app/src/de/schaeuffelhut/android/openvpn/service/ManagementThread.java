@@ -378,7 +378,7 @@ final class ManagementThread extends Thread
 		protected void handleMultilineResponse(ArrayList<String> multilineResponse)
 		{
 			trafficStats.setStats( multilineResponse );
-            mNotification2.notifyBytes( trafficStats.toSmallInOutPerSecString() );
+            mNotification2.notifyBytes( trafficStats.toSmallInOutPerSecString(), mTrafficStats.getTuntapReadBytes(), mTrafficStats.getTuntapWriteBytes() );
         }
 	}
 
@@ -797,7 +797,7 @@ final class ManagementThread extends Thread
 		mTrafficStats.setStats(out, in);
 		String msg = mTrafficStats.toSmallInOutPerSecString();
 		Log.d(mTAG_MT, msg );
-        mNotification2.notifyBytes( msg );
+        mNotification2.notifyBytes( msg, mTrafficStats.getTuntapReadBytes(), mTrafficStats.getTuntapWriteBytes() );
     }
 
 	/*

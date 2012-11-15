@@ -192,6 +192,14 @@ public class TrafficStats {
 				+ Util.roundDecimalsToString((double) tuntapWriteBytesPerSec / 1000) 
 				+ " kBps";
 	}
-	
-	
+
+    public long getTuntapReadBytes()
+    {
+        return tuntapReadBytes;
+    }
+
+    public long getTuntapWriteBytes()
+    {
+        return tuntapWriteBytes;
+    }
 }
