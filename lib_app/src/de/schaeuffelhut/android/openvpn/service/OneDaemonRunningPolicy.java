@@ -44,7 +44,7 @@ import java.util.List;
  * @author Friedrich Schäuffelhut
  * @since 2012-11-03
  */
-public class OneDaemonRunningPolicy
+class OneDaemonRunningPolicy
 {
     private final DaemonMonitorFactory daemonMonitorFactory;
     private final List<File> configFiles;

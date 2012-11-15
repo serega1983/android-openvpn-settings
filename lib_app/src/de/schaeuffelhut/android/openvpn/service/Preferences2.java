@@ -31,7 +31,7 @@ import java.io.File;
  * @author Friedrich Schäuffelhut
  * @since 2012-11-02
  */
-public class Preferences2
+class Preferences2
 {
     public final OpenVpnServiceImpl mContext;
     public final File mConfigFile;

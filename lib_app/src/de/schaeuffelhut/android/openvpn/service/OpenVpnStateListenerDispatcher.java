@@ -42,7 +42,7 @@ import java.util.ArrayList;
  * @author Friedrich Schäuffelhut
  * @since 2012-11-14
  */
-public class OpenVpnStateListenerDispatcher implements IOpenVpnStateListener
+class OpenVpnStateListenerDispatcher implements IOpenVpnStateListener
 {
     private final String TAG = "OpenVPN-Settings";
 

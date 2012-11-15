@@ -28,7 +28,7 @@ import java.io.File;
  * @author Friedrich Schäuffelhut
  * @since 2012-11-03
  */
-public class DaemonMonitorImplFactory implements DaemonMonitorFactory
+class DaemonMonitorImplFactory implements DaemonMonitorFactory
 {
     private final OpenVpnServiceImpl context;
     private final OpenVpnStateListenerDispatcher listenerDispatcher;

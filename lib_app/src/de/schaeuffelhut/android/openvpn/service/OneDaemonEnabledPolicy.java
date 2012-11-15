@@ -50,7 +50,7 @@ import java.util.List;
  * @author Friedrich Schäuffelhut
  * @since 2012-11-03
  */
-public class OneDaemonEnabledPolicy
+class OneDaemonEnabledPolicy
 {
     private final SharedPreferences sharedPreferences;
     private final List<File> configFiles;
