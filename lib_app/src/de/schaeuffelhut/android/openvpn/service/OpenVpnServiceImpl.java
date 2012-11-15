@@ -394,7 +394,7 @@ public class OpenVpnServiceImpl extends Service
      * ========================================
      */
 
-	public final synchronized void daemonStart(File config)
+	final synchronized void daemonStart(File config)
 	{
         if ( getCurrent().isAlive() && !getCurrent().getConfigFile().equals( config ) )
         {
@@ -427,7 +427,7 @@ public class OpenVpnServiceImpl extends Service
 		}
 	}
 
-	public final synchronized void daemonStop(File config)
+	final synchronized void daemonStop(File config)
 	{
 		if ( !isDaemonStarted(config) )
 		{
@@ -440,7 +440,7 @@ public class OpenVpnServiceImpl extends Service
 		}
 	}
 
-	public void daemonPassphrase(File config, String passphrase)
+	void daemonPassphrase(File config, String passphrase)
 	{
 		if ( !isDaemonStarted(config) )
 		{
@@ -453,7 +453,7 @@ public class OpenVpnServiceImpl extends Service
 		}
 	}
 
-	public void daemonUsernamePassword(File config, String username, String password)
+	void daemonUsernamePassword(File config, String username, String password)
 	{
 		if ( !isDaemonStarted(config) )
 		{
@@ -467,13 +467,13 @@ public class OpenVpnServiceImpl extends Service
 	}
 
     @Deprecated //TODO: use Intents.DAEMON_STATE_CHANGED instead
-	public final synchronized boolean isDaemonStarted(File config)
+    final synchronized boolean isDaemonStarted(File config)
 	{
         return getCurrent().isAlive() && config.equals( getCurrent().getConfigFile() );
 	}
 
     @Deprecated //TODO: use Intents.DAEMON_STATE_CHANGED instead
-	public final synchronized boolean hasDaemonsStarted()
+    final synchronized boolean hasDaemonsStarted()
 	{
         return getCurrent().isAlive();
 	}
