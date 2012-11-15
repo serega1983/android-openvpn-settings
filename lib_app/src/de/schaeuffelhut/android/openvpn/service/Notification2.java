@@ -117,10 +117,10 @@ public class Notification2
         Notifications.notifyDisconnected( mNotificationId, mContext, mNotificationManager, mConfigFile, "Connecting" );
     }
 
-    void notifyBytes(String smallInOutPerSecString)
+    void notifyBytes(String smallInOutPerSecString, long received, long sent)
     {
         Notifications.notifyBytes( mNotificationId, mContext, mNotificationManager, mConfigFile, smallInOutPerSecString );
-        listenerDispatcher.onByteCountChanged( 0, 0 ); //TODO: insert real byte count
+        listenerDispatcher.onByteCountChanged( received, sent ); //TODO: insert real byte count
     }
 
     void cancel()

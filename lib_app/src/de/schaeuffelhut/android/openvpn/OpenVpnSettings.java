@@ -253,7 +253,7 @@ public class OpenVpnSettings extends PreferenceActivity
     {
         if ( !BuildConfig.DEBUG )
             return;
-        
+
         //TODO: add a toggle for an external config, provided by a plugin.
         if (mOpenVpnService.getStatus().isStarted())
         {
