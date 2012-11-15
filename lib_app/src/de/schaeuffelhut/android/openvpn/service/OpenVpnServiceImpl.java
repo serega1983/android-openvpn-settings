@@ -213,7 +213,9 @@ public class OpenVpnServiceImpl extends Service
 		PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(
 				Preferences.KEY_OPENVPN_ENABLED, true
 		).commit();
-		
+
+        sendBroadcast( new Intent( de.schaeuffelhut.android.openvpn.service.api.Intents.OPENVPN_STATE_CHANGED.getAction() ) );
+
 		markServiceStarted();
 
 		PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener( onSharedPreferenceChangeListener );

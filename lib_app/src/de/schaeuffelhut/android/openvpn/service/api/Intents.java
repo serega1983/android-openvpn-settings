@@ -13,14 +13,14 @@ public enum Intents
     OPENVPN_NEEDS_USERNAME_PASSWORD,
     DAEMON_STATE_CHANGED(){
         @Override
-        protected String getAction()
+        public String getAction()
         {
             return de.schaeuffelhut.android.openvpn.Intents.DAEMON_STATE_CHANGED;
         }
     },
     NETWORK_STATE_CHANGED(){
         @Override
-        protected String getAction()
+        public String getAction()
         {
             return de.schaeuffelhut.android.openvpn.Intents.NETWORK_STATE_CHANGED;
         }
@@ -28,7 +28,7 @@ public enum Intents
 
     private static final String INTENT_PREFIX = "de.schaeuffelhut.android.openvpn.Intents";
 
-    protected String getAction()
+    public String getAction()
     {
         return INTENT_PREFIX + "." + this.name();
     }
