@@ -152,12 +152,15 @@ public class Notification2
 
         mContext.sendStickyBroadcast( intent );
 
+        String cause = Intents.EXTRA_NETWORK_CAUSE.equals( info0ExtraName ) ? info0ExtraValue : "";
+        String localIp = Intents.EXTRA_NETWORK_LOCALIP.equals( info1ExtraName ) ? info1ExtraValue : "";
+        String remoteIp = Intents.EXTRA_NETWORK_REMOTEIP.equals( info2ExtraName ) ? info2ExtraValue : "";
         listenerDispatcher.onNetworkStateChanged(
                 OpenVpnNetworkState.values()[oldState],
                 OpenVpnNetworkState.values()[newState],
                 System.currentTimeMillis(),
-                "TODO TIM","TODO LIP","TODO RIP"
-        ); //TODO: insert real cause, local IP, remote IP
+                cause, localIp, remoteIp
+        );
     }
 
     void toastMessage(final String message)
