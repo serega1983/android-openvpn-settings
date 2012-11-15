@@ -29,6 +29,9 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.RemoteException;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 /**
  * Wraps a remote {@code IOpenVpnService} obtained with {@code bindService()}.
  * Takes care of binding and unbinding to the service and deals with a vanished
@@ -48,6 +51,7 @@ public class OpenVpnServiceWrapper implements ServiceConnection
 
     private final Context context;
     private IOpenVpnService openVpnService;
+    private ArrayList<IOpenVpnStateListener> listeners = new ArrayList<IOpenVpnStateListener>();
 
     /**
      * Creates an {@code OpenVpnServiceWrapper} using the specified context as
@@ -105,11 +109,13 @@ public class OpenVpnServiceWrapper implements ServiceConnection
     public void onServiceConnected(ComponentName componentName, IBinder iBinder)
     {
         openVpnService = IOpenVpnService.Stub.asInterface( iBinder );
+        addRememberedListenersToRemoteService();
     }
 
     public void onServiceDisconnected(ComponentName componentName)
     {
         invalidateRemoteInterface();
+        removeRememberedListenersFromRemoteService(); // call after invalidateRemoteInterface() so we talk to NullOpenVpnService.
     }
 
     private void invalidateRemoteInterface()
@@ -204,5 +210,128 @@ public class OpenVpnServiceWrapper implements ServiceConnection
             invalidateRemoteInterface();
             //TODO: bind to the interface again?
         }
+    }
+
+    public void addOpenVpnStateListener(IOpenVpnStateListener listener)
+    {
+        if ( listener == null )
+            throw new NullPointerException( "listener is null in addOpenVpnStateListener" );
+
+        remember( listener );
+
+        try
+        {
+            openVpnService.addOpenVpnStateListener( listener );
+        }
+        catch (RemoteException e)
+        {
+            invalidateRemoteInterface();
+            //TODO: bind to the interface again?
+        }
+    }
+
+    public void removeOpenVpnStateListener(IOpenVpnStateListener listener)
+    {
+        if ( listener == null )
+            throw new NullPointerException( "listener is null in removeOpenVpnStateListener" );
+
+        forget( listener );
+
+        try
+        {
+            openVpnService.removeOpenVpnStateListener( listener );
+        }
+        catch (RemoteException e)
+        {
+            invalidateRemoteInterface();
+            //TODO: bind to the interface again?
+        }
+    }
+
+
+    private void remember(IOpenVpnStateListener listener)
+    {
+        synchronized ( listeners ) {
+            for( IOpenVpnStateListener l : listeners )
+                if ( l == listener ) // identity wanted here
+                    return;
+            listeners.add( listener );
+        }
+    }
+
+    private void forget(IOpenVpnStateListener listener)
+    {
+        synchronized ( listeners ) {
+            for( Iterator<IOpenVpnStateListener> it = listeners.iterator(); it.hasNext(); )
+            {
+                if ( it.next() == listener ) // identity wanted here
+                {
+                    it.remove();
+                    // bail out, listener will be in the list only once
+                    break;
+                }
+            }
+        }
+    }
+private boolean listenersRegisteredWithRemoteService = false;
+    private void addRememberedListenersToRemoteService()
+    {
+        synchronized (listeners)
+        {
+            if ( !isBound() )
+                return;
+            if (listenersRegisteredWithRemoteService)
+                return;
+            try
+            {
+                for (IOpenVpnStateListener l : listeners)
+                    openVpnService.addOpenVpnStateListener( l );
+                listenersRegisteredWithRemoteService = true;
+            }
+            catch (RemoteException e)
+            {
+                invalidateRemoteInterface(); //TODO: put under test
+                //TODO: bind to the interface again?
+            }
+        }
+    }
+
+    private void removeRememberedListenersFromRemoteService()
+    {
+        synchronized (listeners)
+        {
+            listenersRegisteredWithRemoteService = false;
+            if ( !isBound() )
+                return;
+            try
+            {
+                for (IOpenVpnStateListener l : listeners)
+                    openVpnService.removeOpenVpnStateListener( l );
+            }
+            catch (RemoteException e)
+            {
+                invalidateRemoteInterface(); //TODO: put under test
+                //TODO: bind to the interface again?
+            }
+        }
+    }
+
+
+    /**
+     * Call {@code resumeListeners()} in {@code onResume()} or {@code onStart()} to add all listeners
+     * registered with this {@code OpenVpnServiceWrapper} to remote service.
+     */
+    public void resumeListeners()
+    {
+        addRememberedListenersToRemoteService();
+    }
+
+    /**
+     * Call {@code pauseListeners()} in {@code onPause()} or {@code onStop()} to remove all listeners
+     * registered with this {@code OpenVpnServiceWrapper} from remote service.
+     */
+    public void pauseListeners()
+    {
+        removeRememberedListenersFromRemoteService();
     }
 }
