@@ -159,18 +159,6 @@ public class OpenVpnSettings extends PreferenceActivity
 			Log.w(TAG, "Could not bind to ControlShell" );
         }
 
-        //TODO: use callback onRequestPassphrase() or onRequestCredentials() instead
-        registerReceiver(
-                broadcastReceiver = new BroadcastReceiver()
-                {
-                    @Override
-                    public void onReceive(Context context, Intent intent)
-                    {
-                        startActivity( (Intent) intent.getParcelableExtra( "ACTION" ) );
-                    }
-                },
-				new IntentFilter( Intents.BROADCAST_NEED_PASSWORD )
-		);
 
 		if ( Util.applicationWasUpdated( this ) )
 			showDialog( DIALOG_CHANGELOG );
@@ -330,7 +318,20 @@ public class OpenVpnSettings extends PreferenceActivity
 		super.onResume();
     	Log.d(TAG, "onResume()" );
 
-		for(DaemonEnabler daemonEnabler : mDaemonEnablers )
+        //TODO: use callback onRequestPassphrase() or onRequestCredentials() instead
+        registerReceiver(
+                broadcastReceiver = new BroadcastReceiver()
+                {
+                    @Override
+                    public void onReceive(Context context, Intent intent)
+                    {
+                        startActivity( (Intent) intent.getParcelableExtra( "ACTION" ) );
+                    }
+                },
+                new IntentFilter( Intents.BROADCAST_NEED_PASSWORD )
+        );
+
+        for(DaemonEnabler daemonEnabler : mDaemonEnablers )
 			daemonEnabler.resume();
 	}
 
@@ -339,7 +340,10 @@ public class OpenVpnSettings extends PreferenceActivity
     	super.onPause();
     	Log.d(TAG, "onPause()" );
 
-		for(DaemonEnabler daemonEnabler : mDaemonEnablers )
+        unregisterReceiver( broadcastReceiver );
+        broadcastReceiver = null;
+
+        for(DaemonEnabler daemonEnabler : mDaemonEnablers )
 			daemonEnabler.pause();
     }
 
@@ -348,8 +352,6 @@ public class OpenVpnSettings extends PreferenceActivity
     	super.onDestroy();
     	Log.d(TAG, "onDestroy()" );
     	mOpenVpnService.unbindService();
-        unregisterReceiver( broadcastReceiver );
-        broadcastReceiver = null;
     }
 
 	/*
