@@ -33,6 +33,7 @@ import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import com.bugsense.trace.BugSenseHandler;
+import de.schaeuffelhut.android.openvpn.lib.app.BuildConfig;
 import de.schaeuffelhut.android.openvpn.lib.app.R;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnServiceImpl;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnConfig;
@@ -229,7 +230,9 @@ public class OpenVpnSettings extends PreferenceActivity
 		PreferenceCategory configurations = (PreferenceCategory) findPreference(Preferences.KEY_OPENVPN_CONFIGURATIONS);
 		configurations.removeAll();
 
-		for ( File config : Preferences.configs(configDir) )
+        initPluginToggles( configDir, configurations );
+
+        for ( File config : Preferences.configs(configDir) )
 		{
 			ConfigFilePreference pref = new ConfigFilePreference( this, mOpenVpnService, config );
 			configurations.addPreference(pref);
@@ -246,8 +249,30 @@ public class OpenVpnSettings extends PreferenceActivity
 		}
     }
 
+    private void initPluginToggles(File configDir, PreferenceCategory configurations)
+    {
+        if ( !BuildConfig.DEBUG )
+            return;
+        
+        //TODO: add a toggle for an external config, provided by a plugin.
+        if (mOpenVpnService.getStatus().isStarted())
+        {
+            Intent intent = registerReceiver( null, new IntentFilter( Intents.DAEMON_STATE_CHANGED ) );
+            if (intent != null)
+            {
+                File config = new File( intent.getStringExtra( Intents.EXTRA_CONFIG ) );
+                if (!config.getAbsolutePath().startsWith( configDir.getAbsolutePath() ))
+                {
+                    ConfigFilePreference pref = new ConfigFilePreference( this, mOpenVpnService, config );
+                    configurations.addPreference( pref );
+                    mDaemonEnablers.add( pref.mDaemonEnabler );
+                }
+            }
+        }
+    }
 
-	@Override
+
+    @Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		switch ( requestCode ) {
