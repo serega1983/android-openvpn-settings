@@ -214,7 +214,7 @@ public abstract class OpenVpnState implements Parcelable
         @Override
         public OpenVpnPasswordRequest getPasswordRequest()
         {
-            throw new IllegalStateException( "Service is stopped" );
+            return  OpenVpnPasswordRequest.NONE;
         }
 
         @Override
