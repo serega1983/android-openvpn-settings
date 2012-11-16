@@ -32,7 +32,7 @@ import org.apache.http.auth.AUTH;
  */
 public enum OpenVpnNetworkState implements Parcelable
 {
-    UNKNOWN,
+    UNKNOWN, //TODO: eliminate OpenVpnNetworkState.UNKNOWN
     CONNECTING,
     RECONNECTING,
     RESOLVE,
