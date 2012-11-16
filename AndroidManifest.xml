@@ -23,8 +23,8 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="de.schaeuffelhut.android.openvpn"
-	android:versionCode="35"
-	android:versionName="0.4.13test3"
+	android:versionCode="36"
+	android:versionName="0.4.13test4"
     >
 
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
