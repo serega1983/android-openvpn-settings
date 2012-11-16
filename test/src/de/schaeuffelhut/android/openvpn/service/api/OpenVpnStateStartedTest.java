@@ -2,15 +2,13 @@ package de.schaeuffelhut.android.openvpn.service.api;
 
 import android.os.Parcel;
 
-import java.io.File;
-
 /**
  * @author Friedrich Schäuffelhut
  * @since 2012-10-28
  */
 public class OpenVpnStateStartedTest extends OpenVpnStateTestBase<OpenVpnState.Started>
 {
-    private static final String DUMMY_STATE = "AUTH";
+    private static final OpenVpnNetworkState DUMMY_STATE = OpenVpnNetworkState.AUTH;
     private static final String DUMMY_CONNECTED_TO = "USA1";
     private static final String DUMMY_IP = "192.168.1.1";
     private static final long DUMMY_BYTES_SENT = 1036847L;
@@ -22,17 +20,15 @@ public class OpenVpnStateStartedTest extends OpenVpnStateTestBase<OpenVpnState.S
         super( OpenVpnState.Started.class );
     }
 
-    @Override
     public void test_isStarted()
     {
         assertTrue( createOpenVpnState().isStarted() );
     }
 
-    @Override
-    public void test_getState()
+    public void test_getNetworkState()
     {
-        for(String state : new String[] { "CONNECTING", "WAIT", "AUTH", "GET_CONFIG", "ASSIGN_IP", "ADD_ROUTES", "CONNECTED", "RECONNECTING", "EXITING" } )
-            assertEquals( state, copy( new OpenVpnState.Started( state, DUMMY_CONNECTED_TO, DUMMY_IP, DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getState() );
+        for(OpenVpnNetworkState state : OpenVpnNetworkState.values() )
+            assertEquals( state, copy( new OpenVpnState.Started( state, DUMMY_CONNECTED_TO, DUMMY_IP, DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getNetworkState() );
     }
 
     public void test_getConnectedTo_USA1()
@@ -45,7 +41,6 @@ public class OpenVpnStateStartedTest extends OpenVpnStateTestBase<OpenVpnState.S
             assertEquals( "France", copy( new OpenVpnState.Started( DUMMY_STATE, "France", DUMMY_IP, DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getConnectedTo() );
     }
 
-    @Override
     public void test_getIp()
     {
         assertEquals( "192.168.1.1", copy( new OpenVpnState.Started( DUMMY_STATE, DUMMY_CONNECTED_TO, "192.168.1.1", DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getIp() );
@@ -103,7 +98,7 @@ public class OpenVpnStateStartedTest extends OpenVpnStateTestBase<OpenVpnState.S
     {
         Parcel parcel = Parcel.obtain();
         parcel.writeByte( (byte)1 );
-        parcel.writeString( "CONNECTED" );
+        parcel.writeParcelable( OpenVpnNetworkState.CONNECTED, 0 );
         parcel.writeString( "Server" );
         parcel.writeString( "10.0.0.2" );
         parcel.writeLong( 101 );
@@ -114,7 +109,7 @@ public class OpenVpnStateStartedTest extends OpenVpnStateTestBase<OpenVpnState.S
         OpenVpnState copy = OpenVpnState.CREATOR.createFromParcel( parcel );
 
         assertTrue( copy.isStarted() );
-        assertEquals( "CONNECTED", copy.getState() );
+        assertEquals( OpenVpnNetworkState.CONNECTED, copy.getNetworkState() );
         assertEquals( "Server", copy.getConnectedTo() );
         assertEquals( "10.0.0.2", copy.getIp() );
         assertEquals( 101, copy.getBytesSent() );
@@ -125,12 +120,12 @@ public class OpenVpnStateStartedTest extends OpenVpnStateTestBase<OpenVpnState.S
     public void test_write_TYPE_STARTED_VERSION_1()
     {
         Parcel parcel = Parcel.obtain();
-        new OpenVpnState.Started( "CONNECTED", "Server", "10.0.0.2", 101, 102, 60 ).writeToParcel( parcel, 0 );
+        new OpenVpnState.Started( OpenVpnNetworkState.CONNECTED, "Server", "10.0.0.2", 101, 102, 60 ).writeToParcel( parcel, 0 );
 
         parcel.setDataPosition(0);
 
         assertEquals( 1, parcel.readByte() );
-        assertEquals( "CONNECTED", parcel.readString() );
+        assertEquals( OpenVpnNetworkState.CONNECTED, parcel.readParcelable( OpenVpnNetworkState.class.getClassLoader() ) );
         assertEquals( "Server", parcel.readString() );
         assertEquals( "10.0.0.2", parcel.readString() );
         assertEquals( 101, parcel.readLong() );
