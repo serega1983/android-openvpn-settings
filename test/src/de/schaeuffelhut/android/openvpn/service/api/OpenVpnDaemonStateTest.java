@@ -123,4 +123,21 @@ public class OpenVpnDaemonStateTest extends TestCase
             assertEquals( "Unexpected ordinal: " + undefinedOrdinal, e.getMessage() );
         }
     }
+
+
+    public void test_isStarted()
+    {
+        assertFalse( OpenVpnDaemonState.UNKNOWN.isStarted() );
+        assertTrue( OpenVpnDaemonState.STARTUP.isStarted() );
+        assertTrue( OpenVpnDaemonState.ENABLED.isStarted() );
+        assertFalse( OpenVpnDaemonState.DISABLED.isStarted() );
+    }
+
+    public void test_isStopped()
+    {
+        assertTrue( OpenVpnDaemonState.UNKNOWN.isStopped() );
+        assertFalse( OpenVpnDaemonState.STARTUP.isStopped() );
+        assertFalse( OpenVpnDaemonState.ENABLED.isStopped() );
+        assertTrue( OpenVpnDaemonState.DISABLED.isStopped() );
+    }
 }

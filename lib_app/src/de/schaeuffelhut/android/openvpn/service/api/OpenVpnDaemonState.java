@@ -25,18 +25,23 @@ package de.schaeuffelhut.android.openvpn.service.api;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.File;
-
 /**
  * @author Friedrich Schäuffelhut
  * @since 2012-11-14
  */
 public enum OpenVpnDaemonState implements Parcelable
 {
-    UNKNOWN,
-    STARTUP,
-    ENABLED,
-    DISABLED;
+    UNKNOWN( false ), //TODO: eliminate OpenVpnDaemonState.UNKNOWN
+    STARTUP( true ),
+    ENABLED( true ),
+    DISABLED( false );
+
+    private final boolean isStarted;
+
+    private OpenVpnDaemonState(boolean started)
+    {
+        isStarted = started;
+    }
 
     public int describeContents()
     {
@@ -70,4 +75,13 @@ public enum OpenVpnDaemonState implements Parcelable
         }
     };
 
+    public boolean isStarted()
+    {
+        return isStarted;
+    }
+
+    public boolean isStopped()
+    {
+        return !isStarted;
+    }
 }

@@ -26,7 +26,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
-import org.apache.http.auth.AUTH;
 
 /**
  * @author Friedrich Schäuffelhut
@@ -43,17 +42,17 @@ public class OpenVpnServiceFake extends Service
     private final IOpenVpnService.Stub mBinder = new IOpenVpnService.Stub()
     {
         OpenVpnState[] states = new OpenVpnState[]{
-                new OpenVpnState.Started( OpenVpnNetworkState.CONNECTING, "USA3", "", 0, 0, 0 ),
-                new OpenVpnState.Started( OpenVpnNetworkState.WAIT, "USA3", "", 0, 0, 0 ),
-                new OpenVpnState.Started( OpenVpnNetworkState.AUTH, "USA3", "", 0, 0, 0 ),
-                new OpenVpnState.Started( OpenVpnNetworkState.GET_CONFIG, "USA3", "", 0, 0, 0 ),
-                new OpenVpnState.Started( OpenVpnNetworkState.ASSIGN_IP, "USA3", "192.168.1.1", 0, 0, 0 ),
-                new OpenVpnState.Started( OpenVpnNetworkState.ADD_ROUTES, "USA3", "192.168.1.1", 0, 0, 0 ),
-                new OpenVpnState.Started( OpenVpnNetworkState.CONNECTED, "USA3", "192.168.1.1", 10, 0, 1 ),
-                new OpenVpnState.Started( OpenVpnNetworkState.CONNECTED, "USA3", "192.168.1.1", 20, 10248, 2 ),
-                new OpenVpnState.Started( OpenVpnNetworkState.CONNECTED, "USA3", "192.168.1.1", 1050, 29452, 3 ),
-                new OpenVpnState.Started( OpenVpnNetworkState.RECONNECTING, "USA3", "", 1050, 29452, 0 ),
-                new OpenVpnState.Started( OpenVpnNetworkState.EXITING, "USA3", "", 1050, 29452, 0 ),
+                new OpenVpnState.Started( OpenVpnDaemonState.ENABLED, OpenVpnNetworkState.CONNECTING, "USA3", "", 0, 0, 0 ),
+                new OpenVpnState.Started( OpenVpnDaemonState.ENABLED, OpenVpnNetworkState.WAIT, "USA3", "", 0, 0, 0 ),
+                new OpenVpnState.Started( OpenVpnDaemonState.ENABLED, OpenVpnNetworkState.AUTH, "USA3", "", 0, 0, 0 ),
+                new OpenVpnState.Started( OpenVpnDaemonState.ENABLED, OpenVpnNetworkState.GET_CONFIG, "USA3", "", 0, 0, 0 ),
+                new OpenVpnState.Started( OpenVpnDaemonState.ENABLED, OpenVpnNetworkState.ASSIGN_IP, "USA3", "192.168.1.1", 0, 0, 0 ),
+                new OpenVpnState.Started( OpenVpnDaemonState.ENABLED, OpenVpnNetworkState.ADD_ROUTES, "USA3", "192.168.1.1", 0, 0, 0 ),
+                new OpenVpnState.Started( OpenVpnDaemonState.ENABLED, OpenVpnNetworkState.CONNECTED, "USA3", "192.168.1.1", 10, 0, 1 ),
+                new OpenVpnState.Started( OpenVpnDaemonState.ENABLED, OpenVpnNetworkState.CONNECTED, "USA3", "192.168.1.1", 20, 10248, 2 ),
+                new OpenVpnState.Started( OpenVpnDaemonState.ENABLED, OpenVpnNetworkState.CONNECTED, "USA3", "192.168.1.1", 1050, 29452, 3 ),
+                new OpenVpnState.Started( OpenVpnDaemonState.ENABLED, OpenVpnNetworkState.RECONNECTING, "USA3", "", 1050, 29452, 0 ),
+                new OpenVpnState.Started( OpenVpnDaemonState.ENABLED, OpenVpnNetworkState.EXITING, "USA3", "", 1050, 29452, 0 ),
         };
         int i = 0;
         Runnable r = new Runnable()
@@ -110,13 +109,13 @@ public class OpenVpnServiceFake extends Service
 
         public OpenVpnState getStatus() throws RemoteException
         {
-            return t != null && t.isAlive() ? states[i % states.length] : new OpenVpnState.Stopped();
+            return t != null && t.isAlive() ? states[i % states.length] : OpenVpnState.stopped();
         }
 
         public OpenVpnState getStatusFor(OpenVpnConfig config) throws RemoteException
         {
             //TODO: compare with config supplied to connect()
-            return t != null && t.isAlive() ? states[i % states.length] : new OpenVpnState.Stopped();
+            return t != null && t.isAlive() ? states[i % states.length] : OpenVpnState.stopped();
         }
 
         public void disconnect() throws RemoteException

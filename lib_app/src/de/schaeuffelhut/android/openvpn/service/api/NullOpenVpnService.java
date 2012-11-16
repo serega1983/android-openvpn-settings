@@ -56,12 +56,12 @@ public class NullOpenVpnService implements IOpenVpnService
 
     public OpenVpnState getStatus() throws RemoteException
     {
-        return new OpenVpnState.Stopped();
+        return OpenVpnState.stopped();
     }
 
     public OpenVpnState getStatusFor(OpenVpnConfig config) throws RemoteException
     {
-        return new OpenVpnState.Stopped();
+        return OpenVpnState.stopped();
     }
 
     public void disconnect() throws RemoteException

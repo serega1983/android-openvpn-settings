@@ -14,7 +14,7 @@ public abstract class OpenVpnState implements Parcelable
 {
     private static final byte TYPE_STARTED_VERSION_1 = (byte) 1;
     private static final byte TYPE_STOPPED_VERSION_1 = (byte) 2;
-    private static final Stopped STOPPED_INSTANCE = new Stopped();
+    private static final Stopped STOPPED_INSTANCE = new Stopped( OpenVpnDaemonState.DISABLED );
 
     private OpenVpnState()
     {
@@ -24,22 +24,24 @@ public abstract class OpenVpnState implements Parcelable
     // TODO: either write test or remove this class
     public static OpenVpnState fromStickyBroadcast(Context context)
     {
-        Intent stateIntent = context.registerReceiver( null, new IntentFilter( "de.schaeuffelhut.android.openvpn.Intents.DAEMON_STATE_CHANGED" ) );
-        if (stateIntent == null)
-            return new Stopped();
-        if (stateIntent.getIntExtra( "daemon-state", 0 ) < 1)
-            return new Stopped();
-        if (stateIntent.getIntExtra( "daemon-state", 0 ) > 2)
-            return new Stopped();
+        Intent daemonStateIntent = context.registerReceiver( null, new IntentFilter( "de.schaeuffelhut.android.openvpn.Intents.DAEMON_STATE_CHANGED" ) );
+        if ( daemonStateIntent == null )
+            return STOPPED_INSTANCE;
 
-        Intent networkState = context.registerReceiver( null, new IntentFilter( "de.schaeuffelhut.android.openvpn.Intents.NETWORK_STATE_CHANGED" ) );
-        if ( networkState == null )
-            return new Stopped();
+        OpenVpnDaemonState daemonState = OpenVpnDaemonState.valueOf( daemonStateIntent.getStringExtra( "daemon-state" ) );
+        if ( daemonState == null )
+            return new Stopped( OpenVpnDaemonState.UNKNOWN );
+        if ( daemonState.isStopped() )
+            return new Stopped( daemonState );
+
+        Intent networkStateIntent = context.registerReceiver( null, new IntentFilter( "de.schaeuffelhut.android.openvpn.Intents.NETWORK_STATE_CHANGED" ) );
+        if ( networkStateIntent == null )
+            return STOPPED_INSTANCE;
 
         return new Started(
-                OpenVpnNetworkState.values()[networkState.getIntExtra( "network-state", 0 )],
-                networkState.getStringExtra( "config" ),
-                networkState.getStringExtra( "network-localip" ),
+                daemonState, OpenVpnNetworkState.values()[networkStateIntent.getIntExtra( "network-state", 0 )],
+                networkStateIntent.getStringExtra( "config" ),
+                networkStateIntent.getStringExtra( "network-localip" ),
                 0, 0, 0
         );
     }
@@ -51,7 +53,8 @@ public abstract class OpenVpnState implements Parcelable
 
 
     public abstract boolean isStarted();
-    public abstract OpenVpnNetworkState getNetworkState();  // TODO: OpenVpnNetworkState getNetworkState()
+    public abstract OpenVpnDaemonState getDaemonState();
+    public abstract OpenVpnNetworkState getNetworkState();
     public abstract String  getConnectedTo();
     public abstract String  getIp();
     public abstract long getBytesSent();
@@ -61,6 +64,7 @@ public abstract class OpenVpnState implements Parcelable
 
     final static class Started extends OpenVpnState
     {
+        private final OpenVpnDaemonState daemonState;
         private final OpenVpnNetworkState networkState;
         private final String connectedTo;
         private final String ip;
@@ -71,6 +75,7 @@ public abstract class OpenVpnState implements Parcelable
         @Deprecated
         Started()
         {
+            this.daemonState = OpenVpnDaemonState.UNKNOWN;
             this.networkState = OpenVpnNetworkState.UNKNOWN;
             this.connectedTo = "";
             this.ip = "";
@@ -79,8 +84,9 @@ public abstract class OpenVpnState implements Parcelable
             this.contectedSeconds = 0;
         }
 
-        Started(OpenVpnNetworkState networkState, String connectedTo, String ip, long bytesSent, long bytesReceived, int connectedSeconds)
+        Started(OpenVpnDaemonState daemonState, OpenVpnNetworkState networkState, String connectedTo, String ip, long bytesSent, long bytesReceived, int connectedSeconds)
         {
+            this.daemonState = daemonState;
             this.networkState = networkState;
             this.connectedTo = connectedTo;
             this.ip = ip;
@@ -92,6 +98,7 @@ public abstract class OpenVpnState implements Parcelable
         Started(Parcel in)
         {
             this(
+                    (OpenVpnDaemonState)in.readParcelable( OpenVpnNetworkState.class.getClassLoader() ), // state
                     (OpenVpnNetworkState)in.readParcelable( OpenVpnNetworkState.class.getClassLoader() ), // state
                     in.readString(), // connected to
                     in.readString(), // ip
@@ -105,6 +112,12 @@ public abstract class OpenVpnState implements Parcelable
         public boolean isStarted()
         {
             return true;
+        }
+
+        @Override
+        public OpenVpnDaemonState getDaemonState()
+        {
+            return daemonState;
         }
 
         @Override
@@ -146,7 +159,8 @@ public abstract class OpenVpnState implements Parcelable
         public void writeToParcel(Parcel parcel, int flags)
         {
             parcel.writeByte( TYPE_STARTED_VERSION_1 );
-            parcel.writeParcelable( networkState, 0 ); //TOOD: could also be an integer, e.g. enum.ordinal
+            parcel.writeParcelable( daemonState, 0 );
+            parcel.writeParcelable( networkState, 0 );
             parcel.writeString( connectedTo );
             parcel.writeString( ip );
             parcel.writeLong( bytesSent );
@@ -157,10 +171,25 @@ public abstract class OpenVpnState implements Parcelable
 
     final static class Stopped extends OpenVpnState
     {
+        private final OpenVpnDaemonState daemonState;
+
+        public Stopped(OpenVpnDaemonState daemonState)
+        {
+            if ( daemonState.isStarted() )
+                throw new IllegalArgumentException( "state: " + daemonState );
+            this.daemonState = daemonState;
+        }
+
         @Override
         public boolean isStarted()
         {
             return false;
+        }
+
+        @Override
+        public OpenVpnDaemonState getDaemonState()
+        {
+            return daemonState;
         }
 
         @Override
@@ -202,7 +231,7 @@ public abstract class OpenVpnState implements Parcelable
         public void writeToParcel(Parcel parcel, int flags)
         {
             parcel.writeByte( TYPE_STOPPED_VERSION_1 );
-            //TODO: implement method stub
+            parcel.writeParcelable( daemonState, 0 );
         }
     }
 
@@ -223,7 +252,7 @@ public abstract class OpenVpnState implements Parcelable
                 case TYPE_STARTED_VERSION_1:
                     return new Started( in );
                 case TYPE_STOPPED_VERSION_1:
-                    return new Stopped();
+                    return new Stopped( (OpenVpnDaemonState)in.readParcelable( OpenVpnDaemonState.class.getClassLoader() ) );
                 default:
                     throw new RuntimeException( "Unexpected protocol version: " + objectType ); // should be UnexpectedSwitchValueException
             }

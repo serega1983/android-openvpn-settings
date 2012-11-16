@@ -208,7 +208,7 @@ public class OpenVpnServiceWrapper implements ServiceConnection
             invalidateRemoteInterface();
             //TODO: bind to the interface again?
         }
-        return new OpenVpnState.Stopped();
+        return OpenVpnState.stopped();
     }
 
     public OpenVpnState getStatusFor(OpenVpnConfig config)
@@ -222,7 +222,7 @@ public class OpenVpnServiceWrapper implements ServiceConnection
             invalidateRemoteInterface();
             //TODO: bind to the interface again?
         }
-        return new OpenVpnState.Stopped();
+        return OpenVpnState.stopped();
     }
 
     public void disconnect()

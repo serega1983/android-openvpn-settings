@@ -18,6 +18,48 @@ public class OpenVpnStateStoppedTest extends OpenVpnStateTestBase<OpenVpnState.S
         assertFalse( createOpenVpnState().isStarted() );
     }
 
+    public void test_init_with_state_UNKNOWN()
+    {
+        assertEquals( OpenVpnDaemonState.UNKNOWN, new OpenVpnState.Stopped( OpenVpnDaemonState.UNKNOWN ).getDaemonState() );
+    }
+
+    public void test_init_with_state_DISABLED()
+    {
+        assertEquals( OpenVpnDaemonState.DISABLED, new OpenVpnState.Stopped( OpenVpnDaemonState.DISABLED ).getDaemonState() );
+    }
+
+    public void test_init_with_state_STARTUP()
+    {
+        try
+        {
+            new OpenVpnState.Stopped( OpenVpnDaemonState.STARTUP );
+            fail( "IllegalArgumentException expected" );
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertEquals( "state: STARTUP", e.getMessage() );
+        }
+    }
+
+    public void test_init_with_state_ENABLED()
+    {
+        try
+        {
+            new OpenVpnState.Stopped( OpenVpnDaemonState.ENABLED );
+            fail( "IllegalArgumentException expected" );
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertEquals( "state: ENABLED", e.getMessage() );
+        }
+    }
+
+    public void test_getDaemonState()
+    {
+        assertEquals( OpenVpnDaemonState.UNKNOWN, new OpenVpnState.Stopped( OpenVpnDaemonState.UNKNOWN ).getDaemonState() );
+        assertEquals( OpenVpnDaemonState.DISABLED, new OpenVpnState.Stopped( OpenVpnDaemonState.DISABLED ).getDaemonState() );
+    }
+
     public void test_getNetworkState()
     {
         try
@@ -101,7 +143,7 @@ public class OpenVpnStateStoppedTest extends OpenVpnStateTestBase<OpenVpnState.S
     @Override
     protected OpenVpnState.Stopped createOpenVpnState()
     {
-        return new OpenVpnState.Stopped();
+        return new OpenVpnState.Stopped( OpenVpnDaemonState.DISABLED );
     }
 
 
@@ -111,22 +153,25 @@ public class OpenVpnStateStoppedTest extends OpenVpnStateTestBase<OpenVpnState.S
     public void test_read_TYPE_STOPPED_VERSION_1()
     {
         Parcel parcel = Parcel.obtain();
-        parcel.writeByte( (byte)2 );
+        parcel.writeByte( (byte) 2 );
+        parcel.writeParcelable( OpenVpnDaemonState.DISABLED, 0 );
 
-        parcel.setDataPosition(0);
+        parcel.setDataPosition( 0 );
         OpenVpnState copy = OpenVpnState.CREATOR.createFromParcel( parcel );
 
         assertFalse( copy.isStarted() );
+        assertEquals( OpenVpnDaemonState.DISABLED, copy.getDaemonState() );
     }
 
     public void test_write_TYPE_STOPPED_VERSION_1()
     {
         Parcel parcel = Parcel.obtain();
-        new OpenVpnState.Stopped().writeToParcel( parcel, 0 );
+        new OpenVpnState.Stopped( OpenVpnDaemonState.DISABLED ).writeToParcel( parcel, 0 );
 
-        parcel.setDataPosition(0);
+        parcel.setDataPosition( 0 );
 
         assertEquals( 2, parcel.readByte() );
+        assertEquals( OpenVpnDaemonState.DISABLED, parcel.readParcelable( OpenVpnDaemonState.class.getClassLoader() ) );
     }
 
 }
