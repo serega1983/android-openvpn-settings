@@ -13,18 +13,16 @@ public class OpenVpnStateStoppedTest extends OpenVpnStateTestBase<OpenVpnState.S
         super( OpenVpnState.Stopped.class );
     }
 
-    @Override
     public void test_isStarted()
     {
         assertFalse( createOpenVpnState().isStarted() );
     }
 
-    @Override
-    public void test_getState()
+    public void test_getNetworkState()
     {
         try
         {
-            createOpenVpnState().getState();
+            createOpenVpnState().getNetworkState();
             fail( "IllegalStateException expected" );
         }
         catch (IllegalStateException e)
@@ -47,7 +45,6 @@ public class OpenVpnStateStoppedTest extends OpenVpnStateTestBase<OpenVpnState.S
     }
 
 
-    @Override
     public void test_getIp()
     {
         try

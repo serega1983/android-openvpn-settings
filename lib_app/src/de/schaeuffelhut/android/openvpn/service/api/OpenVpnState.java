@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Parcel;
 import android.os.Parcelable;
-import de.schaeuffelhut.android.openvpn.util.UnexpectedSwitchValueException;
 
 /**
  * @author Friedrich Schäuffelhut
@@ -38,7 +37,7 @@ public abstract class OpenVpnState implements Parcelable
             return new Stopped();
 
         return new Started(
-                Integer.toString( networkState.getIntExtra( "network-state", -1 ) ),
+                OpenVpnNetworkState.values()[networkState.getIntExtra( "network-state", 0 )],
                 networkState.getStringExtra( "config" ),
                 networkState.getStringExtra( "network-localip" ),
                 0, 0, 0
@@ -52,7 +51,7 @@ public abstract class OpenVpnState implements Parcelable
 
 
     public abstract boolean isStarted();
-    public abstract String  getState();
+    public abstract OpenVpnNetworkState getNetworkState();  // TODO: OpenVpnNetworkState getNetworkState()
     public abstract String  getConnectedTo();
     public abstract String  getIp();
     public abstract long getBytesSent();
@@ -62,7 +61,7 @@ public abstract class OpenVpnState implements Parcelable
 
     final static class Started extends OpenVpnState
     {
-        private final String state;
+        private final OpenVpnNetworkState networkState;
         private final String connectedTo;
         private final String ip;
         private final long bytesSent;
@@ -72,7 +71,7 @@ public abstract class OpenVpnState implements Parcelable
         @Deprecated
         Started()
         {
-            this.state = "UNKNOWN";
+            this.networkState = OpenVpnNetworkState.UNKNOWN;
             this.connectedTo = "";
             this.ip = "";
             this.bytesSent = 0;
@@ -80,9 +79,9 @@ public abstract class OpenVpnState implements Parcelable
             this.contectedSeconds = 0;
         }
 
-        Started(String state, String connectedTo, String ip, long bytesSent, long bytesReceived, int connectedSeconds)
+        Started(OpenVpnNetworkState networkState, String connectedTo, String ip, long bytesSent, long bytesReceived, int connectedSeconds)
         {
-            this.state = state;
+            this.networkState = networkState;
             this.connectedTo = connectedTo;
             this.ip = ip;
             this.bytesSent = bytesSent;
@@ -93,7 +92,7 @@ public abstract class OpenVpnState implements Parcelable
         Started(Parcel in)
         {
             this(
-                    in.readString(), // state
+                    (OpenVpnNetworkState)in.readParcelable( OpenVpnNetworkState.class.getClassLoader() ), // state
                     in.readString(), // connected to
                     in.readString(), // ip
                     in.readLong(), // bytes sent
@@ -109,9 +108,9 @@ public abstract class OpenVpnState implements Parcelable
         }
 
         @Override
-        public String getState()
+        public OpenVpnNetworkState getNetworkState()
         {
-            return state;
+            return networkState;
         }
 
         @Override
@@ -147,7 +146,7 @@ public abstract class OpenVpnState implements Parcelable
         public void writeToParcel(Parcel parcel, int flags)
         {
             parcel.writeByte( TYPE_STARTED_VERSION_1 );
-            parcel.writeString( state ); //TOOD: could also be an integer, e.g. enum.ordinal
+            parcel.writeParcelable( networkState, 0 ); //TOOD: could also be an integer, e.g. enum.ordinal
             parcel.writeString( connectedTo );
             parcel.writeString( ip );
             parcel.writeLong( bytesSent );
@@ -165,7 +164,7 @@ public abstract class OpenVpnState implements Parcelable
         }
 
         @Override
-        public String getState()
+        public OpenVpnNetworkState getNetworkState()
         {
             throw new IllegalStateException( "Service is stopped" );
         }

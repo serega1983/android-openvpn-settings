@@ -28,10 +28,6 @@ public abstract class OpenVpnStateTestBase<T extends OpenVpnState> extends TestC
         assertEquals( 0, createOpenVpnState().describeContents() );
     }
 
-    public abstract void test_isStarted();
-    public abstract void test_getState();
-    public abstract void test_getIp();
-
     protected final T copy(T openVpnState)
     {
         Parcel parcel = Parcel.obtain();
