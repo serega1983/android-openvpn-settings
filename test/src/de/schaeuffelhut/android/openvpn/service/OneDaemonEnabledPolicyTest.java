@@ -26,6 +26,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.test.InstrumentationTestCase;
 import de.schaeuffelhut.android.openvpn.Preferences;
+import org.mockito.Mockito;
 
 import java.io.File;
 import java.util.Arrays;
@@ -88,7 +89,7 @@ public class OneDaemonEnabledPolicyTest extends InstrumentationTestCase
 
     public void test_getCurrent__with_one_alive_config()
     {
-        OneDaemonEnabledPolicy oneDaemonEnabledPolicy = newOneDaemonEnabledPolicy( Arrays.asList( new File( "/sdcard/openvpn/test1-ALIVE.conf" ) ) );
+        OneDaemonEnabledPolicy oneDaemonEnabledPolicy = newOneDaemonEnabledPolicy( Arrays.asList( newExistingFile( "/sdcard/openvpn/test1-ALIVE.conf" ) ) );
         oneDaemonEnabledPolicy.initialize();
 
         assertTrue( oneDaemonEnabledPolicy.hasEnabledConfig() );
@@ -97,7 +98,7 @@ public class OneDaemonEnabledPolicyTest extends InstrumentationTestCase
 
     public void test_getCurrent__with_one_dead_config()
     {
-        OneDaemonEnabledPolicy oneDaemonEnabledPolicy = newOneDaemonEnabledPolicy( Arrays.asList( new File( "/sdcard/openvpn/test1-DEAD.conf" ) ) );
+        OneDaemonEnabledPolicy oneDaemonEnabledPolicy = newOneDaemonEnabledPolicy( Arrays.asList( newExistingFile( "/sdcard/openvpn/test1-DEAD.conf" ) ) );
         oneDaemonEnabledPolicy.initialize();
 
         assertFalse( oneDaemonEnabledPolicy.hasEnabledConfig() );
@@ -107,8 +108,8 @@ public class OneDaemonEnabledPolicyTest extends InstrumentationTestCase
     public void test_getCurrent__with_one_dead_and_one_alive_config()
     {
         OneDaemonEnabledPolicy oneDaemonEnabledPolicy = newOneDaemonEnabledPolicy( Arrays.asList(
-                new File( "/sdcard/openvpn/test1-DEAD.conf" ),
-                new File( "/sdcard/openvpn/test2-ALIVE.conf" )
+                newExistingFile( "/sdcard/openvpn/test1-DEAD.conf" ),
+                newExistingFile( "/sdcard/openvpn/test2-ALIVE.conf" )
         ) );
         oneDaemonEnabledPolicy.initialize();
 
@@ -119,8 +120,8 @@ public class OneDaemonEnabledPolicyTest extends InstrumentationTestCase
     public void test_getCurrent__with_two_alive_configs()
     {
         OneDaemonEnabledPolicy oneDaemonEnabledPolicy = newOneDaemonEnabledPolicy( Arrays.asList(
-                new File( "/sdcard/openvpn/test1-ALIVE.conf" ),
-                new File( "/sdcard/openvpn/test2-ALIVE.conf" )
+                newExistingFile( "/sdcard/openvpn/test1-ALIVE.conf" ),
+                newExistingFile( "/sdcard/openvpn/test2-ALIVE.conf" )
         ) );
         oneDaemonEnabledPolicy.initialize();
 
@@ -132,8 +133,8 @@ public class OneDaemonEnabledPolicyTest extends InstrumentationTestCase
     public void test_getCurrent__with_two_dead_configs()
     {
         OneDaemonEnabledPolicy oneDaemonEnabledPolicy = newOneDaemonEnabledPolicy( Arrays.asList(
-                new File( "/sdcard/openvpn/test1-DEAD.conf" ),
-                new File( "/sdcard/openvpn/test2-DEAD.conf" )
+                newExistingFile( "/sdcard/openvpn/test1-DEAD.conf" ),
+                newExistingFile( "/sdcard/openvpn/test2-DEAD.conf" )
         ) );
         oneDaemonEnabledPolicy.initialize();
 
@@ -144,40 +145,80 @@ public class OneDaemonEnabledPolicyTest extends InstrumentationTestCase
     public void test_init__with_two_alive_configs_disables_preferences()
     {
         OneDaemonEnabledPolicy oneDaemonEnabledPolicy = newOneDaemonEnabledPolicy( Arrays.asList(
-                new File( "/sdcard/openvpn/test1-ALIVE.conf" ),
-                new File( "/sdcard/openvpn/test2-ALIVE.conf" )
+                newExistingFile( "/sdcard/openvpn/test1-ALIVE.conf" ),
+                newExistingFile( "/sdcard/openvpn/test2-ALIVE.conf" )
         ) );
 
-        assertTrue( sharedPreferences.getBoolean( intendedStateOf( new File( "/sdcard/openvpn/test1-ALIVE.conf" ) ), false ) );
-        assertTrue( sharedPreferences.getBoolean( intendedStateOf( new File( "/sdcard/openvpn/test2-ALIVE.conf" ) ), false ) );
+        assertTrue( sharedPreferences.getBoolean( intendedStateOf( newExistingFile( "/sdcard/openvpn/test1-ALIVE.conf" ) ), false ) );
+        assertTrue( sharedPreferences.getBoolean( intendedStateOf( newExistingFile( "/sdcard/openvpn/test2-ALIVE.conf" ) ), false ) );
 
         oneDaemonEnabledPolicy.initialize();
 
-        assertFalse( sharedPreferences.getBoolean( intendedStateOf( new File( "/sdcard/openvpn/test1-ALIVE.conf" ) ), false ) );
-        assertFalse( sharedPreferences.getBoolean( intendedStateOf( new File( "/sdcard/openvpn/test2-ALIVE.conf" ) ), false ) );
+        assertFalse( sharedPreferences.getBoolean( intendedStateOf( newExistingFile( "/sdcard/openvpn/test1-ALIVE.conf" ) ), false ) );
+        assertFalse( sharedPreferences.getBoolean( intendedStateOf( newExistingFile( "/sdcard/openvpn/test2-ALIVE.conf" ) ), false ) );
     }
 
     public void test_init__with_alive_dead_alive_configs_stops_daemons()
     {
         OneDaemonEnabledPolicy oneDaemonEnabledPolicy = newOneDaemonEnabledPolicy( Arrays.asList(
-                new File( "/sdcard/openvpn/test1-ALIVE.conf" ),
-                new File( "/sdcard/openvpn/test2-DEAD.conf" ),
-                new File( "/sdcard/openvpn/test3-ALIVE.conf" )
+                newExistingFile( "/sdcard/openvpn/test1-ALIVE.conf" ),
+                newExistingFile( "/sdcard/openvpn/test2-DEAD.conf" ),
+                newExistingFile( "/sdcard/openvpn/test3-ALIVE.conf" )
         ) );
 
-        assertTrue( sharedPreferences.getBoolean( intendedStateOf( new File( "/sdcard/openvpn/test1-ALIVE.conf" ) ), false ) );
-        assertFalse( sharedPreferences.getBoolean( intendedStateOf( new File( "/sdcard/openvpn/test2-DEAD.conf" ) ), false ) );
-        assertTrue( sharedPreferences.getBoolean( intendedStateOf( new File( "/sdcard/openvpn/test3-ALIVE.conf" ) ), false ) );
+        assertTrue( sharedPreferences.getBoolean( intendedStateOf( newExistingFile( "/sdcard/openvpn/test1-ALIVE.conf" ) ), false ) );
+        assertFalse( sharedPreferences.getBoolean( intendedStateOf( newExistingFile( "/sdcard/openvpn/test2-DEAD.conf" ) ), false ) );
+        assertTrue( sharedPreferences.getBoolean( intendedStateOf( newExistingFile( "/sdcard/openvpn/test3-ALIVE.conf" ) ), false ) );
 
         oneDaemonEnabledPolicy.initialize();
 
-        assertFalse( sharedPreferences.getBoolean( intendedStateOf( new File( "/sdcard/openvpn/test1-ALIVE.conf" ) ), false ) );
-        assertFalse( sharedPreferences.getBoolean( intendedStateOf( new File( "/sdcard/openvpn/test2-DEAD.conf" ) ), false ) );
-        assertFalse( sharedPreferences.getBoolean( intendedStateOf( new File( "/sdcard/openvpn/test3-ALIVE.conf" ) ), false ) );
+        assertFalse( sharedPreferences.getBoolean( intendedStateOf( newExistingFile( "/sdcard/openvpn/test1-ALIVE.conf" ) ), false ) );
+        assertFalse( sharedPreferences.getBoolean( intendedStateOf( newExistingFile( "/sdcard/openvpn/test2-DEAD.conf" ) ), false ) );
+        assertFalse( sharedPreferences.getBoolean( intendedStateOf( newExistingFile( "/sdcard/openvpn/test3-ALIVE.conf" ) ), false ) );
     }
 
     private String intendedStateOf(File config)
     {
         return Preferences.KEY_CONFIG_INTENDED_STATE( config );
+    }
+
+    public void test_disables_enabled_config_when_file_does_not_exist()
+    {
+        OneDaemonEnabledPolicy oneDaemonEnabledPolicy = newOneDaemonEnabledPolicy( Arrays.asList(
+                newDeletedFile( "/sdcard/openvpn/test1-ALIVE.conf" )
+        ) );
+
+        assertTrue( sharedPreferences.getBoolean( intendedStateOf( newExistingFile( "/sdcard/openvpn/test1-ALIVE.conf" ) ), false ) );
+
+        oneDaemonEnabledPolicy.initialize();
+
+        assertFalse( sharedPreferences.getBoolean( intendedStateOf( newExistingFile( "/sdcard/openvpn/test1-ALIVE.conf" ) ), false ) );
+        assertFalse( oneDaemonEnabledPolicy.hasEnabledConfig() );
+    }
+
+    private class FakeFile extends File {
+
+        private final boolean exists;
+
+        public FakeFile(String path, boolean exists)
+        {
+            super( path );
+            this.exists = exists;
+        }
+
+        @Override
+        public boolean exists()
+        {
+            return exists;
+        }
+    }
+    private File newExistingFile(String path)
+    {
+        return new FakeFile( path, true );
+    }
+
+    private File newDeletedFile(String path)
+    {
+        return new FakeFile( path, false );
     }
 }
