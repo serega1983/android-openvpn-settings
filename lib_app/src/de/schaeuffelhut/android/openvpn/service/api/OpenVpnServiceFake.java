@@ -27,6 +27,10 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
 
+import static de.schaeuffelhut.android.openvpn.service.api.OpenVpnDaemonState.ENABLED;
+import static de.schaeuffelhut.android.openvpn.service.api.OpenVpnNetworkState.*;
+import static de.schaeuffelhut.android.openvpn.service.api.OpenVpnPasswordRequest.NONE;
+
 /**
  * @author Friedrich Schäuffelhut
  * @since 2012-10-27
@@ -42,17 +46,17 @@ public class OpenVpnServiceFake extends Service
     private final IOpenVpnService.Stub mBinder = new IOpenVpnService.Stub()
     {
         OpenVpnState[] states = new OpenVpnState[]{
-                new OpenVpnState.Started( OpenVpnDaemonState.ENABLED, OpenVpnNetworkState.CONNECTING, "USA3", "", 0, 0, 0 ),
-                new OpenVpnState.Started( OpenVpnDaemonState.ENABLED, OpenVpnNetworkState.WAIT, "USA3", "", 0, 0, 0 ),
-                new OpenVpnState.Started( OpenVpnDaemonState.ENABLED, OpenVpnNetworkState.AUTH, "USA3", "", 0, 0, 0 ),
-                new OpenVpnState.Started( OpenVpnDaemonState.ENABLED, OpenVpnNetworkState.GET_CONFIG, "USA3", "", 0, 0, 0 ),
-                new OpenVpnState.Started( OpenVpnDaemonState.ENABLED, OpenVpnNetworkState.ASSIGN_IP, "USA3", "192.168.1.1", 0, 0, 0 ),
-                new OpenVpnState.Started( OpenVpnDaemonState.ENABLED, OpenVpnNetworkState.ADD_ROUTES, "USA3", "192.168.1.1", 0, 0, 0 ),
-                new OpenVpnState.Started( OpenVpnDaemonState.ENABLED, OpenVpnNetworkState.CONNECTED, "USA3", "192.168.1.1", 10, 0, 1 ),
-                new OpenVpnState.Started( OpenVpnDaemonState.ENABLED, OpenVpnNetworkState.CONNECTED, "USA3", "192.168.1.1", 20, 10248, 2 ),
-                new OpenVpnState.Started( OpenVpnDaemonState.ENABLED, OpenVpnNetworkState.CONNECTED, "USA3", "192.168.1.1", 1050, 29452, 3 ),
-                new OpenVpnState.Started( OpenVpnDaemonState.ENABLED, OpenVpnNetworkState.RECONNECTING, "USA3", "", 1050, 29452, 0 ),
-                new OpenVpnState.Started( OpenVpnDaemonState.ENABLED, OpenVpnNetworkState.EXITING, "USA3", "", 1050, 29452, 0 ),
+                new OpenVpnState.Started( ENABLED, CONNECTING,   NONE, "USA3", "", 0, 0, 0 ),
+                new OpenVpnState.Started( ENABLED, WAIT,         NONE, "USA3", "", 0, 0, 0 ),
+                new OpenVpnState.Started( ENABLED, AUTH,         NONE, "USA3", "", 0, 0, 0 ),
+                new OpenVpnState.Started( ENABLED, GET_CONFIG,   NONE, "USA3", "", 0, 0, 0 ),
+                new OpenVpnState.Started( ENABLED, ASSIGN_IP,    NONE, "USA3", "192.168.1.1", 0, 0, 0 ),
+                new OpenVpnState.Started( ENABLED, ADD_ROUTES,   NONE, "USA3", "192.168.1.1", 0, 0, 0 ),
+                new OpenVpnState.Started( ENABLED, CONNECTED,    NONE, "USA3", "192.168.1.1", 10, 0, 1 ),
+                new OpenVpnState.Started( ENABLED, CONNECTED,    NONE, "USA3", "192.168.1.1", 20, 10248, 2 ),
+                new OpenVpnState.Started( ENABLED, CONNECTED,    NONE, "USA3", "192.168.1.1", 1050, 29452, 3 ),
+                new OpenVpnState.Started( ENABLED, RECONNECTING, NONE, "USA3", "", 1050, 29452, 0 ),
+                new OpenVpnState.Started( ENABLED, EXITING,      NONE, "USA3", "", 1050, 29452, 0 ),
         };
         int i = 0;
         Runnable r = new Runnable()

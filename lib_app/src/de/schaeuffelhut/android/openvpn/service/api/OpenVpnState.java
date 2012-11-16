@@ -40,6 +40,7 @@ public abstract class OpenVpnState implements Parcelable
 
         return new Started(
                 daemonState, OpenVpnNetworkState.values()[networkStateIntent.getIntExtra( "network-state", 0 )],
+                OpenVpnPasswordRequest.NONE, //TODO: implement OpenVpnPasswordRequest.NONE
                 networkStateIntent.getStringExtra( "config" ),
                 networkStateIntent.getStringExtra( "network-localip" ),
                 0, 0, 0
@@ -55,6 +56,7 @@ public abstract class OpenVpnState implements Parcelable
     public abstract boolean isStarted();
     public abstract OpenVpnDaemonState getDaemonState();
     public abstract OpenVpnNetworkState getNetworkState();
+    public abstract OpenVpnPasswordRequest getPasswordRequest();
     public abstract String  getConnectedTo();
     public abstract String  getIp();
     public abstract long getBytesSent();
@@ -66,6 +68,7 @@ public abstract class OpenVpnState implements Parcelable
     {
         private final OpenVpnDaemonState daemonState;
         private final OpenVpnNetworkState networkState;
+        private final OpenVpnPasswordRequest passwordRequest;
         private final String connectedTo;
         private final String ip;
         private final long bytesSent;
@@ -77,6 +80,7 @@ public abstract class OpenVpnState implements Parcelable
         {
             this.daemonState = OpenVpnDaemonState.UNKNOWN;
             this.networkState = OpenVpnNetworkState.UNKNOWN;
+            this.passwordRequest = OpenVpnPasswordRequest.NONE;
             this.connectedTo = "";
             this.ip = "";
             this.bytesSent = 0;
@@ -84,10 +88,11 @@ public abstract class OpenVpnState implements Parcelable
             this.contectedSeconds = 0;
         }
 
-        Started(OpenVpnDaemonState daemonState, OpenVpnNetworkState networkState, String connectedTo, String ip, long bytesSent, long bytesReceived, int connectedSeconds)
+        Started(OpenVpnDaemonState daemonState, OpenVpnNetworkState networkState, OpenVpnPasswordRequest passwordRequest, String connectedTo, String ip, long bytesSent, long bytesReceived, int connectedSeconds)
         {
             this.daemonState = daemonState;
             this.networkState = networkState;
+            this.passwordRequest = passwordRequest;
             this.connectedTo = connectedTo;
             this.ip = ip;
             this.bytesSent = bytesSent;
@@ -100,6 +105,7 @@ public abstract class OpenVpnState implements Parcelable
             this(
                     (OpenVpnDaemonState)in.readParcelable( OpenVpnNetworkState.class.getClassLoader() ), // state
                     (OpenVpnNetworkState)in.readParcelable( OpenVpnNetworkState.class.getClassLoader() ), // state
+                    (OpenVpnPasswordRequest)in.readParcelable( OpenVpnPasswordRequest.class.getClassLoader() ), // state
                     in.readString(), // connected to
                     in.readString(), // ip
                     in.readLong(), // bytes sent
@@ -124,6 +130,12 @@ public abstract class OpenVpnState implements Parcelable
         public OpenVpnNetworkState getNetworkState()
         {
             return networkState;
+        }
+
+        @Override
+        public OpenVpnPasswordRequest getPasswordRequest()
+        {
+            return passwordRequest;
         }
 
         @Override
@@ -161,6 +173,7 @@ public abstract class OpenVpnState implements Parcelable
             parcel.writeByte( TYPE_STARTED_VERSION_1 );
             parcel.writeParcelable( daemonState, 0 );
             parcel.writeParcelable( networkState, 0 );
+            parcel.writeParcelable( passwordRequest, 0 );
             parcel.writeString( connectedTo );
             parcel.writeString( ip );
             parcel.writeLong( bytesSent );
@@ -194,6 +207,12 @@ public abstract class OpenVpnState implements Parcelable
 
         @Override
         public OpenVpnNetworkState getNetworkState()
+        {
+            throw new IllegalStateException( "Service is stopped" );
+        }
+
+        @Override
+        public OpenVpnPasswordRequest getPasswordRequest()
         {
             throw new IllegalStateException( "Service is stopped" );
         }
