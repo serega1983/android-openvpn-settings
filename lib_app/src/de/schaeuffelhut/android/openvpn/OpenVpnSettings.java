@@ -33,12 +33,10 @@ import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import com.bugsense.trace.BugSenseHandler;
-import de.schaeuffelhut.android.openvpn.lib.app.BuildConfig;
 import de.schaeuffelhut.android.openvpn.lib.app.R;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnServiceImpl;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnConfig;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnServiceWrapper;
-import de.schaeuffelhut.android.openvpn.services.OpenVpnService;
 import de.schaeuffelhut.android.openvpn.setup.prerequisites.PrerequisitesActivity;
 import de.schaeuffelhut.android.openvpn.setup.prerequisites.ProbePrerequisites;
 import de.schaeuffelhut.android.openvpn.tun.ShareTunActivity;
@@ -205,11 +203,7 @@ public class OpenVpnSettings extends PreferenceActivity
 
     }
 
-    private void initToggles() {
-        initToggles( Preferences.getConfigDir( this, PreferenceManager.getDefaultSharedPreferences(this) ) );
-    }
-
-    private void initToggles(File configDir)
+    private void initToggles()
 	{
 		for(DaemonEnabler daemonEnabler : mDaemonEnablers )
 			daemonEnabler.pause();
@@ -218,9 +212,7 @@ public class OpenVpnSettings extends PreferenceActivity
 		PreferenceCategory configurations = (PreferenceCategory) findPreference(Preferences.KEY_OPENVPN_CONFIGURATIONS);
 		configurations.removeAll();
 
-        initPluginToggles( configDir, configurations );
-
-        for ( File config : Preferences.configs(configDir) )
+        for ( File config : Preferences.listExistingConfigs( this ) )
 		{
 			ConfigFilePreference pref = new ConfigFilePreference( this, mOpenVpnService, config );
 			configurations.addPreference(pref);
@@ -235,28 +227,6 @@ public class OpenVpnSettings extends PreferenceActivity
 			pref.setSummary( "Please copy your *.conf, *.ovpn, certificates, etc to\n" + Preferences.getExternalStorage(PreferenceManager.getDefaultSharedPreferences(this)) );
 			configurations.addPreference( pref );
 		}
-    }
-
-    private void initPluginToggles(File configDir, PreferenceCategory configurations)
-    {
-        if ( !BuildConfig.DEBUG )
-            return;
-
-        //TODO: add a toggle for an external config, provided by a plugin.
-        if (mOpenVpnService.getStatus().isStarted())
-        {
-            Intent intent = registerReceiver( null, new IntentFilter( Intents.DAEMON_STATE_CHANGED ) );
-            if (intent != null)
-            {
-                File config = new File( intent.getStringExtra( Intents.EXTRA_CONFIG ) );
-                if (!config.getAbsolutePath().startsWith( configDir.getAbsolutePath() ))
-                {
-                    ConfigFilePreference pref = new ConfigFilePreference( this, mOpenVpnService, config );
-                    configurations.addPreference( pref );
-                    mDaemonEnablers.add( pref.mDaemonEnabler );
-                }
-            }
-        }
     }
 
 

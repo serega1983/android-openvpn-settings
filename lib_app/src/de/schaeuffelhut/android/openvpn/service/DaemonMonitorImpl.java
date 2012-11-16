@@ -353,7 +353,7 @@ final class DaemonMonitorImpl implements DaemonMonitor
 
     public void switchToIntendedState()
     {
-        if ( mPreferences2.getIntendedState() )
+        if ( mPreferences2.getIntendedState() && mConfigFile.exists() )
             start();
         else
             stop();
