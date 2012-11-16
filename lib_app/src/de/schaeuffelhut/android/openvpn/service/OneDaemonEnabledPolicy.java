@@ -63,8 +63,19 @@ class OneDaemonEnabledPolicy
 
     public void initialize()
     {
+        disableVanishedConfigs();
+
         if (hasMoreThanOneEnabledConfigs())
             disableConfigs();
+    }
+
+    private void disableVanishedConfigs()
+    {
+        SharedPreferences.Editor edit = sharedPreferences.edit();
+        for (File config : collectEnabledConfigs())
+            if ( !config.exists() )
+                edit.putBoolean( intendedStateOf( config ), false );
+        edit.commit();
     }
 
     public boolean hasEnabledConfig()
