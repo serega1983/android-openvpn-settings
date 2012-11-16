@@ -358,7 +358,7 @@ public class OpenVpnServiceImpl extends Service
     // hook to be overwritten in unit test
     protected List<File> listConfigs()
     {
-        return Preferences.configs( this );
+        return Preferences.listKnownConfigs( this );
     }
 
 

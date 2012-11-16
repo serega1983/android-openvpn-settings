@@ -22,8 +22,7 @@
 package de.schaeuffelhut.android.openvpn;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 import de.schaeuffelhut.android.openvpn.tun.TunPreferences;
 import org.apache.commons.io.FilenameUtils;
@@ -365,10 +364,26 @@ public final class Preferences {
     }
 
 
-    public final static ArrayList<File> configs(Context context)
+    public final static ArrayList<File> listExistingConfigs(Context context)
 	{
-		return configs(getConfigDir( context, PreferenceManager.getDefaultSharedPreferences(context) ));
-	}
+        ArrayList<File> configs = listKnownConfigs( context );
+        for( Iterator<File> it = configs.iterator(); it.hasNext(); )
+            if ( !it.next().exists() )
+                it.remove();
+        return configs;
+    }
+    public final static ArrayList<File> listKnownConfigs(Context context)
+	{
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences( context );
+        HashSet<File> configs = new HashSet<File>();
+        for (String key : preferences.getAll().keySet())
+            if (isConfigKey( key ) )
+                configs.add( configOf( key ) );
+        configs.addAll( configs( getConfigDir( context, preferences ) ) );
+        ArrayList<File> sortedConfigs = new ArrayList<File>( configs );
+        Collections.sort( sortedConfigs );
+        return sortedConfigs;
+    }
 	
 	public final static ArrayList<File> configs(File configDir)
 	{
