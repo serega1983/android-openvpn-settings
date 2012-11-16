@@ -73,6 +73,19 @@ public class OpenVpnStateStoppedTest extends OpenVpnStateTestBase<OpenVpnState.S
         }
     }
 
+    public void test_getPasswordRequest()
+    {
+        try
+        {
+            createOpenVpnState().getPasswordRequest();
+            fail( "IllegalStateException expected" );
+        }
+        catch (IllegalStateException e)
+        {
+            assertEquals( "Service is stopped", e.getMessage() );
+        }
+    }
+
     public void test_getConnectedTo()
     {
         try
