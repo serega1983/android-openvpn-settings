@@ -27,6 +27,7 @@ import java.io.IOException;
 import android.util.Log;
 import android.widget.Toast;
 import de.schaeuffelhut.android.openvpn.IocContext;
+import de.schaeuffelhut.android.openvpn.service.api.OpenVpnPasswordRequest;
 import de.schaeuffelhut.android.openvpn.tun.TunPreferences;
 import de.schaeuffelhut.android.openvpn.util.Preconditions;
 import de.schaeuffelhut.android.openvpn.util.Shell;
@@ -356,5 +357,18 @@ final class DaemonMonitorImpl implements DaemonMonitor
             start();
         else
             stop();
+    }
+
+    public OpenVpnPasswordRequest getPasswordRequest()
+    {
+        if ( !isAlive() )
+        {
+            Log.w( mTagDaemonMonitor, "Can't query OpenVpnPasswordRequest, daemon is not running!" );
+            return OpenVpnPasswordRequest.NONE;
+        }
+        else
+        {
+            return mManagementThread.getPasswordRequest();
+        }
     }
 }

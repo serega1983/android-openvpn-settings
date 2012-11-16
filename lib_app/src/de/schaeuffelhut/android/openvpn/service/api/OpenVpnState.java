@@ -24,6 +24,13 @@ public abstract class OpenVpnState implements Parcelable
     // TODO: either write test or remove this method
     public static OpenVpnState fromStickyBroadcast(Context context)
     {
+        return fromStickyBroadcast( context, OpenVpnPasswordRequest.NONE );
+    }
+
+    @Deprecated
+    // TODO: either write test or remove this method
+    public static OpenVpnState fromStickyBroadcast(Context context, OpenVpnPasswordRequest passwordRequest)
+    {
         Intent daemonStateIntent = context.registerReceiver( null, new IntentFilter( "de.schaeuffelhut.android.openvpn.Intents.DAEMON_STATE_CHANGED" ) );
         if ( daemonStateIntent == null )
             return STOPPED_INSTANCE;
@@ -38,7 +45,7 @@ public abstract class OpenVpnState implements Parcelable
 
         return new Started(
                 daemonState, OpenVpnNetworkState.values()[networkStateIntent.getIntExtra( "network-state", 0 )],
-                OpenVpnPasswordRequest.NONE, //TODO: implement OpenVpnPasswordRequest.NONE
+                passwordRequest,
                 networkStateIntent.getStringExtra( "config" ),
                 networkStateIntent.getStringExtra( "network-localip" ),
                 networkStateIntent.getStringExtra( "network-remoteip" ),

@@ -22,6 +22,8 @@
 
 package de.schaeuffelhut.android.openvpn.service;
 
+import de.schaeuffelhut.android.openvpn.service.api.OpenVpnPasswordRequest;
+
 import java.io.File;
 
 /**
@@ -57,4 +59,6 @@ interface DaemonMonitor
     File getConfigFile();
 
     void switchToIntendedState();
+
+    OpenVpnPasswordRequest getPasswordRequest();
 }

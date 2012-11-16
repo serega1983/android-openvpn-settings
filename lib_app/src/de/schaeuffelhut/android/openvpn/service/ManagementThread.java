@@ -33,6 +33,8 @@ import java.util.concurrent.CountDownLatch;
 import android.text.TextUtils;
 import android.util.Log;
 import de.schaeuffelhut.android.openvpn.Intents;
+import de.schaeuffelhut.android.openvpn.service.api.OpenVpnPasswordRequest;
+import de.schaeuffelhut.android.openvpn.service.api.OpenVpnState;
 import de.schaeuffelhut.android.openvpn.util.DnsUtil;
 import de.schaeuffelhut.android.openvpn.util.Shell;
 import de.schaeuffelhut.android.openvpn.util.SystemPropertyUtil;
@@ -826,4 +828,14 @@ final class ManagementThread extends Thread
 				Shell.SU
 		).run();
 	}
+
+    OpenVpnPasswordRequest getPasswordRequest()
+    {
+        if ( mWaitingForPassphrase )
+            return OpenVpnPasswordRequest.PASSPHRASE;
+        if ( mWaitingForUserPassword )
+            return  OpenVpnPasswordRequest.CREDENTIALS;
+        return OpenVpnPasswordRequest.NONE;
+    }
+
 }
