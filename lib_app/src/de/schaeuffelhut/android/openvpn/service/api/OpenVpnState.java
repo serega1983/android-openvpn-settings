@@ -56,7 +56,7 @@ public abstract class OpenVpnState implements Parcelable
     public abstract OpenVpnNetworkState getNetworkState();
     public abstract OpenVpnPasswordRequest getPasswordRequest();
     public abstract String  getConnectedTo();
-    public abstract String  getIp();
+    public abstract String getLocalIp();
     public abstract long getBytesSent();
     public abstract long getBytesReceived();
     public abstract int getConnectedSeconds();
@@ -143,7 +143,7 @@ public abstract class OpenVpnState implements Parcelable
         }
 
         @Override
-        public String getIp()
+        public String getLocalIp()
         {
             return ip;
         }
@@ -222,7 +222,7 @@ public abstract class OpenVpnState implements Parcelable
         }
 
         @Override
-        public String getIp()
+        public String getLocalIp()
         {
             throw new IllegalStateException( "Service is stopped" );
         }

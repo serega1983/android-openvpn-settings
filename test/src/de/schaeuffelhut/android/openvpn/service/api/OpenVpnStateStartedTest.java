@@ -55,14 +55,14 @@ public class OpenVpnStateStartedTest extends OpenVpnStateTestBase<OpenVpnState.S
             assertEquals( "France", copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, "France", DUMMY_IP, DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getConnectedTo() );
     }
 
-    public void test_getIp()
+    public void test_getLocalIp()
     {
-        assertEquals( "192.168.1.1", copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, DUMMY_CONNECTED_TO, "192.168.1.1", DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getIp() );
+        assertEquals( "192.168.1.1", copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, DUMMY_CONNECTED_TO, "192.168.1.1", DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getLocalIp() );
     }
 
-    public void test_getIp_2()
+    public void test_getLocalIp_2()
     {
-        assertEquals( "172.24.2.5", copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, DUMMY_CONNECTED_TO, "172.24.2.5", DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getIp() );
+        assertEquals( "172.24.2.5", copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, DUMMY_CONNECTED_TO, "172.24.2.5", DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getLocalIp() );
     }
 
     public void test_getBytesSent_0()
@@ -129,7 +129,7 @@ public class OpenVpnStateStartedTest extends OpenVpnStateTestBase<OpenVpnState.S
         assertEquals( OpenVpnNetworkState.CONNECTED, copy.getNetworkState() );
         assertEquals( OpenVpnPasswordRequest.PASSPHRASE, copy.getPasswordRequest() );
         assertEquals( "Server", copy.getConnectedTo() );
-        assertEquals( "10.0.0.2", copy.getIp() );
+        assertEquals( "10.0.0.2", copy.getLocalIp() );
         assertEquals( 101, copy.getBytesSent() );
         assertEquals( 102, copy.getBytesReceived() );
         assertEquals( 60, copy.getConnectedSeconds() );

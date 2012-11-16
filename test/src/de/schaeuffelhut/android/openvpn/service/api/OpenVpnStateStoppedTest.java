@@ -92,11 +92,11 @@ public class OpenVpnStateStoppedTest extends OpenVpnStateTestBase<OpenVpnState.S
     }
 
 
-    public void test_getIp()
+    public void test_getLocalIp()
     {
         try
         {
-            createOpenVpnState().getIp();
+            createOpenVpnState().getLocalIp();
             fail( "IllegalStateException expected" );
         }
         catch (IllegalStateException e)
