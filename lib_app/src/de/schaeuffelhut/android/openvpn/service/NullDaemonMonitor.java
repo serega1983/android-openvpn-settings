@@ -22,6 +22,8 @@
 
 package de.schaeuffelhut.android.openvpn.service;
 
+import de.schaeuffelhut.android.openvpn.service.api.OpenVpnPasswordRequest;
+
 import java.io.File;
 
 /**
@@ -120,5 +122,10 @@ class NullDaemonMonitor implements DaemonMonitor
     public void switchToIntendedState()
     {
         //TODO: implement method stub
+    }
+
+    public OpenVpnPasswordRequest getPasswordRequest()
+    {
+        return OpenVpnPasswordRequest.NONE;
     }
 }

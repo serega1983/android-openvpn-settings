@@ -22,6 +22,7 @@
 
 package de.schaeuffelhut.android.openvpn.service;
 
+import de.schaeuffelhut.android.openvpn.service.api.OpenVpnPasswordRequest;
 import junit.framework.TestCase;
 
 import java.io.File;
@@ -40,5 +41,10 @@ public class NullDaemonMonitorTest extends TestCase
     public void test_getConfigFile()
     {
         assertEquals( new File( "/dev/null" ), NullDaemonMonitor.getInstance().getConfigFile() );
+    }
+
+    public void test_getPasswordRequest()
+    {
+        assertEquals( OpenVpnPasswordRequest.NONE, NullDaemonMonitor.getInstance().getPasswordRequest() );
     }
 }

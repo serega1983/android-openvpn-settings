@@ -163,13 +163,13 @@ public class OpenVpnServiceImpl extends Service
 
         public OpenVpnState getStatus() throws RemoteException
         {
-            return OpenVpnState.fromStickyBroadcast( OpenVpnServiceImpl.this );
+            return OpenVpnState.fromStickyBroadcast( OpenVpnServiceImpl.this, getCurrent().getPasswordRequest() );
         }
 
         public OpenVpnState getStatusFor(OpenVpnConfig config) throws RemoteException
         {
             if ( getCurrent().getConfigFile().equals( config.getFile() ) )
-                return OpenVpnState.fromStickyBroadcast( OpenVpnServiceImpl.this );
+                return OpenVpnState.fromStickyBroadcast( OpenVpnServiceImpl.this, getCurrent().getPasswordRequest() );
             else
                 return OpenVpnState.stopped();
         }
