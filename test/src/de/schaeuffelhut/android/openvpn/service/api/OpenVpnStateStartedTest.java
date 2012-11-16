@@ -30,69 +30,79 @@ public class OpenVpnStateStartedTest extends OpenVpnStateTestBase<OpenVpnState.S
     public void test_getDaemonState()
     {
         for(OpenVpnDaemonState state : OpenVpnDaemonState.values() )
-            assertEquals( state, copy( new OpenVpnState.Started( state, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, DUMMY_CONNECTED_TO, DUMMY_IP, DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getDaemonState() );
+            assertEquals( state, copy( new OpenVpnState.Started( state, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, DUMMY_CONNECTED_TO, DUMMY_IP, "11.22.33.44", DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getDaemonState() );
     }
 
     public void test_getNetworkState()
     {
         for(OpenVpnNetworkState state : OpenVpnNetworkState.values() )
-            assertEquals( state, copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, state, DUMMY_PASSWORD_REQUEST, DUMMY_CONNECTED_TO, DUMMY_IP, DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getNetworkState() );
+            assertEquals( state, copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, state, DUMMY_PASSWORD_REQUEST, DUMMY_CONNECTED_TO, DUMMY_IP, "11.22.33.44", DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getNetworkState() );
     }
 
     public void test_getPasswordRequest()
     {
         for(OpenVpnPasswordRequest state : OpenVpnPasswordRequest.values() )
-            assertEquals( state, copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, state, DUMMY_CONNECTED_TO, DUMMY_IP, DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getPasswordRequest() );
+            assertEquals( state, copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, state, DUMMY_CONNECTED_TO, DUMMY_IP, "11.22.33.44", DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getPasswordRequest() );
     }
 
     public void test_getConnectedTo_USA1()
     {
-            assertEquals( "USA1", copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, "USA1", DUMMY_IP, DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getConnectedTo() );
+            assertEquals( "USA1", copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, "USA1", DUMMY_IP, "11.22.33.44", DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getConnectedTo() );
     }
 
     public void test_getConnectedTo_France()
     {
-            assertEquals( "France", copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, "France", DUMMY_IP, DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getConnectedTo() );
+            assertEquals( "France", copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, "France", DUMMY_IP, "11.22.33.44", DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getConnectedTo() );
     }
 
     public void test_getLocalIp()
     {
-        assertEquals( "192.168.1.1", copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, DUMMY_CONNECTED_TO, "192.168.1.1", DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getLocalIp() );
+        assertEquals( "192.168.1.1", copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, DUMMY_CONNECTED_TO, "192.168.1.1", "11.22.33.44", DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getLocalIp() );
     }
 
     public void test_getLocalIp_2()
     {
-        assertEquals( "172.24.2.5", copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, DUMMY_CONNECTED_TO, "172.24.2.5", DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getLocalIp() );
+        assertEquals( "172.24.2.5", copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, DUMMY_CONNECTED_TO, "172.24.2.5", "11.22.33.44", DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getLocalIp() );
+    }
+
+    public void test_getRemoteIp()
+    {
+        assertEquals( "10.20.30.40", copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, DUMMY_CONNECTED_TO, "192.168.1.1", "10.20.30.40", DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getRemoteIp() );
+    }
+
+    public void test_getRemoteIp_2()
+    {
+        assertEquals( "11.22.33.44", copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, DUMMY_CONNECTED_TO, "172.24.2.5", "11.22.33.44", DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getRemoteIp() );
     }
 
     public void test_getBytesSent_0()
     {
-        assertEquals( 0, copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, DUMMY_CONNECTED_TO, "172.24.2.5", 0, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getBytesSent() );
+        assertEquals( 0, copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, DUMMY_CONNECTED_TO, "172.24.2.5", "11.22.33.44", 0, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getBytesSent() );
     }
 
     public void test_getBytesSent_87981534597980()
     {
-        assertEquals( 87981534597980L, copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, DUMMY_CONNECTED_TO, "172.24.2.5", 87981534597980L, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getBytesSent() );
+        assertEquals( 87981534597980L, copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, DUMMY_CONNECTED_TO, "172.24.2.5", "11.22.33.44", 87981534597980L, DUMMY_BYTES_RECEIVED, DUMMY_CONNECTED_SECONDS ) ).getBytesSent() );
     }
 
     public void test_getBytesReceived_0()
     {
-        assertEquals( 0, copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, DUMMY_CONNECTED_TO, "172.24.2.5", DUMMY_BYTES_SENT, 0, DUMMY_CONNECTED_SECONDS ) ).getBytesReceived() );
+        assertEquals( 0, copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, DUMMY_CONNECTED_TO, "172.24.2.5", "11.22.33.44", DUMMY_BYTES_SENT, 0, DUMMY_CONNECTED_SECONDS ) ).getBytesReceived() );
     }
 
     public void test_getBytesReceived_87981534597980()
     {
-        assertEquals( 87981534597980L, copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, DUMMY_CONNECTED_TO, "172.24.2.5", DUMMY_BYTES_SENT, 87981534597980L, DUMMY_CONNECTED_SECONDS ) ).getBytesReceived() );
+        assertEquals( 87981534597980L, copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, DUMMY_CONNECTED_TO, "172.24.2.5", "11.22.33.44", DUMMY_BYTES_SENT, 87981534597980L, DUMMY_CONNECTED_SECONDS ) ).getBytesReceived() );
     }
 
     public void test_getConnectedSeconds_0()
     {
-        assertEquals( 0, copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, DUMMY_CONNECTED_TO, "172.24.2.5", DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, 0 ) ).getConnectedSeconds() );
+        assertEquals( 0, copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, DUMMY_CONNECTED_TO, "172.24.2.5", "11.22.33.44", DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, 0 ) ).getConnectedSeconds() );
     }
 
     public void test_getConnectedSeconds_31536000()
     {
-        assertEquals( 31536000, copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, DUMMY_CONNECTED_TO, "172.24.2.5", DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, 31536000 ) ).getConnectedSeconds() );
+        assertEquals( 31536000, copy( new OpenVpnState.Started( DUMMY_DAEMON_STATE, DUMMY_NETWORK_STATE, DUMMY_PASSWORD_REQUEST, DUMMY_CONNECTED_TO, "172.24.2.5", "11.22.33.44", DUMMY_BYTES_SENT, DUMMY_BYTES_RECEIVED, 31536000 ) ).getConnectedSeconds() );
     }
 
 
@@ -117,6 +127,7 @@ public class OpenVpnStateStartedTest extends OpenVpnStateTestBase<OpenVpnState.S
         parcel.writeParcelable( OpenVpnPasswordRequest.PASSPHRASE, 0 );
         parcel.writeString( "Server" );
         parcel.writeString( "10.0.0.2" );
+        parcel.writeString( "11.22.33.44" );
         parcel.writeLong( 101 );
         parcel.writeLong( 102 );
         parcel.writeInt( 60 );
@@ -130,6 +141,7 @@ public class OpenVpnStateStartedTest extends OpenVpnStateTestBase<OpenVpnState.S
         assertEquals( OpenVpnPasswordRequest.PASSPHRASE, copy.getPasswordRequest() );
         assertEquals( "Server", copy.getConnectedTo() );
         assertEquals( "10.0.0.2", copy.getLocalIp() );
+        assertEquals( "11.22.33.44", copy.getRemoteIp() );
         assertEquals( 101, copy.getBytesSent() );
         assertEquals( 102, copy.getBytesReceived() );
         assertEquals( 60, copy.getConnectedSeconds() );
@@ -138,7 +150,7 @@ public class OpenVpnStateStartedTest extends OpenVpnStateTestBase<OpenVpnState.S
     public void test_write_TYPE_STARTED_VERSION_1()
     {
         Parcel parcel = Parcel.obtain();
-        new OpenVpnState.Started( DUMMY_DAEMON_STATE, OpenVpnNetworkState.CONNECTED, DUMMY_PASSWORD_REQUEST, "Server", "10.0.0.2", 101, 102, 60 ).writeToParcel( parcel, 0 );
+        new OpenVpnState.Started( DUMMY_DAEMON_STATE, OpenVpnNetworkState.CONNECTED, DUMMY_PASSWORD_REQUEST, "Server", "10.0.0.2", "11.22.33.44", 101, 102, 60 ).writeToParcel( parcel, 0 );
 
         parcel.setDataPosition(0);
 
@@ -148,6 +160,7 @@ public class OpenVpnStateStartedTest extends OpenVpnStateTestBase<OpenVpnState.S
         assertEquals( OpenVpnPasswordRequest.NONE, parcel.readParcelable( OpenVpnPasswordRequest.class.getClassLoader() ) );
         assertEquals( "Server", parcel.readString() );
         assertEquals( "10.0.0.2", parcel.readString() );
+        assertEquals( "11.22.33.44", parcel.readString() );
         assertEquals( 101, parcel.readLong() );
         assertEquals( 102, parcel.readLong() );
         assertEquals( 60, parcel.readInt() );

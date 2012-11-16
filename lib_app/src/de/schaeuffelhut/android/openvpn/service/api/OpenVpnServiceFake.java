@@ -46,17 +46,17 @@ public class OpenVpnServiceFake extends Service
     private final IOpenVpnService.Stub mBinder = new IOpenVpnService.Stub()
     {
         OpenVpnState[] states = new OpenVpnState[]{
-                new OpenVpnState.Started( ENABLED, CONNECTING,   NONE, "USA3", "", 0, 0, 0 ),
-                new OpenVpnState.Started( ENABLED, WAIT,         NONE, "USA3", "", 0, 0, 0 ),
-                new OpenVpnState.Started( ENABLED, AUTH,         NONE, "USA3", "", 0, 0, 0 ),
-                new OpenVpnState.Started( ENABLED, GET_CONFIG,   NONE, "USA3", "", 0, 0, 0 ),
-                new OpenVpnState.Started( ENABLED, ASSIGN_IP,    NONE, "USA3", "192.168.1.1", 0, 0, 0 ),
-                new OpenVpnState.Started( ENABLED, ADD_ROUTES,   NONE, "USA3", "192.168.1.1", 0, 0, 0 ),
-                new OpenVpnState.Started( ENABLED, CONNECTED,    NONE, "USA3", "192.168.1.1", 10, 0, 1 ),
-                new OpenVpnState.Started( ENABLED, CONNECTED,    NONE, "USA3", "192.168.1.1", 20, 10248, 2 ),
-                new OpenVpnState.Started( ENABLED, CONNECTED,    NONE, "USA3", "192.168.1.1", 1050, 29452, 3 ),
-                new OpenVpnState.Started( ENABLED, RECONNECTING, NONE, "USA3", "", 1050, 29452, 0 ),
-                new OpenVpnState.Started( ENABLED, EXITING,      NONE, "USA3", "", 1050, 29452, 0 ),
+                new OpenVpnState.Started( ENABLED, CONNECTING,   NONE, "USA3", "", "11.22.33.44", 0, 0, 0 ),
+                new OpenVpnState.Started( ENABLED, WAIT,         NONE, "USA3", "", "11.22.33.44", 0, 0, 0 ),
+                new OpenVpnState.Started( ENABLED, AUTH,         NONE, "USA3", "", "11.22.33.44", 0, 0, 0 ),
+                new OpenVpnState.Started( ENABLED, GET_CONFIG,   NONE, "USA3", "", "11.22.33.44", 0, 0, 0 ),
+                new OpenVpnState.Started( ENABLED, ASSIGN_IP,    NONE, "USA3", "192.168.1.1", "11.22.33.44", 0, 0, 0 ),
+                new OpenVpnState.Started( ENABLED, ADD_ROUTES,   NONE, "USA3", "192.168.1.1", "11.22.33.44", 0, 0, 0 ),
+                new OpenVpnState.Started( ENABLED, CONNECTED,    NONE, "USA3", "192.168.1.1", "11.22.33.44", 10, 0, 1 ),
+                new OpenVpnState.Started( ENABLED, CONNECTED,    NONE, "USA3", "192.168.1.1", "11.22.33.44", 20, 10248, 2 ),
+                new OpenVpnState.Started( ENABLED, CONNECTED,    NONE, "USA3", "192.168.1.1", "11.22.33.44", 1050, 29452, 3 ),
+                new OpenVpnState.Started( ENABLED, RECONNECTING, NONE, "USA3", "", "11.22.33.44", 1050, 29452, 0 ),
+                new OpenVpnState.Started( ENABLED, EXITING,      NONE, "USA3", "", "11.22.33.44", 1050, 29452, 0 ),
         };
         int i = 0;
         Runnable r = new Runnable()

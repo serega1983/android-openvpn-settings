@@ -41,6 +41,7 @@ public abstract class OpenVpnState implements Parcelable
                 OpenVpnPasswordRequest.NONE, //TODO: implement OpenVpnPasswordRequest.NONE
                 networkStateIntent.getStringExtra( "config" ),
                 networkStateIntent.getStringExtra( "network-localip" ),
+                networkStateIntent.getStringExtra( "network-remoteip" ),
                 0, 0, 0
         );
     }
@@ -57,6 +58,7 @@ public abstract class OpenVpnState implements Parcelable
     public abstract OpenVpnPasswordRequest getPasswordRequest();
     public abstract String  getConnectedTo();
     public abstract String getLocalIp();
+    public abstract String getRemoteIp();
     public abstract long getBytesSent();
     public abstract long getBytesReceived();
     public abstract int getConnectedSeconds();
@@ -68,7 +70,8 @@ public abstract class OpenVpnState implements Parcelable
         private final OpenVpnNetworkState networkState;
         private final OpenVpnPasswordRequest passwordRequest;
         private final String connectedTo;
-        private final String ip;
+        private final String localIp;
+        private final String remoteIp;
         private final long bytesSent;
         private final long bytesReceived;
         private final int contectedSeconds;
@@ -80,19 +83,21 @@ public abstract class OpenVpnState implements Parcelable
             this.networkState = OpenVpnNetworkState.UNKNOWN;
             this.passwordRequest = OpenVpnPasswordRequest.NONE;
             this.connectedTo = "";
-            this.ip = "";
+            this.localIp = "";
+            this.remoteIp = "";
             this.bytesSent = 0;
             this.bytesReceived = 0;
             this.contectedSeconds = 0;
         }
 
-        Started(OpenVpnDaemonState daemonState, OpenVpnNetworkState networkState, OpenVpnPasswordRequest passwordRequest, String connectedTo, String ip, long bytesSent, long bytesReceived, int connectedSeconds)
+        Started(OpenVpnDaemonState daemonState, OpenVpnNetworkState networkState, OpenVpnPasswordRequest passwordRequest, String connectedTo, String localIp, String remoteIp, long bytesSent, long bytesReceived, int connectedSeconds)
         {
             this.daemonState = daemonState;
             this.networkState = networkState;
             this.passwordRequest = passwordRequest;
             this.connectedTo = connectedTo;
-            this.ip = ip;
+            this.localIp = localIp;
+            this.remoteIp = remoteIp;
             this.bytesSent = bytesSent;
             this.bytesReceived = bytesReceived;
             this.contectedSeconds = connectedSeconds;
@@ -105,7 +110,8 @@ public abstract class OpenVpnState implements Parcelable
                     (OpenVpnNetworkState)in.readParcelable( OpenVpnNetworkState.class.getClassLoader() ), // state
                     (OpenVpnPasswordRequest)in.readParcelable( OpenVpnPasswordRequest.class.getClassLoader() ), // state
                     in.readString(), // connected to
-                    in.readString(), // ip
+                    in.readString(), // local IP
+                    in.readString(), // remote IP
                     in.readLong(), // bytes sent
                     in.readLong(), // bytes received
                     in.readInt() // connected seconds
@@ -145,7 +151,13 @@ public abstract class OpenVpnState implements Parcelable
         @Override
         public String getLocalIp()
         {
-            return ip;
+            return localIp;
+        }
+
+        @Override
+        public String getRemoteIp()
+        {
+            return remoteIp;
         }
 
         @Override
@@ -173,7 +185,8 @@ public abstract class OpenVpnState implements Parcelable
             parcel.writeParcelable( networkState, 0 );
             parcel.writeParcelable( passwordRequest, 0 );
             parcel.writeString( connectedTo );
-            parcel.writeString( ip );
+            parcel.writeString( localIp );
+            parcel.writeString( remoteIp );
             parcel.writeLong( bytesSent );
             parcel.writeLong( bytesReceived );
             parcel.writeInt( contectedSeconds );
@@ -223,6 +236,12 @@ public abstract class OpenVpnState implements Parcelable
 
         @Override
         public String getLocalIp()
+        {
+            throw new IllegalStateException( "Service is stopped" );
+        }
+
+        @Override
+        public String getRemoteIp()
         {
             throw new IllegalStateException( "Service is stopped" );
         }
