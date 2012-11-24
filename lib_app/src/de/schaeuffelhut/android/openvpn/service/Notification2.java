@@ -42,6 +42,8 @@ import java.io.File;
  */
 public class Notification2
 {
+    public static final ComponentName DEFAULT_ACTIVITY_FOR_PASSPHRASE_REQUEST = new ComponentName( "de.schaeuffelhut.android.openvpn", "de.schaeuffelhut.android.openvpn.EnterPassphrase" );
+    public static final ComponentName DEFAULT_ACTIVITY_FOR_CREDENTIALS_REQUEST = new ComponentName( "de.schaeuffelhut.android.openvpn", "de.schaeuffelhut.android.openvpn.EnterUserPassword" );
     private final OpenVpnServiceImpl mContext; //TODO: convert to ApplicationContext
     private final File mConfigFile;
     private final int mNotificationId;
