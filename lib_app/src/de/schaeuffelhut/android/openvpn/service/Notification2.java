@@ -23,10 +23,13 @@
 package de.schaeuffelhut.android.openvpn.service;
 
 import android.app.NotificationManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.widget.Toast;
+import de.schaeuffelhut.android.openvpn.EnterPassphrase;
+import de.schaeuffelhut.android.openvpn.EnterUserPassword;
 import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnDaemonState;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnNetworkState;
@@ -45,20 +48,28 @@ public class Notification2
     private final NotificationManager mNotificationManager;
     private final Handler mUiThreadHandler;
     private final OpenVpnStateListenerDispatcher listenerDispatcher;
+    private ComponentName activityForPassphraseRequest;
+    private ComponentName activityForCredentialsRequest;
 
     @Deprecated
-    public Notification2(OpenVpnServiceImpl mContext, File mConfigFile, int mNotificationId) {
-        this(mContext, mConfigFile, mNotificationId, new OpenVpnStateListenerDispatcher());
+    public Notification2(OpenVpnServiceImpl context, File configFile, int notificationId) {
+        this(context, configFile, notificationId, new OpenVpnStateListenerDispatcher(), new ComponentName( context, EnterPassphrase.class ), new ComponentName( context, EnterUserPassword.class ) );
     }
 
-    public Notification2(OpenVpnServiceImpl mContext, File mConfigFile, int mNotificationId, OpenVpnStateListenerDispatcher listenerDispatcher)
-    {
-        this.mContext = mContext;
-        this.mConfigFile = mConfigFile;
-        this.mNotificationId = mNotificationId;
-        this.mNotificationManager = (NotificationManager) mContext.getSystemService( Context.NOTIFICATION_SERVICE);
+    public Notification2(
+            OpenVpnServiceImpl context, File configFile, int notificationId,
+            OpenVpnStateListenerDispatcher listenerDispatcher,
+            ComponentName activityForPassphraseRequest,
+            ComponentName activityForCredentialsRequest
+    ) {
+        this.mContext = context;
+        this.mConfigFile = configFile;
+        this.mNotificationId = notificationId;
+        this.mNotificationManager = (NotificationManager) context.getSystemService( Context.NOTIFICATION_SERVICE);
         this.mUiThreadHandler = new Handler();
         this.listenerDispatcher = listenerDispatcher;
+        this.activityForPassphraseRequest = activityForPassphraseRequest;
+        this.activityForCredentialsRequest = activityForCredentialsRequest;
     }
 
 
@@ -97,13 +108,13 @@ public class Notification2
 
     void sendPassphraseRequired()
     {
-        Notifications.sendPassphraseRequired( mNotificationId, mContext, mNotificationManager, mConfigFile );
+        Notifications.sendPassphraseRequired( mNotificationId, mContext, mNotificationManager, mConfigFile, activityForPassphraseRequest );
         listenerDispatcher.onRequestPassphrase();
     }
 
     void sendUsernamePasswordRequired()
     {
-        Notifications.sendUsernamePasswordRequired( mNotificationId, mContext, mConfigFile, mNotificationManager );
+        Notifications.sendUsernamePasswordRequired( mNotificationId, mContext, mConfigFile, mNotificationManager, activityForCredentialsRequest );
         listenerDispatcher.onRequestCredentials();
     }
 

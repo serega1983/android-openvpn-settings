@@ -107,7 +107,7 @@ final class Notifications {
 		notificationManager.notify( id, notification);
 	}
 	
-	static void sendPassphraseRequired(int id, Context context, NotificationManager notificationManager, File configFile) {
+	static void sendPassphraseRequired(int id, Context context, NotificationManager notificationManager, File configFile, ComponentName component) {
 		Notification notification = new Notification(
 				R.drawable.vpn_disconnected_attention,
 				"Passphrase required",
@@ -117,7 +117,7 @@ final class Notifications {
 		notification.flags |= Notification.FLAG_ONGOING_EVENT;
 
 
-		Intent intent = new Intent(null, Uri.fromFile(configFile)).setComponent( new ComponentName( context, EnterPassphrase.class ) );
+		Intent intent = new Intent(null, Uri.fromFile(configFile)).setComponent( component );
 		
 		notification.setLatestEventInfo(
 				context,
@@ -136,7 +136,7 @@ final class Notifications {
         sendNeedPassword( context, intent );
     }
 
-    static void sendUsernamePasswordRequired(int id, Context context, File configFile, NotificationManager notificationManager) {
+    static void sendUsernamePasswordRequired(int id, Context context, File configFile, NotificationManager notificationManager, ComponentName component) {
 		Notification notification = new Notification(
 				R.drawable.vpn_disconnected_attention,
 				"Username/Password required",
@@ -145,7 +145,7 @@ final class Notifications {
 		notification.flags |= Notification.FLAG_NO_CLEAR;
 		notification.flags |= Notification.FLAG_ONGOING_EVENT;
 
-		Intent intent = new Intent(null, Uri.fromFile(configFile)). setComponent(new ComponentName(context, EnterUserPassword.class));
+		Intent intent = new Intent(null, Uri.fromFile(configFile)). setComponent( component );
 
 		notification.setLatestEventInfo(
 				context,

@@ -22,6 +22,10 @@
 
 package de.schaeuffelhut.android.openvpn.service;
 
+import android.content.ComponentName;
+import de.schaeuffelhut.android.openvpn.EnterPassphrase;
+import de.schaeuffelhut.android.openvpn.EnterUserPassword;
+
 import java.io.File;
 
 /**
@@ -42,7 +46,9 @@ class DaemonMonitorImplFactory implements DaemonMonitorFactory
     public DaemonMonitor createDaemonMonitorFor(File configFile)
     {
         Preferences2 preferences2 = new Preferences2( context, configFile );
-        Notification2 notification2 = new Notification2( context, configFile, preferences2.getNotificationId(), listenerDispatcher );
+        ComponentName activityForPassphraseRequest = new ComponentName( context, EnterPassphrase.class );
+        ComponentName activityForCredentialsRequest = new ComponentName( context, EnterUserPassword.class );
+        Notification2 notification2 = new Notification2( context, configFile, preferences2.getNotificationId(), listenerDispatcher, activityForPassphraseRequest, activityForCredentialsRequest );
         return new DaemonMonitorImpl( context, configFile, notification2, preferences2 );
     }
 
