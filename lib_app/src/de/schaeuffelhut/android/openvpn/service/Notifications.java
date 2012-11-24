@@ -26,6 +26,7 @@ import java.io.File;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -41,12 +42,12 @@ final class Notifications {
 	
 	private static final int SHARE_TUN_ID = 1000;
 
-    public static void notifyConnected(int id, Context context, NotificationManager notificationManager, File configFile)
+    static void notifyConnected(int id, Context context, NotificationManager notificationManager, File configFile)
 	{
 		notifyConnected(id, context, notificationManager, configFile, null);
 	}
 	
-	public static void notifyConnected(int id, Context context, NotificationManager notificationManager, File configFile, String msg) {
+	static void notifyConnected(int id, Context context, NotificationManager notificationManager, File configFile, String msg) {
 		Notification notification = new Notification(
 				R.drawable.vpn_connected,
 				Preferences.getConfigName( context, configFile ) + ": Connected",
@@ -73,13 +74,13 @@ final class Notifications {
 		notificationManager.notify( id, notification);
 	}
 	
-	public static void notifyBytes(int id, Context context, NotificationManager notificationManager, File configFile, String msg) {
+	static void notifyBytes(int id, Context context, NotificationManager notificationManager, File configFile, String msg) {
 		// To update latestEventInfo only, exactly the same notification type must be used. 
 		// Otherwise the user will get permanent notifications in his title-bar
 		notifyConnected(id, context, notificationManager, configFile, msg);
 	}
 
-	public static void notifyDisconnected(int id, Context context, NotificationManager notificationManager, File configFile, String msg) {
+	static void notifyDisconnected(int id, Context context, NotificationManager notificationManager, File configFile, String msg) {
 		Notification notification = new Notification(
 				R.drawable.vpn_disconnected,
 				Preferences.getConfigName(context, configFile) +": " + msg,
@@ -106,7 +107,7 @@ final class Notifications {
 		notificationManager.notify( id, notification);
 	}
 	
-	public static void sendPassphraseRequired(int id, Context context, NotificationManager notificationManager, File configFile) {
+	static void sendPassphraseRequired(int id, Context context, NotificationManager notificationManager, File configFile) {
 		Notification notification = new Notification(
 				R.drawable.vpn_disconnected_attention,
 				"Passphrase required",
@@ -114,8 +115,9 @@ final class Notifications {
 		);
 		notification.flags |= Notification.FLAG_NO_CLEAR;
 		notification.flags |= Notification.FLAG_ONGOING_EVENT;
-		
-		Intent intent = new Intent(null, Uri.fromFile(configFile), context, EnterPassphrase.class );
+
+
+		Intent intent = new Intent(null, Uri.fromFile(configFile)).setComponent( new ComponentName( context, EnterPassphrase.class ) );
 		
 		notification.setLatestEventInfo(
 				context,
@@ -134,7 +136,7 @@ final class Notifications {
         sendNeedPassword( context, intent );
     }
 
-    public static void sendUsernamePasswordRequired(int id, Context context, File configFile, NotificationManager notificationManager) {
+    static void sendUsernamePasswordRequired(int id, Context context, File configFile, NotificationManager notificationManager) {
 		Notification notification = new Notification(
 				R.drawable.vpn_disconnected_attention,
 				"Username/Password required",
@@ -143,7 +145,7 @@ final class Notifications {
 		notification.flags |= Notification.FLAG_NO_CLEAR;
 		notification.flags |= Notification.FLAG_ONGOING_EVENT;
 
-		Intent intent = new Intent(null, Uri.fromFile(configFile), context, EnterUserPassword.class );
+		Intent intent = new Intent(null, Uri.fromFile(configFile)). setComponent(new ComponentName(context, EnterUserPassword.class));
 
 		notification.setLatestEventInfo(
 				context,
@@ -171,7 +173,7 @@ final class Notifications {
         context.sendBroadcast( needPassword );
     }
 
-    public static void cancel(int id, Context context)
+    static void cancel(int id, Context context)
 	{
 		getNotificationManager(context).cancel( id );
 	}
@@ -182,7 +184,7 @@ final class Notifications {
 	}
 	
 	
-	public static void sendShareTunModule(Context context, NotificationManager notificationManager) {
+	static void sendShareTunModule(Context context, NotificationManager notificationManager) {
 		Notification notification = new Notification(
 				R.drawable.ic_share_tun,
 				"Please share your tun module",
@@ -209,7 +211,7 @@ final class Notifications {
 		notificationManager.notify( SHARE_TUN_ID, notification);
 	}
 
-	public static void cancelShareTunModule(Context context) {
+	static void cancelShareTunModule(Context context) {
 		cancel( SHARE_TUN_ID, context);
 	}
 }
