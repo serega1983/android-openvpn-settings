@@ -22,6 +22,7 @@
 
 package de.schaeuffelhut.android.openvpn.service;
 
+import android.content.Context;
 import android.preference.PreferenceManager;
 import de.schaeuffelhut.android.openvpn.Preferences;
 
@@ -33,10 +34,10 @@ import java.io.File;
  */
 class Preferences2
 {
-    public final OpenVpnServiceImpl mContext;
+    public final Context mContext;
     public final File mConfigFile;
 
-    public Preferences2(OpenVpnServiceImpl context, File configFile)
+    public Preferences2(Context context, File configFile)
     {
         this.mContext = context;
         this.mConfigFile = configFile;
