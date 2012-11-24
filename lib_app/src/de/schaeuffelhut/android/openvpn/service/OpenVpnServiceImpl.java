@@ -117,7 +117,6 @@ public class OpenVpnServiceImpl extends Service
 	}
 
 	
-	@Deprecated //TODO: aidl?
     public final class ServiceBinder extends IOpenVpnService.Stub
     {
         private Handler handler = new Handler( Looper.getMainLooper() );
