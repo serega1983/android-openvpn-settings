@@ -133,7 +133,7 @@ public class OpenVpnServiceImpl extends Service
             {
                 public void run()
                 {
-                    daemonStart( config.getFile() );
+                    daemonStart( config );
                 }
             } );
         }
@@ -231,7 +231,7 @@ public class OpenVpnServiceImpl extends Service
         if ( !intent.hasExtra( Intents.EXTRA_CONFIG ) )
             return;
         if ( Intents.START_DAEMON.equals( intent.getAction() ) )
-            daemonStart( new File( intent.getStringExtra( Intents.EXTRA_CONFIG ) ) );
+            daemonStart( new OpenVpnConfig( new File( intent.getStringExtra( Intents.EXTRA_CONFIG ) ) ) );
         else if ( Intents.STOP_DAEMON.equals( intent.getAction() ) )
             daemonStop( new File( intent.getStringExtra( Intents.EXTRA_CONFIG ) ) );
     }
@@ -395,9 +395,9 @@ public class OpenVpnServiceImpl extends Service
      * ========================================
      */
 
-	final synchronized void daemonStart(File config)
+	final synchronized void daemonStart(OpenVpnConfig config)
 	{
-        if ( getCurrent().isAlive() && !getCurrent().getConfigFile().equals( config ) )
+        if ( getCurrent().isAlive() && !getCurrent().getConfigFile().equals( config.getFile() ) )
         {
             Log.i( TAG, "Stopping current daemon " + getCurrent().getConfigFile() );
             getCurrent().stop();
@@ -410,19 +410,19 @@ public class OpenVpnServiceImpl extends Service
             }
         }
 
-		if ( isDaemonStarted(config) )
+		if ( isDaemonStarted(config.getFile()) )
 		{
 			Log.i( TAG, config + " is already running" );
 		}
-		else if ( Preferences.getVpnDnsEnabled(this, config) && isVpnDnsActive() )
+		else if ( Preferences.getVpnDnsEnabled(this, config.getFile()) && isVpnDnsActive() )
 		{
 			Log.i( TAG, config + " only one VPN DNS may be active at a time, aborting" );
 			Toast.makeText( this , "VPN DNS is only supported in one tunnel!", Toast.LENGTH_LONG).show();
-            newNotification2( config ).daemonStateChangedToDisabled();
+            newNotification2( config.getFile() ).daemonStateChangedToDisabled();
 		}
 		else
 		{
-			DaemonMonitor daemonMonitor = newDaemonMonitor( config );
+			DaemonMonitor daemonMonitor = newDaemonMonitor( config.getFile() );
             setCurrent( daemonMonitor );
             daemonMonitor.start();
 		}

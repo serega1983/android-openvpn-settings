@@ -26,6 +26,7 @@ import android.content.Intent;
 import android.preference.PreferenceManager;
 import android.test.ServiceTestCase;
 import de.schaeuffelhut.android.openvpn.Preferences;
+import de.schaeuffelhut.android.openvpn.service.api.OpenVpnConfig;
 import junit.framework.Assert;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -196,19 +197,19 @@ public class OpenVpnServiceImplTest extends ServiceTestCase<OpenVpnServiceImplTe
 
     public void test_daemonStart() throws InterruptedException
     {
-        File configFile = new File( "/sdcard/openvpn/test-" + System.currentTimeMillis() + ".conf" );
+        OpenVpnConfig configFile = new OpenVpnConfig( new File( "/sdcard/openvpn/test-" + System.currentTimeMillis() + ".conf" ) );
         startService( new Intent( getContext(), MockOpenVpnServiceImpl.class ) );
 
         getService().daemonStart( configFile );
 
         assertTrue( getService().getCurrent().isAlive() );
-        Assert.assertEquals( configFile, getService().getCurrent().getConfigFile() );
+        Assert.assertEquals( configFile.getFile(), getService().getCurrent().getConfigFile() );
     }
 
     public void test_daemonStart_A_then_daemonStart_B() throws InterruptedException
     {
-        File configFileA = new File( "/sdcard/openvpn/test-A" + System.currentTimeMillis() + ".conf" );
-        File configFileB = new File( "/sdcard/openvpn/test-B" + System.currentTimeMillis() + ".conf" );
+        OpenVpnConfig configFileA = new OpenVpnConfig( new File( "/sdcard/openvpn/test-A" + System.currentTimeMillis() + ".conf" ) );
+        OpenVpnConfig configFileB = new OpenVpnConfig( new File( "/sdcard/openvpn/test-B" + System.currentTimeMillis() + ".conf" ) );
         startService( new Intent( getContext(), MockOpenVpnServiceImpl.class ) );
 
         getService().daemonStart( configFileA );
@@ -217,64 +218,64 @@ public class OpenVpnServiceImplTest extends ServiceTestCase<OpenVpnServiceImplTe
         DaemonMonitor daemonMonitorB = getService().getCurrent();
 
         assertFalse( daemonMonitorA.isAlive() );
-        assertEquals( configFileA, daemonMonitorA.getConfigFile() );
+        assertEquals( configFileA.getFile(), daemonMonitorA.getConfigFile() );
         assertTrue( daemonMonitorB.isAlive() );
-        assertEquals( configFileB, daemonMonitorB.getConfigFile() );
+        assertEquals( configFileB.getFile(), daemonMonitorB.getConfigFile() );
     }
 
     public void test_daemonStop() throws InterruptedException
     {
-        File configFile = new File( "/sdcard/openvpn/test-" + System.currentTimeMillis() + ".conf" );
+        OpenVpnConfig configFile = new OpenVpnConfig( new File( "/sdcard/openvpn/test-" + System.currentTimeMillis() + ".conf" ) );
         startService( new Intent( getContext(), MockOpenVpnServiceImpl.class ) );
         getService().daemonStart( configFile );
 
-        getService().daemonStop( configFile );
+        getService().daemonStop( configFile.getFile() );
 
         assertFalse( getService().getCurrent().isAlive() );
     }
 
     public void test_daemonPassphrase() throws InterruptedException
     {
-        File configFile = new File( "/sdcard/openvpn/test-" + System.currentTimeMillis() + ".conf" );
+        OpenVpnConfig configFile = new OpenVpnConfig( new File( "/sdcard/openvpn/test-" + System.currentTimeMillis() + ".conf" ) );
         String passphrase = "passphrase" + System.currentTimeMillis();
         startService( new Intent( getContext(), MockOpenVpnServiceImpl.class ) );
         getService().daemonStart( configFile );
 
-        getService().daemonPassphrase( configFile, passphrase );
+        getService().daemonPassphrase( configFile.getFile(), passphrase );
 
         Mockito.verify( getService().getCurrent() ).supplyPassphrase( passphrase );
     }
 
     public void test_daemonUsernamePassword() throws InterruptedException
     {
-        File configFile = new File( "/sdcard/openvpn/test-" + System.currentTimeMillis() + ".conf" );
+        OpenVpnConfig configFile = new OpenVpnConfig( new File( "/sdcard/openvpn/test-" + System.currentTimeMillis() + ".conf" ) );
         String username = "username" + System.currentTimeMillis();
         String passphrase = "passphrase" + System.currentTimeMillis();
         startService( new Intent( getContext(), MockOpenVpnServiceImpl.class ) );
         getService().daemonStart( configFile );
 
-        getService().daemonUsernamePassword( configFile, username, passphrase );
+        getService().daemonUsernamePassword( configFile.getFile(), username, passphrase );
 
         Mockito.verify( getService().getCurrent() ).supplyUsernamePassword( username, passphrase );
     }
 
     public void test_isDaemonStarted() throws InterruptedException
     {
-        File configFile = new File( "/sdcard/openvpn/test-" + System.currentTimeMillis() + ".conf" );
+        OpenVpnConfig configFile = new OpenVpnConfig( new File( "/sdcard/openvpn/test-" + System.currentTimeMillis() + ".conf" ) );
         startService( new Intent( getContext(), MockOpenVpnServiceImpl.class ) );
 
-        assertFalse( getService().isDaemonStarted( configFile ) );
+        assertFalse( getService().isDaemonStarted( configFile.getFile() ) );
 
         getService().daemonStart( configFile );
-        assertTrue( getService().isDaemonStarted( configFile ) );
+        assertTrue( getService().isDaemonStarted( configFile.getFile() ) );
 
-        getService().daemonStop( configFile );
-        assertFalse( getService().isDaemonStarted( configFile ) );
+        getService().daemonStop( configFile.getFile() );
+        assertFalse( getService().isDaemonStarted( configFile.getFile() ) );
     }
 
     public void test_hasDaemonsStarted() throws InterruptedException
     {
-        File configFile = new File( "/sdcard/openvpn/test-" + System.currentTimeMillis() + ".conf" );
+        OpenVpnConfig configFile = new OpenVpnConfig( new File( "/sdcard/openvpn/test-" + System.currentTimeMillis() + ".conf" ) );
         startService( new Intent( getContext(), MockOpenVpnServiceImpl.class ) );
 
         assertFalse( getService().hasDaemonsStarted() );
@@ -282,7 +283,7 @@ public class OpenVpnServiceImplTest extends ServiceTestCase<OpenVpnServiceImplTe
         getService().daemonStart( configFile );
         assertTrue( getService().hasDaemonsStarted() );
 
-        getService().daemonStop( configFile );
+        getService().daemonStop( configFile.getFile() );
         assertFalse( getService().hasDaemonsStarted() );
     }
 }
