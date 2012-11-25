@@ -101,6 +101,9 @@ public class ProbeRoot
         public CheckForRoot()
         {
             super( "OpenVPN-Settings", "id", true );
+
+            // avoid reporting thousands of failed su attempts, when probing for root access.
+            setDoBugSenseExec( false );
         }
 
         @Override
