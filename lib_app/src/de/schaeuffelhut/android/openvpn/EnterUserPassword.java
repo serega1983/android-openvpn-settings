@@ -45,7 +45,7 @@ public class EnterUserPassword extends Activity {
 
 	private static final String TAG = "OpenVPN-EnterPassphrase";
 	
-	private OpenVpnServiceWrapper mOpenVpnService = new OpenVpnServiceWrapper( this ) {
+	private final OpenVpnServiceWrapper mOpenVpnService = new OpenVpnServiceWrapper( this ) {
 
         public synchronized void onServiceConnected(ComponentName name, IBinder serviceBinder) {
             super.onServiceConnected( name, serviceBinder );
@@ -57,7 +57,6 @@ public class EnterUserPassword extends Activity {
         }
 
         public synchronized void onServiceDisconnected(ComponentName name) {
-            mOpenVpnService = null;
             Log.d( TAG, "Disconnected from OpenVpnService" );
 
             Button button = getNeutralButtonFromDialog();
