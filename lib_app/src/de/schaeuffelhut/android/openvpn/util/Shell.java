@@ -48,8 +48,9 @@ public class Shell extends Thread
 	private Process mShellProcess;
 	private LoggerThread mStdoutLogger;
 	private LoggerThread mStderrLogger;
-	
-	public Shell(String tag, String cmd, boolean root)
+    private boolean mDoBugSenseExec = true;
+
+    public Shell(String tag, String cmd, boolean root)
 	{
 		super( tag + "-stdin" );
 		mTag = tag;
@@ -60,7 +61,17 @@ public class Shell extends Thread
 		mSu = findBinary( "su" );
 	}
 
-	static String findBinary(String executable) {
+    /**
+     * Set to false if exec failures should not be reported via BugSense.
+     *
+     * @param bugSenseExec {@code true} if exec failures should be reported via BugSense, {@code false} otherwise.
+     */
+    protected void setDoBugSenseExec(boolean bugSenseExec)
+    {
+        this.mDoBugSenseExec = bugSenseExec;
+    }
+
+    static String findBinary(String executable) {
 		for (String bin : new String[]{"/system/bin/", "/system/xbin/"}) {
 			String path = bin+executable;
 			if ( new File( path ).exists() )
@@ -122,15 +133,18 @@ public class Shell extends Thread
 					Util.join( shellBuilder.command(), ' ' ),
 					e
 			));
-			BugSenseHandler.sendExceptionMessage(
-                    "DEBUG",
-					String.format( 
-							"invoking external process: %s", 
-							Util.join( shellBuilder.command(), ' ' )
-					),
-					e
-			);
-			
+            if (mDoBugSenseExec)
+            {
+                BugSenseHandler.sendExceptionMessage(
+                        "DEBUG",
+                        String.format(
+                                "invoking external process: %s",
+                                Util.join( shellBuilder.command(), ' ' )
+                        ),
+                        e
+                );
+            }
+
 			onExecuteFailed( e );
 		}
 	}
