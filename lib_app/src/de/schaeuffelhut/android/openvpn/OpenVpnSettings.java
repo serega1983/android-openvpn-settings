@@ -106,7 +106,7 @@ public class OpenVpnSettings extends PreferenceActivity
         setContentView( mCurrentContentView = AdUtil.getAdSupportedListView( getApplicationContext() ) );
 
     	if ( Configuration.BUG_SENSE_API_KEY != null  )
-    		BugSenseHandler.setup( this, Configuration.BUG_SENSE_API_KEY );
+    		BugSenseHandler.initAndStartSession( this, Configuration.BUG_SENSE_API_KEY );
 
     	addPreferencesFromResource( R.xml.openvpn_settings );
 

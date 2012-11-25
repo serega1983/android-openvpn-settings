@@ -122,7 +122,8 @@ public class Shell extends Thread
 					Util.join( shellBuilder.command(), ' ' ),
 					e
 			));
-			BugSenseHandler.log(
+			BugSenseHandler.sendExceptionMessage(
+                    "DEBUG",
 					String.format( 
 							"invoking external process: %s", 
 							Util.join( shellBuilder.command(), ' ' )

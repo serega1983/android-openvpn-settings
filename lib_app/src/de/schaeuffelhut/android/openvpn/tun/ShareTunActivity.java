@@ -92,10 +92,10 @@ public class ShareTunActivity extends Activity
 			} catch (OperationFailed e) {
 				Log.e( "OpenVPN-Settings", "Uploading device dteails failed", e );
 				// TODO: log via ACRA
-				BugSenseHandler.log( "Uploading device dteails failed", e );
+				BugSenseHandler.sendExceptionMessage( "DEBUG", "Uploading device dteails failed", e );
 				TunPreferences.setSendDeviceDetailWasSuccessfull( getApplicationContext(), false );
 			} catch (Exception e) {
-				BugSenseHandler.log( "Uploading device dteails failed", e );
+				BugSenseHandler.sendExceptionMessage( "DEBUG", "Uploading device dteails failed", e );
 			}			
 			return null;
 		}
@@ -191,7 +191,7 @@ public class ShareTunActivity extends Activity
 			try {
 				IOUtils.write(bytes, digestOutputStream);
 			} catch (Exception e) {
-				BugSenseHandler.log( "Digesting bytes", e );
+				BugSenseHandler.sendExceptionMessage( "DEBUG", "Digesting bytes", e );
 				// ignore, all data goes to a NullOutputStream
 			}
 		}
@@ -200,7 +200,7 @@ public class ShareTunActivity extends Activity
 			try {
 				FileUtils.copyFile( file, digestOutputStream );
 			} catch (Exception e) {
-				BugSenseHandler.log( "Digesting file", e );
+				BugSenseHandler.sendExceptionMessage( "DEBUG", "Digesting file", e );
 				// ignore, all data goes to a NullOutputStream
 			}
 		}
@@ -209,7 +209,7 @@ public class ShareTunActivity extends Activity
 			try {
 				digestOutputStream.write( value.getBytes( "UTF-8" ) );
 			} catch (Exception e) {
-				BugSenseHandler.log( "Digesting String", e );
+				BugSenseHandler.sendExceptionMessage( "DEBUG", "Digesting String", e );
 				// ignore, all data goes to a NullOutputStream
 			}
 		}
