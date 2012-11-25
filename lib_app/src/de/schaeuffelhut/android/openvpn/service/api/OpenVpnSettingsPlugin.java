@@ -30,6 +30,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.*;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Support plugin registration with OpenVPN Settings.
@@ -57,7 +58,7 @@ public class OpenVpnSettingsPlugin
 
     public boolean isOpenVpnSettingsInstalled()
     {
-        return openVpnSettings != null;
+        return openVpnSettings != null && openVpnSettings.versionCode >= 37;
     }
 
     private PackageInfo findOpenVpnSettingsPackage()
