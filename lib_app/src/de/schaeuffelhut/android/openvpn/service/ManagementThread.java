@@ -640,7 +640,7 @@ final class ManagementThread extends Thread
 		Log.v(mTAG_MT, String.format("onState(\"%s\")", line ) );
 		
 		final String fieldString = line.startsWith(RTMSG_STATE) ? line.substring( RTMSG_STATE.length() ) : line;
-		final String[] stateFields = fieldString.split( "," );
+		final String[] stateFields = TextUtils.split( fieldString, "," ); // TODO: put under test, make sure array size is fixed and empty strings are returend
 		final String state = stateFields[STATE_FIELD_STATE];
 
 		if (STATE_CONNECTED.equals(state)) {
