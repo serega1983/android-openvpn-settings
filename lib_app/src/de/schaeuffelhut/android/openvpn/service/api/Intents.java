@@ -41,7 +41,7 @@ public enum Intents
     public Intent createLocalAppIntent()
     {
         Intent intent = createIntent();
-        intent.setPackage( INTENT_PREFIX );
+        //intent.setPackage( INTENT_PREFIX ); //TODO: uncomment once minSdkVersion > 3, also uncomment in IntentsTest
         return intent;
     }
 
