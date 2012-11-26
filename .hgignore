@@ -8,3 +8,4 @@ tmp
 local.properties
 */local.properties
 build.properties
+src/config.properties

@@ -22,8 +22,91 @@
 
 package de.schaeuffelhut.android.openvpn;
 
-public class Configuration {
-	public final static String BUG_SENSE_API_KEY = null;
-	public final static String TUN_COLLECTOR_SECRET = "muoleef5IeghieX7Ooc1aiwieK7Ta2ee";
-	public static final String TUN_COLLECTOR_URL = "http://tuncollector.android.schaeuffelhut.de:8080/tuncollector/TunCollector/";
+import android.text.TextUtils;
+import android.util.Log;
+import org.apache.commons.io.IOUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+/**
+ * @author Friedrich Schäuffelhut
+ * @since 2012-11-25
+ */
+public class Configuration
+{
+    @Deprecated
+    public final static String BUG_SENSE_API_KEY = null;
+
+    @Deprecated
+    public final static String TUN_COLLECTOR_SECRET = "muoleef5IeghieX7Ooc1aiwieK7Ta2ee";
+
+    @Deprecated
+    public static final String TUN_COLLECTOR_URL = "http://tuncollector.android.schaeuffelhut.de:8080/tuncollector/TunCollector/";
+
+    private final static Configuration INSTANCE = new Configuration();
+
+    public static Configuration getInstance()
+    {
+        return INSTANCE;
+    }
+
+    private final String bugSenseApiKey;
+    private final boolean isBugSenseEnabled;
+
+    private Configuration()
+    {
+        this( Configuration.class.getResourceAsStream( "/config.properties" ) );
+    }
+
+    Configuration(InputStream stream)
+    {
+        final Properties properties = new Properties();
+        load( stream, properties );
+        bugSenseApiKey = ifBlank( properties.getProperty( "BugSenseApiKey" ), "disabled" );
+        isBugSenseEnabled = !"disabled".equals( bugSenseApiKey );
+
+        Log.d( "TorGuard", "BugSense is " + (isBugSenseEnabled ? "enabled" : "disabled") );
+    }
+
+    private String ifBlank(String value, String defaultValue)
+    {
+        if (value == null)
+            return defaultValue;
+        if (TextUtils.isEmpty( value.trim() ))
+            return defaultValue;
+        return value;
+    }
+
+    private void load(InputStream stream, Properties properties)
+    {
+        if (stream == null)
+        {
+            Log.d( "TorGuard", "Configuration: config.properties not found" );
+            return;
+        }
+        try
+        {
+            properties.load( stream );
+        }
+        catch (IOException e)
+        {
+            Log.e( "TorGuard", "Reading Configuration Properties", e );
+        }
+        finally
+        {
+            IOUtils.closeQuietly( stream );
+        }
+    }
+
+    public String getBugSenseApiKey()
+    {
+        return bugSenseApiKey;
+    }
+
+    public boolean isBugSenseEnabled()
+    {
+        return isBugSenseEnabled;
+    }
 }
