@@ -168,7 +168,7 @@ final class Notifications {
     private static void sendNeedPassword(Context context, Parcelable intent)
     {
         Intent needPassword = new Intent( Intents.BROADCAST_NEED_PASSWORD );
-        needPassword.setPackage( Intents.NS );
+        //needPassword.setPackage( Intents.NS ); //TODO: uncomment once minSdkVersion > 3
         needPassword.putExtra( "ACTION", intent );
         context.sendBroadcast( needPassword );
     }

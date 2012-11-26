@@ -25,7 +25,7 @@ public class IntentsTest extends InstrumentationTestCase
         {
             Intent intent = intentName.createLocalAppIntent();
             assertEquals( INTENT_PREFIX + "." + intentName.name(), intent.getAction() );
-            assertEquals( INTENT_PREFIX, intent.getPackage() );
+            //assertEquals( INTENT_PREFIX, intent.getPackage() );  //TODO: uncomment once minSdkVersion > 3, also uncomment in Intents
         }
     }
 
