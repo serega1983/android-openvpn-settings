@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="custom_rules">
+
+    <target name="-pre-clean">
+        <delete file="src/config.properties"/>
+    </target>
+
+    <target name="-pre-build">
+        <property name="config.BugSenseApiKey" value="disabled"/>
+        <propertyfile
+                file="src/config.properties"
+                comment="Runtime Configuration Properties">
+            <entry key="BugSenseApiKey" value="${config.BugSenseApiKey}"/>
+        </propertyfile>
+    </target>
+
+</project>
