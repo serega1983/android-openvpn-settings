@@ -7,4 +7,4 @@ out
 tmp
 local.properties
 */local.properties
-
+build.properties
