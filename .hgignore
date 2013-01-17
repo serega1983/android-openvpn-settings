@@ -9,3 +9,5 @@ local.properties
 */local.properties
 build.properties
 src/config.properties
+lib_openvpn/obj
+lib_openvpn/libs
