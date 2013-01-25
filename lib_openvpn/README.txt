@@ -26,3 +26,15 @@ Compile busybox:
 
 The output will be in libs/armeabi/busybox
 
+
+Add binaries to APK:
+====================
+The binaries are included as raw resources.
+Later on the device these raw resources are extraced
+to the APP local file system.
+
+cp libs/armeabi/busybox res/raw/busybox
+cp libs/armeabi/openvpn-static res/raw/openvpn
+
+hg commit -m 'Update busybox and opemvpn binaries' res/raw/busybox res/raw/openvpn
+
