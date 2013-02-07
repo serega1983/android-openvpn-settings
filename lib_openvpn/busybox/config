@@ -62,9 +62,14 @@ CONFIG_BUSYBOX_EXEC_PATH="/proc/self/exe"
 # CONFIG_FEATURE_INDIVIDUAL is not set
 # CONFIG_FEATURE_SHARED_BUSYBOX is not set
 # CONFIG_LFS is not set
-CONFIG_CROSS_COMPILER_PREFIX="arm-linux-androideabi-"
-CONFIG_SYSROOT="/opt/android-ndk/platforms/android-9/arch-arm"
-CONFIG_EXTRA_CFLAGS="-DANDROID -D__ANDROID__ -DSK_RELEASE -nostdlib -march=armv7-a -msoft-float -mfloat-abi=softfp -mfpu=neon -mthumb -mthumb-interwork -fpic -fno-short-enums -fgcse-after-reload -frename-registers"
+
+#CONFIG_CROSS_COMPILER_PREFIX="arm-linux-androideabi-"
+#CONFIG_SYSROOT="/opt/android-ndk/platforms/android-9/arch-arm"
+CONFIG_CROSS_COMPILER_PREFIX="arm-eabi-"
+CONFIG_SYSROOT="/opt/android-ndk/platforms/android-5/arch-arm"
+
+#CONFIG_EXTRA_CFLAGS="-DANDROID -D__ANDROID__ -DSK_RELEASE -nostdlib -march=armv7-a -msoft-float -mfloat-abi=softfp -mfpu=neon -mthumb -mthumb-interwork -fpic -fno-short-enums -fgcse-after-reload -frename-registers"
+CONFIG_EXTRA_CFLAGS="-DANDROID -D__ANDROID__ -DSK_RELEASE -nostdlib -march=armv5te -msoft-float -mfloat-abi=softfp  -fpic -fno-short-enums -fgcse-after-reload -frename-registers"
 CONFIG_EXTRA_LDFLAGS="-Xlinker -z -Xlinker muldefs -nostdlib -Bdynamic -Xlinker -dynamic-linker -Xlinker /system/bin/linker -Xlinker -z -Xlinker nocopyreloc -Xlinker --no-undefined ${SYSROOT}/usr/lib/crtbegin_dynamic.o ${SYSROOT}/usr/lib/crtend_android.o"
 CONFIG_EXTRA_LDLIBS="dl m c gcc"
 
