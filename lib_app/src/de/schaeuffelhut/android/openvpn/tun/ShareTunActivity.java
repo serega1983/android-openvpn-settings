@@ -64,7 +64,7 @@ import com.bugsense.trace.BugSenseHandler;
 
 import de.schaeuffelhut.android.openvpn.Configuration;
 import de.schaeuffelhut.android.openvpn.lib.app.R;
-import de.schaeuffelhut.android.openvpn.util.Util;
+import de.schaeuffelhut.android.openvpn.shared.util.Util;
 
 public class ShareTunActivity extends Activity
 {

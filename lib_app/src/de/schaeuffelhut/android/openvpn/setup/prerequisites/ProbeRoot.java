@@ -22,7 +22,7 @@
 
 package de.schaeuffelhut.android.openvpn.setup.prerequisites;
 
-import de.schaeuffelhut.android.openvpn.util.Shell;
+import de.schaeuffelhut.android.openvpn.shared.util.Shell;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

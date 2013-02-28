@@ -36,7 +36,7 @@ import org.apache.commons.io.FileUtils;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.util.Log;
-import de.schaeuffelhut.android.openvpn.util.SystemPropertyUtil;
+import de.schaeuffelhut.android.openvpn.shared.util.SystemPropertyUtil;
 
 public class DeviceDetails
 {

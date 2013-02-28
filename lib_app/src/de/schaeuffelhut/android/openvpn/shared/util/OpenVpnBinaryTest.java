@@ -20,9 +20,9 @@
  * Contact the author at:          android.openvpn@schaeuffelhut.de
  */
 
-package de.schaeuffelhut.android.openvpn.util;
+package de.schaeuffelhut.android.openvpn.shared.util;
 
-import android.test.InstrumentationTestCase;
+import de.schaeuffelhut.android.openvpn.shared.util.OpenVpnBinary;
 import junit.framework.Assert;
 
 import java.io.File;

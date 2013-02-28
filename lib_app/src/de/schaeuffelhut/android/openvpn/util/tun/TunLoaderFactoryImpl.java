@@ -23,10 +23,10 @@
 package de.schaeuffelhut.android.openvpn.util.tun;
 
 import android.content.SharedPreferences;
+import de.schaeuffelhut.android.openvpn.shared.util.Shell;
 import de.schaeuffelhut.android.openvpn.tun.TunPreferences;
-import de.schaeuffelhut.android.openvpn.util.Shell;
-import de.schaeuffelhut.android.openvpn.util.UnexpectedSwitchValueException;
-import de.schaeuffelhut.android.openvpn.util.Util;
+import de.schaeuffelhut.android.openvpn.shared.util.UnexpectedSwitchValueException;
+import de.schaeuffelhut.android.openvpn.shared.util.Util;
 
 import java.io.File;
 

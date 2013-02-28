@@ -37,7 +37,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import de.schaeuffelhut.android.openvpn.lib.app.R;
-import de.schaeuffelhut.android.openvpn.util.Util;
+import de.schaeuffelhut.android.openvpn.shared.util.Util;
 
 public class EditConfig extends Activity
 {

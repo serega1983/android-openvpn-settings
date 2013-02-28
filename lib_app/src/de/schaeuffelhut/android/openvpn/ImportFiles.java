@@ -41,8 +41,8 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 import de.schaeuffelhut.android.openvpn.lib.app.R;
-import de.schaeuffelhut.android.openvpn.util.UnexpectedSwitchValueException;
-import de.schaeuffelhut.android.openvpn.util.Util;
+import de.schaeuffelhut.android.openvpn.shared.util.UnexpectedSwitchValueException;
+import de.schaeuffelhut.android.openvpn.shared.util.Util;
 
 public class ImportFiles extends Activity
 {

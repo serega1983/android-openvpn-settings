@@ -24,6 +24,7 @@ package de.schaeuffelhut.android.openvpn.util;
 
 import android.content.Context;
 import android.widget.Toast;
+import de.schaeuffelhut.android.openvpn.shared.util.Shell;
 
 public class Preconditions {
 

@@ -22,6 +22,8 @@
 
 package de.schaeuffelhut.android.openvpn.util;
 
+import de.schaeuffelhut.android.openvpn.shared.util.SystemPropertyUtil;
+
 public class DnsUtil {
 	private DnsUtil(){}
 

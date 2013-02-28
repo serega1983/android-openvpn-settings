@@ -20,10 +20,7 @@
  * Contact the author at:          android.openvpn@schaeuffelhut.de
  */
 
-package de.schaeuffelhut.android.openvpn.util;
-
-import android.graphics.PixelXorXfermode;
-import android.util.Log;
+package de.schaeuffelhut.android.openvpn.shared.util;
 
 import java.io.File;
 import java.util.List;
@@ -32,16 +29,17 @@ import java.util.List;
  * @author Friedrich Schäuffelhut
  * @since 2013-01-25
  */
-public class OpenVpnBinary
+public class BusyBoxBinary
 {
     private final File path;
     private final List<String> usage;
+    private final List<String> applets;
     private final String version;
-    private final boolean hasIpRoute;
+    private final boolean hasIpApplet;
 
-    public OpenVpnBinary(File path)
+    public BusyBoxBinary(File path)
     {
-        this( path, queryUsage( path ) );
+        this( path, queryUsage( path ), queryApplets( path ) );
     }
 
     private static List<String> queryUsage(File path)
@@ -51,25 +49,26 @@ public class OpenVpnBinary
         return shell.getStdout();
     }
 
+    private static List<String> queryApplets(File path)
+    {
+        ShellWithCollectedOutput shell = new ShellWithCollectedOutput( "OpenVPN", path.getAbsolutePath() + " --list" );
+        shell.run();
+        return shell.getStdout();
+    }
 
-    /**
-     * Test only constructor.
-     * @param path     path to openvpn binary.
-     * @param usage    usage output of {@code openvpn --help}
-     */
-    OpenVpnBinary(File path, List<String> usage)
+    public BusyBoxBinary(File path, List<String> usage, List<String> applets)
     {
         this.path = path;
         this.usage = usage;
+        this.applets = applets;
         this.version = detectVersion();
-        this.hasIpRoute = detectFeatureIpRoute();
+        this.hasIpApplet = applets.contains( "ip" );
     }
-
     private String detectVersion()
     {
         for(String line : usage)
         {
-            if ( line.startsWith( "OpenVPN" ) )
+            if ( line.startsWith( "BusyBox" ) )
             {
                 int versionStart = line.indexOf( ' ' ) + 1;
                 int versionEnd = line.indexOf( ' ', versionStart );
@@ -79,22 +78,13 @@ public class OpenVpnBinary
         return "unknown";
     }
 
-    private boolean detectFeatureIpRoute()
-    {
-        for(String line : usage)
-            if ( line.startsWith( "--iproute cmd" ) )
-                return true;
-        return false;
-    }
-
-
     public String getVersion()
     {
         return version;
     }
 
-    public boolean hasIpRoute()
+    public boolean hasIpApplet()
     {
-        return hasIpRoute;
+        return hasIpApplet;
     }
 }

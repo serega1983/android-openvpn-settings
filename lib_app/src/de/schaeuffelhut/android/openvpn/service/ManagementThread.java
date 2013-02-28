@@ -34,13 +34,12 @@ import android.text.TextUtils;
 import android.util.Log;
 import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnPasswordRequest;
-import de.schaeuffelhut.android.openvpn.service.api.OpenVpnState;
+import de.schaeuffelhut.android.openvpn.shared.util.Shell;
 import de.schaeuffelhut.android.openvpn.util.DnsUtil;
-import de.schaeuffelhut.android.openvpn.util.Shell;
-import de.schaeuffelhut.android.openvpn.util.SystemPropertyUtil;
+import de.schaeuffelhut.android.openvpn.shared.util.SystemPropertyUtil;
 import de.schaeuffelhut.android.openvpn.util.TrafficStats;
-import de.schaeuffelhut.android.openvpn.util.UnexpectedSwitchValueException;
-import de.schaeuffelhut.android.openvpn.util.Util;
+import de.schaeuffelhut.android.openvpn.shared.util.UnexpectedSwitchValueException;
+import de.schaeuffelhut.android.openvpn.shared.util.Util;
 
 final class ManagementThread extends Thread
 {

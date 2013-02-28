@@ -25,7 +25,7 @@ package de.schaeuffelhut.android.openvpn.tun;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import de.schaeuffelhut.android.openvpn.util.Util;
+import de.schaeuffelhut.android.openvpn.shared.util.Util;
 
 import java.io.File;
 
