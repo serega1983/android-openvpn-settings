@@ -22,8 +22,8 @@
 
 package de.schaeuffelhut.android.openvpn.shared.util;
 
-import de.schaeuffelhut.android.openvpn.shared.util.OpenVpnBinary;
 import junit.framework.Assert;
+import junit.framework.TestCase;
 
 import java.io.File;
 import java.util.Arrays;
@@ -34,7 +34,7 @@ import java.util.List;
  * @author Friedrich Schäuffelhut
  * @since 2013-01-25
  */
-public class OpenVpnBinaryTest
+public class OpenVpnBinaryTest extends TestCase
 {
     public void test_OPENVPN_USAGE_211_NOIPROUTE_has_x_lines()
     {
@@ -48,12 +48,12 @@ public class OpenVpnBinaryTest
 
     public void test_version_231()
     {
-        OpenVpnBinary openVpnBinary = new OpenVpnBinary( new File( "openvpn" ), Collections.unmodifiableList( Arrays.asList( "" +
+        OpenVpnBinary openVpnBinary = new OpenVpnBinary( new File( "openvpn" ), Collections.unmodifiableList( Arrays.asList( ("" +
                 "OpenVPN 2.3.1 i686-pc-linux-gnu [SSL] [LZO2] [EPOLL] built on Jan 25 2013\n" +
                 "\n" +
                 "General Options:\n" +
-                "--config file   : Read configuration options from file.\n"
-                        .split( "\n" )
+                "--config file   : Read configuration options from file.\n")
+                .split( "\n" )
         ) ) );
         Assert.assertEquals( "2.3.1", openVpnBinary.getVersion() );
     }
