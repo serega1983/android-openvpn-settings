@@ -22,27 +22,47 @@
 
 package de.schaeuffelhut.android.openvpn.setup.prerequisites;
 
+import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import de.schaeuffelhut.android.openvpn.lib.app.R;
+import de.schaeuffelhut.android.openvpn.lib.openvpn.InstallFailed;
+import de.schaeuffelhut.android.openvpn.lib.openvpn.Installer;
+import de.schaeuffelhut.android.openvpn.util.Shell;
 
 import java.io.File;
 
 /**
- * Created with IntelliJ IDEA.
- * User: fries
- * Date: 4/30/12
- * Time: 5:49 PM
- * To change this template use File | Settings | File Templates.
+ * @author Friedrich Schäuffelhut
+ * @since 2012-04-30
  */
 class ProbeOpenVpn extends ProbeExecutable
 {
-    ProbeOpenVpn()
+    public ProbeOpenVpn(Context context)
     {
         super( "OpenVPN binary",
                 "The actual VPN program.",
                 R.string.prerequisites_item_title_getOpenVpn,
                 Uri.parse( "market://details?id=de.schaeuffelhut.android.openvpn.installer" ),
-                new File("/system/xbin/openvpn"), new File("/system/bin/openvpn"), new File("/sbin/openvpn")
+                new File( "/system/xbin/openvpn" ), new File( "/system/bin/openvpn" ), new File( "/sbin/openvpn" )
+                //TODO:, install( context )
         );
+    }
+
+    private static File install(Context context)
+    {
+        try
+        {
+            File file = new Installer( context ).installOpenVpn();
+            Shell shell = new Shell( "OpenVPN-Settings", file.getAbsolutePath(), false );
+            shell.run();
+            return file;
+        }
+        catch (InstallFailed installFailed)
+        {
+            Log.e( "OpenVPN-Settings", "installing openvpn", installFailed );
+        }
+
+        return null;
     }
 }
