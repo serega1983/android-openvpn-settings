@@ -20,6 +20,5 @@
  * Contact the author at:          android.openvpn@schaeuffelhut.de
  */
 
-//TODO: Move package de.schaeuffelhut.android.openvpn.lib.openvpn to module lib_openvpn
 package de.schaeuffelhut.android.openvpn.lib.openvpn;
 
