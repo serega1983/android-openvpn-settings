@@ -48,7 +48,7 @@ public class OpenVpnServiceWrapper implements ServiceConnection
 
     private final Context context;
     private IOpenVpnService openVpnService;
-    private ArrayList<IOpenVpnStateListener> listeners = new ArrayList<IOpenVpnStateListener>();
+    private final ArrayList<IOpenVpnStateListener> listeners = new ArrayList<IOpenVpnStateListener>();
 
     /**
      * Creates an {@code OpenVpnServiceWrapper} using the specified context as

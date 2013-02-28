@@ -22,15 +22,11 @@
 
 package de.schaeuffelhut.android.openvpn.service.api;
 
-import android.app.PendingIntent;
-import android.content.*;
-import android.content.pm.ApplicationInfo;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.*;
-import android.util.Log;
-import android.widget.Toast;
 
 /**
  * Support plugin registration with OpenVPN Settings.

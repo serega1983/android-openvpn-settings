@@ -15,14 +15,14 @@ public enum Intents
         @Override
         public String getAction()
         {
-            return de.schaeuffelhut.android.openvpn.Intents.DAEMON_STATE_CHANGED;
+            return "de.schaeuffelhut.android.openvpn.Intents.DAEMON_STATE_CHANGED"; //TODO: duplicates [lib_app]Intents.DAEMON_STATE_CHANGED;
         }
     },
     NETWORK_STATE_CHANGED(){
         @Override
         public String getAction()
         {
-            return de.schaeuffelhut.android.openvpn.Intents.NETWORK_STATE_CHANGED;
+            return "de.schaeuffelhut.android.openvpn.Intents.NETWORK_STATE_CHANGED"; //TODO: duplicates [lib_app]Intents.NETWORK_STATE_CHANGED;
         }
     };
 

@@ -24,7 +24,6 @@ package de.schaeuffelhut.android.openvpn.service.api;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import org.apache.http.auth.AUTH;
 
 /**
  * @author Friedrich Schäuffelhut

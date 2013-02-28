@@ -30,8 +30,8 @@ public final class Intents
 	public final static String NS = Intents.class.getName();
 
     // broadcasted intents
-	public final static String DAEMON_STATE_CHANGED = NS + ".DAEMON_STATE_CHANGED";
-	public final static String NETWORK_STATE_CHANGED = NS + ".NETWORK_STATE_CHANGED";
+	public final static String DAEMON_STATE_CHANGED = NS + ".DAEMON_STATE_CHANGED"; //TODO: duplicated by [lib_service_api]Intents.DAEMON_STATE_CHANGED.getAction()
+	public final static String NETWORK_STATE_CHANGED = NS + ".NETWORK_STATE_CHANGED"; //TODO: duplicated by [lib_service_api]Intents.NETWORK_STATE_CHANGED.getAction()
     public static final String BROADCAST_NEED_PASSWORD = NS + ".NEED_PASSWORD";
 
     // extras used by multiple intents
