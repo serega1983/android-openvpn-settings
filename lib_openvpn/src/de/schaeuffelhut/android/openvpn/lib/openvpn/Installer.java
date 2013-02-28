@@ -23,8 +23,6 @@
 package de.schaeuffelhut.android.openvpn.lib.openvpn;
 
 import android.content.Context;
-import de.schaeuffelhut.android.openvpn.lib.app.*;
-import de.schaeuffelhut.android.openvpn.lib.app.R;
 
 import java.io.*;
 
@@ -34,11 +32,6 @@ import java.io.*;
  */
 public class Installer
 {
-    //Installer resides in home package of lib_openvpn where also an R is generated.
-    //But this R is not accessible by the ant build. Qualifying the package name fixes the build.
-    private static final int R_RAW_BUSYBOX = de.schaeuffelhut.android.openvpn.lib.app.R.raw.busybox;
-    private static final int R_RAW_OPENVPN = de.schaeuffelhut.android.openvpn.lib.app.R.raw.openvpn;
-
     private static final String OPENVPN = "openvpn";
     private static final String BUSYBOX = "busybox";
 
@@ -56,14 +49,14 @@ public class Installer
     public File installOpenVpn() throws InstallFailed
     {
         File openvpn = new File( bin, OPENVPN );
-        install( R_RAW_OPENVPN, openvpn );
+        install( R.raw.openvpn, openvpn );
         return openvpn;
     }
 
     public File installBusyBox() throws InstallFailed
     {
         File busybox = new File( bin, BUSYBOX );
-        install( R_RAW_BUSYBOX, busybox );
+        install( R.raw.busybox, busybox );
         return busybox;
     }
 
