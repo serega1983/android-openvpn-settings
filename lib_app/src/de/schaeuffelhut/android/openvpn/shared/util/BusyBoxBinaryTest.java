@@ -20,8 +20,9 @@
  * Contact the author at:          android.openvpn@schaeuffelhut.de
  */
 
-package de.schaeuffelhut.android.openvpn.util;
+package de.schaeuffelhut.android.openvpn.shared.util;
 
+import de.schaeuffelhut.android.openvpn.shared.util.BusyBoxBinary;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 

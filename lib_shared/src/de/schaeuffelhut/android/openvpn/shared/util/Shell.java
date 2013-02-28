@@ -19,7 +19,7 @@
  * Report bugs or new features at: http://code.google.com/p/android-openvpn-settings/
  * Contact the author at:          android.openvpn@schaeuffelhut.de
  */
-package de.schaeuffelhut.android.openvpn.util;
+package de.schaeuffelhut.android.openvpn.shared.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +28,6 @@ import java.io.PrintStream;
 import android.util.Log;
 
 import com.bugsense.trace.BugSenseHandler;
-
 
 public class Shell extends Thread
 {
@@ -71,7 +70,7 @@ public class Shell extends Thread
         this.mDoBugSenseExec = bugSenseExec;
     }
 
-    static String findBinary(String executable) {
+    public static String findBinary(String executable) {
 		for (String bin : new String[]{"/system/bin/", "/system/xbin/"}) {
 			String path = bin+executable;
 			if ( new File( path ).exists() )

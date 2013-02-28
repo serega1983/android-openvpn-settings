@@ -39,6 +39,7 @@ import de.schaeuffelhut.android.openvpn.service.api.OpenVpnConfig;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnServiceWrapper;
 import de.schaeuffelhut.android.openvpn.setup.prerequisites.PrerequisitesActivity;
 import de.schaeuffelhut.android.openvpn.setup.prerequisites.ProbePrerequisites;
+import de.schaeuffelhut.android.openvpn.shared.util.UnexpectedSwitchValueException;
 import de.schaeuffelhut.android.openvpn.tun.ShareTunActivity;
 import de.schaeuffelhut.android.openvpn.tun.TunPreferences;
 import de.schaeuffelhut.android.openvpn.util.*;
@@ -158,7 +159,7 @@ public class OpenVpnSettings extends PreferenceActivity
         }
 
 
-		if ( Util.applicationWasUpdated( this ) )
+		if ( Preferences.applicationWasUpdated( this ) )
 			showDialog( DIALOG_CHANGELOG );
         else
             openPrerequisitesActivityIfNeeded();

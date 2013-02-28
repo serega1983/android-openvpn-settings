@@ -32,7 +32,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import de.schaeuffelhut.android.openvpn.lib.app.R;
-import de.schaeuffelhut.android.openvpn.util.Util;
+import de.schaeuffelhut.android.openvpn.shared.util.Util;
 
 public final class HtmlDialog {
 	private HtmlDialog() {

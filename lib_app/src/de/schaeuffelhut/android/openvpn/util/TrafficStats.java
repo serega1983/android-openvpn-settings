@@ -32,6 +32,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.util.Log;
+import de.schaeuffelhut.android.openvpn.shared.util.Util;
 
 /**
  * @author chri
@@ -187,7 +188,7 @@ public class TrafficStats {
 	public String toSmallInOutPerSecString() {
 		// TODO chri - use stringbuilder
 		return "up: " 
-				+ Util.roundDecimalsToString((double) tuntapReadBytesPerSec / 1000) 
+				+ Util.roundDecimalsToString( (double) tuntapReadBytesPerSec / 1000 )
 				+ " kBps - down: "
 				+ Util.roundDecimalsToString((double) tuntapWriteBytesPerSec / 1000) 
 				+ " kBps";

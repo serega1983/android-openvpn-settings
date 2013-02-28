@@ -19,7 +19,7 @@
  * Report bugs or new features at: http://code.google.com/p/android-openvpn-settings/
  * Contact the author at:          android.openvpn@schaeuffelhut.de
  */
-package de.schaeuffelhut.android.openvpn.util;
+package de.schaeuffelhut.android.openvpn.shared.util;
 
 import java.util.HashMap;
 import java.util.Iterator;

@@ -20,7 +20,7 @@
  * Contact the author at:          android.openvpn@schaeuffelhut.de
  */
 
-package de.schaeuffelhut.android.openvpn.util;
+package de.schaeuffelhut.android.openvpn.shared.util;
 
 import java.io.File;
 import java.util.List;
@@ -29,17 +29,16 @@ import java.util.List;
  * @author Friedrich Schäuffelhut
  * @since 2013-01-25
  */
-public class BusyBoxBinary
+public class OpenVpnBinary
 {
     private final File path;
     private final List<String> usage;
-    private final List<String> applets;
     private final String version;
-    private final boolean hasIpApplet;
+    private final boolean hasIpRoute;
 
-    public BusyBoxBinary(File path)
+    public OpenVpnBinary(File path)
     {
-        this( path, queryUsage( path ), queryApplets( path ) );
+        this( path, queryUsage( path ) );
     }
 
     private static List<String> queryUsage(File path)
@@ -49,26 +48,25 @@ public class BusyBoxBinary
         return shell.getStdout();
     }
 
-    private static List<String> queryApplets(File path)
-    {
-        ShellWithCollectedOutput shell = new ShellWithCollectedOutput( "OpenVPN", path.getAbsolutePath() + " --list" );
-        shell.run();
-        return shell.getStdout();
-    }
 
-    public BusyBoxBinary(File path, List<String> usage, List<String> applets)
+    /**
+     * Test only constructor.
+     * @param path     path to openvpn binary.
+     * @param usage    usage output of {@code openvpn --help}
+     */
+    OpenVpnBinary(File path, List<String> usage)
     {
         this.path = path;
         this.usage = usage;
-        this.applets = applets;
         this.version = detectVersion();
-        this.hasIpApplet = applets.contains( "ip" );
+        this.hasIpRoute = detectFeatureIpRoute();
     }
+
     private String detectVersion()
     {
         for(String line : usage)
         {
-            if ( line.startsWith( "BusyBox" ) )
+            if ( line.startsWith( "OpenVPN" ) )
             {
                 int versionStart = line.indexOf( ' ' ) + 1;
                 int versionEnd = line.indexOf( ' ', versionStart );
@@ -78,13 +76,22 @@ public class BusyBoxBinary
         return "unknown";
     }
 
+    private boolean detectFeatureIpRoute()
+    {
+        for(String line : usage)
+            if ( line.startsWith( "--iproute cmd" ) )
+                return true;
+        return false;
+    }
+
+
     public String getVersion()
     {
         return version;
     }
 
-    public boolean hasIpApplet()
+    public boolean hasIpRoute()
     {
-        return hasIpApplet;
+        return hasIpRoute;
     }
 }

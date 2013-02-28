@@ -31,7 +31,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
-import de.schaeuffelhut.android.openvpn.util.Util;
+import de.schaeuffelhut.android.openvpn.shared.util.Util;
 
 public final class Preferences {
 	
@@ -440,4 +440,14 @@ public final class Preferences {
 		return name;
 	}
 
+    public final static boolean applicationWasUpdated(Context context)
+    {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        int applicationVersionCode = Util.applicationVersionCode( context );
+        int storedVersionCode = sharedPreferences.getInt( KEY_OPENVPN_VERSION_CODE, -1 );
+        final boolean wasUpdated = applicationVersionCode > storedVersionCode;
+        if ( wasUpdated )
+            sharedPreferences.edit().putInt( KEY_OPENVPN_VERSION_CODE, applicationVersionCode ).commit();
+        return wasUpdated;
+    }
 }

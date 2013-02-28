@@ -38,7 +38,7 @@ import android.widget.Toast;
 import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.service.api.*;
-import de.schaeuffelhut.android.openvpn.util.NetworkConnectivityListener;
+import de.schaeuffelhut.android.openvpn.shared.util.NetworkConnectivityListener;
 
 /**
  * @author M.Sc. Friedrich Schäuffelhut

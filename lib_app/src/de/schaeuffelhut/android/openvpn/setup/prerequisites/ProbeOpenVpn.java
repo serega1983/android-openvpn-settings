@@ -28,7 +28,7 @@ import android.util.Log;
 import de.schaeuffelhut.android.openvpn.lib.app.R;
 import de.schaeuffelhut.android.openvpn.lib.openvpn.InstallFailed;
 import de.schaeuffelhut.android.openvpn.lib.openvpn.Installer;
-import de.schaeuffelhut.android.openvpn.util.Shell;
+import de.schaeuffelhut.android.openvpn.shared.util.Shell;
 
 import java.io.File;
 

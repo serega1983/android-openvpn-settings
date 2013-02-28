@@ -30,8 +30,8 @@ import de.schaeuffelhut.android.openvpn.IocContext;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnPasswordRequest;
 import de.schaeuffelhut.android.openvpn.tun.TunPreferences;
 import de.schaeuffelhut.android.openvpn.util.Preconditions;
-import de.schaeuffelhut.android.openvpn.util.Shell;
-import de.schaeuffelhut.android.openvpn.util.Util;
+import de.schaeuffelhut.android.openvpn.shared.util.Shell;
+import de.schaeuffelhut.android.openvpn.shared.util.Util;
 import de.schaeuffelhut.android.openvpn.util.tun.TunInfo;
 
 /**

@@ -30,7 +30,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import de.schaeuffelhut.android.openvpn.lib.app.R;
-import de.schaeuffelhut.android.openvpn.util.Util;
+import de.schaeuffelhut.android.openvpn.shared.util.Util;
 
 public class ViewLogFile extends Activity
 {

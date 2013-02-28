@@ -19,19 +19,46 @@
  * Report bugs or new features at: http://code.google.com/p/android-openvpn-settings/
  * Contact the author at:          android.openvpn@schaeuffelhut.de
  */
-package de.schaeuffelhut.android.openvpn.util;
 
-public final class UnexpectedSwitchValueException extends RuntimeException
+package de.schaeuffelhut.android.openvpn.shared.util;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * @author Friedrich Schäuffelhut
+ * @since 2013-01-25
+ */
+public class ShellWithCollectedOutput extends Shell
 {
-	private static final long serialVersionUID = 1L;
+    private final ArrayList<String> stdout = new ArrayList<String>();
+    private final ArrayList<String> stderr = new ArrayList<String>();
 
-	public UnexpectedSwitchValueException(int v)
-	{
-		super( Integer.toString( v ) );
-	}
-
-    public UnexpectedSwitchValueException(String value)
+    public ShellWithCollectedOutput(String tag, String command)
     {
-        super( value );
+        super( tag, command, SH );
+    }
+
+    @Override
+    protected void onStdout(String line)
+    {
+        stdout.add( line );
+    }
+
+    @Override
+    protected void onStderr(String line)
+    {
+        stderr.add( line );
+    }
+
+    public List<String> getStdout()
+    {
+        return Collections.unmodifiableList( stdout );
+    }
+
+    public List<String> getStderr()
+    {
+        return Collections.unmodifiableList( stderr );
     }
 }

@@ -19,13 +19,14 @@
  * Report bugs or new features at: http://code.google.com/p/android-openvpn-settings/
  * Contact the author at:          android.openvpn@schaeuffelhut.de
  */
-package de.schaeuffelhut.android.openvpn.util;
+package de.schaeuffelhut.android.openvpn.shared.util;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 
 import android.util.Log;
+import de.schaeuffelhut.android.openvpn.shared.util.Util;
 
 public class LoggerThread extends Thread
 {

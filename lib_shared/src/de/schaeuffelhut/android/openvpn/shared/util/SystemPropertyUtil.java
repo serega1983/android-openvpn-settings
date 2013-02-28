@@ -20,13 +20,14 @@
  * Contact the author at:          android.openvpn@schaeuffelhut.de
  */
 
-package de.schaeuffelhut.android.openvpn.util;
+package de.schaeuffelhut.android.openvpn.shared.util;
 
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.util.Log;
+import de.schaeuffelhut.android.openvpn.shared.util.Shell;
 
 public class SystemPropertyUtil
 {
