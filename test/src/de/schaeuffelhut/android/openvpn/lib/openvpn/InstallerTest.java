@@ -23,8 +23,9 @@
 package de.schaeuffelhut.android.openvpn.lib.openvpn;
 
 import android.test.InstrumentationTestCase;
-import de.schaeuffelhut.android.openvpn.util.BusyBoxBinary;
-import de.schaeuffelhut.android.openvpn.util.OpenVpnBinary;
+import android.util.Log;
+import de.schaeuffelhut.android.openvpn.shared.util.BusyBoxBinary;
+import de.schaeuffelhut.android.openvpn.shared.util.OpenVpnBinary;
 import junit.framework.Assert;
 
 import java.io.File;
@@ -54,7 +55,7 @@ public class InstallerTest extends InstrumentationTestCase
     {
         File pathToBusybox = new Installer( getInstrumentation().getTargetContext() ).installBusyBox();
         Assert.assertNotNull( pathToBusybox );
-        Assert.assertEquals( "v1.21.0.git", new BusyBoxBinary( pathToBusybox ).getVersion() );
+        Assert.assertEquals( "v1.21.0", new BusyBoxBinary( pathToBusybox ).getVersion() );
     }
 
 }
