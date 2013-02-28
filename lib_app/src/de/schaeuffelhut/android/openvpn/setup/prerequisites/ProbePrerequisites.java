@@ -29,11 +29,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: fries
- * Date: 4/30/12
- * Time: 7:19 PM
- * To change this template use File | Settings | File Templates.
+ * @author Friedrich Schäuffelhut
+ * @since 2012-04-30
  */
 public class ProbePrerequisites
 {
@@ -44,8 +41,8 @@ public class ProbePrerequisites
         probeResults = new ArrayList<ProbeResult>();
         probeResults.add( ProbeRoot.probeRoot() );
         probeResults.add( new ProbeTunDevice( context ).probe() );
-        probeResults.add( new ProbeOpenVpn().probe() );
-        probeResults.add( new ProbeBusyBox().probe() );
+        probeResults.add( new ProbeOpenVpn( context ).probe() );
+        probeResults.add( new ProbeBusyBox( context ).probe() );
     }
 
     public List<ProbeResult> getProbeResults()

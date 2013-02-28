@@ -22,27 +22,46 @@
 
 package de.schaeuffelhut.android.openvpn.setup.prerequisites;
 
+import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import de.schaeuffelhut.android.openvpn.lib.app.R;
+import de.schaeuffelhut.android.openvpn.lib.openvpn.InstallFailed;
+import de.schaeuffelhut.android.openvpn.lib.openvpn.Installer;
+import de.schaeuffelhut.android.openvpn.util.Shell;
 
 import java.io.File;
 
 /**
- * Created with IntelliJ IDEA.
- * User: fries
- * Date: 4/30/12
- * Time: 5:49 PM
- * To change this template use File | Settings | File Templates.
+ * @author Friedrich Schäuffelhut
+ * @since 2012-04-30
  */
 class ProbeBusyBox extends ProbeExecutable
 {
-    ProbeBusyBox()
+    ProbeBusyBox(Context context)
     {
         super( "BusyBox binary",
                 "Used to configure the network interface.",
                 R.string.prerequisites_item_title_getBusyBox,
                 Uri.parse( "market://details?id=stericson.busybox" ),
-                new File("/system/xbin/busybox"), new File("/system/bin/busybox"), new File("/sbin/busybox")
+                new File( "/system/xbin/busybox" ), new File( "/system/bin/busybox" ), new File( "/sbin/busybox" )
+                //TODO:, install( context )
         );
+    }
+
+    private static File install(Context context)
+    {
+        try
+        {
+            File file = new Installer( context ).installBusyBox();
+            Shell shell = new Shell( "OpenVPN-Settings", file.getAbsolutePath(), false );
+            shell.run();
+            return file;
+        }
+        catch (InstallFailed installFailed)
+        {
+            Log.e( "OpenVPN-Settings", "installing busybox", installFailed );
+        }
+        return null;
     }
 }
