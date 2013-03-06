@@ -11,3 +11,4 @@ build.properties
 src/config.properties
 lib_openvpn/obj
 lib_openvpn/libs
+lib_shared/obj
