@@ -20,16 +20,28 @@
  * Contact the author at:          android.openvpn@schaeuffelhut.de
  */
 
-package de.schaeuffelhut.android.openvpn.shared.util;
+package de.schaeuffelhut.android.openvpn.shared.util.service;
+
+import android.app.Service;
 
 /**
- * @author Friedrich Schäuffelhut
- * @since 2013-03-06
- */
-public class DelegatingServiceTest extends DelegatingServiceBaseTest
+* @author Friedrich Schäuffelhut
+* @since 2013-03-06
+*/
+public interface ServiceDelegate
 {
-    protected DelegatingService newDelegatingService(ServiceDelegate serviceDelegate)
-    {
-        return new DelegatingService( serviceDelegate );
-    }
+    /**
+     * Called by a delegating service to supply its reference to an instance of ServiceDelegate.
+     * @param service the service object delegating to this ServiceDelegate.
+     */
+    public void setService(Service service);
+
+    public void onCreate();
+
+    @Deprecated
+    public void onStart(android.content.Intent intent, int startId);
+
+    public void onDestroy();
+
+    public abstract android.os.IBinder onBind(android.content.Intent intent);
 }

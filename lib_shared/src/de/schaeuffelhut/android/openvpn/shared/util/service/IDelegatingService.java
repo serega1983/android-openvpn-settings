@@ -1,4 +1,4 @@
-package de.schaeuffelhut.android.openvpn.shared.util;
+package de.schaeuffelhut.android.openvpn.shared.util.service;
 
 /**
  * @author Friedrich Schäuffelhut
