@@ -22,12 +22,20 @@
 
 package de.schaeuffelhut.android.openvpn.shared.util;
 
+import android.app.Service;
+
 /**
 * @author Friedrich Schäuffelhut
 * @since 2013-03-06
 */
 public interface ServiceDelegate
 {
+    /**
+     * Called by a delegating service to supply its reference to an instance of ServiceDelegate.
+     * @param service the service object delegating to this ServiceDelegate.
+     */
+    public void setService(Service service);
+
     public void onCreate();
 
     @Deprecated

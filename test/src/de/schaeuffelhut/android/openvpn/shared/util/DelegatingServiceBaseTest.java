@@ -41,6 +41,16 @@ abstract class DelegatingServiceBaseTest extends TestCase
 
     protected abstract Service newDelegatingService(ServiceDelegate serviceDelegate);
 
+    public final void test_sets_service_object()
+    {
+        Mockito.verify( serviceDelegate ).setService( service );
+    }
+
+    public final void test_getServiceDelegate()
+    {
+        assertSame( serviceDelegate, ((IDelegatingService)service).getServiceDelegate() );
+    }
+
     public final void test_onCreate_delegates_to_serviceDelegate()
     {
         service.onCreate();

@@ -34,13 +34,19 @@ import android.os.IBinder;
  * @author Friedrich Schäuffelhut
  * @since 2013-03-06
  */
-public final class DelegatingService extends Service
+public class DelegatingService<T extends ServiceDelegate> extends Service implements IDelegatingService<T>
 {
-    private final ServiceDelegate serviceDelegate;
+    private final T serviceDelegate;
 
-    public DelegatingService(ServiceDelegate serviceDelegate)
+    public DelegatingService(T serviceDelegate)
     {
         this.serviceDelegate = serviceDelegate;//TODO: guava checkNotNull()
+        this.serviceDelegate.setService( this );
+    }
+
+    public T getServiceDelegate()
+    {
+        return serviceDelegate;
     }
 
     @Override
