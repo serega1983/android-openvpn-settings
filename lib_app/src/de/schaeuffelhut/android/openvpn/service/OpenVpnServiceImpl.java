@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -39,14 +40,44 @@ import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.service.api.*;
 import de.schaeuffelhut.android.openvpn.shared.util.NetworkConnectivityListener;
+import de.schaeuffelhut.android.openvpn.shared.util.ServiceDelegate;
 
 /**
  * @author M.Sc. Friedrich Schäuffelhut
  *
  */
 //TODO: expose interface through aidl
-public class OpenVpnServiceImpl extends Service
+public class OpenVpnServiceImpl implements ServiceDelegate
 {
+    /*
+     Delegate to Service object.
+     */
+    private Service mService;
+
+    @Override
+    public void setService(Service service)
+    {
+        mService = service;
+    }
+
+    private Service getService()
+    {
+        return mService;
+    }
+
+    private Context getContext()
+    {
+        return getService();
+    }
+
+    private Context getApplicationContext2()
+    {
+        return getService().getApplicationContext();
+    }
+
+
+
+
 	private final static String TAG = "OpenVPN-ControlShell";
 	
 	/* This is a hack
@@ -109,23 +140,23 @@ public class OpenVpnServiceImpl extends Service
 			if ( !daemonMonitor.isAlive() )
 				return;
 			
-			if ( Preferences.getLogStdoutEnable( OpenVpnServiceImpl.this, config ) )
+			if ( Preferences.getLogStdoutEnable( getContext(), config ) )
 				daemonMonitor.startLogging();
 			else
 				daemonMonitor.stopLogging();
 		}
 	}
 
-	
+
     public final class ServiceBinder extends IOpenVpnService.Stub
     {
         private Handler handler = new Handler( Looper.getMainLooper() );
 
 
-        public final OpenVpnServiceImpl getService()
-        {
-            return OpenVpnServiceImpl.this;
-        }
+//        public final OpenVpnServiceImpl getService()
+//        {
+//            return OpenVpnServiceImpl.this;
+//        }
 
         public void connect(final OpenVpnConfig config) throws RemoteException
         {
@@ -162,13 +193,13 @@ public class OpenVpnServiceImpl extends Service
 
         public OpenVpnState getStatus() throws RemoteException
         {
-            return OpenVpnState.fromStickyBroadcast( OpenVpnServiceImpl.this, getCurrent().getPasswordRequest() );
+            return OpenVpnState.fromStickyBroadcast( getContext(), getCurrent().getPasswordRequest() );
         }
 
         public OpenVpnState getStatusFor(OpenVpnConfig config) throws RemoteException
         {
             if ( getCurrent().getConfigFile().equals( config.getFile() ) )
-                return OpenVpnState.fromStickyBroadcast( OpenVpnServiceImpl.this, getCurrent().getPasswordRequest() );
+                return OpenVpnState.fromStickyBroadcast( getContext(), getCurrent().getPasswordRequest() );
             else
                 return OpenVpnState.stopped();
         }
@@ -205,26 +236,26 @@ public class OpenVpnServiceImpl extends Service
 	@Override
 	public void onCreate()
 	{
-		super.onCreate();
+//		super.onCreate();
 
 		startup();
 
-		PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(
+		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean(
 				Preferences.KEY_OPENVPN_ENABLED, true
 		).commit();
 
-        sendBroadcast( new Intent( de.schaeuffelhut.android.openvpn.service.api.Intents.OPENVPN_STATE_CHANGED.getAction() ) );
+        getService().sendBroadcast( new Intent( de.schaeuffelhut.android.openvpn.service.api.Intents.OPENVPN_STATE_CHANGED.getAction() ) );
 
 		markServiceStarted();
 
-		PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener( onSharedPreferenceChangeListener );
+		PreferenceManager.getDefaultSharedPreferences(getContext()).registerOnSharedPreferenceChangeListener( onSharedPreferenceChangeListener );
 	}
 
     @Override
     //TODO: implement onStartCommand instead, when updated to API level 5 or higher.
     public void onStart(Intent intent, int startId)
     {
-        super.onStart( intent, startId );
+//        super.onStart( intent, startId );
         if ( intent == null )
             return;
         Log.d(TAG, "onStart: " + intent.getAction() );
@@ -239,11 +270,11 @@ public class OpenVpnServiceImpl extends Service
     @Override
 	public void onDestroy()
     {
-		PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener( onSharedPreferenceChangeListener );
+		PreferenceManager.getDefaultSharedPreferences(getContext()).unregisterOnSharedPreferenceChangeListener( onSharedPreferenceChangeListener );
 
 		markServiceStopped();
 
-		PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(
+		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean(
 				Preferences.KEY_OPENVPN_ENABLED, false
 		).commit();
 
@@ -263,7 +294,7 @@ public class OpenVpnServiceImpl extends Service
 
     private final OpenVpnStateListenerDispatcher listenerDispatcher = new OpenVpnStateListenerDispatcher();
 
-    private DaemonMonitorFactory daemonMonitorFactory = new DaemonMonitorImplFactory( this, listenerDispatcher );
+    private DaemonMonitorFactory daemonMonitorFactory = new DaemonMonitorImplFactory( getContext(), listenerDispatcher );
 
     private synchronized void startup()
 	{
@@ -286,7 +317,7 @@ public class OpenVpnServiceImpl extends Service
 		}, 0);
 
 		//TODO: introduce preference setting
-		mConnectivity.startListening( getApplicationContext() );
+		mConnectivity.startListening( getApplicationContext2() );
 	}
 	
 	private synchronized void shutdown()
@@ -311,12 +342,12 @@ public class OpenVpnServiceImpl extends Service
 		Log.d( TAG, "trying to attach to already running daemons" );
 
         mRegistry.clear();
-        DaemonMonitor daemonMonitor = new FindCurrentDaemon( this, daemonMonitorFactory, listConfigs() ).getTheOneRunningDaemonOrTheNullDaemonMonitor();
+        DaemonMonitor daemonMonitor = new FindCurrentDaemon( getContext(), daemonMonitorFactory, listConfigs() ).getTheOneRunningDaemonOrTheNullDaemonMonitor();
         setCurrent( daemonMonitor );
 
         // clean up sticky broadcasts
         //TODO: review this code it might not be correct
-        Intent intent = registerReceiver( null, new IntentFilter( Intents.DAEMON_STATE_CHANGED ) );
+        Intent intent = getService().registerReceiver( null, new IntentFilter( Intents.DAEMON_STATE_CHANGED ) );
         if (intent != null && !isDaemonStarted( new File( intent.getStringExtra( Intents.EXTRA_CONFIG ) ) ))
             newNotification2(
                     new File( intent.getStringExtra( Intents.EXTRA_CONFIG ) )
@@ -345,7 +376,7 @@ public class OpenVpnServiceImpl extends Service
 
     private Notification2 newNotification2(File config)
     {
-        return new Notification2( this, config, new Preferences2( this, config ).getNotificationId() );
+        return new Notification2( getContext(), config, new Preferences2( getContext(), config ).getNotificationId() );
     }
 
 
@@ -357,7 +388,7 @@ public class OpenVpnServiceImpl extends Service
     // hook to be overwritten in unit test
     protected List<File> listConfigs()
     {
-        return Preferences.listKnownConfigs( this );
+        return Preferences.listKnownConfigs( getContext() );
     }
 
 
@@ -414,10 +445,10 @@ public class OpenVpnServiceImpl extends Service
 		{
 			Log.i( TAG, config + " is already running" );
 		}
-		else if ( Preferences.getVpnDnsEnabled(this, config.getFile()) && isVpnDnsActive() )
+		else if ( Preferences.getVpnDnsEnabled(getContext(), config.getFile()) && isVpnDnsActive() )
 		{
 			Log.i( TAG, config + " only one VPN DNS may be active at a time, aborting" );
-			Toast.makeText( this , "VPN DNS is only supported in one tunnel!", Toast.LENGTH_LONG).show();
+			Toast.makeText( getContext() , "VPN DNS is only supported in one tunnel!", Toast.LENGTH_LONG).show();
             newNotification2( config.getFile() ).daemonStateChangedToDisabled();
 		}
 		else
