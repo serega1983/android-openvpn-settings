@@ -41,6 +41,7 @@ import android.content.Context;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
+import android.net.LocalSocket;
 import android.util.Log;
 
 public class Util 
@@ -165,6 +166,16 @@ public class Util
 				s.close();
 		}catch (Exception e) {
 			Log.e( "OpenVPN", "closing Socket", e );
+		}
+	}
+
+	public final static void closeQuietly(LocalSocket s)
+	{
+		try{
+			if ( s != null )
+				s.close();
+		}catch (Exception e) {
+			Log.e( "OpenVPN", "closing LocalSocket", e );
 		}
 	}
 
