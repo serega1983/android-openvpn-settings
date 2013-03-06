@@ -22,6 +22,8 @@
 
 package de.schaeuffelhut.android.openvpn.service;
 
+import android.content.Context;
+
 import java.io.File;
 
 /**
@@ -30,10 +32,10 @@ import java.io.File;
  */
 class DaemonMonitorImplFactory implements DaemonMonitorFactory
 {
-    private final OpenVpnServiceImpl context;
+    private final Context context;
     private final OpenVpnStateListenerDispatcher listenerDispatcher;
 
-    public DaemonMonitorImplFactory(OpenVpnServiceImpl context, OpenVpnStateListenerDispatcher listenerDispatcher)
+    public DaemonMonitorImplFactory(Context context, OpenVpnStateListenerDispatcher listenerDispatcher)
     {
         this.context = context;
         this.listenerDispatcher = listenerDispatcher;

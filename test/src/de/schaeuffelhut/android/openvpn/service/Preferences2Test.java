@@ -22,6 +22,7 @@
 
 package de.schaeuffelhut.android.openvpn.service;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.test.InstrumentationTestCase;
@@ -43,7 +44,7 @@ public class Preferences2Test extends InstrumentationTestCase
     public void setUp() throws Exception
     {
         super.setUp();
-        preferences = new Preferences2( getInstrumentation().getContext(), uniqueFile );
+        preferences = new Preferences2( getContext(), uniqueFile );
     }
 
     public void test_getMgmtPort_9090()
@@ -439,6 +440,11 @@ public class Preferences2Test extends InstrumentationTestCase
 
     private SharedPreferences preference()
     {
-        return PreferenceManager.getDefaultSharedPreferences( getInstrumentation().getContext() );
+        return PreferenceManager.getDefaultSharedPreferences( getContext() );
+    }
+
+    private Context getContext()
+    {
+        return getInstrumentation().getTargetContext();
     }
 }
