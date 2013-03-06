@@ -20,7 +20,7 @@
  * Contact the author at:          android.openvpn@schaeuffelhut.de
  */
 
-package de.schaeuffelhut.android.openvpn.shared.util;
+package de.schaeuffelhut.android.openvpn.shared.util.service;
 
 import android.app.Service;
 import android.content.Intent;

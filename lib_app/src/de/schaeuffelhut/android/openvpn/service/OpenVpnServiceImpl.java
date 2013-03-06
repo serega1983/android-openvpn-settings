@@ -40,7 +40,7 @@ import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.service.api.*;
 import de.schaeuffelhut.android.openvpn.shared.util.NetworkConnectivityListener;
-import de.schaeuffelhut.android.openvpn.shared.util.ServiceDelegate;
+import de.schaeuffelhut.android.openvpn.shared.util.service.ServiceDelegate;
 
 /**
  * @author M.Sc. Friedrich Schäuffelhut

@@ -20,11 +20,13 @@
  * Contact the author at:          android.openvpn@schaeuffelhut.de
  */
 
-package de.schaeuffelhut.android.openvpn.shared.util;
+package de.schaeuffelhut.android.openvpn.shared.util.service;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import de.schaeuffelhut.android.openvpn.shared.util.service.IDelegatingService;
+import de.schaeuffelhut.android.openvpn.shared.util.service.ServiceDelegate;
 import junit.framework.TestCase;
 import org.mockito.Mockito;
 
@@ -48,7 +50,7 @@ abstract class DelegatingServiceBaseTest extends TestCase
 
     public final void test_getServiceDelegate()
     {
-        assertSame( serviceDelegate, ((IDelegatingService)service).getServiceDelegate() );
+        assertSame( serviceDelegate, ((IDelegatingService) service).getServiceDelegate() );
     }
 
     public final void test_onCreate_delegates_to_serviceDelegate()

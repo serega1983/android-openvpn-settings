@@ -22,9 +22,8 @@
 
 package de.schaeuffelhut.android.openvpn.services;
 
-import android.app.Service;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnServiceImpl;
-import de.schaeuffelhut.android.openvpn.shared.util.DelegatingService;
+import de.schaeuffelhut.android.openvpn.shared.util.service.DelegatingService;
 
 /**
  * This class provides a unique and persistent name for the OpenVpnService implemented else where.
