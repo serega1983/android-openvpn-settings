@@ -22,6 +22,7 @@
 
 package de.schaeuffelhut.android.openvpn.service;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
@@ -40,11 +41,11 @@ import java.util.List;
  */
 class FindCurrentDaemon
 {
-    private final OpenVpnServiceImpl context;
+    private final Context context;
     private final DaemonMonitorFactory daemonMonitorFactory;
     private final List<File> configFiles;
 
-    FindCurrentDaemon(OpenVpnServiceImpl context, DaemonMonitorFactory daemonMonitorFactory, List<File> configFiles)
+    FindCurrentDaemon(Context context, DaemonMonitorFactory daemonMonitorFactory, List<File> configFiles)
     {
         this.context = context;
         this.daemonMonitorFactory = daemonMonitorFactory;

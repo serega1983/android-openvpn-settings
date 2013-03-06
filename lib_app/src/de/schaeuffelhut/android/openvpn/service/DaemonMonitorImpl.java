@@ -24,6 +24,7 @@ package de.schaeuffelhut.android.openvpn.service;
 import java.io.File;
 import java.io.IOException;
 
+import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 import de.schaeuffelhut.android.openvpn.IocContext;
@@ -42,7 +43,7 @@ import de.schaeuffelhut.android.openvpn.util.tun.TunInfo;
  */
 final class DaemonMonitorImpl implements DaemonMonitor
 {
-	private final OpenVpnServiceImpl mContext;
+	private final Context mContext;
 	private final File mConfigFile;
     private final Notification2 mNotification2;
     private final Preferences2 mPreferences2;
@@ -54,7 +55,7 @@ final class DaemonMonitorImpl implements DaemonMonitor
 	private ManagementThread mManagementThread;
 
 
-    DaemonMonitorImpl(OpenVpnServiceImpl context, File configFile, Notification2 notification2, Preferences2 preferences2)
+    DaemonMonitorImpl(Context context, File configFile, Notification2 notification2, Preferences2 preferences2)
 	{
 		mContext = context;
 		mConfigFile = configFile;

@@ -44,7 +44,7 @@ public class Notification2
 {
     public static final ComponentName DEFAULT_ACTIVITY_FOR_PASSPHRASE_REQUEST = new ComponentName( "de.schaeuffelhut.android.openvpn", "de.schaeuffelhut.android.openvpn.EnterPassphrase" );
     public static final ComponentName DEFAULT_ACTIVITY_FOR_CREDENTIALS_REQUEST = new ComponentName( "de.schaeuffelhut.android.openvpn", "de.schaeuffelhut.android.openvpn.EnterUserPassword" );
-    private final OpenVpnServiceImpl mContext; //TODO: convert to ApplicationContext
+    private final Context mContext;
     private final File mConfigFile;
     private final int mNotificationId;
     private final NotificationManager mNotificationManager;
@@ -54,12 +54,12 @@ public class Notification2
     private ComponentName activityForCredentialsRequest;
 
     @Deprecated
-    public Notification2(OpenVpnServiceImpl context, File configFile, int notificationId) {
+    public Notification2(Context context, File configFile, int notificationId) {
         this(context, configFile, notificationId, new OpenVpnStateListenerDispatcher(), new ComponentName( context, EnterPassphrase.class ), new ComponentName( context, EnterUserPassword.class ) );
     }
 
     public Notification2(
-            OpenVpnServiceImpl context, File configFile, int notificationId,
+            Context context, File configFile, int notificationId,
             OpenVpnStateListenerDispatcher listenerDispatcher,
             ComponentName activityForPassphraseRequest,
             ComponentName activityForCredentialsRequest
