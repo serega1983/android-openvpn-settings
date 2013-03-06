@@ -22,7 +22,9 @@
 
 package de.schaeuffelhut.android.openvpn.services;
 
+import android.app.Service;
 import de.schaeuffelhut.android.openvpn.service.OpenVpnServiceImpl;
+import de.schaeuffelhut.android.openvpn.shared.util.DelegatingService;
 
 /**
  * This class provides a unique and persistent name for the OpenVpnService implemented else where.
@@ -30,9 +32,14 @@ import de.schaeuffelhut.android.openvpn.service.OpenVpnServiceImpl;
  * @author Friedrich Schäuffelhut
  * @since 2012-11-13
  */
-public class OpenVpnService extends OpenVpnServiceImpl
+public class OpenVpnService extends DelegatingService<OpenVpnServiceImpl>
 {
     public static final String NAME = "de.schaeuffelhut.android.openvpn.services.OpenVpnService";
+
+    public OpenVpnService()
+    {
+        super( new OpenVpnServiceImpl() );
+    }
 
     /*
      * Keep implementation outside this class and package.

@@ -25,6 +25,7 @@ package de.schaeuffelhut.android.openvpn.service;
 import android.content.Intent;
 import android.test.ServiceTestCase;
 import de.schaeuffelhut.android.openvpn.Intents;
+import de.schaeuffelhut.android.openvpn.services.OpenVpnService;
 import de.schaeuffelhut.android.util.MockitoSupport;
 
 import java.io.File;
@@ -33,13 +34,18 @@ import java.io.File;
  * @author Friedrich Schäuffelhut
  * @since 2012-11-05
  */
-public class OpenVpnServiceIntentApiTest extends ServiceTestCase<OpenVpnServiceImpl>
+public class OpenVpnServiceIntentApiTest extends ServiceTestCase<OpenVpnService>
 {
     final DaemonMonitorMockFactory daemonMonitorFactory = new DaemonMonitorMockFactory();
 
     public OpenVpnServiceIntentApiTest()
     {
-        super( OpenVpnServiceImpl.class );
+        super( OpenVpnService.class );
+    }
+
+    private OpenVpnServiceImpl getServiceDelegate()
+    {
+        return super.getService().getServiceDelegate();
     }
 
     @Override
@@ -48,7 +54,7 @@ public class OpenVpnServiceIntentApiTest extends ServiceTestCase<OpenVpnServiceI
         super.setUp();
         MockitoSupport.workaroundMockitoClassloaderIssue();
         setupService();
-        getService().setDaemonMonitorFactory( daemonMonitorFactory );
+        getServiceDelegate().setDaemonMonitorFactory( daemonMonitorFactory );
     }
 
     public void test_startService_daemon_with_null_intent()
@@ -56,7 +62,7 @@ public class OpenVpnServiceIntentApiTest extends ServiceTestCase<OpenVpnServiceI
         try
         {
             startService( null );
-            assertFalse( getService().getCurrent().isAlive() );
+            assertFalse( getServiceDelegate().getCurrent().isAlive() );
             // no action expected
         }
         catch (NullPointerException e)
@@ -72,8 +78,8 @@ public class OpenVpnServiceIntentApiTest extends ServiceTestCase<OpenVpnServiceI
         intent.putExtra( Intents.EXTRA_CONFIG, configFile.getAbsolutePath() );
         startService( intent );
 
-        assertTrue( getService().getCurrent().isAlive() );
-        assertEquals( configFile, getService().getCurrent().getConfigFile() );
+        assertTrue( getServiceDelegate().getCurrent().isAlive() );
+        assertEquals( configFile, getServiceDelegate().getCurrent().getConfigFile() );
     }
 
     public void test_startService_daemon_start_without_EXTRA_CONFIG()
@@ -81,7 +87,7 @@ public class OpenVpnServiceIntentApiTest extends ServiceTestCase<OpenVpnServiceI
         try
         {
             startService( new Intent( Intents.START_DAEMON ) );
-            assertFalse( getService().getCurrent().isAlive() );
+            assertFalse( getServiceDelegate().getCurrent().isAlive() );
             // no action expected
         }
         catch (NullPointerException e)
@@ -98,18 +104,18 @@ public class OpenVpnServiceIntentApiTest extends ServiceTestCase<OpenVpnServiceI
         {
             Intent intent = new Intent( Intents.START_DAEMON );
             intent.putExtra( Intents.EXTRA_CONFIG, configFile.getAbsolutePath() );
-            getService().onStart( intent, 0 );
+            getServiceDelegate().onStart( intent, 0 );
         }
-        assertTrue( getService().getCurrent().isAlive() );
-        assertEquals( configFile, getService().getCurrent().getConfigFile() );
+        assertTrue( getServiceDelegate().getCurrent().isAlive() );
+        assertEquals( configFile, getServiceDelegate().getCurrent().getConfigFile() );
 
         {
             Intent intent = new Intent( Intents.STOP_DAEMON );
             intent.putExtra( Intents.EXTRA_CONFIG, configFile.getAbsolutePath() );
-            getService().onStart( intent, 0 );
+            getServiceDelegate().onStart( intent, 0 );
         }
-        assertFalse( getService().getCurrent().isAlive() );
-        assertEquals( configFile, getService().getCurrent().getConfigFile() );
+        assertFalse( getServiceDelegate().getCurrent().isAlive() );
+        assertEquals( configFile, getServiceDelegate().getCurrent().getConfigFile() );
     }
 
 }
