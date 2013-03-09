@@ -36,6 +36,7 @@ import android.os.*;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
+import com.google.common.base.Preconditions;
 import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.service.api.*;
@@ -52,12 +53,11 @@ public class OpenVpnServiceImpl implements ServiceDelegate
     /*
      Delegate to Service object.
      */
-    private Service mService;
+    private final Service mService;
 
-    @Override
-    public void setService(Service service)
+    public OpenVpnServiceImpl(Service mService)
     {
-        mService = service;
+        this.mService = Preconditions.checkNotNull( mService );
     }
 
     private Service getService()

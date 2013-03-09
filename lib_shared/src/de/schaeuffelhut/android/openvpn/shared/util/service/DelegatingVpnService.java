@@ -34,24 +34,29 @@ import android.os.IBinder;
  * @author Friedrich Schäuffelhut
  * @since 2013-03-06
  */
-public class DelegatingVpnService<T extends ServiceDelegate> extends VpnService implements IDelegatingService<T>
+public abstract class DelegatingVpnService<T extends ServiceDelegate> extends VpnService implements IDelegatingService<T>
 {
-    private final T serviceDelegate;
+    private T serviceDelegate;
 
-    public DelegatingVpnService(T serviceDelegate)
-    {
-        this.serviceDelegate = serviceDelegate;//TODO: guava checkNotNull()
-        this.serviceDelegate.setService( this );
-    }
-
-    public T getServiceDelegate()
+    public final T getServiceDelegate()
     {
         return serviceDelegate;
     }
 
+    private void createServiceDelegateIfNeeded()
+    {
+        if ( serviceDelegate == null )
+        {
+            serviceDelegate = createServiceDelegate();
+        }
+    }
+
+    protected abstract T createServiceDelegate();
+
     @Override
     public void onCreate()
     {
+        createServiceDelegateIfNeeded();
         serviceDelegate.onCreate();
     }
 

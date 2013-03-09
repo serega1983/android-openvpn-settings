@@ -23,8 +23,6 @@
 package de.schaeuffelhut.android.openvpn.shared.util.service;
 
 import android.app.Service;
-import de.schaeuffelhut.android.openvpn.shared.util.service.DelegatingVpnService;
-import de.schaeuffelhut.android.openvpn.shared.util.service.ServiceDelegate;
 
 /**
  * @author Friedrich Schäuffelhut
@@ -32,8 +30,14 @@ import de.schaeuffelhut.android.openvpn.shared.util.service.ServiceDelegate;
  */
 public class DelegatingVpnServiceTest extends DelegatingServiceBaseTest
 {
-    protected Service newDelegatingService(ServiceDelegate serviceDelegate)
+    protected Service newDelegatingService(final ServiceDelegate serviceDelegate)
     {
-        return new DelegatingVpnService( serviceDelegate );
+        return new DelegatingVpnService() {
+            @Override
+            protected ServiceDelegate createServiceDelegate()
+            {
+                return serviceDelegate;
+            }
+        };
     }
 }

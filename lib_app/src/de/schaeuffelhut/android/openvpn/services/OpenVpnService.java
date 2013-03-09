@@ -37,7 +37,13 @@ public class OpenVpnService extends DelegatingService<OpenVpnServiceImpl>
 
     public OpenVpnService()
     {
-        super( new OpenVpnServiceImpl() );
+        super();
+    }
+
+    @Override
+    protected OpenVpnServiceImpl createServiceDelegate()
+    {
+        return new OpenVpnServiceImpl( this );
     }
 
     /*

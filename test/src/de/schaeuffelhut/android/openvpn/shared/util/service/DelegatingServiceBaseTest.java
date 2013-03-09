@@ -43,9 +43,11 @@ abstract class DelegatingServiceBaseTest extends TestCase
 
     protected abstract Service newDelegatingService(ServiceDelegate serviceDelegate);
 
-    public final void test_sets_service_object()
+    @Override
+    public void setUp() throws Exception
     {
-        Mockito.verify( serviceDelegate ).setService( service );
+        super.setUp();
+        service.onCreate();
     }
 
     public final void test_getServiceDelegate()
@@ -55,7 +57,7 @@ abstract class DelegatingServiceBaseTest extends TestCase
 
     public final void test_onCreate_delegates_to_serviceDelegate()
     {
-        service.onCreate();
+        //service.onCreate(); // already called in setUp()
         Mockito.verify( serviceDelegate ).onCreate();
     }
 

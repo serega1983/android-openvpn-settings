@@ -30,12 +30,6 @@ import android.app.Service;
 */
 public interface ServiceDelegate
 {
-    /**
-     * Called by a delegating service to supply its reference to an instance of ServiceDelegate.
-     * @param service the service object delegating to this ServiceDelegate.
-     */
-    public void setService(Service service);
-
     public void onCreate();
 
     @Deprecated
