@@ -24,6 +24,7 @@ package de.schaeuffelhut.android.openvpn;
 import java.io.File;
 import java.util.*;
 
+import android.os.Environment;
 import de.schaeuffelhut.android.openvpn.tun.TunPreferences;
 import org.apache.commons.io.FilenameUtils;
 
@@ -146,7 +147,8 @@ public final class Preferences {
 
 	public final static String getExternalStorage(SharedPreferences sharedPreferences)
 	{
-		return sharedPreferences.getString( Preferences.KEY_OPENVPN_EXTERNAL_STORAGE, "/sdcard/openvpn" );
+        String defaultPath = new File( Environment.getExternalStorageDirectory(), "openvpn" ).getAbsolutePath();
+        return sharedPreferences.getString( Preferences.KEY_OPENVPN_EXTERNAL_STORAGE, defaultPath );
 	}
 
 	public final static File getExternalStorageAsFile( SharedPreferences sharedPreferences)
