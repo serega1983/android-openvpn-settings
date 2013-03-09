@@ -51,13 +51,19 @@ public class OpenVpnServiceImplTest extends ServiceTestCase<OpenVpnServiceImplTe
     {
         public MockOpenVpnServiceImpl()
         {
-            super( new OpenVpnServiceImpl(){
+            super();
+        }
+
+        @Override
+        protected OpenVpnServiceImpl createServiceDelegate()
+        {
+            return new OpenVpnServiceImpl( this ){
                 @Override
                 protected List<File> listConfigs()
                 {
                     return configs;
                 }
-            });
+            };
         }
     }
 
