@@ -24,7 +24,9 @@ package de.schaeuffelhut.android.openvpn.shared.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Map;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.bugsense.trace.BugSenseHandler;
@@ -48,13 +50,23 @@ public class Shell extends Thread
 	private LoggerThread mStdoutLogger;
 	private LoggerThread mStderrLogger;
     private boolean mDoBugSenseExec = true;
+    @Deprecated //TODO: remove mLdLibraryPathElements once openvpn4 does not depend on it anymore
+    private String mLdLibraryPath;
 
     public Shell(String tag, String cmd, boolean root)
+    {
+        this( tag, cmd, "", root );
+    }
+
+    @Deprecated
+    //TODO: Setting the LD_LIBRARY_PATH is fragile. Bionic support for LD_LIBRARY_PATH was broken once before. Also the location for app local libraries might change with devices or future android versions.
+    public Shell(String tag, String cmd, String ldLibraryPathElements, boolean root)
 	{
 		super( tag + "-stdin" );
 		mTag = tag;
 		mCmd = cmd;
-		mRoot = root;
+        mLdLibraryPath = ldLibraryPathElements;
+        mRoot = root;
 		
 		mSh = findBinary( "sh" );
 		mSu = findBinary( "su" );
@@ -109,6 +121,8 @@ public class Shell extends Thread
 	{
 		final ProcessBuilder shellBuilder = new ProcessBuilder( mRoot ? mSu : mSh );
 
+        setUpLdLibraryPath( shellBuilder );
+
 		if ( LOCAL_LOGD )
 			Log.d( mTag, String.format( 
 					"invoking external process: %s", 
@@ -148,7 +162,22 @@ public class Shell extends Thread
 		}
 	}
 
-	protected void onExecuteFailed(IOException e) {
+    @Deprecated //TODO: remove once openvpn4 does not depend on it anymore
+    private void setUpLdLibraryPath(ProcessBuilder shellBuilder)
+    {
+        mLdLibraryPath = "/data/data/de.schaeuffelhut.android.openvpn/lib";
+        if (mLdLibraryPath.isEmpty())
+            return;
+
+        final Map<String, String> env = shellBuilder.environment();
+        final String currentLdLibraryPath = env.get( "LD_LIBRARY_PATH" );
+        if (currentLdLibraryPath == null || currentLdLibraryPath.trim().isEmpty())
+            env.put( "LD_LIBRARY_PATH", mLdLibraryPath );
+        else
+            env.put( "LD_LIBRARY_PATH", currentLdLibraryPath + ":" + mLdLibraryPath );
+    }
+
+    protected void onExecuteFailed(IOException e) {
 		//overwrite if desired
 		// if this method is called either su or sh was not found or may not be executed.
 	}
