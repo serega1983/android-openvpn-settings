@@ -21,12 +21,6 @@
  */
 package de.schaeuffelhut.android.openvpn.service;
 
-import java.io.File;
-import java.lang.ref.WeakReference;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -43,6 +37,12 @@ import de.schaeuffelhut.android.openvpn.service.api.*;
 import de.schaeuffelhut.android.openvpn.shared.util.NetworkConnectivityListener;
 import de.schaeuffelhut.android.openvpn.shared.util.service.ServiceDelegate;
 
+import java.io.File;
+import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * @author M.Sc. Friedrich Schäuffelhut
  *
@@ -58,6 +58,7 @@ public class OpenVpnServiceImpl implements ServiceDelegate
     public OpenVpnServiceImpl(Service mService)
     {
         this.mService = Preconditions.checkNotNull( mService );
+        this.daemonMonitorFactory = new DaemonMonitorImplFactory( getContext(), listenerDispatcher );
     }
 
     private Service getService()
@@ -294,7 +295,7 @@ public class OpenVpnServiceImpl implements ServiceDelegate
 
     private final OpenVpnStateListenerDispatcher listenerDispatcher = new OpenVpnStateListenerDispatcher();
 
-    private DaemonMonitorFactory daemonMonitorFactory = new DaemonMonitorImplFactory( getContext(), listenerDispatcher );
+    private DaemonMonitorFactory daemonMonitorFactory;
 
     private synchronized void startup()
 	{
