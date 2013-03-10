@@ -21,6 +21,12 @@
  */
 package de.schaeuffelhut.android.openvpn.service;
 
+import java.io.File;
+import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -35,13 +41,8 @@ import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.service.api.*;
 import de.schaeuffelhut.android.openvpn.shared.util.NetworkConnectivityListener;
+import de.schaeuffelhut.android.openvpn.shared.util.apilevel.ApiLevel;
 import de.schaeuffelhut.android.openvpn.shared.util.service.ServiceDelegate;
-
-import java.io.File;
-import java.lang.ref.WeakReference;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * @author M.Sc. Friedrich Schäuffelhut
@@ -238,6 +239,12 @@ public class OpenVpnServiceImpl implements ServiceDelegate
 	public void onCreate()
 	{
 //		super.onCreate();
+
+        if (!ApiLevel.get().isVpnServicePrepared( getContext() ) )
+        {
+            getService().stopSelf();
+            return;
+        }
 
 		startup();
 
