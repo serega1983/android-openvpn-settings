@@ -40,6 +40,7 @@ import de.schaeuffelhut.android.openvpn.service.api.OpenVpnServiceWrapper;
 import de.schaeuffelhut.android.openvpn.setup.prerequisites.PrerequisitesActivity;
 import de.schaeuffelhut.android.openvpn.setup.prerequisites.ProbePrerequisites;
 import de.schaeuffelhut.android.openvpn.shared.util.UnexpectedSwitchValueException;
+import de.schaeuffelhut.android.openvpn.shared.util.apilevel.ApiLevel;
 import de.schaeuffelhut.android.openvpn.tun.ShareTunActivity;
 import de.schaeuffelhut.android.openvpn.tun.TunPreferences;
 import de.schaeuffelhut.android.openvpn.util.*;
@@ -55,6 +56,7 @@ public class OpenVpnSettings extends PreferenceActivity
 	private static final int REQUEST_CODE_EDIT_CONFIG = 2;
 	private static final int REQUEST_CODE_EDIT_CONFIG_PREFERENCES = 3;
 	private static final int REQUEST_CODE_ADVANCED_SETTINGS = 4;
+	private static final int REQUEST_PREPARE_VPN = 5;
 
 	private static final int DIALOG_HELP = 1;
 	private static final int DIALOG_PLEASE_RESTART = 2;
@@ -117,20 +119,17 @@ public class OpenVpnSettings extends PreferenceActivity
         	pref.setSummary( "" );
         	pref.setChecked( isServiceStarted() );
 //        	pref.setSelectable( false );
-        	pref.setOnPreferenceChangeListener( new Preference.OnPreferenceChangeListener() {
-				public boolean onPreferenceChange(Preference preference, Object newValue) {
-					if ( newValue == null )
-					    return false;
+            pref.setOnPreferenceChangeListener( new Preference.OnPreferenceChangeListener()
+            {
+                public boolean onPreferenceChange(Preference preference, Object newValue)
+                {
+                    if (newValue == null)
+                        return false;
 
                     if ((Boolean) newValue)
                     {
-                        mOpenVpnService.startService();
-
-                        if (!mOpenVpnService.bindService())
-                        {
-                            // should always success, as we bind to a local service.
-                            Log.w( TAG, "Could not bind to ControlShell" );
-                        }
+                        if (ApiLevel.get().prepareVpnService( OpenVpnSettings.this, REQUEST_PREPARE_VPN ))
+                            startOpenVpnService();
                     }
                     else
                     {
@@ -139,7 +138,7 @@ public class OpenVpnSettings extends PreferenceActivity
 
                     return false;
                 }
-			});
+            } );
         }
 
 		registerForContextMenu( getListView() );
@@ -163,6 +162,17 @@ public class OpenVpnSettings extends PreferenceActivity
 			showDialog( DIALOG_CHANGELOG );
         else
             openPrerequisitesActivityIfNeeded();
+    }
+
+    private void startOpenVpnService()
+    {
+        mOpenVpnService.startService();
+
+        if (!mOpenVpnService.bindService())
+        {
+            // should always success, as we bind to a local service.
+            Log.w( TAG, "Could not bind to ControlShell" );
+        }
     }
 
     private void openPrerequisitesActivityIfNeeded()
@@ -276,7 +286,14 @@ public class OpenVpnSettings extends PreferenceActivity
 				setContentView( mCurrentContentView = AdUtil.getAdSupportedListView( getApplicationContext() ) );
 			if ( hasDaemonsStarted() )
 				initToggles();
-		}
+		} break;
+
+        case REQUEST_PREPARE_VPN: {
+            if ( resultCode == RESULT_OK )
+                startOpenVpnService();
+            else
+                ; // App is not allowed to use VpnService
+        } break;
 
 		default:
 			Log.w( TAG, String.format( "unexpected onActivityResult(%d, %d, %s) ", requestCode, resultCode, data ) );
