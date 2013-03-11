@@ -36,7 +36,17 @@ import java.io.File;
  */
 public class OpenVpnServiceIntentApiTest extends ServiceTestCase<OpenVpnService>
 {
-    final DaemonMonitorMockFactory daemonMonitorFactory = new DaemonMonitorMockFactory();
+    private static DaemonMonitorMockFactory daemonMonitorFactory; //Ugly hack: Store in static field so createServiceDelegate() can access it.
+
+    private static class OpenVpnServiceSut extends OpenVpnService {
+        @Override
+        protected OpenVpnServiceImpl createServiceDelegate()
+        {
+            OpenVpnServiceImpl serviceDelegate = super.createServiceDelegate();
+            serviceDelegate.setDaemonMonitorFactory( daemonMonitorFactory );
+            return serviceDelegate;
+        }
+    }
 
     public OpenVpnServiceIntentApiTest()
     {
@@ -52,9 +62,10 @@ public class OpenVpnServiceIntentApiTest extends ServiceTestCase<OpenVpnService>
     public void setUp() throws Exception
     {
         super.setUp();
+        daemonMonitorFactory = new DaemonMonitorMockFactory();
         MockitoSupport.workaroundMockitoClassloaderIssue();
         setupService();
-        getServiceDelegate().setDaemonMonitorFactory( daemonMonitorFactory );
+//        getServiceDelegate().setDaemonMonitorFactory( daemonMonitorFactory );
     }
 
     public void test_startService_daemon_with_null_intent()

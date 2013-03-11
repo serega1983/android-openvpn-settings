@@ -22,6 +22,7 @@
 
 package de.schaeuffelhut.android.openvpn.service;
 
+import junit.framework.AssertionFailedError;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -80,6 +81,8 @@ public class DaemonMonitorMockFactory implements DaemonMonitorFactory
 
     public DaemonMonitor getLastMockDaemonMonitorCreated()
     {
+        if ( mockDaemonMonitors.isEmpty() )
+            throw new AssertionFailedError( "Expected at least one created MockDaemonMonitor" );
         return mockDaemonMonitors.get( mockDaemonMonitors.size() - 1 );
     }
 }

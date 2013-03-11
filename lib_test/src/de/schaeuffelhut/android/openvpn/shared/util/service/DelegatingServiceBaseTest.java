@@ -38,7 +38,7 @@ import static org.mockito.Mockito.mock;
  */
 abstract class DelegatingServiceBaseTest extends TestCase
 {
-    private final ServiceDelegate serviceDelegate = mock( ServiceDelegate.class );
+    private final ServiceDelegate serviceDelegate = Mockito.mock( ServiceDelegate.class );
     private final Service service = newDelegatingService( serviceDelegate );
 
     protected abstract Service newDelegatingService(ServiceDelegate serviceDelegate);
@@ -84,7 +84,7 @@ abstract class DelegatingServiceBaseTest extends TestCase
 
     public final void test_onBind_returns_value_from_serviceDelegate()
     {
-        IBinder expectedBinder = mock( IBinder.class );
+        IBinder expectedBinder = Mockito.mock( IBinder.class );
         Intent intent = new Intent();
         Mockito.when( serviceDelegate.onBind( intent ) ).thenReturn( expectedBinder );
 

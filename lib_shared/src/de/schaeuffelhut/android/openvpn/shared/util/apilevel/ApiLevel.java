@@ -24,6 +24,7 @@ package de.schaeuffelhut.android.openvpn.shared.util.apilevel;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 
 /**
  * @author Friedrich Schäuffelhut
@@ -80,5 +81,10 @@ public abstract class ApiLevel
     public boolean isVpnServicePrepared(Context context)
     {
         return true;
+    }
+
+    public void addNativeLibDirToLdLibraryPath(ProcessBuilder pb, ApplicationInfo info)
+    {
+        // earlier version of android can't modify the process builder environment
     }
 }
