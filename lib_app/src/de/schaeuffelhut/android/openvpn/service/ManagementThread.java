@@ -29,6 +29,7 @@ import java.util.concurrent.CountDownLatch;
 
 import android.net.LocalSocket;
 import android.net.LocalSocketAddress;
+import android.os.ParcelFileDescriptor;
 import android.text.TextUtils;
 import android.util.Log;
 import de.schaeuffelhut.android.openvpn.Intents;
@@ -516,6 +517,7 @@ final class ManagementThread extends Thread
 	private static final String RTMSG_PASSWORD = ">PASSWORD:";
 	private static final String RTMSG_STATE = ">STATE:";
 	private static final String RTMSG_BYTECOUNT = ">BYTECOUNT:";
+	private static final String RTMSG_NEED_OK = ">NEED-OK:";
 
 	/**
 	 * Dispatch given message to its message handler.
@@ -544,6 +546,8 @@ final class ManagementThread extends Thread
 			onState( msg );
 		else if ( msg.startsWith( RTMSG_BYTECOUNT ) )
 			onByteCount(msg);
+		else if ( msg.startsWith( RTMSG_NEED_OK ) )
+			onNeedOk( msg );
 
 		else
 			Log.w(mTAG_MT, "Unexpected real-time message: " + msg );
@@ -629,7 +633,7 @@ final class ManagementThread extends Thread
 	private void onState(String line)
 	{
 		Log.v(mTAG_MT, String.format("onState(\"%s\")", line ) );
-		
+
 		final String fieldString = line.startsWith(RTMSG_STATE) ? line.substring( RTMSG_STATE.length() ) : line;
 		final String[] stateFields = TextUtils.split( fieldString, "," ); // TODO: put under test, make sure array size is fixed and empty strings are returend
 		final String state = stateFields[STATE_FIELD_STATE];
@@ -793,7 +797,104 @@ final class ManagementThread extends Thread
         mNotification2.notifyBytes( msg, mTrafficStats.getTuntapReadBytes(), mTrafficStats.getTuntapWriteBytes() );
     }
 
-	/*
+    private IfConfig ifConfig = new IfConfig();
+
+    private void onNeedOk(String line)
+    {
+        if (line.equals( ">NEED-OK:Need 'PROTECTFD' confirmation MSG:protect_fd_nonlocal" ))
+        {
+            FileDescriptor[] fds;
+            try
+            {
+                fds = mSocket.getAncillaryFileDescriptors();
+            }
+            catch (IOException e)
+            {
+                Log.e( mTAG_MT, "Error reading fds from socket", e );
+                //TODO: notify user, explain cause
+                sendSignal( SIGTERM );
+                fds = null;
+            }
+            if (fds == null)
+            {
+                Log.e( mTAG_MT, "No fds received from socket" );
+                //TODO: notify user, explain cause
+                sendSignal( SIGTERM );
+                return;
+            }
+
+            for (FileDescriptor fd : fds)
+            {
+                ifConfig.protect( fd );
+                JniUtil.closeQuietly( fd );
+            }
+
+            sendCommand( new SimpleCommand( "needok 'PROTECTFD' ok" ) );
+        }
+        // NEED-OK:Need 'IFCONFIG' confirmation MSG:10.0.0.1 255.255.255.0 1500 subnet
+        else if (line.startsWith( ">NEED-OK:Need 'IFCONFIG' confirmation MSG:" ))
+        {
+            String msg = line.substring( ">NEED-OK:Need 'IFCONFIG' confirmation MSG:".length() );
+            ifConfig.setIfconfig( msg );
+
+            sendCommand( new SimpleCommand( "needok 'IFCONFIG' ok" ) );
+        }
+        //>NEED-OK:Need 'ROUTE' confirmation MSG:10.0.0.0 255.0.0.0
+        else if (line.startsWith( ">NEED-OK:Need 'ROUTE' confirmation MSG:" ))
+        {
+            String msg = line.substring( ">NEED-OK:Need 'ROUTE' confirmation MSG:".length() );
+            ifConfig.setRoute( msg );
+
+            sendCommand( new SimpleCommand( "needok 'ROUTE' ok" ) );
+        }
+        //>NEED-OK:Need 'DNSSERVER' confirmation MSG:8.8.8.8
+        else if (line.startsWith( ">NEED-OK:Need 'DNSSERVER' confirmation MSG:" ))
+        {
+            String msg = line.substring( ">NEED-OK:Need 'DNSSERVER' confirmation MSG:".length() );
+            ifConfig.setDnsServer( msg );
+
+            sendCommand( new SimpleCommand( "needok 'DNSSERVER' ok" ) );
+        }
+        //>NEED-OK:Need 'OPENTUN' confirmation MSG:tun0
+        else if (line.startsWith( ">NEED-OK:Need 'OPENTUN' confirmation MSG:" ))
+        {
+            //TODO: ignore tun device name
+            //TODO: assert not TAP
+            ParcelFileDescriptor pfd = ifConfig.establish();
+            if (pfd == null)
+            {
+                sendCommand( new SimpleCommand( "needok 'OPENTUN' cancel" ) );
+            }
+            else
+            {
+                mSocket.setFileDescriptorsForSend( new FileDescriptor[]{
+                        pfd.getFileDescriptor()
+                } );
+
+                sendCommand( new SimpleCommand( "needok 'OPENTUN' ok" ) );
+
+                // The API documentation fails to mention that it will not reset the file descriptor to
+                // be send and will happily send the file descriptor on every write ...
+                mSocket.setFileDescriptorsForSend( null );
+
+                try
+                {
+                    pfd.close();
+                }
+                catch (IOException e)
+                {
+                    Log.e( mTAG_MT, "Failed to close our side of tun fd" );
+                }
+            }
+        }
+        else
+        {
+            Log.w( mTAG_MT, "unexpected 'NEED-OK:' notification: " + line );
+        }
+    }
+
+
+    /*
 	 * broadcasting intents 
 	 */
 	
