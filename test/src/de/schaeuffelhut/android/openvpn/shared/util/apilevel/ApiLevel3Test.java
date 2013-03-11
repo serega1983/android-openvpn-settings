@@ -24,6 +24,8 @@ package de.schaeuffelhut.android.openvpn.shared.util.apilevel;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.util.Log;
 import junit.framework.TestCase;
 
 /**
@@ -51,5 +53,15 @@ public class ApiLevel3Test extends TestCase
     public void testPrepareVpnService() throws Exception
     {
         assertTrue( apiLevel.prepareVpnService( DUMMY_ACTIVITY, DUMMY_REQUEST_CODE ) );
+    }
+
+    public void testAddNativeLibDirToLdLibraryPath() throws Exception
+    {
+        ProcessBuilder processBuilder = new ProcessBuilder( "" );
+        String expectedValue = processBuilder.environment().get( "LD_LIBRARY_PATH" );
+
+        apiLevel.addNativeLibDirToLdLibraryPath( processBuilder, new ApplicationInfo() );
+
+        assertEquals( expectedValue, processBuilder.environment().get( "LD_LIBRARY_PATH" ) );
     }
 }

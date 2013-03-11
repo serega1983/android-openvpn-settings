@@ -8,14 +8,15 @@ if [ ! -x $ANDROID_SDK_HOME/tools/android ]; then
 	exit -1
 fi
 
-target=android-4
 
-$ANDROID_SDK_HOME/tools/android update project --subprojects --target $target --path . || exit -1
+
+#target=android-4
+#$ANDROID_SDK_HOME/tools/android update project --subprojects --target $target --path . || exit -1
 
 
 # build main application
-ant clean
-ant debug || exit 1
+#ant clean
+#ant debug || exit 1
 
 # build unit tests
 cd test

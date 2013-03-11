@@ -25,7 +25,11 @@ package de.schaeuffelhut.android.openvpn.shared.util.apilevel;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.net.VpnService;
+import de.schaeuffelhut.android.openvpn.shared.util.Util;
+
+import java.util.Map;
 
 /**
  * @author Friedrich Schäuffelhut
@@ -58,5 +62,15 @@ public class ApiLevel14 extends ApiLevel3
     public boolean isVpnServicePrepared(Context context)
     {
         return VpnService.prepare( context ) == null;
+    }
+
+    public void addNativeLibDirToLdLibraryPath(ProcessBuilder pb, ApplicationInfo info)
+    {
+        final Map<String, String> env = pb.environment();
+        final String currentLdLibraryPath = env.get( "LD_LIBRARY_PATH" );
+        if (Util.isBlank( currentLdLibraryPath ))
+            env.put( "LD_LIBRARY_PATH", info.nativeLibraryDir );
+        else
+            env.put( "LD_LIBRARY_PATH", currentLdLibraryPath + ":" + info.nativeLibraryDir );
     }
 }

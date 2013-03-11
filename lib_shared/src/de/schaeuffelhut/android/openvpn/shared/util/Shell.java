@@ -24,12 +24,12 @@ package de.schaeuffelhut.android.openvpn.shared.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.Map;
 
-import android.text.TextUtils;
+import android.content.pm.ApplicationInfo;
 import android.util.Log;
 
 import com.bugsense.trace.BugSenseHandler;
+import de.schaeuffelhut.android.openvpn.shared.util.apilevel.ApiLevel;
 
 public class Shell extends Thread
 {
@@ -44,28 +44,28 @@ public class Shell extends Thread
 	
 	private final String mTag;
 	private final String mCmd;
+    @Deprecated //TODO: Used to set LD_LIBRARY_PATH. remove once openvpn-14 does not depend on it anymore
+    private final ApplicationInfo mApplicationInfo;
 	private final boolean mRoot;
 
 	private Process mShellProcess;
 	private LoggerThread mStdoutLogger;
 	private LoggerThread mStderrLogger;
     private boolean mDoBugSenseExec = true;
-    @Deprecated //TODO: remove mLdLibraryPathElements once openvpn4 does not depend on it anymore
-    private String mLdLibraryPath;
 
     public Shell(String tag, String cmd, boolean root)
     {
-        this( tag, cmd, "", root );
+        this( tag, cmd, null, root );
     }
 
     @Deprecated
     //TODO: Setting the LD_LIBRARY_PATH is fragile. Bionic support for LD_LIBRARY_PATH was broken once before. Also the location for app local libraries might change with devices or future android versions.
-    public Shell(String tag, String cmd, String ldLibraryPathElements, boolean root)
+    public Shell(String tag, String cmd, ApplicationInfo applicationInfo, boolean root)
 	{
 		super( tag + "-stdin" );
 		mTag = tag;
 		mCmd = cmd;
-        mLdLibraryPath = ldLibraryPathElements;
+        mApplicationInfo = applicationInfo;
         mRoot = root;
 		
 		mSh = findBinary( "sh" );
@@ -165,16 +165,9 @@ public class Shell extends Thread
     @Deprecated //TODO: remove once openvpn4 does not depend on it anymore
     private void setUpLdLibraryPath(ProcessBuilder shellBuilder)
     {
-        mLdLibraryPath = "/data/data/de.schaeuffelhut.android.openvpn/lib";
-        if (mLdLibraryPath.isEmpty())
+        if ( mApplicationInfo == null )
             return;
-
-        final Map<String, String> env = shellBuilder.environment();
-        final String currentLdLibraryPath = env.get( "LD_LIBRARY_PATH" );
-        if (currentLdLibraryPath == null || currentLdLibraryPath.trim().isEmpty())
-            env.put( "LD_LIBRARY_PATH", mLdLibraryPath );
-        else
-            env.put( "LD_LIBRARY_PATH", currentLdLibraryPath + ":" + mLdLibraryPath );
+        ApiLevel.get().addNativeLibDirToLdLibraryPath( shellBuilder, mApplicationInfo );
     }
 
     protected void onExecuteFailed(IOException e) {

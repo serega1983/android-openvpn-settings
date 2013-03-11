@@ -44,7 +44,7 @@ import java.util.List;
  */
 public class OpenVpnServiceImplTest extends ServiceTestCase<OpenVpnServiceImplTest.MockOpenVpnServiceImpl>
 {
-    private final DaemonMonitorMockFactory daemonMonitorFactory = new DaemonMonitorMockFactory();
+    private static DaemonMonitorMockFactory daemonMonitorFactory; //Ugly hack: Store in static field so createServiceDelegate() can access it.
     private static List<File> configs;
 
     public static class MockOpenVpnServiceImpl extends DelegatingService<OpenVpnServiceImpl>
@@ -57,13 +57,16 @@ public class OpenVpnServiceImplTest extends ServiceTestCase<OpenVpnServiceImplTe
         @Override
         protected OpenVpnServiceImpl createServiceDelegate()
         {
-            return new OpenVpnServiceImpl( this ){
+            OpenVpnServiceImpl openVpnService = new OpenVpnServiceImpl( this )
+            {
                 @Override
                 protected List<File> listConfigs()
                 {
                     return configs;
                 }
             };
+            openVpnService.setDaemonMonitorFactory( daemonMonitorFactory );
+            return openVpnService;
         }
     }
 
@@ -76,9 +79,9 @@ public class OpenVpnServiceImplTest extends ServiceTestCase<OpenVpnServiceImplTe
     protected void setUp() throws Exception
     {
         super.setUp();
+        daemonMonitorFactory = new DaemonMonitorMockFactory();
         configs = Collections.emptyList();
         setupService();
-        getServiceDelegate().setDaemonMonitorFactory( daemonMonitorFactory );
     }
 
     public OpenVpnServiceImpl getServiceDelegate()
@@ -204,7 +207,7 @@ public class OpenVpnServiceImplTest extends ServiceTestCase<OpenVpnServiceImplTe
                 return daemonMonitor;
             }
         };
-        getServiceDelegate().setDaemonMonitorFactory( daemonMonitorFactory );
+        //getServiceDelegate().setDaemonMonitorFactory( daemonMonitorFactory );
 
         startService( new Intent( getContext(), MockOpenVpnServiceImpl.class ) );
 

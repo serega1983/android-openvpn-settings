@@ -22,6 +22,7 @@
 
 package de.schaeuffelhut.android.openvpn.shared.util.apilevel;
 
+import android.content.pm.ApplicationInfo;
 import android.test.InstrumentationTestCase;
 import junit.framework.TestCase;
 
@@ -47,4 +48,28 @@ public class ApiLevel14Test extends InstrumentationTestCase
 //    {
 //        assertTrue( apiLevel.prepareVpnService( DUMMY_ACTIVITY, DUMMY_REQUEST_CODE ) );
 //    }
+
+    public void testAddNativeLibDirToLdLibraryPath_with_empty_LD_LIBRARY_PATH() throws Exception
+    {
+        ProcessBuilder processBuilder = new ProcessBuilder( "" );
+        processBuilder.environment().remove( "LD_LIBRARY_PATH" );
+        ApplicationInfo info = new ApplicationInfo();
+        info.nativeLibraryDir = "/full/path/to/shared/libraries";
+
+        apiLevel.addNativeLibDirToLdLibraryPath( processBuilder, info );
+
+        assertEquals( "/full/path/to/shared/libraries", processBuilder.environment().get( "LD_LIBRARY_PATH" ) );
+    }
+
+    public void testAddNativeLibDirToLdLibraryPath_with_nonempty_LD_LIBRARY_PATH() throws Exception
+    {
+        ProcessBuilder processBuilder = new ProcessBuilder( "" );
+        processBuilder.environment().put( "LD_LIBRARY_PATH", "/some/path" );
+        ApplicationInfo info = new ApplicationInfo();
+        info.nativeLibraryDir = "/full/path/to/shared/libraries";
+
+        apiLevel.addNativeLibDirToLdLibraryPath( processBuilder, info );
+
+        assertEquals( "/some/path:/full/path/to/shared/libraries", processBuilder.environment().get( "LD_LIBRARY_PATH" ) );
+    }
 }

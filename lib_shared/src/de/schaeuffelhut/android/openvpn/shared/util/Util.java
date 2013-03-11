@@ -406,4 +406,11 @@ public class Util
 			return false;
 		}
 	}
+
+    public static boolean isBlank(String string)
+    {
+        if ( string == null )
+            return true;
+        return string.trim().length() == 0;
+    }
 }
