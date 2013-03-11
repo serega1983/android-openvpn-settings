@@ -22,9 +22,7 @@
 
 package de.schaeuffelhut.android.openvpn.service;
 
-import android.net.VpnService;
 import android.os.ParcelFileDescriptor;
-import de.schaeuffelhut.android.openvpn.services.OpenVpnServiceIcs;
 import de.schaeuffelhut.android.openvpn.shared.util.CidrInetAddress;
 
 import java.io.FileDescriptor;
@@ -92,17 +90,17 @@ public class IfConfig
 //        return builder.establish();
     }
 
-    private void configure(VpnService.Builder builder)
-    {
-        builder.setSession( "TODO: TestSession" );
-        builder.addAddress( localIp.getIp(), localIp.getPrefixLength() ); //TODO: make localIp optional, handle error
-        builder.setMtu( mtu );
-        for (CidrInetAddress route : routes)
-            builder.addRoute( route.getIp(), route.getPrefixLength() );
-        for (String dnsserver : dnssevers)
-            builder.addDnsServer( dnsserver );
-//            builder.addSearchDomain(  );
-        builder.addRoute( "0.0.0.0", 0 );
-    }
+//    private void configure(VpnService.Builder builder)
+//    {
+//        builder.setSession( "TODO: TestSession" );
+//        builder.addAddress( localIp.getIp(), localIp.getPrefixLength() ); //TODO: make localIp optional, handle error
+//        builder.setMtu( mtu );
+//        for (CidrInetAddress route : routes)
+//            builder.addRoute( route.getIp(), route.getPrefixLength() );
+//        for (String dnsserver : dnssevers)
+//            builder.addDnsServer( dnsserver );
+////            builder.addSearchDomain(  );
+//        builder.addRoute( "0.0.0.0", 0 );
+//    }
 
 }
