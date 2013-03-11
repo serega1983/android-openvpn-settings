@@ -22,46 +22,44 @@
 package de.schaeuffelhut.android.openvpn.service;
 
 import java.io.*;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.CountDownLatch;
 
+import android.net.LocalSocket;
+import android.net.LocalSocketAddress;
 import android.text.TextUtils;
 import android.util.Log;
 import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnPasswordRequest;
-import de.schaeuffelhut.android.openvpn.shared.util.Shell;
+import de.schaeuffelhut.android.openvpn.shared.util.*;
 import de.schaeuffelhut.android.openvpn.util.DnsUtil;
-import de.schaeuffelhut.android.openvpn.shared.util.SystemPropertyUtil;
 import de.schaeuffelhut.android.openvpn.util.TrafficStats;
-import de.schaeuffelhut.android.openvpn.shared.util.UnexpectedSwitchValueException;
-import de.schaeuffelhut.android.openvpn.shared.util.Util;
 
 final class ManagementThread extends Thread
 {
 	private final DaemonMonitor mDaemonMonitor;
     private final Notification2 mNotification2;
+    private final LocalSocketAddress mMgmtSocket;
     private final Preferences2  mPreferences2;
 	private final String mTAG_MT;
 
-	ManagementThread(DaemonMonitorImpl daemonMonitor, Notification2 notification2, Preferences2 preferences2)
+	ManagementThread(DaemonMonitorImpl daemonMonitor, Notification2 notification2, Preferences2 preferences2, LocalSocketAddress mgmtSocket)
 	{
 		mDaemonMonitor = daemonMonitor;
         mNotification2 = notification2;
         mPreferences2 = preferences2;
 		mTAG_MT = daemonMonitor.mTagDaemonMonitor + "-mgmt";
-	}
+        mMgmtSocket = mgmtSocket;
+    }
 	
 	private final CountDownLatch mReadyForCommands = new CountDownLatch(1);
 	final CountDownLatch mTerminated = new CountDownLatch(1);
 	
 	private final LinkedList<Command> ms_PendingCommandFifo = new LinkedList<Command>();
-	
-	private Socket mSocket = null;
+
+    private LocalSocket mSocket = null;
 	private PrintWriter mOut = null;
 	private int mCurrentState = Intents.NETWORK_STATE_UNKNOWN;
 
@@ -113,23 +111,17 @@ final class ManagementThread extends Thread
 
     boolean attach()
 	{
-        int mgmtPort = mPreferences2.getMgmtPort();
-		Log.d( mTAG_MT, "attach(): using management port at " + mgmtPort );
-		
-		if ( mgmtPort == -1 )
+		if ( mMgmtSocket == null )
 		{
 			Log.d( mTAG_MT, "attach(): unspecified management port, not attaching" );
 		}
 		else if ( mSocket == null || !mSocket.isConnected() )
 		{
+    		Log.d( mTAG_MT, "attach(): using management port at " + mMgmtSocket );
 			try
 			{
-				mSocket = new Socket( InetAddress.getByAddress( new byte[]{ 0x7F, 0x0, 0x0, 0x1 } ), mgmtPort ); // ip address: see issue #42
-			}
-			catch (UnknownHostException e)
-			{
-				mSocket = null;
-				Log.e( mTAG_MT, "attaching to OpenVPN daemon", e );
+                mSocket = new LocalSocket();
+                mSocket.connect( mMgmtSocket );
 			}
 			catch (IOException e)
 			{
@@ -552,7 +544,7 @@ final class ManagementThread extends Thread
 			onState( msg );
 		else if ( msg.startsWith( RTMSG_BYTECOUNT ) )
 			onByteCount(msg);
-		
+
 		else
 			Log.w(mTAG_MT, "Unexpected real-time message: " + msg );
 	}

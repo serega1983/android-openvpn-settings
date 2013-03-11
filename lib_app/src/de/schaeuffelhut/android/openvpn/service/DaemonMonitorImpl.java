@@ -25,10 +25,14 @@ import java.io.File;
 import java.io.IOException;
 
 import android.content.Context;
+import android.net.LocalSocketAddress;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 import de.schaeuffelhut.android.openvpn.IocContext;
+import de.schaeuffelhut.android.openvpn.lib.openvpn.Installer;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnPasswordRequest;
+import de.schaeuffelhut.android.openvpn.shared.util.apilevel.ApiLevel;
 import de.schaeuffelhut.android.openvpn.tun.TunPreferences;
 import de.schaeuffelhut.android.openvpn.util.Preconditions;
 import de.schaeuffelhut.android.openvpn.shared.util.Shell;
@@ -54,6 +58,7 @@ final class DaemonMonitorImpl implements DaemonMonitor
 	private Shell mDaemonProcess;
 	private ManagementThread mManagementThread;
 
+    private final LocalSocketAddress mgmtSocket;
 
     DaemonMonitorImpl(Context context, File configFile, Notification2 notification2, Preferences2 preferences2)
 	{
@@ -65,6 +70,11 @@ final class DaemonMonitorImpl implements DaemonMonitor
         mLog = new LogFile( mPreferences2.logFileFor() );
 		mTagDaemonMonitor = String.format("OpenVPN-DaemonMonitor[%s]", mConfigFile);
 
+        mgmtSocket = new LocalSocketAddress(
+                new File( mContext.getDir( "mgmt", Context.MODE_PRIVATE ), "mgmt.socket" ).getAbsolutePath(),
+                LocalSocketAddress.Namespace.FILESYSTEM
+        );
+
         reattach();
     }
 
@@ -72,7 +82,7 @@ final class DaemonMonitorImpl implements DaemonMonitor
 	{
 		mDaemonProcess = null;
 
-        mManagementThread = new ManagementThread( DaemonMonitorImpl.this, mNotification2, mPreferences2 );
+        mManagementThread = new ManagementThread( DaemonMonitorImpl.this, mNotification2, mPreferences2, mgmtSocket );
 		if ( mManagementThread.attach() )
 			mManagementThread.start();
 		else
@@ -88,7 +98,8 @@ final class DaemonMonitorImpl implements DaemonMonitor
 			return;
 		}
 
-		if ( !Preconditions.check( mContext ) ){
+        //TODO: extract precondition check!
+        if ( !ApiLevel.get().hasVpnService() && !Preconditions.check( mContext ) ){ //TODO: rename Preconditions.check to checkRoot
             mNotification2.daemonStateChangedToDisabled();
 			return;
 		}
@@ -143,13 +154,29 @@ final class DaemonMonitorImpl implements DaemonMonitor
 
         mDaemonProcess = new Shell(
 				mTagDaemonMonitor + "-daemon",
-				String.format( 
-						"%s --cd %s --config %s --script-security %d --management 127.0.0.1 %d --management-query-passwords --verb 3",
-						openvpnBinary.getAbsolutePath(),				
+//                String.format( "" +
+//                        "%s --cd %s --config %s --script-security %d" +
+//                        " --management %s unix" +
+//                        " --management-query-passwords --verb 3",
+//                        "/data/data/de.schaeuffelhut.android.openvpn/app_bin/miniopenvpn",
+//                        Util.shellEscape(mConfigFile.getParentFile().getAbsolutePath()),
+//						Util.shellEscape(mConfigFile.getName()),
+//                        mPreferences2.getScriptSecurityLevel(),
+//                        mgmtSocket.getName()
+//				),
+//                "ApplicationInfo.nativeLibraryDir API9",
+//				Shell.SH
+				String.format(
+						"%s --cd %s --config %s --script-security %d" +
+//                                " --iproute %s" +
+                                " --management %s unix" +
+                                " --management-query-passwords --verb 3",
+						openvpnBinary.getAbsolutePath(),
 						Util.shellEscape(mConfigFile.getParentFile().getAbsolutePath()),
 						Util.shellEscape(mConfigFile.getName()),
                         mPreferences2.getScriptSecurityLevel(),
-						mgmtPort
+//                        new File( mContext.getDir( "bin", Context.MODE_PRIVATE ), "ip" ).getAbsolutePath(),
+                        mgmtSocket.getName()
 				),
 				Shell.SU
 		){
@@ -166,10 +193,10 @@ final class DaemonMonitorImpl implements DaemonMonitor
 			{
 				log( line );
 				
-				if ( waitForMgmt && line.indexOf( "MANAGEMENT: TCP Socket listening on" ) != -1 )
+				if ( waitForMgmt && line.indexOf( "MANAGEMENT: unix domain socket listening on" ) != -1 )
 				{
 					waitForMgmt = false;
-                    mManagementThread = new ManagementThread( DaemonMonitorImpl.this, mNotification2, mPreferences2 );
+                    mManagementThread = new ManagementThread( DaemonMonitorImpl.this, mNotification2, mPreferences2, mgmtSocket );
 					mManagementThread.start();
 				}
 			}
