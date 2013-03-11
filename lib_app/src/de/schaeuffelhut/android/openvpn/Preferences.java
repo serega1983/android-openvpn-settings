@@ -231,7 +231,7 @@ public final class Preferences {
 		edit.putInt( KEY_CONFIG_MGMT_PORT(configFile), mgmtPort );
 		edit.commit();
 	}
-	
+
 	public final static int getMgmtPort(Context context, File configFile)
 	{
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);

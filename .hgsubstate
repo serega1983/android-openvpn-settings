@@ -1,4 +1,4 @@
 69e428475d97f8cfa156678fa47e39999b98f674 lib_openvpn/busybox/vanilla
 b1964767621879fb14e0a6f4118acba752596d92 lib_openvpn/jni/liblzo
 f38fa64dd46a52d63cca4f4ab816553a170ab492 lib_openvpn/jni/openssl
-4f40f78cd056ac27cf5343ddb60c378e876d13d8 lib_openvpn/jni/openvpn
+13a0c6fc5f6809dd2b850f47cafe0827c16e5ebe lib_openvpn/jni/openvpn
