@@ -36,7 +36,6 @@ import android.os.*;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
-import com.google.common.base.Preconditions;
 import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.service.api.*;
@@ -56,9 +55,9 @@ public class OpenVpnServiceImpl implements ServiceDelegate
      */
     private final Service mService;
 
-    public OpenVpnServiceImpl(Service mService)
+    public OpenVpnServiceImpl(Service service)
     {
-        this.mService = Preconditions.checkNotNull( mService );
+        this.mService = service;
         this.daemonMonitorFactory = new DaemonMonitorImplFactory( getContext(), listenerDispatcher );
     }
 
