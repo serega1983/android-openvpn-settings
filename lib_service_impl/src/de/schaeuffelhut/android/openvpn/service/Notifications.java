@@ -34,7 +34,7 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.Preferences;
-import de.schaeuffelhut.android.openvpn.lib.app.R;
+import de.schaeuffelhut.android.openvpn.lib.service.impl.R;
 
 final class Notifications {
 

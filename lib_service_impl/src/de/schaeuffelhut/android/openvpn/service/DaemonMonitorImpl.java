@@ -28,13 +28,13 @@ import android.content.Context;
 import android.net.LocalSocketAddress;
 import android.util.Log;
 import android.widget.Toast;
-import de.schaeuffelhut.android.openvpn.IocContext;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnPasswordRequest;
 import de.schaeuffelhut.android.openvpn.shared.util.apilevel.ApiLevel;
 import de.schaeuffelhut.android.openvpn.util.Preconditions;
 import de.schaeuffelhut.android.openvpn.shared.util.Shell;
 import de.schaeuffelhut.android.openvpn.shared.util.Util;
 import de.schaeuffelhut.android.openvpn.util.tun.TunInfo;
+import de.schaeuffelhut.android.openvpn.util.tun.TunInfoSingleton;
 
 /**
  * Starts an OpenVPN process and monitors it until its death;
@@ -126,7 +126,7 @@ final class DaemonMonitorImpl implements DaemonMonitor
 
         mNotification2.daemonStateChangedToStartUp();
 
-        TunInfo tunInfo = IocContext.get().getTunInfo( mContext );
+        TunInfo tunInfo = TunInfoSingleton.get().getTunInfo( mContext );
         if (!tunInfo.isDeviceNodeAvailable()) // only load the driver if it's not yet available
         {
             if (tunInfo.hasTunLoader())
