@@ -38,7 +38,7 @@ public class CmdLineBuilder4 extends CmdLineBuilder
     @Override
     protected void addIpRoute(ArrayList<String> argv)
     {
-        argv.add( "--ip" );
+        argv.add( "--iproute" );
         argv.add( ip.getAbsolutePath() );
     }
 }
