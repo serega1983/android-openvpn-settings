@@ -44,11 +44,11 @@ class DaemonMonitorImplFactory implements DaemonMonitorFactory
     public DaemonMonitor createDaemonMonitorFor(File configFile)
     {
         Preferences2 preferences2 = new Preferences2( context, configFile );
-        PluginPreferences pluginPreferences = new PluginPreferences( context, "default" );
         Notification2 notification2 = new Notification2(
-                context, configFile, preferences2.getNotificationId(), listenerDispatcher,
-                pluginPreferences.getActivityHandlingPassphraseRequest(),
-                pluginPreferences.getActivityHandlingCredentialsRequest()
+                context,
+                configFile,
+                preferences2.getNotificationId(),
+                listenerDispatcher
         );
         return new DaemonMonitorImpl( context, configFile, notification2, preferences2 );
     }

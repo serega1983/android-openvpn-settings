@@ -29,6 +29,7 @@ import android.os.Environment;
 import android.test.InstrumentationTestCase;
 import de.schaeuffelhut.android.openvpn.EnterPassphrase;
 import de.schaeuffelhut.android.openvpn.EnterUserPassword;
+import de.schaeuffelhut.android.openvpn.OpenVpnSettings;
 import de.schaeuffelhut.android.openvpn.service.PluginPreferences;
 
 import java.io.File;
@@ -135,6 +136,48 @@ public class PluginPreferencesTest extends InstrumentationTestCase
         ComponentName componentName = new ComponentName( getInstrumentation().getTargetContext(), EnterUserPassword.class );
         pluginPreferences.edit().setActivityHandlingCredentialsRequest( componentName ).commit();
         assertFalse( preference().contains( "activity_handling_credentials_request" ) );
+    }
+
+    /**
+     * Ensure we return our own EnterUserPassword activity by default.
+     * This test bind the component name defined as a sting to it's implementation class.
+     *
+     * @throws Exception
+     */
+    public void test_getActivityHandlingOngoingNotification_default() throws Exception
+    {
+        assertEquals(
+                new ComponentName( getInstrumentation().getTargetContext(), OpenVpnSettings.class ),
+                pluginPreferences.getActivityHandlingOngoingNotification()
+        );
+    }
+
+    public void test_set_get_ActivityHandlingOngoingNotification() throws Exception
+    {
+        ComponentName componentName = new ComponentName( "de.schaeuffelhut.android.openvpn.plugin1", "de.schaeuffelhut.android.openvpn.plugin1.OngoingNotificationActivity" );
+        pluginPreferences.edit().setActivityHandlingOngoingNotification( componentName ).commit();
+        assertEquals( componentName, pluginPreferences.getActivityHandlingOngoingNotification() );
+    }
+
+    public void test_keep_KEY_ACTIVITY_HANDLING_ONGOING_NOTIFICATION_constant() throws Exception
+    {
+        editPreference().putString( "activity_handling_ongoing_notification", "a/a.b" ).commit();
+        assertEquals( new ComponentName( "a", "a.b" ), pluginPreferences.getActivityHandlingOngoingNotification() );
+    }
+
+
+    /**
+     * Make sure we do not store the default component name,
+     * so we do not need to migrate any properties after refactoring
+     * that component.
+     *
+     * @throws Exception
+     */
+    public void test_setActivityHandlingOngoingNotification_does_not_store_default() throws Exception
+    {
+        ComponentName componentName = new ComponentName( getInstrumentation().getTargetContext(), OpenVpnSettings.class );
+        pluginPreferences.edit().setActivityHandlingOngoingNotification( componentName ).commit();
+        assertFalse( preference().contains( "activity_handling_ongoing_notification" ) );
     }
 
 
