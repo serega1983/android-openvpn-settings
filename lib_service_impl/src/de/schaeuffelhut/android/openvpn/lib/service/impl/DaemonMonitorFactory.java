@@ -20,33 +20,20 @@
  * Contact the author at:          android.openvpn@schaeuffelhut.de
  */
 
-package de.schaeuffelhut.android.openvpn.services;
+package de.schaeuffelhut.android.openvpn.lib.service.impl;
 
-import de.schaeuffelhut.android.openvpn.lib.service.impl.OpenVpnServiceImpl;
-import de.schaeuffelhut.android.openvpn.shared.util.service.DelegatingService;
+import java.io.File;
 
 /**
- * This class provides a unique and persistent name for the OpenVpnService implemented else where.
- * Other APPS may use this name to lookup and find the OpenVpnService.
+ * Creates a {@code DaemonMonitor} for a given config file.
+ * Production and test code need to create {@code DaemonMonitor}s
+ * in various places. So a factory class seems more reasonable than
+ * overriding factory methods.
+ *
  * @author Friedrich Schäuffelhut
- * @since 2012-11-13
+ * @since 2012-11-03
  */
-public class OpenVpnService extends DelegatingService<OpenVpnServiceImpl>
+interface DaemonMonitorFactory
 {
-    public static final String NAME = "de.schaeuffelhut.android.openvpn.services.OpenVpnService";
-
-    public OpenVpnService()
-    {
-        super();
-    }
-
-    @Override
-    protected OpenVpnServiceImpl createServiceDelegate()
-    {
-        return new OpenVpnServiceImpl( this );
-    }
-
-    /*
-     * Keep implementation outside this class and package.
-     */
+    DaemonMonitor createDaemonMonitorFor(File configFile);
 }

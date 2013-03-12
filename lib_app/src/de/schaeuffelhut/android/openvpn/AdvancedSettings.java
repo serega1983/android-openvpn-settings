@@ -35,7 +35,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import de.schaeuffelhut.android.openvpn.lib.app.R;
-import de.schaeuffelhut.android.openvpn.tun.TunPreferences;
+import de.schaeuffelhut.android.openvpn.util.tun.TunPreferences;
 import de.schaeuffelhut.android.openvpn.util.AdUtil;
 import de.schaeuffelhut.android.openvpn.util.tun.TunLoaderPreferences;
 

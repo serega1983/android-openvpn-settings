@@ -20,33 +20,37 @@
  * Contact the author at:          android.openvpn@schaeuffelhut.de
  */
 
-package de.schaeuffelhut.android.openvpn.services;
+package de.schaeuffelhut.android.openvpn.lib.service.impl;
 
-import de.schaeuffelhut.android.openvpn.lib.service.impl.OpenVpnServiceImpl;
-import de.schaeuffelhut.android.openvpn.shared.util.service.DelegatingService;
+import android.content.Context;
+
+import java.io.File;
 
 /**
- * This class provides a unique and persistent name for the OpenVpnService implemented else where.
- * Other APPS may use this name to lookup and find the OpenVpnService.
  * @author Friedrich Schäuffelhut
- * @since 2012-11-13
+ * @since 2012-11-03
  */
-public class OpenVpnService extends DelegatingService<OpenVpnServiceImpl>
+class DaemonMonitorImplFactory implements DaemonMonitorFactory
 {
-    public static final String NAME = "de.schaeuffelhut.android.openvpn.services.OpenVpnService";
+    private final Context context;
+    private final OpenVpnStateListenerDispatcher listenerDispatcher;
 
-    public OpenVpnService()
+    public DaemonMonitorImplFactory(Context context, OpenVpnStateListenerDispatcher listenerDispatcher)
     {
-        super();
+        this.context = context;
+        this.listenerDispatcher = listenerDispatcher;
     }
 
-    @Override
-    protected OpenVpnServiceImpl createServiceDelegate()
+    public DaemonMonitor createDaemonMonitorFor(File configFile)
     {
-        return new OpenVpnServiceImpl( this );
+        Preferences2 preferences2 = new Preferences2( context, configFile );
+        Notification2 notification2 = new Notification2(
+                context,
+                configFile,
+                preferences2.getNotificationId(),
+                listenerDispatcher
+        );
+        return new DaemonMonitorImpl( context, configFile, notification2, preferences2 );
     }
 
-    /*
-     * Keep implementation outside this class and package.
-     */
 }

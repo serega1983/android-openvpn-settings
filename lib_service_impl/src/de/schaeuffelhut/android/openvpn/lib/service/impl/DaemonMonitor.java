@@ -20,33 +20,45 @@
  * Contact the author at:          android.openvpn@schaeuffelhut.de
  */
 
-package de.schaeuffelhut.android.openvpn.services;
+package de.schaeuffelhut.android.openvpn.lib.service.impl;
 
-import de.schaeuffelhut.android.openvpn.lib.service.impl.OpenVpnServiceImpl;
-import de.schaeuffelhut.android.openvpn.shared.util.service.DelegatingService;
+import de.schaeuffelhut.android.openvpn.service.api.OpenVpnPasswordRequest;
+
+import java.io.File;
 
 /**
- * This class provides a unique and persistent name for the OpenVpnService implemented else where.
- * Other APPS may use this name to lookup and find the OpenVpnService.
  * @author Friedrich Schäuffelhut
- * @since 2012-11-13
+ * @since 2012-11-02
  */
-public class OpenVpnService extends DelegatingService<OpenVpnServiceImpl>
+interface DaemonMonitor
 {
-    public static final String NAME = "de.schaeuffelhut.android.openvpn.services.OpenVpnService";
+    void start();
 
-    public OpenVpnService()
-    {
-        super();
-    }
+    void restart();
 
-    @Override
-    protected OpenVpnServiceImpl createServiceDelegate()
-    {
-        return new OpenVpnServiceImpl( this );
-    }
+    void stop();
 
-    /*
-     * Keep implementation outside this class and package.
-     */
+    void waitForTermination() throws InterruptedException;
+
+    void queryState();
+
+    void supplyPassphrase(String passphrase);
+
+    void supplyUsernamePassword(String username, String password);
+
+    boolean isAlive();
+
+    void startLogging();
+
+    void stopLogging();
+
+    boolean isDaemonProcessAlive();
+
+    boolean isVpnDnsActive();
+
+    File getConfigFile();
+
+    void switchToIntendedState();
+
+    OpenVpnPasswordRequest getPasswordRequest();
 }
