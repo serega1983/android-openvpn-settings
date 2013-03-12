@@ -53,7 +53,7 @@ class ProbeTunDevice
 
     ProbeTunDevice(Context context)
     {
-        tunInfo = IocContext.get().getTunInfo( context );
+        tunInfo = TunInfoSingleton.get().getTunInfo( context );
         tunLoaderPreferences = new TunLoaderPreferences( context );
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences( context );
     }
