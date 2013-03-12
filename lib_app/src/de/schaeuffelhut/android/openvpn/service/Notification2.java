@@ -28,8 +28,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.widget.Toast;
-import de.schaeuffelhut.android.openvpn.EnterPassphrase;
-import de.schaeuffelhut.android.openvpn.EnterUserPassword;
 import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnDaemonState;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnNetworkState;
@@ -51,19 +49,13 @@ public class Notification2
     private final NotificationManager mNotificationManager;
     private final Handler mUiThreadHandler;
     private final OpenVpnStateListenerDispatcher listenerDispatcher;
-    private ComponentName activityForPassphraseRequest;
-    private ComponentName activityForCredentialsRequest;
-
-    @Deprecated
-    public Notification2(Context context, File configFile, int notificationId) {
-        this(context, configFile, notificationId, new OpenVpnStateListenerDispatcher(), new ComponentName( context, EnterPassphrase.class ), new ComponentName( context, EnterUserPassword.class ) );
-    }
+    private final ComponentName activityForPassphraseRequest;
+    private final ComponentName activityForCredentialsRequest;
+    private final ComponentName activityForOngoingNotification;
 
     public Notification2(
             Context context, File configFile, int notificationId,
-            OpenVpnStateListenerDispatcher listenerDispatcher,
-            ComponentName activityForPassphraseRequest,
-            ComponentName activityForCredentialsRequest
+            OpenVpnStateListenerDispatcher listenerDispatcher
     ) {
         this.mContext = context;
         this.mConfigFile = configFile;
@@ -71,8 +63,11 @@ public class Notification2
         this.mNotificationManager = (NotificationManager) context.getSystemService( Context.NOTIFICATION_SERVICE);
         this.mUiThreadHandler = new Handler();
         this.listenerDispatcher = listenerDispatcher;
-        this.activityForPassphraseRequest = activityForPassphraseRequest;
-        this.activityForCredentialsRequest = activityForCredentialsRequest;
+
+        PluginPreferences pluginPreferences = new PluginPreferences( context, "default" );
+        this.activityForPassphraseRequest   = pluginPreferences.getActivityHandlingPassphraseRequest();
+        this.activityForCredentialsRequest  = pluginPreferences.getActivityHandlingCredentialsRequest();
+        this.activityForOngoingNotification = pluginPreferences.getActivityHandlingOngoingNotification();
     }
 
 
@@ -123,17 +118,17 @@ public class Notification2
 
     void notifyConnected()
     {
-        Notifications.notifyConnected( mNotificationId, mContext, mNotificationManager, mConfigFile );
+        Notifications.notifyConnected( mNotificationId, mContext, mNotificationManager, mConfigFile, activityForOngoingNotification );
     }
 
     void notifyDisconnected()
     {
-        Notifications.notifyDisconnected( mNotificationId, mContext, mNotificationManager, mConfigFile, "Connecting" );
+        Notifications.notifyDisconnected( mNotificationId, mContext, mNotificationManager, mConfigFile, "Connecting", activityForOngoingNotification );
     }
 
     void notifyBytes(String smallInOutPerSecString, long received, long sent)
     {
-        Notifications.notifyBytes( mNotificationId, mContext, mNotificationManager, mConfigFile, smallInOutPerSecString );
+        Notifications.notifyBytes( mNotificationId, mContext, mNotificationManager, mConfigFile, smallInOutPerSecString, activityForOngoingNotification );
         listenerDispatcher.onByteCountChanged( received, sent ); //TODO: insert real byte count
     }
 

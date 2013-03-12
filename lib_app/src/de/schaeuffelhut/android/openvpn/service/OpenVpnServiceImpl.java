@@ -383,7 +383,7 @@ public class OpenVpnServiceImpl implements ServiceDelegate
 
     private Notification2 newNotification2(File config)
     {
-        return new Notification2( getContext(), config, new Preferences2( getContext(), config ).getNotificationId() );
+        return new Notification2( getContext(), config, new Preferences2( getContext(), config ).getNotificationId(), listenerDispatcher );
     }
 
 

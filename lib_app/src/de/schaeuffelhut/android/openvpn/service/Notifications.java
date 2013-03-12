@@ -32,19 +32,20 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Parcelable;
 import android.text.TextUtils;
-import de.schaeuffelhut.android.openvpn.*;
+import de.schaeuffelhut.android.openvpn.Intents;
+import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.lib.app.R;
 
 final class Notifications {
 
     private Notifications(){}
 
-    static void notifyConnected(int id, Context context, NotificationManager notificationManager, File configFile)
+    static void notifyConnected(int id, Context context, NotificationManager notificationManager, File configFile, ComponentName activityForOngoingNotification)
 	{
-		notifyConnected(id, context, notificationManager, configFile, null);
+		notifyConnected(id, context, notificationManager, configFile, null, activityForOngoingNotification );
 	}
 	
-	static void notifyConnected(int id, Context context, NotificationManager notificationManager, File configFile, String msg) {
+	static void notifyConnected(int id, Context context, NotificationManager notificationManager, File configFile, String msg, ComponentName activityForOngoingNotification) {
 		Notification notification = new Notification(
 				R.drawable.vpn_connected,
 				Preferences.getConfigName( context, configFile ) + ": Connected",
@@ -53,12 +54,12 @@ final class Notifications {
 		notification.flags |= Notification.FLAG_NO_CLEAR;
 		notification.flags |= Notification.FLAG_ONGOING_EVENT;
 		notification.flags |= Notification.FLAG_ONLY_ALERT_ONCE;
-		
-		Intent intent = new Intent(context, OpenVpnSettings.class );
+
+		Intent intent = new Intent().setComponent( activityForOngoingNotification );
 		
 		notification.setLatestEventInfo(
 				context,
-				"OpenVPN, " + Preferences.getConfigName(context, configFile),
+				"OpenVPN, " + Preferences.getConfigName( context, configFile ),
 				TextUtils.isEmpty( msg ) ? "Connected" : msg,
 				PendingIntent.getActivity(
 						context,
@@ -71,13 +72,13 @@ final class Notifications {
 		notificationManager.notify( id, notification);
 	}
 	
-	static void notifyBytes(int id, Context context, NotificationManager notificationManager, File configFile, String msg) {
+	static void notifyBytes(int id, Context context, NotificationManager notificationManager, File configFile, String msg, ComponentName activityForOngoingNotification) {
 		// To update latestEventInfo only, exactly the same notification type must be used. 
 		// Otherwise the user will get permanent notifications in his title-bar
-		notifyConnected(id, context, notificationManager, configFile, msg);
+		notifyConnected(id, context, notificationManager, configFile, msg, activityForOngoingNotification );
 	}
 
-	static void notifyDisconnected(int id, Context context, NotificationManager notificationManager, File configFile, String msg) {
+	static void notifyDisconnected(int id, Context context, NotificationManager notificationManager, File configFile, String msg, ComponentName activityForOngoingNotification) {
 		Notification notification = new Notification(
 				R.drawable.vpn_disconnected,
 				Preferences.getConfigName(context, configFile) +": " + msg,
@@ -86,7 +87,7 @@ final class Notifications {
 		notification.flags |= Notification.FLAG_NO_CLEAR;
 		notification.flags |= Notification.FLAG_ONGOING_EVENT;
 		
-		Intent intent = new Intent(context, OpenVpnSettings.class );
+		Intent intent = new Intent().setComponent( activityForOngoingNotification );
 //		intent.putExtra( EnterPassphrase.EXTRA_FILENAME, configFile.getAbsolutePath() );
 		
 		notification.setLatestEventInfo(

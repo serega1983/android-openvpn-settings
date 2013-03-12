@@ -41,10 +41,14 @@ public class PluginPreferences
     private final static String KEY_ACTIVITY_HANDLING_CREDENTIALS_REQUEST = "activity_handling_credentials_request";
     private final static String DEFAULT_ACTIVITY_HANDLING_CREDENTIALS_REQUEST = "de.schaeuffelhut.android.openvpn/de.schaeuffelhut.android.openvpn.EnterUserPassword";
 
+    private final static String KEY_ACTIVITY_HANDLING_ONGOING_NOTIFICATION = "activity_handling_ongoing_notification";
+    private final static String DEFAULT_ACTIVITY_HANDLING_ONGOING_NOTIFICATION = "de.schaeuffelhut.android.openvpn/de.schaeuffelhut.android.openvpn.OpenVpnSettings";
+
     private final static String KEY_CONFIG_DIR = "config_dir";
 
     private final Context context;
     private final SharedPreferences preferences;
+    private ComponentName activityHandlingOngoingNotification;
 
     PluginPreferences(Context context, String pluginPackageName)
     {
@@ -68,6 +72,17 @@ public class PluginPreferences
                 preferences.getString(
                         KEY_ACTIVITY_HANDLING_CREDENTIALS_REQUEST,
                         DEFAULT_ACTIVITY_HANDLING_CREDENTIALS_REQUEST
+                )
+        );
+    }
+
+
+    public ComponentName getActivityHandlingOngoingNotification()
+    {
+        return ComponentName.unflattenFromString(
+                preferences.getString(
+                        KEY_ACTIVITY_HANDLING_ONGOING_NOTIFICATION,
+                        DEFAULT_ACTIVITY_HANDLING_ONGOING_NOTIFICATION
                 )
         );
     }
@@ -98,6 +113,16 @@ public class PluginPreferences
                 editor.remove( KEY_ACTIVITY_HANDLING_CREDENTIALS_REQUEST );
             else
                 editor.putString( KEY_ACTIVITY_HANDLING_CREDENTIALS_REQUEST, flattenedName );
+            return this;
+        }
+
+        public Editor setActivityHandlingOngoingNotification(ComponentName componentName)
+        {
+            String flattenedName = componentName.flattenToString();
+            if (flattenedName.equals( DEFAULT_ACTIVITY_HANDLING_ONGOING_NOTIFICATION ))
+                editor.remove( KEY_ACTIVITY_HANDLING_ONGOING_NOTIFICATION );
+            else
+                editor.putString( KEY_ACTIVITY_HANDLING_ONGOING_NOTIFICATION, flattenedName );
             return this;
         }
 
