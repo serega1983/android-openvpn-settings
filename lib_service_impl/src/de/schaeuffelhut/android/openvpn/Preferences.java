@@ -25,7 +25,7 @@ import java.io.File;
 import java.util.*;
 
 import android.os.Environment;
-import de.schaeuffelhut.android.openvpn.tun.TunPreferences;
+import de.schaeuffelhut.android.openvpn.util.tun.TunPreferences;
 import org.apache.commons.io.FilenameUtils;
 
 import android.content.Context;

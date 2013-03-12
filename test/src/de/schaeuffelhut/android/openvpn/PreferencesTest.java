@@ -26,7 +26,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.test.InstrumentationTestCase;
-import de.schaeuffelhut.android.openvpn.tun.TunPreferences;
+import de.schaeuffelhut.android.openvpn.util.tun.TunPreferences;
 import junit.framework.Assert;
 
 import java.io.File;
