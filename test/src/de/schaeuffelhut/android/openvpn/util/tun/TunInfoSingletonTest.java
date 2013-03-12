@@ -20,13 +20,16 @@
  * Contact the author at:          android.openvpn@schaeuffelhut.de
  */
 
-package de.schaeuffelhut.android.openvpn;
+package de.schaeuffelhut.android.openvpn.util.tun;
 
 import android.test.InstrumentationTestCase;
 import android.test.MoreAsserts;
+import de.schaeuffelhut.android.openvpn.IocContext;
+import de.schaeuffelhut.android.openvpn.util.tun.TunInfo;
+import de.schaeuffelhut.android.openvpn.util.tun.TunInfoFake;
 import de.schaeuffelhut.android.openvpn.util.tun.TunInfoImpl;
+import de.schaeuffelhut.android.openvpn.util.tun.TunInfoSingleton;
 import junit.framework.Assert;
-import junit.framework.TestCase;
 
 /**
  * Created with IntelliJ IDEA.
@@ -35,7 +38,7 @@ import junit.framework.TestCase;
  * Time: 5:43 PM
  * To change this template use File | Settings | File Templates.
  */
-public class IocContextTest extends InstrumentationTestCase
+public class TunInfoSingletonTest extends InstrumentationTestCase
 {
     public void testGet() throws Exception
     {
@@ -44,6 +47,16 @@ public class IocContextTest extends InstrumentationTestCase
 
     public void testGetTunInfo() throws Exception
     {
-        MoreAsserts.assertAssignableFrom( TunInfoImpl.class, IocContext.get().getTunInfo( getInstrumentation().getContext() ) );
+        MoreAsserts.assertAssignableFrom( TunInfoImpl.class, TunInfoSingleton.get().getTunInfo( getInstrumentation().getContext() ) );
+    }
+
+    public void testSetTunInfo() throws Exception
+    {
+        TunInfoFake expected = new TunInfoFake();
+        TunInfoSingleton.get().setTunInfo( expected );
+
+        TunInfo actual = TunInfoSingleton.get().getTunInfo( getInstrumentation().getContext() );
+
+        assertSame( expected, actual );
     }
 }
