@@ -1,5 +1,7 @@
 package de.schaeuffelhut.android.openvpn.lib.service.impl;
 
+import android.util.Log;
+
 import java.io.File;
 import java.util.ArrayList;
 
@@ -9,17 +11,15 @@ import java.util.ArrayList;
  */
 public class CmdLineBuilder4 extends CmdLineBuilder
 {
-    private final File openvpn;
     private final File ip;
 
     public CmdLineBuilder4(File openvpn, File ip)
     {
-        if ( openvpn == null )
-            throw new NullPointerException();
+        super( openvpn );
+
         if ( ip == null )
             throw new NullPointerException();
 
-        this.openvpn = openvpn;
         this.ip = ip;
     }
 
@@ -30,15 +30,19 @@ public class CmdLineBuilder4 extends CmdLineBuilder
     }
 
     @Override
-    protected void addOpenvpnLocation(ArrayList<String> argv)
-    {
-        argv.add( openvpn.getAbsolutePath() );
-    }
-
-    @Override
     protected void addIpRoute(ArrayList<String> argv)
     {
         argv.add( "--iproute" );
         argv.add( ip.getAbsolutePath() );
+    }
+
+    @Override
+    public boolean canExecute(String logTag)
+    {
+        if ( !ip.exists() ){
+            Log.d( logTag, "ip not found: " + ip.getAbsolutePath() );
+            return false;
+        }
+        return super.canExecute( logTag );
     }
 }

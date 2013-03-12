@@ -1,5 +1,6 @@
 package de.schaeuffelhut.android.openvpn.lib.service.impl;
 
+import android.test.InstrumentationTestCase;
 import junit.framework.TestCase;
 
 import java.io.File;
@@ -8,7 +9,7 @@ import java.io.File;
  * @author Friedrich Schäuffelhut
  * @since 2013-03-12
  */
-abstract class CmdLineBuilderBaseTest extends TestCase
+abstract class CmdLineBuilderBaseTest extends InstrumentationTestCase
 {
     static final String OPENVPN1 = "/data/data/de.schaeuffelhut.android.openvpn/app_bin/openvpn";
     static final String OPENVPN2 = "/data/data/de. .openvpn/app_bin/openvpn";
@@ -47,4 +48,5 @@ abstract class CmdLineBuilderBaseTest extends TestCase
                 cmdLineBuilder.buildCmdLine()
         );
     }
+
 }
