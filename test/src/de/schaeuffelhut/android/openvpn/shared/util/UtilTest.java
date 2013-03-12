@@ -47,4 +47,63 @@ public class UtilTest extends TestCase
     {
         assertFalse( Util.isBlank("a second text") );
     }
+
+
+    public void test_optionalShellEscape_word() throws Exception
+    {
+        assertEquals( "word", Util.optionalShellEscape( "word" ) );
+    }
+
+    public void test_optionalShellEscape_word_underscore() throws Exception
+    {
+        assertEquals( "a_word", Util.optionalShellEscape( "a_word" ) );
+    }
+
+    public void test_optionalShellEscape_word_camelcase() throws Exception
+    {
+        assertEquals( "AnotherWord", Util.optionalShellEscape( "AnotherWord" ) );
+    }
+
+    public void test_optionalShellEscape_option() throws Exception
+    {
+        assertEquals( "-a", Util.optionalShellEscape( "-a" ) );
+    }
+
+    public void test_optionalShellEscape_path() throws Exception
+    {
+        assertEquals( "/system/bin", Util.optionalShellEscape( "/system/bin" ) );
+    }
+
+    public void test_optionalShellEscape_file_with_extension() throws Exception
+    {
+        assertEquals( "config.ovpn", Util.optionalShellEscape( "config.ovpn" ) );
+    }
+
+    public void test_optionalShellEscape_numeric_option_value() throws Exception
+    {
+        assertEquals( "15", Util.optionalShellEscape( "15" ) );
+    }
+
+    public void test_optionalShellEscape_empty() throws Exception
+    {
+        assertEquals( "''", Util.optionalShellEscape( "" ) );
+    }
+
+    public void test_optionalShellEscape_space() throws Exception
+    {
+        assertEquals( "' '", Util.optionalShellEscape( " " ) );
+    }
+
+    public void test_optionalShellEscape_path_with_space() throws Exception
+    {
+        assertEquals( "'/sdcard/config dir/my config.ovpn'", Util.optionalShellEscape( "/sdcard/config dir/my config.ovpn" ) );
+    }
+
+    public void test_optionalShellEscape_crazy() throws Exception
+    {
+        assertEquals(
+                "'/sdcard/\\'config dir\\'/\"my\\\nconfig.ovpn\"'",
+                Util.optionalShellEscape( "/sdcard/'config dir'/\"my\nconfig.ovpn\"" )
+        );
+    }
 }

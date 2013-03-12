@@ -354,6 +354,18 @@ public class Util
 	}
 
 	/**
+	 * Prepare and sanitize a string to be used as parameter for a command
+	 * @param s
+	 * @return A string safe to use as parameter for a command
+	 */
+	public static String optionalShellEscape(String s) {
+        if ( s.matches( "[a-zA-Z0-9/._-]+" ) )
+            return s;
+
+		return shellEscape( s );
+	}
+
+	/**
 	 * Locte the tun.ko driver on the filesystem  
 	 * @return a String with the path of the tun.ko driver
 	 */
