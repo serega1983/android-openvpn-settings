@@ -1,5 +1,6 @@
 package de.schaeuffelhut.android.openvpn.lib.service.impl;
 
+import android.util.Log;
 import de.schaeuffelhut.android.openvpn.shared.util.Util;
 
 import java.io.File;
@@ -14,9 +15,18 @@ import java.util.List;
  */
 public abstract class CmdLineBuilder
 {
+    protected final File openvpn;
     private File config;
     private int scriptSecurity;
     private File mgmtSocket;
+
+    public CmdLineBuilder(File openvpn)
+    {
+        if ( openvpn == null )
+            throw new NullPointerException();
+
+        this.openvpn = openvpn;
+    }
 
     public abstract boolean requiresRoot();
 
@@ -43,7 +53,7 @@ public abstract class CmdLineBuilder
     {
         ArrayList<String> argv = new ArrayList<String>();
 
-        addOpenvpnLocation( argv );
+        argv.add( openvpn.getAbsolutePath() );
 
         argv.add( "--cd" );
         argv.add( config.getParentFile().getAbsolutePath() );
@@ -67,8 +77,6 @@ public abstract class CmdLineBuilder
         return argv;
     }
 
-    protected abstract void addOpenvpnLocation(ArrayList<String> sb);
-
     protected abstract void addIpRoute(ArrayList<String> argv);
 
     public String buildCmdLine()
@@ -81,5 +89,34 @@ public abstract class CmdLineBuilder
             sb.append( Util.optionalShellEscape( arg) );
         }
         return sb.toString();
+    }
+
+    public boolean canExecute(String logTag)
+    {
+        if ( !openvpn.exists() ){
+            Log.d( logTag, "openvpn not found: " + openvpn.getAbsolutePath() );
+            return false;
+        }
+
+        if ( config == null ) {
+            Log.d( logTag, "config file not set" );
+            return false;
+        }
+        if ( !config.exists() ) {
+            Log.d( logTag, "config file not found: " + config.getAbsolutePath() );
+            return false;
+        }
+
+        if ( mgmtSocket == null ) {
+            Log.d( logTag, "management socket not set" );
+            return false;
+        }
+        if ( !mgmtSocket.exists() ) {
+            Log.d( logTag, "parent directory of management socket not found: " + mgmtSocket.getParentFile().getAbsolutePath() );
+            return false;
+        }
+
+
+        return true;
     }
 }
