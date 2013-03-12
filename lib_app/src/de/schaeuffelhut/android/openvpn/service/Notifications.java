@@ -34,13 +34,10 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 import de.schaeuffelhut.android.openvpn.*;
 import de.schaeuffelhut.android.openvpn.lib.app.R;
-import de.schaeuffelhut.android.openvpn.tun.ShareTunActivity;
 
 final class Notifications {
 
     private Notifications(){}
-	
-	private static final int SHARE_TUN_ID = 1000;
 
     static void notifyConnected(int id, Context context, NotificationManager notificationManager, File configFile)
 	{
@@ -172,46 +169,4 @@ final class Notifications {
         needPassword.putExtra( "ACTION", intent );
         context.sendBroadcast( needPassword );
     }
-
-    static void cancel(int id, Context context)
-	{
-		getNotificationManager(context).cancel( id );
-	}
-	
-	private static NotificationManager getNotificationManager(Context context) {
-		NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		return notificationManager;
-	}
-	
-	
-	static void sendShareTunModule(Context context, NotificationManager notificationManager) {
-		Notification notification = new Notification(
-				R.drawable.ic_share_tun,
-				"Please share your tun module",
-				System.currentTimeMillis()
-		);
-//		notification.flags |= Notification.FLAG_NO_CLEAR;
-//		notification.flags |= Notification.FLAG_ONGOING_EVENT;
-		
-		Intent intent = new Intent(context, ShareTunActivity.class ); //TODO: put tun sharing activity here
-//		intent.putExtra( EnterPassphrase.EXTRA_FILENAME, configFile.getAbsolutePath() );
-		
-		notification.setLatestEventInfo(
-				context,
-				"Help to improve OpenVPN Settings",
-				"Please share your tun module",
-				PendingIntent.getActivity(
-						context,
-						0,
-						intent,
-						0
-				)
-		);
-		
-		notificationManager.notify( SHARE_TUN_ID, notification);
-	}
-
-	static void cancelShareTunModule(Context context) {
-		cancel( SHARE_TUN_ID, context);
-	}
 }

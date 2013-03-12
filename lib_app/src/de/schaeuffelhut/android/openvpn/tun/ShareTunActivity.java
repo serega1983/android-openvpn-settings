@@ -267,7 +267,7 @@ public class ShareTunActivity extends Activity
 		
 		cancelButton().setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-                Notification2.cancelShareTunModule( getApplicationContext() );
+                TunNotification.cancelShareTunModule( getApplicationContext() );
 				// TODO: remember user did cancel and don't call again (ar ask
 				// user if we should call him again)
 				finish();
