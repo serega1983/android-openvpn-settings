@@ -1,4 +1,4 @@
 lib_openvpn/jni/liblzo = [git]https://github.com/fries/android-external-liblzo.git
 lib_openvpn/jni/openssl = [git]https://github.com/fries/android-external-openssl.git
 lib_openvpn/jni/openvpn = [git]https://github.com/fries/android-external-openvpn.git
-lib_openvpn/busybox/vanilla = [git]git://busybox.net/busybox.git
+lib_openvpn/busybox/vanilla = [git]https://github.com/fries/fries/openvpn-settings-busybox.git
