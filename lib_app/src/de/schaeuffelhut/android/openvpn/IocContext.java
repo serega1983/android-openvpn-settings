@@ -37,27 +37,12 @@ import de.schaeuffelhut.android.openvpn.util.tun.TunInfoImpl;
 public class IocContext
 {
     static IocContext iocContext = new IocContext();
-    private TunInfo tunInfo;
+
     private boolean fulfilsPrerequisites = false;
 
     public final static IocContext get()
     {
         return iocContext;
-    }
-
-    public void setTunInfo(TunInfo tunInfo)
-    {
-        this.tunInfo = tunInfo;
-    }
-
-    public TunInfo getTunInfo(Context context)
-    {
-        if (tunInfo == null)
-        {
-            // return new instance on each call, otherwise we leak the context!
-            return new TunInfoImpl( context );
-        }
-        return tunInfo;
     }
 
     public ProbePrerequisites probePrerequisites(Context context)
