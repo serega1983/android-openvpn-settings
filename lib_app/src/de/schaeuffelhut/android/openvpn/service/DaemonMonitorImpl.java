@@ -26,14 +26,11 @@ import java.io.IOException;
 
 import android.content.Context;
 import android.net.LocalSocketAddress;
-import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 import de.schaeuffelhut.android.openvpn.IocContext;
-import de.schaeuffelhut.android.openvpn.lib.openvpn.Installer;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnPasswordRequest;
 import de.schaeuffelhut.android.openvpn.shared.util.apilevel.ApiLevel;
-import de.schaeuffelhut.android.openvpn.tun.TunPreferences;
 import de.schaeuffelhut.android.openvpn.util.Preconditions;
 import de.schaeuffelhut.android.openvpn.shared.util.Shell;
 import de.schaeuffelhut.android.openvpn.shared.util.Util;
@@ -59,6 +56,7 @@ final class DaemonMonitorImpl implements DaemonMonitor
 	private ManagementThread mManagementThread;
 
     private final LocalSocketAddress mgmtSocket;
+    private final ShareTun mShareTun = new NullShareTun();//TODO: to enable TUN sharing again, inject ShareTunImpl.
 
     DaemonMonitorImpl(Context context, File configFile, Notification2 notification2, Preferences2 preferences2)
 	{
@@ -137,7 +135,7 @@ final class DaemonMonitorImpl implements DaemonMonitor
 
                 if (tunInfo.isDeviceNodeAvailable())
                 {
-                    shareTunModule();
+                    mShareTun.shareTun();
                 }
                 else
                 {
@@ -245,23 +243,6 @@ final class DaemonMonitorImpl implements DaemonMonitor
 		};
 		mDaemonProcess.start();
 	}
-
-    private void shareTunModule()
-	{
-		if (isTunSharingExpired())
-			return;
-
-        if (TunPreferences.getSendDeviceDetailWasSuccessfull( mPreferences2.mContext ))
-			return;
-
-        mNotification2.sendShareTunModule();
-    }
-
-    @Deprecated//TODO: move some where in TunSharing code
-    private boolean isTunSharingExpired()
-    {
-        return TunPreferences.isTunSharingExpired();
-    }
 
     public void restart()
 	{

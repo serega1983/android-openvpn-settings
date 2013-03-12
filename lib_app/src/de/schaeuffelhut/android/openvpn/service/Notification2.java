@@ -33,6 +33,7 @@ import de.schaeuffelhut.android.openvpn.EnterUserPassword;
 import de.schaeuffelhut.android.openvpn.Intents;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnDaemonState;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnNetworkState;
+import de.schaeuffelhut.android.openvpn.shared.util.NotificationUtil;
 
 import java.io.File;
 
@@ -138,7 +139,7 @@ public class Notification2
 
     void cancel()
     {
-        Notifications.cancel( mNotificationId, mContext );
+        NotificationUtil.cancel( mNotificationId, mContext );
     }
 
     void networkStateChanged(int oldState, int newState)
@@ -185,15 +186,5 @@ public class Notification2
                 Toast.makeText( mContext, message, Toast.LENGTH_LONG ).show();
             }
         } );
-    }
-
-    void sendShareTunModule()
-    {
-        Notifications.sendShareTunModule( mContext, mNotificationManager );
-    }
-
-    public static void cancelShareTunModule(Context context)
-    {
-        Notifications.cancelShareTunModule( context );
     }
 }
