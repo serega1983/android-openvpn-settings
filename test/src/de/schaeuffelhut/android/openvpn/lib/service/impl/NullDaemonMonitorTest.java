@@ -20,33 +20,32 @@
  * Contact the author at:          android.openvpn@schaeuffelhut.de
  */
 
-package de.schaeuffelhut.android.openvpn.services;
+package de.schaeuffelhut.android.openvpn.lib.service.impl;
 
-import de.schaeuffelhut.android.openvpn.lib.service.impl.OpenVpnServiceImpl;
-import de.schaeuffelhut.android.openvpn.shared.util.service.DelegatingService;
+import de.schaeuffelhut.android.openvpn.lib.service.impl.NullDaemonMonitor;
+import de.schaeuffelhut.android.openvpn.service.api.OpenVpnPasswordRequest;
+import junit.framework.TestCase;
+
+import java.io.File;
 
 /**
- * This class provides a unique and persistent name for the OpenVpnService implemented else where.
- * Other APPS may use this name to lookup and find the OpenVpnService.
  * @author Friedrich Schäuffelhut
- * @since 2012-11-13
+ * @since 2012-11-03
  */
-public class OpenVpnService extends DelegatingService<OpenVpnServiceImpl>
+public class NullDaemonMonitorTest extends TestCase
 {
-    public static final String NAME = "de.schaeuffelhut.android.openvpn.services.OpenVpnService";
-
-    public OpenVpnService()
+    public void test_isAlive() throws Exception
     {
-        super();
+        assertFalse( NullDaemonMonitor.getInstance().isAlive() );
     }
 
-    @Override
-    protected OpenVpnServiceImpl createServiceDelegate()
+    public void test_getConfigFile()
     {
-        return new OpenVpnServiceImpl( this );
+        assertEquals( new File( "/dev/null" ), NullDaemonMonitor.getInstance().getConfigFile() );
     }
 
-    /*
-     * Keep implementation outside this class and package.
-     */
+    public void test_getPasswordRequest()
+    {
+        assertEquals( OpenVpnPasswordRequest.NONE, NullDaemonMonitor.getInstance().getPasswordRequest() );
+    }
 }

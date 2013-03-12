@@ -34,7 +34,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import com.bugsense.trace.BugSenseHandler;
 import de.schaeuffelhut.android.openvpn.lib.app.R;
-import de.schaeuffelhut.android.openvpn.service.OpenVpnServiceImpl;
+import de.schaeuffelhut.android.openvpn.lib.service.impl.OpenVpnServiceImpl;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnConfig;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnServiceWrapper;
 import de.schaeuffelhut.android.openvpn.setup.prerequisites.PrerequisitesActivity;
@@ -42,7 +42,7 @@ import de.schaeuffelhut.android.openvpn.setup.prerequisites.ProbePrerequisites;
 import de.schaeuffelhut.android.openvpn.shared.util.UnexpectedSwitchValueException;
 import de.schaeuffelhut.android.openvpn.shared.util.apilevel.ApiLevel;
 import de.schaeuffelhut.android.openvpn.tun.ShareTunActivity;
-import de.schaeuffelhut.android.openvpn.tun.TunPreferences;
+import de.schaeuffelhut.android.openvpn.util.tun.TunPreferences;
 import de.schaeuffelhut.android.openvpn.util.*;
 
 import java.io.File;

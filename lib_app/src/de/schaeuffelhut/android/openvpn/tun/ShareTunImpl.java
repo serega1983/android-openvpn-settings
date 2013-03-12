@@ -2,7 +2,8 @@ package de.schaeuffelhut.android.openvpn.tun;
 
 import android.app.NotificationManager;
 import android.content.Context;
-import de.schaeuffelhut.android.openvpn.service.ShareTun;
+import de.schaeuffelhut.android.openvpn.lib.service.impl.ShareTun;
+import de.schaeuffelhut.android.openvpn.util.tun.TunPreferences;
 
 /**
  * @author Friedrich Schäuffelhut

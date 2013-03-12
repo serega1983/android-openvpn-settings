@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import de.schaeuffelhut.android.openvpn.util.tun.TunPreferences;
 import org.apache.commons.io.FileUtils;
 
 import android.content.SharedPreferences;
