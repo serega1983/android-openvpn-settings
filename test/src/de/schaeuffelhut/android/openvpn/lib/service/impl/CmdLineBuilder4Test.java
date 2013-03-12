@@ -24,7 +24,7 @@ public class CmdLineBuilder4Test extends CmdLineBuilderBaseTest
 
         testBuildCmdLine(
                 cmdLineBuilder,
-                "--ip /data/data/de.schaeuffelhut.android.openvpn/app_bin/bb/ip "
+                "--iproute /data/data/de.schaeuffelhut.android.openvpn/app_bin/bb/ip "
         );
     }
 
@@ -35,6 +35,6 @@ public class CmdLineBuilder4Test extends CmdLineBuilderBaseTest
                 new File( "/data/data/de. .openvpn/app_bin/bb/ip" )
         );
 
-        testBuildCmdLine_WithShellEscape( cmdLineBuilder, "--ip '/data/data/de. .openvpn/app_bin/bb/ip' " );
+        testBuildCmdLine_WithShellEscape( cmdLineBuilder, "--iproute '/data/data/de. .openvpn/app_bin/bb/ip' " );
     }
 }
