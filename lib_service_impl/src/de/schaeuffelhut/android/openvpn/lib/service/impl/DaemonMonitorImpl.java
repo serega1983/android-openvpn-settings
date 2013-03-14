@@ -32,7 +32,6 @@ import de.schaeuffelhut.android.openvpn.service.api.OpenVpnPasswordRequest;
 import de.schaeuffelhut.android.openvpn.shared.util.apilevel.ApiLevel;
 import de.schaeuffelhut.android.openvpn.util.Preconditions;
 import de.schaeuffelhut.android.openvpn.shared.util.Shell;
-import de.schaeuffelhut.android.openvpn.shared.util.Util;
 import de.schaeuffelhut.android.openvpn.util.tun.TunInfo;
 import de.schaeuffelhut.android.openvpn.util.tun.TunInfoSingleton;
 
@@ -57,8 +56,9 @@ final class DaemonMonitorImpl implements DaemonMonitor
 
     private final LocalSocketAddress mgmtSocket;
     private final ShareTun mShareTun = new NullShareTun();//TODO: to enable TUN sharing again, inject ShareTunImpl.
+    private CmdLineBuilder mCmdLineBuilder;
 
-    DaemonMonitorImpl(Context context, File configFile, Notification2 notification2, Preferences2 preferences2)
+    DaemonMonitorImpl(Context context, File configFile, Notification2 notification2, Preferences2 preferences2, CmdLineBuilder cmdLineBuilder)
 	{
 		mContext = context;
 		mConfigFile = configFile;
@@ -74,6 +74,8 @@ final class DaemonMonitorImpl implements DaemonMonitor
         );
 
         reattach();
+
+        mCmdLineBuilder = cmdLineBuilder;
     }
 
     private boolean reattach()
@@ -102,22 +104,16 @@ final class DaemonMonitorImpl implements DaemonMonitor
 			return;
 		}
 
-        final File openvpnBinary = mPreferences2.getPathToBinaryAsFile();
-		if ( openvpnBinary == null ) {
-			Log.w( mTagDaemonMonitor, "start(): openvpn binary not found" );
-			return;//TODO: send Intents.DAEMON_STATE_DISABLED
-		}
-		if ( !openvpnBinary.exists() ) {
-			Log.w( mTagDaemonMonitor, "start(): file not found: " + openvpnBinary );
-			return; //TODO: send Intents.DAEMON_STATE_DISABLED 
-		}
-		
-		if ( !mConfigFile.exists() ) {
-			Log.w( mTagDaemonMonitor, "start(): file not found: " + mConfigFile );
-			return; //TODO: send Intents.DAEMON_STATE_DISABLED
-		}
+        mCmdLineBuilder.setConfigLocation( mConfigFile );
+        mCmdLineBuilder.setScriptSecurityLevel( mPreferences2.getScriptSecurityLevel() );
+        mCmdLineBuilder.setMgmtSocketLocation( new File( mgmtSocket.getName() ) );
 
-		// reset saved dns state
+        if ( !mCmdLineBuilder.canExecute( mTagDaemonMonitor ) ) {
+            mNotification2.daemonStateChangedToDisabled();
+            return;
+        }
+
+        // reset saved dns state
         mPreferences2.setDns1( 0, "" );
 
 		final int mgmtPort = 10000 + (int)(Math.random() * 50000); 
@@ -152,31 +148,9 @@ final class DaemonMonitorImpl implements DaemonMonitor
 
         mDaemonProcess = new Shell(
 				mTagDaemonMonitor + "-daemon",
-//                String.format( "" +
-//                        "%s --cd %s --config %s --script-security %d" +
-//                        " --management %s unix" +
-//                        " --management-query-passwords --verb 3",
-//                        "/data/data/de.schaeuffelhut.android.openvpn/app_bin/miniopenvpn",
-//                        Util.shellEscape(mConfigFile.getParentFile().getAbsolutePath()),
-//						Util.shellEscape(mConfigFile.getName()),
-//                        mPreferences2.getScriptSecurityLevel(),
-//                        mgmtSocket.getName()
-//				),
-//                "ApplicationInfo.nativeLibraryDir API9",
-//				Shell.SH
-				String.format(
-						"%s --cd %s --config %s --script-security %d" +
-//                                " --iproute %s" +
-                                " --management %s unix" +
-                                " --management-query-passwords --verb 3",
-						openvpnBinary.getAbsolutePath(),
-						Util.shellEscape(mConfigFile.getParentFile().getAbsolutePath()),
-						Util.shellEscape(mConfigFile.getName()),
-                        mPreferences2.getScriptSecurityLevel(),
-//                        new File( mContext.getDir( "bin", Context.MODE_PRIVATE ), "ip" ).getAbsolutePath(),
-                        mgmtSocket.getName()
-				),
-				Shell.SU
+                mCmdLineBuilder.buildCmdLine(),
+                mContext.getApplicationInfo(), // needed to setup LD_LIBRARY_PATH
+                mCmdLineBuilder.requiresRoot()
 		){
 			boolean waitForMgmt = true;
 

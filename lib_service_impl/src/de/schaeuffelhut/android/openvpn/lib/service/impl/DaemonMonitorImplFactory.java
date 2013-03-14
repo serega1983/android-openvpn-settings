@@ -50,7 +50,11 @@ class DaemonMonitorImplFactory implements DaemonMonitorFactory
                 preferences2.getNotificationId(),
                 listenerDispatcher
         );
-        return new DaemonMonitorImpl( context, configFile, notification2, preferences2 );
+        CmdLineBuilder cmdLineBuilder = (CmdLineBuilder)new CmdLineBuilder4(
+                new File( "/data/data/de.schaeuffelhut.android.openvpn/app_bin/openvpn" ),
+                new File( "/data/data/de.schaeuffelhut.android.openvpn/app_bin/ip" )
+        );
+        return new DaemonMonitorImpl( context, configFile, notification2, preferences2, cmdLineBuilder );
     }
 
 }
