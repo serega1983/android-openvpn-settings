@@ -45,14 +45,16 @@ final class ManagementThread extends Thread
     private final LocalSocketAddress mMgmtSocket;
     private final Preferences2  mPreferences2;
 	private final String mTAG_MT;
+    private final IfConfigFactory mIfConfigFactory;
 
-	ManagementThread(DaemonMonitorImpl daemonMonitor, Notification2 notification2, Preferences2 preferences2, LocalSocketAddress mgmtSocket)
+    ManagementThread(DaemonMonitorImpl daemonMonitor, Notification2 notification2, Preferences2 preferences2, LocalSocketAddress mgmtSocket, IfConfigFactory ifConfigFactory)
 	{
 		mDaemonMonitor = daemonMonitor;
         mNotification2 = notification2;
         mPreferences2 = preferences2;
 		mTAG_MT = daemonMonitor.mTagDaemonMonitor + "-mgmt";
         mMgmtSocket = mgmtSocket;
+        mIfConfigFactory = ifConfigFactory;
     }
 	
 	private final CountDownLatch mReadyForCommands = new CountDownLatch(1);
@@ -106,7 +108,7 @@ final class ManagementThread extends Thread
 
             mTerminated.countDown();
 			
-			Log.d( mTAG_MT, "terminated");
+			Log.d( mTAG_MT, "terminated" );
 		}
 	}
 
@@ -797,7 +799,7 @@ final class ManagementThread extends Thread
         mNotification2.notifyBytes( msg, mTrafficStats.getTuntapReadBytes(), mTrafficStats.getTuntapWriteBytes() );
     }
 
-    private IfConfig ifConfig = new IfConfig();
+    private IfConfig ifConfig = mIfConfigFactory.createIfConfig();
 
     private void onNeedOk(String line)
     {

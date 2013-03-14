@@ -50,20 +50,23 @@ final class DaemonMonitorImpl implements DaemonMonitor
 
 	private final LogFile mLog;
 	final String mTagDaemonMonitor;
+    private final IfConfigFactory mIfConfigFactory;
 
-	private Shell mDaemonProcess;
+    private Shell mDaemonProcess;
 	private ManagementThread mManagementThread;
 
     private final LocalSocketAddress mgmtSocket;
     private final ShareTun mShareTun = new NullShareTun();//TODO: to enable TUN sharing again, inject ShareTunImpl.
     private CmdLineBuilder mCmdLineBuilder;
 
-    DaemonMonitorImpl(Context context, File configFile, Notification2 notification2, Preferences2 preferences2, CmdLineBuilder cmdLineBuilder)
+    DaemonMonitorImpl(Context context, File configFile, Notification2 notification2, Preferences2 preferences2, CmdLineBuilder cmdLineBuilder, IfConfigFactory ifConfigFactory)
 	{
 		mContext = context;
 		mConfigFile = configFile;
         mNotification2 = notification2;
         mPreferences2 = preferences2;
+        mCmdLineBuilder = cmdLineBuilder;
+        mIfConfigFactory = ifConfigFactory;
 
         mLog = new LogFile( mPreferences2.logFileFor() );
 		mTagDaemonMonitor = String.format("OpenVPN-DaemonMonitor[%s]", mConfigFile);
@@ -74,15 +77,13 @@ final class DaemonMonitorImpl implements DaemonMonitor
         );
 
         reattach();
-
-        mCmdLineBuilder = cmdLineBuilder;
     }
 
     private boolean reattach()
 	{
 		mDaemonProcess = null;
 
-        mManagementThread = new ManagementThread( DaemonMonitorImpl.this, mNotification2, mPreferences2, mgmtSocket );
+        mManagementThread = new ManagementThread( DaemonMonitorImpl.this, mNotification2, mPreferences2, mgmtSocket, mIfConfigFactory );
 		if ( mManagementThread.attach() )
 			mManagementThread.start();
 		else
@@ -168,7 +169,7 @@ final class DaemonMonitorImpl implements DaemonMonitor
 				if ( waitForMgmt && line.indexOf( "MANAGEMENT: unix domain socket listening on" ) != -1 )
 				{
 					waitForMgmt = false;
-                    mManagementThread = new ManagementThread( DaemonMonitorImpl.this, mNotification2, mPreferences2, mgmtSocket );
+                    mManagementThread = new ManagementThread( DaemonMonitorImpl.this, mNotification2, mPreferences2, mgmtSocket, mIfConfigFactory );
 					mManagementThread.start();
 				}
 			}

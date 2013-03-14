@@ -34,11 +34,13 @@ class DaemonMonitorImplFactory implements DaemonMonitorFactory
 {
     private final Context context;
     private final OpenVpnStateListenerDispatcher listenerDispatcher;
+    private final IfConfigFactory ifConfigFactory;
 
-    public DaemonMonitorImplFactory(Context context, OpenVpnStateListenerDispatcher listenerDispatcher)
+    public DaemonMonitorImplFactory(Context context, OpenVpnStateListenerDispatcher listenerDispatcher, IfConfigFactory ifConfigFactory)
     {
         this.context = context;
         this.listenerDispatcher = listenerDispatcher;
+        this.ifConfigFactory = ifConfigFactory;
     }
 
     public DaemonMonitor createDaemonMonitorFor(File configFile)
@@ -54,7 +56,7 @@ class DaemonMonitorImplFactory implements DaemonMonitorFactory
                 new File( "/data/data/de.schaeuffelhut.android.openvpn/app_bin/openvpn" ),
                 new File( "/data/data/de.schaeuffelhut.android.openvpn/app_bin/ip" )
         );
-        return new DaemonMonitorImpl( context, configFile, notification2, preferences2, cmdLineBuilder );
+        return new DaemonMonitorImpl( context, configFile, notification2, preferences2, cmdLineBuilder, ifConfigFactory );
     }
 
 }
