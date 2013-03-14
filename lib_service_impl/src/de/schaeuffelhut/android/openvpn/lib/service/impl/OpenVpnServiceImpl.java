@@ -55,10 +55,10 @@ public class OpenVpnServiceImpl implements ServiceDelegate
      */
     private final Service mService;
 
-    public OpenVpnServiceImpl(Service service)
+    public OpenVpnServiceImpl(Service service, IfConfigFactory ifConfigFactory)
     {
         this.mService = service;
-        this.daemonMonitorFactory = new DaemonMonitorImplFactory( getContext(), listenerDispatcher );
+        this.daemonMonitorFactory = new DaemonMonitorImplFactory( getContext(), listenerDispatcher, ifConfigFactory );
     }
 
     private Service getService()
