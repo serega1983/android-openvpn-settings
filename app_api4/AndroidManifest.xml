@@ -112,7 +112,18 @@
             -->
         </service>
 
-		<receiver
+        <!--
+        <service
+                android:name="de.schaeuffelhut.android.openvpn.lib.openvpn4.VpnServiceImpl"
+                android:label="@string/services_vpn_service"
+                android:exported="true"
+                android:enabled="true"
+                android:permission="android.permission.BIND_VPN_SERVICE"
+                >
+        </service>
+         -->
+
+        <receiver
 			android:name="de.schaeuffelhut.android.openvpn.util.BootCompletedReceiver"
 			android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
 			<intent-filter>
