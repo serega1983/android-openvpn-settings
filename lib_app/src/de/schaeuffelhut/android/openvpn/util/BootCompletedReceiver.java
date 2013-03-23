@@ -45,7 +45,7 @@ public class BootCompletedReceiver extends BroadcastReceiver
             {
                 Log.d( TAG, "OpenVPN-Service enabled in preferences, starting!" );
 
-                ComponentName service = context.startService( OpenVpnServiceWrapper.createIntentAddressingOpenVpnService() );
+                ComponentName service = context.startService( OpenVpnServiceWrapper.createDefaultIntentAddressingOpenVpnService() );
 
                 if (service == null)
                 {

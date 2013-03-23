@@ -78,12 +78,12 @@ public class OpenVpnServiceWrapperTest extends TestCase
 
     public void test_createIntentAddressingOpenVpnService_has_no_action()
     {
-        assertEquals( null, OpenVpnServiceWrapper.createIntentAddressingOpenVpnService().getAction() );
+        assertEquals( null, OpenVpnServiceWrapper.createDefaultIntentAddressingOpenVpnService().getAction() );
     }
 
     public void test_createIntentAddressingOpenVpnService_verify_componentName()
     {
-        assertEquals( COMPONENT_NAME, OpenVpnServiceWrapper.createIntentAddressingOpenVpnService().getComponent() );
+        assertEquals( COMPONENT_NAME, OpenVpnServiceWrapper.createDefaultIntentAddressingOpenVpnService().getComponent() );
     }
 
     private void assert_intentAddressesOpenVpnService_with_no_action(Intent intent)
