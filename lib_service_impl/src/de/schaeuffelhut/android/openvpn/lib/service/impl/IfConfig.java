@@ -78,7 +78,15 @@ public class IfConfig
         dnsServers.add( msg );
     }
 
-    void protect(FileDescriptor fd)
+
+    /**
+     * An android API level 14 VpnService must implement this method to protect
+     * the VPN connection.
+     * @see VpnService.protect(FileDescriptor)
+     * @param fd The FileDescriptor to protect
+     */
+    //TODO: mark as abstract, provide default implementation
+    protected void protect(FileDescriptor fd)
     {
         throw new RuntimeException( "not implemented" );
     }
@@ -88,6 +96,19 @@ public class IfConfig
         return establish(localIp, mtu, mode, routes, dnsServers );
     }
 
+
+    /**
+     * An android API level 14 VpnService must implement this method
+     * and create a TUN device using the VpnService.Builder.
+     * @see VpnService.Builder()
+     * @param localIp
+     * @param mtu
+     * @param mode
+     * @param routes
+     * @param dnsServers
+     * @return The ParcelFileDescriptor connected to the TUN device
+     */
+    //TODO: mark as abstract, provide default implementation
     protected ParcelFileDescriptor establish(CidrInetAddress localIp, int mtu, String mode, List<CidrInetAddress> routes, List<String> dnsServers)
     {
         throw new RuntimeException( "not implemented" );
