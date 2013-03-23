@@ -31,16 +31,16 @@ import java.util.List;
 
 /**
  * Configures and creates a tun device for an Android 4 (ICS) vpn.
-* @author Friedrich Schäuffelhut
-* @since 2013-03-10
-*/
+ * @author Friedrich Schäuffelhut
+ * @since 2013-03-10
+ */
 public class IfConfig
 {
     private CidrInetAddress localIp;
     private int mtu;
     private String mode;
     private List<CidrInetAddress> routes = new ArrayList<CidrInetAddress>( 4 );
-    private List<String> dnssevers = new ArrayList<String>( 4 );
+    private List<String> dnsServers = new ArrayList<String>( 4 );
 
     void setIfconfig(String msg)
     {
@@ -54,7 +54,7 @@ public class IfConfig
         localIp = new CidrInetAddress( ip, netmask, mode );
     }
 
-    public void setRoute(String msg)
+    void setRoute(String msg)
     {
         String[] fields = msg.split( " " );
         //TODO: assert field length
@@ -73,34 +73,23 @@ public class IfConfig
         routes.add(route);
     }
 
-    public void setDnsServer(String msg)
+    void setDnsServer(String msg)
     {
-        dnssevers.add(msg);
+        dnsServers.add( msg );
     }
 
-    void protect(FileDescriptor fd){
+    void protect(FileDescriptor fd)
+    {
         throw new RuntimeException( "not implemented" );
-        //VpnService.this.protect( fdInt );
     }
 
-    protected ParcelFileDescriptor establish(){
+    ParcelFileDescriptor establish()
+    {
+        return establish(localIp, mtu, mode, routes, dnsServers );
+    }
+
+    protected ParcelFileDescriptor establish(CidrInetAddress localIp, int mtu, String mode, List<CidrInetAddress> routes, List<String> dnsServers)
+    {
         throw new RuntimeException( "not implemented" );
-//        VpnService.Builder builder = new VpnService.Builder();
-//        configure( builder );
-//        return builder.establish();
     }
-
-//    private void configure(VpnService.Builder builder)
-//    {
-//        builder.setSession( "TODO: TestSession" );
-//        builder.addAddress( localIp.getIp(), localIp.getPrefixLength() ); //TODO: make localIp optional, handle error
-//        builder.setMtu( mtu );
-//        for (CidrInetAddress route : routes)
-//            builder.addRoute( route.getIp(), route.getPrefixLength() );
-//        for (String dnsserver : dnssevers)
-//            builder.addDnsServer( dnsserver );
-////            builder.addSearchDomain(  );
-//        builder.addRoute( "0.0.0.0", 0 );
-//    }
-
 }
