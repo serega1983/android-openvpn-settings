@@ -47,8 +47,24 @@ public class OpenVpnServiceWrapper implements ServiceConnection
     );
 
     private final Context context;
+    private final ComponentName serviceName;
     private IOpenVpnService openVpnService;
     private final ArrayList<IOpenVpnStateListener> listeners = new ArrayList<IOpenVpnStateListener>();
+
+    /**
+     * Creates an {@code OpenVpnServiceWrapper} using the specified context as
+     * the target for {@code bindService()}, {@code unbindService()} as well as
+     * {@code startService()} and {@code stopService()}. Keeps a reference to
+     * the {@code Context} object. Connects to the default OpenVpnService
+     * published by OpenVpnSettings.
+     *
+     * @param context The {@code Context} to call {@code bindService()}, {@code unbindService()} as well as
+     * {@code startService()} and {@code stopService()} upon. A reference to this {@code Context} is kept.
+     */
+    public OpenVpnServiceWrapper(Context context)
+    {
+        this( context, COMPONENT_NAME );
+    }
 
     /**
      * Creates an {@code OpenVpnServiceWrapper} using the specified context as
@@ -58,14 +74,21 @@ public class OpenVpnServiceWrapper implements ServiceConnection
      *
      * @param context The {@code Context} to call {@code bindService()}, {@code unbindService()} as well as
      * {@code startService()} and {@code stopService()} upon. A reference to this {@code Context} is kept.
+     * @param serviceName The service to connect to.
      */
-    public OpenVpnServiceWrapper(Context context)
+    public OpenVpnServiceWrapper(Context context, ComponentName serviceName)
     {
         this.context = context;
+        this.serviceName = serviceName;
         invalidateRemoteInterface();
     }
 
-    public static Intent createIntentAddressingOpenVpnService()
+    private Intent createIntentAddressingOpenVpnService()
+    {
+        return new Intent().setComponent( serviceName );
+    }
+
+    public static Intent createDefaultIntentAddressingOpenVpnService()
     {
         return new Intent().setComponent( COMPONENT_NAME );
     }
