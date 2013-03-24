@@ -117,7 +117,7 @@ public abstract class CmdLineBuilder
             Log.d( logTag, "management socket not set" );
             return false;
         }
-        if ( !mgmtSocket.exists() ) {
+        if ( !mgmtSocket.getParentFile().exists() ) {
             Log.d( logTag, "parent directory of management socket not found: " + mgmtSocket.getParentFile().getAbsolutePath() );
             return false;
         }
