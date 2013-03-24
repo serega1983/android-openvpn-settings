@@ -22,6 +22,8 @@
 
 package de.schaeuffelhut.android.openvpn.shared.util;
 
+import android.content.pm.ApplicationInfo;
+
 import java.io.File;
 import java.util.List;
 
@@ -38,12 +40,17 @@ public class OpenVpnBinary
 
     public OpenVpnBinary(File path)
     {
-        this( path, queryUsage( path ) );
+        this( path, queryUsage( path, null ) );
     }
 
-    private static List<String> queryUsage(File path)
+    public OpenVpnBinary(File path, ApplicationInfo applicationInfo)
     {
-        ShellWithCollectedOutput shell = new ShellWithCollectedOutput( "OpenVPN", path.getAbsolutePath() );
+        this( path, queryUsage( path, applicationInfo ) );
+    }
+
+    private static List<String> queryUsage(File path, ApplicationInfo applicationInfo)
+    {
+        ShellWithCollectedOutput shell = new ShellWithCollectedOutput( "OpenVPN", path.getAbsolutePath(), applicationInfo );
         shell.run();
         return shell.getStdout();
     }

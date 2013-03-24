@@ -1,5 +1,6 @@
 package de.schaeuffelhut.android.openvpn.lib.openvpn4;
 
+import android.content.Context;
 import android.test.InstrumentationTestCase;
 import de.schaeuffelhut.android.openvpn.shared.util.OpenVpnBinary;
 import junit.framework.Assert;
@@ -11,12 +12,25 @@ import java.io.File;
  * @author Friedrich Schäuffelhut
  * @since 2013-03-23
  */
+//TODO: merge with openvpn.InstallerTest
 public class InstallerTest extends InstrumentationTestCase
 {
     @Override
     public void setUp() throws Exception
     {
         super.setUp();
+        removeBinDir();
+    }
+
+    private void removeBinDir()
+    {
+        File binDir = getBinDir();
+        File[] files = binDir.listFiles();
+        if (files != null)
+            for (File file : files)
+                file.delete();
+        binDir.delete();
+        Assert.assertFalse( binDir.exists() );
     }
 
 
@@ -61,11 +75,45 @@ public class InstallerTest extends InstrumentationTestCase
     }
 
 
-    public void test_installOpenVpn() throws InstallFailed
+    public void test_installOpenVpn_installs_binary() throws InstallFailed
     {
-        File pathToOpenVpn = new Installer( getInstrumentation().getTargetContext() ).installMiniOpenVpn();
+        File pathToOpenVpn = new Installer( getTargetContext() ).installMiniOpenVpn();
         Assert.assertNotNull( pathToOpenVpn );
-        Assert.assertEquals( "2.1.1", new OpenVpnBinary( pathToOpenVpn ).getVersion() );
+        Assert.assertEquals( "2.3_rc1+dspatch3", new OpenVpnBinary( pathToOpenVpn, getTargetContext().getApplicationInfo() ).getVersion() );
+    }
+
+    public void test_installOpenVpn_verify_location() throws InstallFailed
+    {
+        File pathToOpenVpn = new Installer( getTargetContext() ).installMiniOpenVpn();
+        Assert.assertEquals(
+                new File( getBinDir(), "miniopenvpn" ),
+                pathToOpenVpn
+        );
+    }
+
+    public void test_installOpenVpn_twice_succeeds() throws InstallFailed
+    {
+        new Installer( getTargetContext() ).installMiniOpenVpn();
+        new Installer( getTargetContext() ).installMiniOpenVpn();
+    }
+
+
+
+    /**
+     * Returns path to the directory where app local binaries are stored.
+     * This directory should always be retrieved through out the app the
+     * same way as implemente in this method.
+     *
+     * @return path to the directory where app local binaries are stored.
+     */
+    private File getBinDir()
+    {
+        return getTargetContext().getDir( "bin", Context.MODE_PRIVATE );
+    }
+
+    private Context getTargetContext()
+    {
+        return getInstrumentation().getTargetContext();
     }
 }
 
