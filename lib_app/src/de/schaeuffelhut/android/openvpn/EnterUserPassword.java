@@ -49,7 +49,6 @@ public class EnterUserPassword extends Activity {
 
         @Override
         public synchronized void onServiceConnectedHook(ComponentName name, IBinder serviceBinder) {
-            super.onServiceConnected( name, serviceBinder );
             Log.d( TAG, "Connected to OpenVpnService" );
 
             Button button = getNeutralButtonFromDialog();

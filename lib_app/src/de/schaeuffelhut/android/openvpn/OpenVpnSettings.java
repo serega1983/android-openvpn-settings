@@ -76,8 +76,6 @@ public class OpenVpnSettings extends PreferenceActivity
 
         @Override
         public void onServiceConnectedHook(ComponentName name, IBinder serviceBinder) {
-            super.onServiceConnected( name, serviceBinder );
-
             Log.d( TAG, "Connected to OpenVpnService" );
 
             for(DaemonEnabler daemonEnabler : mDaemonEnablers )
@@ -90,8 +88,6 @@ public class OpenVpnSettings extends PreferenceActivity
 
         @Override
         public void onServiceDisconnectedHook(ComponentName name) {
-            super.onServiceDisconnected( name );
-
             Log.d( TAG, "Disconnected from OpenVpnService" );
 
             for(DaemonEnabler daemonEnabler : mDaemonEnablers )

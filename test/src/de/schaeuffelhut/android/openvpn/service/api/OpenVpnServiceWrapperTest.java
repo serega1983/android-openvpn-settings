@@ -48,14 +48,12 @@ public class OpenVpnServiceWrapperTest extends TestCase
         @Override
         protected void onServiceConnectedHook(ComponentName componentName, IBinder iBinder)
         {
-            super.onServiceConnectedHook( componentName, iBinder );
             onServiceConnectedCalled.set( true );
         }
 
         @Override
         protected void onServiceDisconnectedHook(ComponentName componentName)
         {
-            super.onServiceDisconnectedHook( componentName );
             onServiceDisconnectedCalled.set( true );
         }
     };
