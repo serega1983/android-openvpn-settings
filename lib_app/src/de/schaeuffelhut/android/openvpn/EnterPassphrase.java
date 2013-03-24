@@ -49,7 +49,6 @@ public class EnterPassphrase extends Activity {
 
         @Override
         public synchronized void onServiceConnectedHook(ComponentName name, IBinder serviceBinder) {
-            super.onServiceConnected( name, serviceBinder );
             Log.d( TAG, "Connected to OpenVpnService" );
 
             Button button = getNeutralButtonFromDialog();
@@ -59,7 +58,6 @@ public class EnterPassphrase extends Activity {
 
         @Override
         public synchronized void onServiceDisconnectedHook(ComponentName name) {
-            super.onServiceDisconnected( name );
             Log.d( TAG, "Disconnected from OpenVpnService" );
 
             Button button = getNeutralButtonFromDialog();
