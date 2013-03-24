@@ -20,8 +20,9 @@ public class OpenVpnSettingsTest extends ActivityInstrumentationTestCase2<OpenVp
 
     public void test1() throws InterruptedException
     {
-        OpenVpnSettings activity = getActivity();
-        Thread.sleep(2500);
-        activity.finish();
+        fail("Test was disabled");
+//        OpenVpnSettings activity = getActivity();
+//        Thread.sleep(2500);
+//        activity.finish();
     }
 }
