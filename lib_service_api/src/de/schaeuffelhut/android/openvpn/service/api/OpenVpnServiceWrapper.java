@@ -142,16 +142,43 @@ public class OpenVpnServiceWrapper implements ServiceConnection
         context.unbindService( this );
     }
 
-    public void onServiceConnected(ComponentName componentName, IBinder iBinder)
+    public final void onServiceConnected(ComponentName componentName, IBinder iBinder)
     {
         openVpnService = IOpenVpnService.Stub.asInterface( iBinder );
+        if ( isPaused )
+            return;
         addRememberedListenersToRemoteService();
+        onServiceConnectedHook( componentName, iBinder );
     }
 
-    public void onServiceDisconnected(ComponentName componentName)
+    /**
+     * Called when ServiceConnection.onServiceConnected() is called and listeners are not paused.
+     * @param componentName @see ServiceConnection.onServiceConnected()
+     * @param iBinder       @see ServiceConnection.onServiceConnected()
+     */
+    protected void onServiceConnectedHook(ComponentName componentName, IBinder iBinder)
+    {
+        // overwrite hook if necessary
+        //TODO: Replace this hook by delegating to a instance of ServiceConnection
+    }
+
+    public final void onServiceDisconnected(ComponentName componentName)
     {
         invalidateRemoteInterface();
+        if ( isPaused )
+            return;
         removeRememberedListenersFromRemoteService(); // call after invalidateRemoteInterface() so we talk to NullOpenVpnService.
+        onServiceDisconnectedHook( componentName );
+    }
+
+    /**
+     * Called when ServiceConnection.onServiceDisconnected() is called and listeners are not paused.
+     * @param componentName @see ServiceConnection.onServiceDisconnected()
+     */
+    protected void onServiceDisconnectedHook(ComponentName componentName)
+    {
+        // overwrite hook if necessary
+        //TODO: Replace this hook by delegating to a instance of ServiceConnection
     }
 
     private void invalidateRemoteInterface()
@@ -322,7 +349,9 @@ public class OpenVpnServiceWrapper implements ServiceConnection
             }
         }
     }
-private boolean listenersRegisteredWithRemoteService = false;
+
+    private boolean listenersRegisteredWithRemoteService = false;
+
     private void addRememberedListenersToRemoteService()
     {
         synchronized (listeners)
@@ -365,6 +394,7 @@ private boolean listenersRegisteredWithRemoteService = false;
         }
     }
 
+    private boolean isPaused = false;
 
     /**
      * Call {@code resumeListeners()} in {@code onResume()} or {@code onStart()} to add all listeners
@@ -373,6 +403,7 @@ private boolean listenersRegisteredWithRemoteService = false;
     public void resumeListeners()
     {
         addRememberedListenersToRemoteService();
+        isPaused = false;
     }
 
     /**
@@ -382,5 +413,6 @@ private boolean listenersRegisteredWithRemoteService = false;
     public void pauseListeners()
     {
         removeRememberedListenersFromRemoteService();
+        isPaused = true;
     }
 }

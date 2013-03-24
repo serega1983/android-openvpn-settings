@@ -34,6 +34,8 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import com.bugsense.trace.BugSenseHandler;
 import de.schaeuffelhut.android.openvpn.lib.app.R;
+import de.schaeuffelhut.android.openvpn.lib.openvpn.Installer;
+import de.schaeuffelhut.android.openvpn.lib.openvpn4.InstallFailed;
 import de.schaeuffelhut.android.openvpn.lib.service.impl.OpenVpnServiceImpl;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnConfig;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnServiceWrapper;
@@ -72,7 +74,8 @@ public class OpenVpnSettings extends PreferenceActivity
 
 	private final OpenVpnServiceWrapper mOpenVpnService = new OpenVpnServiceWrapper( this ){
 
-        public void onServiceConnected(ComponentName name, IBinder serviceBinder) {
+        @Override
+        public void onServiceConnectedHook(ComponentName name, IBinder serviceBinder) {
             super.onServiceConnected( name, serviceBinder );
 
             Log.d( TAG, "Connected to OpenVpnService" );
@@ -85,7 +88,8 @@ public class OpenVpnSettings extends PreferenceActivity
             pref.setChecked( isServiceStarted() );
         }
 
-        public void onServiceDisconnected(ComponentName name) {
+        @Override
+        public void onServiceDisconnectedHook(ComponentName name) {
             super.onServiceDisconnected( name );
 
             Log.d( TAG, "Disconnected from OpenVpnService" );
