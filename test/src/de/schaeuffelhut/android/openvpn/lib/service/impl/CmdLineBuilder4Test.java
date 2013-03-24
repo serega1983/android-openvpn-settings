@@ -1,5 +1,6 @@
 package de.schaeuffelhut.android.openvpn.lib.service.impl;
 
+import android.content.Context;
 import de.schaeuffelhut.android.openvpn.lib.openvpn.Installer;
 
 import java.io.File;
@@ -27,6 +28,17 @@ public class CmdLineBuilder4Test extends CmdLineBuilderBaseTest
         testBuildCmdLine(
                 cmdLineBuilder,
                 "--iproute /data/data/de.schaeuffelhut.android.openvpn/app_bin/bb/ip "
+        );
+    }
+
+    public void testBuildCmdLine_from_context() throws Exception
+    {
+        CmdLineBuilder4 cmdLineBuilder = new CmdLineBuilder4( getInstrumentation().getTargetContext() );
+
+        testBuildCmdLine(
+                cmdLineBuilder,
+                new File ( getInstrumentation().getTargetContext().getDir( "bin", Context.MODE_PRIVATE ), "openvpn").getAbsolutePath(),
+                "--iproute " + new File ( getInstrumentation().getTargetContext().getDir( "bin", Context.MODE_PRIVATE ), "ip").getAbsolutePath() + " "
         );
     }
 

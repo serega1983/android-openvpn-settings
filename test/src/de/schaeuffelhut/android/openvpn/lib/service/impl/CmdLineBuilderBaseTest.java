@@ -17,12 +17,17 @@ abstract class CmdLineBuilderBaseTest extends InstrumentationTestCase
 
     protected void testBuildCmdLine(CmdLineBuilder cmdLineBuilder, String ip)
     {
+        testBuildCmdLine( cmdLineBuilder, "/data/data/de.schaeuffelhut.android.openvpn/app_bin/openvpn", ip );
+    }
+
+    protected void testBuildCmdLine(CmdLineBuilder cmdLineBuilder, String openvpn, String ip)
+    {
         cmdLineBuilder.setConfigLocation( new File( "/sdcard/openvpn/client.conf" ) );
         cmdLineBuilder.setMgmtSocketLocation( new File( "/data/data/de.schaeuffelhut.android.openvpn/app_mgmt/client.mgmt" ) );
         cmdLineBuilder.setScriptSecurityLevel( 2 );
 
         assertEquals( "" +
-                "/data/data/de.schaeuffelhut.android.openvpn/app_bin/openvpn " +
+                openvpn + " " +
                 "--cd /sdcard/openvpn --config client.conf " +
                 "--script-security 2 " +
                 ip +

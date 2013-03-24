@@ -59,7 +59,8 @@ public class OpenVpnServiceImplTest extends ServiceTestCase<OpenVpnServiceImplTe
         {
             OpenVpnServiceImpl openVpnService = new OpenVpnServiceImpl(
                     this,
-                    new IfConfigFactoryImpl()
+                    new IfConfigFactoryImpl(),
+                    new CmdLineBuilder4( getApplicationContext() )
             ) {
                 @Override
                 protected List<File> listConfigs()

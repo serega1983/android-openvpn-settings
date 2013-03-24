@@ -1,5 +1,6 @@
 package de.schaeuffelhut.android.openvpn.lib.service.impl;
 
+import android.content.Context;
 import android.util.Log;
 
 import java.io.File;
@@ -13,7 +14,12 @@ public class CmdLineBuilder4 extends CmdLineBuilder
 {
     private final File ip;
 
-    public CmdLineBuilder4(File openvpn, File ip)
+    public CmdLineBuilder4(Context context)
+    {
+        this( resolveBinary( context, "openvpn" ), resolveBinary( context, "ip" ) );
+    }
+
+    CmdLineBuilder4(File openvpn, File ip)
     {
         super( openvpn );
 
