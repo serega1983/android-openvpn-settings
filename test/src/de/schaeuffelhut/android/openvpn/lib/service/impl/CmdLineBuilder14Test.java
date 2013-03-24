@@ -31,6 +31,17 @@ public class CmdLineBuilder14Test extends CmdLineBuilderBaseTest
         );
     }
 
+    public void testBuildCmdLine_from_context() throws Exception
+    {
+        CmdLineBuilder14 cmdLineBuilder = new CmdLineBuilder14( getInstrumentation().getTargetContext() );
+
+        testBuildCmdLine(
+                cmdLineBuilder,
+                new File ( getInstrumentation().getTargetContext().getDir( "bin", Context.MODE_PRIVATE ), "miniopenvpn").getAbsolutePath(),
+                IP_ROUTE_NOT_REQUIRED
+        );
+    }
+
     public void testBuildCmdLine_WithShellEscape() throws Exception
     {
         CmdLineBuilder14 cmdLineBuilder = new CmdLineBuilder14( new File( OPENVPN2 ) );

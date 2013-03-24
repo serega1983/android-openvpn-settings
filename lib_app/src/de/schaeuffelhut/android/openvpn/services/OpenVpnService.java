@@ -22,8 +22,10 @@
 
 package de.schaeuffelhut.android.openvpn.services;
 
-import de.schaeuffelhut.android.openvpn.lib.service.impl.OpenVpnServiceImpl;
+import de.schaeuffelhut.android.openvpn.lib.service.impl.*;
 import de.schaeuffelhut.android.openvpn.shared.util.service.DelegatingService;
+
+import java.io.File;
 
 /**
  * This class provides a unique and persistent name for the OpenVpnService implemented else where.
@@ -43,7 +45,7 @@ public class OpenVpnService extends DelegatingService<OpenVpnServiceImpl>
     @Override
     protected OpenVpnServiceImpl createServiceDelegate()
     {
-        return new OpenVpnServiceImpl( this );
+        return new OpenVpnServiceImpl( this, new IfConfigFactoryImpl(), new CmdLineBuilder4( getApplicationContext() ) );
     }
 
     /*

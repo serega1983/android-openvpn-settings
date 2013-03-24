@@ -1,5 +1,6 @@
 package de.schaeuffelhut.android.openvpn.lib.service.impl;
 
+import android.content.Context;
 import android.util.Log;
 import de.schaeuffelhut.android.openvpn.shared.util.Util;
 
@@ -26,6 +27,11 @@ public abstract class CmdLineBuilder
             throw new NullPointerException();
 
         this.openvpn = openvpn;
+    }
+
+    protected static File resolveBinary(Context context, String binary)
+    {
+        return new File( context.getDir( "bin", Context.MODE_PRIVATE ), binary );
     }
 
     public abstract boolean requiresRoot();
