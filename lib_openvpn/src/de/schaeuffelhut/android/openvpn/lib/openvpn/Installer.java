@@ -30,6 +30,7 @@ import java.io.*;
  * @author Friedrich Schäuffelhut
  * @since 2013-01-21
  */
+//TODO: merge with openvpn4.Installer, extract common base class AbstractInstaller
 public class Installer
 {
     private static final String OPENVPN = "openvpn";
@@ -57,6 +58,7 @@ public class Installer
     {
         File busybox = new File( bin, BUSYBOX );
         install( R.raw.busybox, busybox );
+        installApplets( busybox );
         return busybox;
     }
 
@@ -94,7 +96,8 @@ public class Installer
     {
         try
         {
-            Runtime.getRuntime().exec( new String[]{"chmod", "500", target.getAbsolutePath() } );
+            // Also make writable so future install operations won't fail.
+            Runtime.getRuntime().exec( new String[]{"chmod", "700", target.getAbsolutePath() } );
         }
         catch (IOException e)
         {
@@ -147,5 +150,22 @@ public class Installer
     {
         // Assets can not be part of a library project. Use a raw resource instead.
         return context.getResources().openRawResource(  id );
+    }
+
+    private void installApplets(File busybox) throws InstallFailed
+    {
+        ProcessBuilder pb = new ProcessBuilder( busybox.getAbsolutePath(), "--install", busybox.getParentFile().getAbsolutePath() );
+        try
+        {
+            pb.start().waitFor();
+        }
+        catch (InterruptedException e)
+        {
+            throw new InstallFailed( e );
+        }
+        catch (IOException e)
+        {
+            throw new InstallFailed( e );
+        }
     }
 }

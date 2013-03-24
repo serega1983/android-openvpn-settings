@@ -22,6 +22,8 @@
 
 package de.schaeuffelhut.android.openvpn.shared.util;
 
+import android.content.pm.ApplicationInfo;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -38,6 +40,11 @@ public class ShellWithCollectedOutput extends Shell
     public ShellWithCollectedOutput(String tag, String command)
     {
         super( tag, command, SH );
+    }
+
+    public ShellWithCollectedOutput(String tag, String command, ApplicationInfo applicationInfo)
+    {
+        super( tag, command, applicationInfo, SH );
     }
 
     @Override

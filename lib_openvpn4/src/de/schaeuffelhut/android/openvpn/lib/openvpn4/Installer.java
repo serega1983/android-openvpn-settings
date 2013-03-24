@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+//TODO: merge with openvpn.Installer, extract common base class AbstractInstaller
 public class Installer
 {
     @Deprecated
@@ -102,7 +103,7 @@ public class Installer
     {
         try
         {
-            Runtime.getRuntime().exec( new String[]{"chmod", "500", target.getAbsolutePath() } );
+            Runtime.getRuntime().exec( new String[]{"chmod", "700", target.getAbsolutePath() } );
         }
         catch (IOException e)
         {
