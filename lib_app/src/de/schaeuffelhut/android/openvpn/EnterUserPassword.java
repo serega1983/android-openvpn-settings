@@ -47,7 +47,8 @@ public class EnterUserPassword extends Activity {
 	
 	private final OpenVpnServiceWrapper mOpenVpnService = new OpenVpnServiceWrapper( this ) {
 
-        public synchronized void onServiceConnected(ComponentName name, IBinder serviceBinder) {
+        @Override
+        public synchronized void onServiceConnectedHook(ComponentName name, IBinder serviceBinder) {
             super.onServiceConnected( name, serviceBinder );
             Log.d( TAG, "Connected to OpenVpnService" );
 
@@ -56,7 +57,8 @@ public class EnterUserPassword extends Activity {
                 button.setEnabled( true );
         }
 
-        public synchronized void onServiceDisconnected(ComponentName name) {
+        @Override
+        public synchronized void onServiceDisconnectedHook(ComponentName name) {
             Log.d( TAG, "Disconnected from OpenVpnService" );
 
             Button button = getNeutralButtonFromDialog();

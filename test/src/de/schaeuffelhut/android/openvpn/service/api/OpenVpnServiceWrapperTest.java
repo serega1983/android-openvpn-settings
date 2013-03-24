@@ -22,10 +22,7 @@
 
 package de.schaeuffelhut.android.openvpn.service.api;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.*;
 import android.os.IBinder;
 import android.os.RemoteException;
 import junit.framework.TestCase;
@@ -33,6 +30,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import java.io.File;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static de.schaeuffelhut.android.openvpn.service.api.OpenVpnServiceWrapper.COMPONENT_NAME;
 import static org.mockito.Mockito.*;
@@ -46,7 +44,21 @@ public class OpenVpnServiceWrapperTest extends TestCase
     private static interface Stub extends IOpenVpnService, IBinder {}
 
     private Context context = mock( Context.class );
-    private OpenVpnServiceWrapper wrapper = new OpenVpnServiceWrapper( context );
+    private OpenVpnServiceWrapper wrapper = new OpenVpnServiceWrapper( context ) {
+        @Override
+        protected void onServiceConnectedHook(ComponentName componentName, IBinder iBinder)
+        {
+            super.onServiceConnectedHook( componentName, iBinder );
+            onServiceConnectedCalled.set( true );
+        }
+
+        @Override
+        protected void onServiceDisconnectedHook(ComponentName componentName)
+        {
+            super.onServiceDisconnectedHook( componentName );
+            onServiceDisconnectedCalled.set( true );
+        }
+    };
     private Stub openVpnServiceStub = mock( Stub.class );
 
     @Override
@@ -607,5 +619,37 @@ public class OpenVpnServiceWrapperTest extends TestCase
         wrapper.unbindService();
 
         verify( context ).unregisterReceiver( broadcastReceiver );
+    }
+
+    /*
+     * Test if ServiceConnection hooks
+     */
+    private final AtomicBoolean onServiceConnectedCalled = new AtomicBoolean( false );
+    private final AtomicBoolean onServiceDisconnectedCalled = new AtomicBoolean( false );
+    public void test_onServiceConnectedHook_is_called_when_listeners_are_not_paused()
+    {
+        assertFalse( onServiceConnectedCalled.get() );
+        wrapper.onServiceConnected( COMPONENT_NAME, openVpnServiceStub );
+        assertTrue( onServiceConnectedCalled.get() );
+    }
+    public void test_onServiceConnectedHook_is_not_called_when_listeners_are_paused()
+    {
+        assertFalse( onServiceConnectedCalled.get() );
+        wrapper.pauseListeners();
+        wrapper.onServiceConnected( COMPONENT_NAME, openVpnServiceStub );
+        assertFalse( onServiceConnectedCalled.get() );
+    }
+    public void test_onServiceDisconnectedHook_is_called_when_listeners_are_not_paused()
+    {
+        assertFalse( onServiceDisconnectedCalled.get() );
+        wrapper.onServiceDisconnected( COMPONENT_NAME );
+        assertTrue( onServiceDisconnectedCalled.get() );
+    }
+    public void test_onServiceDisconnectedHook_is_not_called_when_listeners_are_paused()
+    {
+        assertFalse( onServiceDisconnectedCalled.get() );
+        wrapper.pauseListeners();
+        wrapper.onServiceDisconnected( COMPONENT_NAME );
+        assertFalse( onServiceDisconnectedCalled.get() );
     }
 }
