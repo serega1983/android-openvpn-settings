@@ -113,6 +113,29 @@ public class OpenVpnSettings extends PreferenceActivity
 
     	addPreferencesFromResource( R.xml.openvpn_settings );
 
+        if ( ApiLevel.get().hasVpnService() )
+        {
+            try
+            {
+                de.schaeuffelhut.android.openvpn.lib.openvpn4.Installer.install( this );
+            }
+            catch (InstallFailed installFailed)
+            {
+                throw new RuntimeException( installFailed ); //TODO: handle exception
+            }
+        }
+        try
+        {
+            Installer installer = new Installer( this );
+            installer.installOpenVpn();
+            installer.installBusyBox();
+        }
+        catch (de.schaeuffelhut.android.openvpn.lib.openvpn.InstallFailed installFailed)
+        {
+            throw new RuntimeException( installFailed ); //TODO: handle exception
+        }
+
+
         //TODO: write OpenVpnEnabled, see WifiEnabler => start stop OpenVpnService
         {
         	CheckBoxPreference pref = (CheckBoxPreference) findPreference( Preferences.KEY_OPENVPN_ENABLED );
