@@ -225,6 +225,36 @@ public class OpenVpnServiceImpl implements ServiceDelegate
         {
             listenerDispatcher.removeOpenVpnStateListener( listener );
         }
+
+        /**
+         * Intercept remote method calls and check for "onRevoke" code which
+         * is represented by IBinder.LAST_CALL_TRANSACTION. If onRevoke message
+         * was received, call onRevoke() otherwise delegate to super implementation.
+         */
+        @Override
+        public boolean onTransact(int code, Parcel data, Parcel reply, int flags) throws RemoteException
+        {
+            if (ApiLevel.get().hasVpnService() && isVpnServiceOnRevoke( code ))
+            {
+                //TODO: only allow this method call when this is a pure android VpnService
+                //TODO: When this service runs on API14 in rooted mode, do not call onRevoke()
+                onRevoke();
+                return true;
+            }
+            return super.onTransact( code, data, reply, flags );
+        }
+
+        private void onRevoke()
+        {
+            getCurrent().stop();
+        }
+
+        private boolean isVpnServiceOnRevoke(int code)
+        {
+            // see Implementation of android.net.VpnService.Callback.onTransact()
+            // http://grepcode.com/file/repository.grepcode.com/java/ext/com.google.android/android/4.2.2_r1/android/net/VpnService.java/#VpnService.onRevoke%28%29
+            return code == IBinder.LAST_CALL_TRANSACTION;
+        }
     }
 
     private final IBinder mBinder = new ServiceBinder();
