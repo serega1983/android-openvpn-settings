@@ -443,7 +443,7 @@ public class OpenVpnServiceImpl implements ServiceDelegate
         }
 
         //TODO: When running on rooted Android phone do not check if VpnService was prepared.
-        if (ApiLevel.get().isVpnServicePrepared( getContext() ) )
+        if (!ApiLevel.get().isVpnServicePrepared( getContext() ) )
         {
             Toast.makeText( getContext(), "VPN service must be prepared before daemonStart() may be called!", Toast.LENGTH_LONG ).show();
             return;
