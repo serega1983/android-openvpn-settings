@@ -239,12 +239,6 @@ public class OpenVpnServiceImpl implements ServiceDelegate
 	{
 //		super.onCreate();
 
-        if (!ApiLevel.get().isVpnServicePrepared( getContext() ) )
-        {
-            getService().stopSelf();
-            return;
-        }
-
 		startup();
 
 		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean(
@@ -448,7 +442,14 @@ public class OpenVpnServiceImpl implements ServiceDelegate
             }
         }
 
-		if ( isDaemonStarted(config.getFile()) )
+        //TODO: When running on rooted Android phone do not check if VpnService was prepared.
+        if (ApiLevel.get().isVpnServicePrepared( getContext() ) )
+        {
+            Toast.makeText( getContext(), "VPN service must be prepared before daemonStart() may be called!", Toast.LENGTH_LONG ).show();
+            return;
+        }
+
+        if ( isDaemonStarted(config.getFile()) )
 		{
 			Log.i( TAG, config + " is already running" );
 		}
