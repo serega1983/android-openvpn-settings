@@ -124,6 +124,7 @@ public class OpenVpnSettings extends PreferenceActivity
                 throw new RuntimeException( installFailed ); //TODO: handle exception
             }
         }
+        //TODO: if has root
         try
         {
             Installer installer = new Installer( this );
