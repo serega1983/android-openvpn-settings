@@ -25,6 +25,7 @@ package de.schaeuffelhut.android.openvpn.shared.util.apilevel;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
+import de.schaeuffelhut.android.openvpn.shared.BuildConfig;
 
 /**
  * @author Friedrich Schäuffelhut
@@ -32,11 +33,23 @@ import android.content.pm.ApplicationInfo;
  */
 public abstract class ApiLevel
 {
-    private final static ApiLevel API_LEVEL = ApiLevelLoader.loadAbstractionForExecutionEnvironment();
+    private static ApiLevel API_LEVEL = ApiLevelLoader.loadAbstractionForExecutionEnvironment();
 
     public final static ApiLevel get()
     {
         return API_LEVEL;
+    }
+
+    /**
+     * This setter is used only by ApiLeveltestSupport for setting
+     * a mock object.
+     * @param apiLevel the mocked ApiLevel object.
+     */
+    final static void set(ApiLevel apiLevel)
+    {
+        if (!BuildConfig.DEBUG )
+            throw new IllegalStateException( "ApiLevel may only be set by debug builds." );
+        API_LEVEL = apiLevel;
     }
 
     /*
