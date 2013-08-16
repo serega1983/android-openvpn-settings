@@ -1,0 +1,704 @@
+<mockup version="1.0" skin="sketch" measuredW="1735" measuredH="1557" mockupW="1660" mockupH="1520">
+  <controls>
+    <control controlID="0" controlTypeID="com.balsamiq.mockups::Arrow" x="1007" y="221" w="10" h="45" measuredW="150" measuredH="100" zOrder="0" locked="false" isInGroup="-1">
+      <controlProperties>
+        <curvature>0</curvature>
+        <direction>bottom</direction>
+        <leftArrow>true</leftArrow>
+        <rightArrow>false</rightArrow>
+        <text/>
+      </controlProperties>
+    </control>
+    <control controlID="8" controlTypeID="com.balsamiq.mockups::Arrow" x="1045" y="310" w="63" h="32" measuredW="150" measuredH="100" zOrder="1" locked="false" isInGroup="-1">
+      <controlProperties>
+        <direction>top</direction>
+        <leftArrow>false</leftArrow>
+        <text/>
+      </controlProperties>
+    </control>
+    <control controlID="23" controlTypeID="com.balsamiq.mockups::Title" x="84" y="862" w="261" h="-1" measuredW="261" measuredH="26" zOrder="2" locked="false" isInGroup="-1">
+      <controlProperties>
+        <size>18</size>
+        <text>Okay%2C%20Let%27s%20Set%20Up%20Your%20Device</text>
+      </controlProperties>
+    </control>
+    <control controlID="26" controlTypeID="com.balsamiq.mockups::Button" x="133" y="1157" w="64" h="27" measuredW="64" measuredH="27" zOrder="3" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Cancel</text>
+      </controlProperties>
+    </control>
+    <control controlID="27" controlTypeID="com.balsamiq.mockups::Button" x="254" y="1157" w="70" h="27" measuredW="51" measuredH="27" zOrder="4" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Next</text>
+      </controlProperties>
+    </control>
+    <control controlID="28" controlTypeID="com.balsamiq.mockups::ProgressBar" x="84" y="888" w="269" h="20" measuredW="100" measuredH="20" zOrder="5" locked="false" isInGroup="-1">
+      <controlProperties>
+        <indeterminate>false</indeterminate>
+        <scrollBarValue>0</scrollBarValue>
+      </controlProperties>
+    </control>
+    <control controlID="29" controlTypeID="com.balsamiq.mockups::TextArea" x="1474" y="984" w="261" h="344" measuredW="200" measuredH="140" zOrder="6" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>TUN/TAP%20provides%20an%20interface%20used%20by%20user%20space%20programs%20to%20exchange%20network%20packages%20with%20the%20linux%20kernel.%0AOpenVPN%20receives%20network%20packages%20from%20the%20TUN/TAP%20interface%2C%20and%20forwards%20them%20encrypted%20to%20an%20other%20OpenVPN%20site.%0AThere%20OpenVPN%20will%20decrypt%20the%20received%20package%20and%20hand%20it%20over%20to%20the%20linux%20kernel%20for%20further%20processing.%0A%20%0AAlso%20TUN/TAP%20is%20part%20of%20the%20standard%20linux%20kernel%2C%20most%20Android%20devices%20ship%20with%20TUN/TAP%20support%20turned%20off.%0A%20%0AOn%20Android%20tun%20suppo</text>
+      </controlProperties>
+    </control>
+    <control controlID="30" controlTypeID="com.balsamiq.mockups::Label" x="876" y="281" w="-1" h="-1" measuredW="284" measuredH="21" zOrder="7" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Is%20tun%20support%20available%20%28/dev/tun%20or%20/dev/net/tun%29</text>
+      </controlProperties>
+    </control>
+    <control controlID="31" controlTypeID="com.balsamiq.mockups::Label" x="1115" y="348" w="318" h="21" measuredW="180" measuredH="21" zOrder="8" locked="false" isInGroup="-1">
+      <controlProperties>
+        <color>40463</color>
+        <text>Good%2C%20Ready%20to%20use%20OpenVPN</text>
+      </controlProperties>
+    </control>
+    <control controlID="32" controlTypeID="com.balsamiq.mockups::Label" x="1045" y="327" w="-1" h="-1" measuredW="32" measuredH="21" zOrder="9" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>YES</text>
+      </controlProperties>
+    </control>
+    <control controlID="33" controlTypeID="com.balsamiq.mockups::Label" x="953" y="327" w="-1" h="-1" measuredW="24" measuredH="21" zOrder="10" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>NO</text>
+      </controlProperties>
+    </control>
+    <control controlID="44" controlTypeID="com.balsamiq.mockups::Label" x="561" y="587" w="-1" h="-1" measuredW="136" measuredH="21" zOrder="11" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Go%2C%20find%20one%20on%20the%20net</text>
+      </controlProperties>
+    </control>
+    <control controlID="46" controlTypeID="com.balsamiq.mockups::Label" x="1067" y="422" w="61" h="21" measuredW="55" measuredH="21" zOrder="12" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Success</text>
+      </controlProperties>
+    </control>
+    <control controlID="47" controlTypeID="com.balsamiq.mockups::Label" x="988" y="432" w="45" h="21" measuredW="43" measuredH="21" zOrder="13" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Failure</text>
+      </controlProperties>
+    </control>
+    <control controlID="48" controlTypeID="com.balsamiq.mockups::Label" x="922" y="179" w="-1" h="-1" measuredW="214" measuredH="21" zOrder="14" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>%21Assumption%3A%20ROOT%20IS%20AVAILABLE%21</text>
+      </controlProperties>
+    </control>
+    <control controlID="53" controlTypeID="com.balsamiq.mockups::Arrow" x="918" y="310" w="66" h="32" measuredW="150" measuredH="100" zOrder="15" locked="false" isInGroup="-1">
+      <controlProperties>
+        <curvature>1</curvature>
+        <direction>bottom</direction>
+        <leftArrow>true</leftArrow>
+        <rightArrow>false</rightArrow>
+        <text/>
+      </controlProperties>
+    </control>
+    <control controlID="62" controlTypeID="com.balsamiq.mockups::Arrow" x="1058" y="491" w="129" h="47" measuredW="150" measuredH="100" zOrder="16" locked="false" isInGroup="-1">
+      <controlProperties>
+        <curvature>-1</curvature>
+        <direction>bottom</direction>
+        <leftArrow>false</leftArrow>
+        <text/>
+      </controlProperties>
+    </control>
+    <control controlID="73" controlTypeID="com.balsamiq.mockups::Label" x="676" y="610" w="-1" h="-1" measuredW="32" measuredH="21" zOrder="17" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>YES</text>
+      </controlProperties>
+    </control>
+    <control controlID="74" controlTypeID="com.balsamiq.mockups::Label" x="488" y="610" w="-1" h="-1" measuredW="158" measuredH="21" zOrder="19" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>NO%2C%20or%20already%20downloaded</text>
+      </controlProperties>
+    </control>
+    <control controlID="75" controlTypeID="com.balsamiq.mockups::Arrow" x="534" y="623" w="66" h="32" measuredW="150" measuredH="100" zOrder="18" locked="false" isInGroup="-1">
+      <controlProperties>
+        <curvature>1</curvature>
+        <direction>bottom</direction>
+        <leftArrow>true</leftArrow>
+        <rightArrow>false</rightArrow>
+        <text/>
+      </controlProperties>
+    </control>
+    <control controlID="76" controlTypeID="com.balsamiq.mockups::Label" x="494" y="665" w="-1" h="-1" measuredW="206" measuredH="21" zOrder="20" locked="false" isInGroup="-1">
+      <controlProperties>
+        <color>13576743</color>
+        <text>Bummer%21%20May%20be%20load%20from%20sdcard.</text>
+      </controlProperties>
+    </control>
+    <control controlID="81" controlTypeID="com.balsamiq.mockups::Arrow" x="910" y="440" w="75" h="32" measuredW="150" measuredH="100" zOrder="21" locked="false" isInGroup="-1">
+      <controlProperties>
+        <curvature>1</curvature>
+        <direction>bottom</direction>
+        <leftArrow>true</leftArrow>
+        <rightArrow>false</rightArrow>
+        <text/>
+      </controlProperties>
+    </control>
+    <control controlID="99" controlTypeID="com.balsamiq.mockups::TextArea" x="75" y="37" w="413" h="198" measuredW="200" measuredH="140" zOrder="22" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>1.%20file%20exists%3A%20/dev/tun%20or%20/dev/net/tun%0A2.%20file%20exists%3A%20/system/lib/modules/tun.ko%0A3.%20Is%20it%20a%20module%3F%20grep%20/proc/modules%20for%20tun%0A4.%20load%20a%20module%20using%20insmod%0A5.%20download%20a%20list%20possible%20module%20candidates%0A%20%0Aclass%20TunInfo%20%7B%0A%09source%3A%0A%09%09COMPILED_INTO_KERNEL%2C%0A%09%09PREINSTALLED_ON_DEVICE%2C%0A%09pathToKernelModule%0A%7D</text>
+      </controlProperties>
+    </control>
+    <control controlID="100" controlTypeID="com.balsamiq.mockups::Label" x="922" y="200" w="-1" h="-1" measuredW="217" measuredH="21" zOrder="23" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>%21Assumption%3A%20insmod%20IS%20AVAILABLE%21</text>
+      </controlProperties>
+    </control>
+    <control controlID="102" controlTypeID="com.balsamiq.mockups::Label" x="116" y="914" w="-1" h="-1" measuredW="188" measuredH="21" zOrder="24" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Support%20for%20tun%20on%20your%20device%20is</text>
+      </controlProperties>
+    </control>
+    <control controlID="103" controlTypeID="com.balsamiq.mockups::Label" x="247" y="942" w="-1" h="-1" measuredW="106" measuredH="21" zOrder="25" locked="false" isInGroup="-1">
+      <controlProperties>
+        <bold>true</bold>
+        <italic>true</italic>
+        <text>Module%20is%20loaded</text>
+      </controlProperties>
+    </control>
+    <control controlID="104" controlTypeID="com.balsamiq.mockups::Label" x="84" y="963" w="-1" h="-1" measuredW="98" measuredH="21" zOrder="26" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>and%20provided%20by</text>
+      </controlProperties>
+    </control>
+    <control controlID="105" controlTypeID="com.balsamiq.mockups::Label" x="186" y="963" w="-1" h="-1" measuredW="167" measuredH="21" zOrder="27" locked="false" isInGroup="-1">
+      <controlProperties>
+        <bold>true</bold>
+        <italic>true</italic>
+        <text>/system/lib/modules/tun.ko</text>
+      </controlProperties>
+    </control>
+    <control controlID="106" controlTypeID="com.balsamiq.mockups::CheckBox" x="105" y="1041" w="-1" h="-1" measuredW="234" measuredH="24" zOrder="28" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>CheckMarkIcon%7Csmall</icon>
+        <text>Yes%2C%20I%20want%20to%20share%20the%20module</text>
+      </controlProperties>
+    </control>
+    <control controlID="108" controlTypeID="com.balsamiq.mockups::Button" x="192" y="1157" w="64" h="27" measuredW="47" measuredH="27" zOrder="29" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Skip</text>
+      </controlProperties>
+    </control>
+    <control controlID="109" controlTypeID="com.balsamiq.mockups::Button" x="75" y="1157" w="64" h="27" measuredW="53" measuredH="27" zOrder="30" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Back</text>
+      </controlProperties>
+    </control>
+    <control controlID="110" controlTypeID="com.balsamiq.mockups::Title" x="385" y="862" w="261" h="-1" measuredW="261" measuredH="26" zOrder="31" locked="false" isInGroup="-1">
+      <controlProperties>
+        <size>18</size>
+        <text>Okay%2C%20Let%27s%20Set%20Up%20Your%20Device</text>
+      </controlProperties>
+    </control>
+    <control controlID="111" controlTypeID="com.balsamiq.mockups::Button" x="434" y="1157" w="64" h="27" measuredW="64" measuredH="27" zOrder="32" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Cancel</text>
+      </controlProperties>
+    </control>
+    <control controlID="112" controlTypeID="com.balsamiq.mockups::Button" x="555" y="1157" w="70" h="27" measuredW="51" measuredH="27" zOrder="33" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Next</text>
+      </controlProperties>
+    </control>
+    <control controlID="113" controlTypeID="com.balsamiq.mockups::ProgressBar" x="385" y="888" w="269" h="20" measuredW="100" measuredH="20" zOrder="34" locked="false" isInGroup="-1">
+      <controlProperties>
+        <indeterminate>false</indeterminate>
+        <scrollBarValue>0</scrollBarValue>
+      </controlProperties>
+    </control>
+    <control controlID="114" controlTypeID="com.balsamiq.mockups::Label" x="417" y="914" w="-1" h="-1" measuredW="188" measuredH="21" zOrder="35" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Support%20for%20tun%20on%20your%20device%20is</text>
+      </controlProperties>
+    </control>
+    <control controlID="119" controlTypeID="com.balsamiq.mockups::Button" x="493" y="1157" w="64" h="27" measuredW="47" measuredH="27" zOrder="36" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Skip</text>
+      </controlProperties>
+    </control>
+    <control controlID="120" controlTypeID="com.balsamiq.mockups::Button" x="376" y="1157" w="64" h="27" measuredW="53" measuredH="27" zOrder="37" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Back</text>
+      </controlProperties>
+    </control>
+    <control controlID="121" controlTypeID="com.balsamiq.mockups::Label" x="84" y="942" w="-1" h="-1" measuredW="42" measuredH="21" zOrder="38" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Status</text>
+      </controlProperties>
+    </control>
+    <control controlID="122" controlTypeID="com.balsamiq.mockups::Label" x="478" y="942" w="-1" h="-1" measuredW="176" measuredH="21" zOrder="39" locked="false" isInGroup="-1">
+      <controlProperties>
+        <bold>true</bold>
+        <italic>true</italic>
+        <text>Module%20found%20but%20not%20loaded</text>
+      </controlProperties>
+    </control>
+    <control controlID="123" controlTypeID="com.balsamiq.mockups::Label" x="386" y="963" w="-1" h="-1" measuredW="98" measuredH="21" zOrder="40" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>and%20provided%20by</text>
+      </controlProperties>
+    </control>
+    <control controlID="124" controlTypeID="com.balsamiq.mockups::Label" x="488" y="963" w="-1" h="-1" measuredW="167" measuredH="21" zOrder="41" locked="false" isInGroup="-1">
+      <controlProperties>
+        <bold>true</bold>
+        <italic>true</italic>
+        <text>/system/lib/modules/tun.ko</text>
+      </controlProperties>
+    </control>
+    <control controlID="125" controlTypeID="com.balsamiq.mockups::Label" x="386" y="942" w="-1" h="-1" measuredW="42" measuredH="21" zOrder="42" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Status</text>
+      </controlProperties>
+    </control>
+    <control controlID="126" controlTypeID="com.balsamiq.mockups::CheckBox" x="398" y="1017" w="-1" h="-1" measuredW="182" measuredH="24" zOrder="43" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>CheckMarkIcon%7Csmall</icon>
+        <text>Try%20to%20load%20the%20module</text>
+      </controlProperties>
+    </control>
+    <control controlID="127" controlTypeID="com.balsamiq.mockups::Title" x="681" y="862" w="261" h="-1" measuredW="261" measuredH="26" zOrder="44" locked="false" isInGroup="-1">
+      <controlProperties>
+        <size>18</size>
+        <text>Okay%2C%20Let%27s%20Set%20Up%20Your%20Device</text>
+      </controlProperties>
+    </control>
+    <control controlID="128" controlTypeID="com.balsamiq.mockups::Button" x="730" y="1157" w="64" h="27" measuredW="64" measuredH="27" zOrder="45" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Cancel</text>
+      </controlProperties>
+    </control>
+    <control controlID="129" controlTypeID="com.balsamiq.mockups::Button" x="851" y="1157" w="70" h="27" measuredW="51" measuredH="27" zOrder="46" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Next</text>
+      </controlProperties>
+    </control>
+    <control controlID="130" controlTypeID="com.balsamiq.mockups::ProgressBar" x="681" y="888" w="269" h="20" measuredW="100" measuredH="20" zOrder="47" locked="false" isInGroup="-1">
+      <controlProperties>
+        <indeterminate>false</indeterminate>
+        <scrollBarValue>0</scrollBarValue>
+      </controlProperties>
+    </control>
+    <control controlID="131" controlTypeID="com.balsamiq.mockups::Label" x="713" y="914" w="-1" h="-1" measuredW="188" measuredH="21" zOrder="48" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Support%20for%20tun%20on%20your%20device%20is</text>
+      </controlProperties>
+    </control>
+    <control controlID="132" controlTypeID="com.balsamiq.mockups::Button" x="789" y="1157" w="64" h="27" measuredW="47" measuredH="27" zOrder="49" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Skip</text>
+      </controlProperties>
+    </control>
+    <control controlID="133" controlTypeID="com.balsamiq.mockups::Button" x="672" y="1157" w="64" h="27" measuredW="53" measuredH="27" zOrder="50" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Back</text>
+      </controlProperties>
+    </control>
+    <control controlID="134" controlTypeID="com.balsamiq.mockups::Label" x="841" y="942" w="-1" h="-1" measuredW="109" measuredH="21" zOrder="51" locked="false" isInGroup="-1">
+      <controlProperties>
+        <bold>true</bold>
+        <italic>true</italic>
+        <text>Module%20not%20found</text>
+      </controlProperties>
+    </control>
+    <control controlID="137" controlTypeID="com.balsamiq.mockups::Label" x="682" y="942" w="-1" h="-1" measuredW="42" measuredH="21" zOrder="52" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Status</text>
+      </controlProperties>
+    </control>
+    <control controlID="139" controlTypeID="com.balsamiq.mockups::CheckBox" x="694" y="993" w="-1" h="-1" measuredW="135" measuredH="24" zOrder="53" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>CheckMarkIcon%7Csmall</icon>
+        <text>Find%20one%20online</text>
+      </controlProperties>
+    </control>
+    <control controlID="140" controlTypeID="com.balsamiq.mockups::Title" x="978" y="862" w="261" h="-1" measuredW="261" measuredH="26" zOrder="54" locked="false" isInGroup="-1">
+      <controlProperties>
+        <size>18</size>
+        <text>Okay%2C%20Let%27s%20Set%20Up%20Your%20Device</text>
+      </controlProperties>
+    </control>
+    <control controlID="141" controlTypeID="com.balsamiq.mockups::Button" x="1027" y="1157" w="64" h="27" measuredW="64" measuredH="27" zOrder="55" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Cancel</text>
+      </controlProperties>
+    </control>
+    <control controlID="142" controlTypeID="com.balsamiq.mockups::Button" x="1148" y="1157" w="70" h="27" measuredW="51" measuredH="27" zOrder="56" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Next</text>
+      </controlProperties>
+    </control>
+    <control controlID="143" controlTypeID="com.balsamiq.mockups::ProgressBar" x="978" y="888" w="269" h="20" measuredW="100" measuredH="20" zOrder="57" locked="false" isInGroup="-1">
+      <controlProperties>
+        <indeterminate>false</indeterminate>
+        <scrollBarValue>0</scrollBarValue>
+      </controlProperties>
+    </control>
+    <control controlID="144" controlTypeID="com.balsamiq.mockups::Label" x="1010" y="914" w="-1" h="-1" measuredW="188" measuredH="21" zOrder="58" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Support%20for%20tun%20on%20your%20device%20is</text>
+      </controlProperties>
+    </control>
+    <control controlID="145" controlTypeID="com.balsamiq.mockups::Button" x="1086" y="1157" w="64" h="27" measuredW="47" measuredH="27" zOrder="59" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Skip</text>
+      </controlProperties>
+    </control>
+    <control controlID="146" controlTypeID="com.balsamiq.mockups::Button" x="969" y="1157" w="64" h="27" measuredW="53" measuredH="27" zOrder="60" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Back</text>
+      </controlProperties>
+    </control>
+    <control controlID="147" controlTypeID="com.balsamiq.mockups::Label" x="1182" y="942" w="-1" h="-1" measuredW="60" measuredH="21" zOrder="61" locked="false" isInGroup="-1">
+      <controlProperties>
+        <bold>true</bold>
+        <italic>true</italic>
+        <text>Available</text>
+      </controlProperties>
+    </control>
+    <control controlID="148" controlTypeID="com.balsamiq.mockups::Label" x="979" y="942" w="-1" h="-1" measuredW="42" measuredH="21" zOrder="62" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Status</text>
+      </controlProperties>
+    </control>
+    <control controlID="150" controlTypeID="com.balsamiq.mockups::Label" x="983" y="963" w="-1" h="-1" measuredW="98" measuredH="21" zOrder="63" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>and%20provided%20by</text>
+      </controlProperties>
+    </control>
+    <control controlID="151" controlTypeID="com.balsamiq.mockups::Label" x="1169" y="963" w="-1" h="-1" measuredW="79" measuredH="21" zOrder="64" locked="false" isInGroup="-1">
+      <controlProperties>
+        <bold>true</bold>
+        <italic>true</italic>
+        <text>Linux%20Kernel</text>
+      </controlProperties>
+    </control>
+    <control controlID="152" controlTypeID="com.balsamiq.mockups::Title" x="377" y="1235" w="261" h="-1" measuredW="261" measuredH="26" zOrder="65" locked="false" isInGroup="-1">
+      <controlProperties>
+        <size>18</size>
+        <text>Okay%2C%20Let%27s%20Set%20Up%20Your%20Device</text>
+      </controlProperties>
+    </control>
+    <control controlID="153" controlTypeID="com.balsamiq.mockups::Button" x="426" y="1530" w="64" h="27" measuredW="64" measuredH="27" zOrder="66" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Cancel</text>
+      </controlProperties>
+    </control>
+    <control controlID="154" controlTypeID="com.balsamiq.mockups::Button" x="547" y="1530" w="70" h="27" measuredW="51" measuredH="27" zOrder="67" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Next</text>
+      </controlProperties>
+    </control>
+    <control controlID="155" controlTypeID="com.balsamiq.mockups::ProgressBar" x="377" y="1261" w="269" h="20" measuredW="100" measuredH="20" zOrder="68" locked="false" isInGroup="-1">
+      <controlProperties>
+        <indeterminate>false</indeterminate>
+        <scrollBarValue>0</scrollBarValue>
+      </controlProperties>
+    </control>
+    <control controlID="156" controlTypeID="com.balsamiq.mockups::Label" x="409" y="1287" w="-1" h="-1" measuredW="188" measuredH="21" zOrder="69" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Support%20for%20tun%20on%20your%20device%20is</text>
+      </controlProperties>
+    </control>
+    <control controlID="157" controlTypeID="com.balsamiq.mockups::Button" x="485" y="1530" w="64" h="27" measuredW="47" measuredH="27" zOrder="70" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Skip</text>
+      </controlProperties>
+    </control>
+    <control controlID="158" controlTypeID="com.balsamiq.mockups::Button" x="368" y="1530" w="64" h="27" measuredW="53" measuredH="27" zOrder="71" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Back</text>
+      </controlProperties>
+    </control>
+    <control controlID="159" controlTypeID="com.balsamiq.mockups::Label" x="470" y="1315" w="-1" h="-1" measuredW="176" measuredH="21" zOrder="72" locked="false" isInGroup="-1">
+      <controlProperties>
+        <bold>true</bold>
+        <italic>true</italic>
+        <text>Module%20found%20but%20not%20loaded</text>
+      </controlProperties>
+    </control>
+    <control controlID="160" controlTypeID="com.balsamiq.mockups::Label" x="378" y="1336" w="-1" h="-1" measuredW="98" measuredH="21" zOrder="73" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>and%20provided%20by</text>
+      </controlProperties>
+    </control>
+    <control controlID="161" controlTypeID="com.balsamiq.mockups::Label" x="480" y="1336" w="-1" h="-1" measuredW="167" measuredH="21" zOrder="74" locked="false" isInGroup="-1">
+      <controlProperties>
+        <bold>true</bold>
+        <italic>true</italic>
+        <text>/system/lib/modules/tun.ko</text>
+      </controlProperties>
+    </control>
+    <control controlID="162" controlTypeID="com.balsamiq.mockups::Label" x="378" y="1315" w="-1" h="-1" measuredW="42" measuredH="21" zOrder="75" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Status</text>
+      </controlProperties>
+    </control>
+    <control controlID="165" controlTypeID="com.balsamiq.mockups::IconLabel" x="418" y="1382" w="176" h="-1" measuredW="173" measuredH="24" zOrder="76" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>AlertIcon%7Csmall</icon>
+        <labelPosition>right</labelPosition>
+        <text>Failed%20to%20load%20the%20module</text>
+      </controlProperties>
+    </control>
+    <control controlID="166" controlTypeID="com.balsamiq.mockups::CheckBox" x="428" y="1414" w="-1" h="-1" measuredW="135" measuredH="24" zOrder="77" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>CheckMarkIcon%7Csmall</icon>
+        <text>Find%20one%20online</text>
+      </controlProperties>
+    </control>
+    <control controlID="167" controlTypeID="com.balsamiq.mockups::Title" x="670" y="1233" w="261" h="-1" measuredW="261" measuredH="26" zOrder="78" locked="false" isInGroup="-1">
+      <controlProperties>
+        <size>18</size>
+        <text>Okay%2C%20Let%27s%20Set%20Up%20Your%20Device</text>
+      </controlProperties>
+    </control>
+    <control controlID="168" controlTypeID="com.balsamiq.mockups::Button" x="719" y="1528" w="64" h="27" measuredW="64" measuredH="27" zOrder="79" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Cancel</text>
+      </controlProperties>
+    </control>
+    <control controlID="169" controlTypeID="com.balsamiq.mockups::Button" x="840" y="1528" w="70" h="27" measuredW="51" measuredH="27" zOrder="80" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Next</text>
+      </controlProperties>
+    </control>
+    <control controlID="170" controlTypeID="com.balsamiq.mockups::ProgressBar" x="670" y="1259" w="269" h="20" measuredW="100" measuredH="20" zOrder="81" locked="false" isInGroup="-1">
+      <controlProperties>
+        <indeterminate>false</indeterminate>
+        <scrollBarValue>0</scrollBarValue>
+      </controlProperties>
+    </control>
+    <control controlID="171" controlTypeID="com.balsamiq.mockups::Label" x="702" y="1285" w="-1" h="-1" measuredW="188" measuredH="21" zOrder="82" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Support%20for%20tun%20on%20your%20device%20is</text>
+      </controlProperties>
+    </control>
+    <control controlID="172" controlTypeID="com.balsamiq.mockups::Button" x="778" y="1528" w="64" h="27" measuredW="47" measuredH="27" zOrder="83" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Skip</text>
+      </controlProperties>
+    </control>
+    <control controlID="173" controlTypeID="com.balsamiq.mockups::Button" x="661" y="1528" w="64" h="27" measuredW="53" measuredH="27" zOrder="84" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Back</text>
+      </controlProperties>
+    </control>
+    <control controlID="174" controlTypeID="com.balsamiq.mockups::Label" x="830" y="1313" w="-1" h="-1" measuredW="109" measuredH="21" zOrder="85" locked="false" isInGroup="-1">
+      <controlProperties>
+        <bold>true</bold>
+        <italic>true</italic>
+        <text>Module%20not%20found</text>
+      </controlProperties>
+    </control>
+    <control controlID="175" controlTypeID="com.balsamiq.mockups::Label" x="671" y="1313" w="-1" h="-1" measuredW="42" measuredH="21" zOrder="86" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Status</text>
+      </controlProperties>
+    </control>
+    <control controlID="177" controlTypeID="com.balsamiq.mockups::IconLabel" x="661" y="1367" w="283" h="-1" measuredW="276" measuredH="24" zOrder="87" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>AlertIcon%7Csmall</icon>
+        <labelPosition>right</labelPosition>
+        <text>I%20could%20not%20find%20a%20tun%20module%20for%20your%20device</text>
+      </controlProperties>
+    </control>
+    <control controlID="178" controlTypeID="com.balsamiq.mockups::TextArea" x="661" y="1399" w="270" h="111" measuredW="200" measuredH="140" zOrder="88" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Here%20is%20what%20you%20cand%20do%3A%0A%20%0AGo%20find%20the%20kernel%20source%20on%20you%20device%20manufactures%20homepage.%0ADownload%20it%20and%20build%20the%20tun%20module....%0A.....</text>
+      </controlProperties>
+    </control>
+    <control controlID="179" controlTypeID="com.balsamiq.mockups::CheckBox" x="694" y="1017" w="-1" h="-1" measuredW="182" measuredH="24" zOrder="89" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>CheckMarkIcon%7Csmall</icon>
+        <text>Try%20to%20load%20the%20module</text>
+      </controlProperties>
+    </control>
+    <control controlID="180" controlTypeID="com.balsamiq.mockups::Title" x="84" y="288" w="261" h="-1" measuredW="261" measuredH="26" zOrder="90" locked="false" isInGroup="-1">
+      <controlProperties>
+        <size>18</size>
+        <text>Okay%2C%20Let%27s%20Set%20Up%20Your%20Device</text>
+      </controlProperties>
+    </control>
+    <control controlID="181" controlTypeID="com.balsamiq.mockups::Button" x="133" y="583" w="64" h="27" measuredW="64" measuredH="27" zOrder="91" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Cancel</text>
+      </controlProperties>
+    </control>
+    <control controlID="182" controlTypeID="com.balsamiq.mockups::Button" x="254" y="583" w="70" h="27" measuredW="51" measuredH="27" zOrder="92" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Next</text>
+      </controlProperties>
+    </control>
+    <control controlID="183" controlTypeID="com.balsamiq.mockups::ProgressBar" x="84" y="314" w="269" h="20" measuredW="100" measuredH="20" zOrder="93" locked="false" isInGroup="-1">
+      <controlProperties>
+        <indeterminate>false</indeterminate>
+        <scrollBarValue>0</scrollBarValue>
+      </controlProperties>
+    </control>
+    <control controlID="184" controlTypeID="com.balsamiq.mockups::Label" x="116" y="340" w="-1" h="-1" measuredW="138" measuredH="21" zOrder="94" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Checking%20requirements</text>
+      </controlProperties>
+    </control>
+    <control controlID="185" controlTypeID="com.balsamiq.mockups::Label" x="290" y="376" w="-1" h="-1" measuredW="25" measuredH="21" zOrder="95" locked="false" isInGroup="-1">
+      <controlProperties>
+        <bold>true</bold>
+        <italic>true</italic>
+        <text>OK</text>
+      </controlProperties>
+    </control>
+    <control controlID="189" controlTypeID="com.balsamiq.mockups::Button" x="192" y="583" w="64" h="27" measuredW="47" measuredH="27" zOrder="96" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Skip</text>
+      </controlProperties>
+    </control>
+    <control controlID="190" controlTypeID="com.balsamiq.mockups::Button" x="75" y="583" w="64" h="27" measuredW="53" measuredH="27" zOrder="97" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Back</text>
+      </controlProperties>
+    </control>
+    <control controlID="191" controlTypeID="com.balsamiq.mockups::Label" x="107" y="376" w="-1" h="-1" measuredW="30" measuredH="21" zOrder="98" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>root</text>
+      </controlProperties>
+    </control>
+    <control controlID="192" controlTypeID="com.balsamiq.mockups::Label" x="290" y="397" w="25" h="21" measuredW="25" measuredH="21" zOrder="99" locked="false" isInGroup="-1">
+      <controlProperties>
+        <bold>true</bold>
+        <italic>true</italic>
+        <text>OK</text>
+      </controlProperties>
+    </control>
+    <control controlID="193" controlTypeID="com.balsamiq.mockups::Label" x="107" y="397" w="56" h="21" measuredW="45" measuredH="21" zOrder="100" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>insmod</text>
+      </controlProperties>
+    </control>
+    <control controlID="194" controlTypeID="com.balsamiq.mockups::Label" x="269" y="414" w="55" h="21" measuredW="42" measuredH="21" zOrder="101" locked="false" isInGroup="-1">
+      <controlProperties>
+        <bold>true</bold>
+        <italic>true</italic>
+        <text>Failed</text>
+      </controlProperties>
+    </control>
+    <control controlID="195" controlTypeID="com.balsamiq.mockups::Label" x="107" y="414" w="56" h="21" measuredW="22" measuredH="21" zOrder="102" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>tun</text>
+      </controlProperties>
+    </control>
+    <control controlID="196" controlTypeID="com.balsamiq.mockups::Label" x="270" y="434" w="55" h="21" measuredW="42" measuredH="21" zOrder="103" locked="false" isInGroup="-1">
+      <controlProperties>
+        <bold>true</bold>
+        <italic>true</italic>
+        <text>Failed</text>
+      </controlProperties>
+    </control>
+    <control controlID="197" controlTypeID="com.balsamiq.mockups::Label" x="108" y="434" w="56" h="21" measuredW="54" measuredH="21" zOrder="104" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>openvpn</text>
+      </controlProperties>
+    </control>
+    <control controlID="198" controlTypeID="com.balsamiq.mockups::Label" x="293" y="453" w="44" h="21" measuredW="25" measuredH="21" zOrder="105" locked="false" isInGroup="-1">
+      <controlProperties>
+        <bold>true</bold>
+        <italic>true</italic>
+        <text>OK</text>
+      </controlProperties>
+    </control>
+    <control controlID="199" controlTypeID="com.balsamiq.mockups::Label" x="107" y="453" w="56" h="21" measuredW="50" measuredH="21" zOrder="106" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>busybox</text>
+      </controlProperties>
+    </control>
+    <control controlID="200" controlTypeID="com.balsamiq.mockups::Label" x="832" y="348" w="197" h="21" measuredW="188" measuredH="21" zOrder="107" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Is%20a%20method%20to%20load%20tun%20defined%3F</text>
+      </controlProperties>
+    </control>
+    <control controlID="201" controlTypeID="com.balsamiq.mockups::Arrow" x="952" y="367" w="63" h="32" measuredW="150" measuredH="100" zOrder="108" locked="false" isInGroup="-1">
+      <controlProperties>
+        <direction>top</direction>
+        <leftArrow>false</leftArrow>
+        <text/>
+      </controlProperties>
+    </control>
+    <control controlID="202" controlTypeID="com.balsamiq.mockups::Label" x="952" y="384" w="-1" h="-1" measuredW="32" measuredH="21" zOrder="109" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>YES</text>
+      </controlProperties>
+    </control>
+    <control controlID="203" controlTypeID="com.balsamiq.mockups::Label" x="860" y="384" w="-1" h="-1" measuredW="24" measuredH="21" zOrder="110" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>NO</text>
+      </controlProperties>
+    </control>
+    <control controlID="204" controlTypeID="com.balsamiq.mockups::Arrow" x="809" y="367" w="82" h="101" measuredW="150" measuredH="100" zOrder="111" locked="false" isInGroup="-1">
+      <controlProperties>
+        <curvature>1</curvature>
+        <direction>bottom</direction>
+        <leftArrow>true</leftArrow>
+        <rightArrow>false</rightArrow>
+        <text/>
+      </controlProperties>
+    </control>
+    <control controlID="205" controlTypeID="com.balsamiq.mockups::Label" x="960" y="406" w="-1" h="-1" measuredW="112" measuredH="21" zOrder="112" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Good%2C%20try%20to%20load%20it</text>
+      </controlProperties>
+    </control>
+    <control controlID="210" controlTypeID="com.balsamiq.mockups::Arrow" x="682" y="618" w="163" h="32" measuredW="150" measuredH="100" zOrder="113" locked="false" isInGroup="-1">
+      <controlProperties>
+        <curvature>-1</curvature>
+        <direction>bottom</direction>
+        <leftArrow>false</leftArrow>
+        <text/>
+      </controlProperties>
+    </control>
+    <control controlID="211" controlTypeID="com.balsamiq.mockups::Arrow" x="1123" y="381" w="71" h="59" measuredW="150" measuredH="100" zOrder="114" locked="false" isInGroup="-1">
+      <controlProperties>
+        <curvature>-1</curvature>
+        <direction>bottom</direction>
+        <leftArrow>false</leftArrow>
+        <text/>
+      </controlProperties>
+    </control>
+    <control controlID="212" controlTypeID="com.balsamiq.mockups::TextArea" x="794" y="474" w="217" h="112" measuredW="200" measuredH="140" zOrder="115" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Enumerate%20all%20found%20tun%20modules.%0ATry%20to%20load%20each.%0ADefine%20load%20method%20for%0Afirst%20tun%20that%20succeeds%20%20loading%0AMark%20any%20failed%20tun%20as%20bad%20for%20this%20wizard%20cycle</text>
+      </controlProperties>
+    </control>
+    <control controlID="213" controlTypeID="com.balsamiq.mockups::Label" x="1033" y="498" w="61" h="21" measuredW="55" measuredH="21" zOrder="116" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Success</text>
+      </controlProperties>
+    </control>
+    <control controlID="214" controlTypeID="com.balsamiq.mockups::Label" x="739" y="538" w="45" h="21" measuredW="43" measuredH="21" zOrder="117" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Failure</text>
+      </controlProperties>
+    </control>
+    <control controlID="215" controlTypeID="com.balsamiq.mockups::Arrow" x="661" y="546" w="75" h="32" measuredW="150" measuredH="100" zOrder="118" locked="false" isInGroup="-1">
+      <controlProperties>
+        <curvature>1</curvature>
+        <direction>bottom</direction>
+        <leftArrow>true</leftArrow>
+        <rightArrow>false</rightArrow>
+        <text/>
+      </controlProperties>
+    </control>
+    <control controlID="216" controlTypeID="com.balsamiq.mockups::Arrow" x="1218" y="378" w="45" h="79" measuredW="150" measuredH="100" zOrder="119" locked="false" isInGroup="-1">
+      <controlProperties>
+        <curvature>-1</curvature>
+        <direction>bottom</direction>
+        <leftArrow>false</leftArrow>
+        <text/>
+      </controlProperties>
+    </control>
+    <control controlID="217" controlTypeID="com.balsamiq.mockups::Label" x="1169" y="463" w="61" h="21" measuredW="40" measuredH="21" zOrder="120" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Share</text>
+      </controlProperties>
+    </control>
+  </controls>
+</mockup>

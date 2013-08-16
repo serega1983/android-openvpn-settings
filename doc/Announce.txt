@@ -1,0 +1,21 @@
+
+
+Release announcements:
+----------------------
+
+Before releasing a new version into the wild a test version is made available.
+Any release (testing or production) should be announced here:
+
+- Upload this test version on http://code.google.com/p/android-openvpn-settings/downloads/list
+- Announce on:
+  - Twitter https://twitter.com/#!/fschaeuffelhut,
+  - Google+ https://plus.google.com/u/0/b/111285345642420906245/
+  - Google Group: https://groups.google.com/forum/?fromgroups#!forum/android-openvpn-settings
+                  (Topic Release Announcements)
+  - Testers Mailing List
+
+Promotion:
+----------
+Put promotional videos on YouTube.
+Announce them on twitter and google+.
+

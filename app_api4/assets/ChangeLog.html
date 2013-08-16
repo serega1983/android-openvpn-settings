@@ -1,0 +1,90 @@
+<!--
+  ~ This file is part of OpenVPN-Settings.
+  ~
+  ~ Copyright © 2009-2012  Friedrich Schäuffelhut
+  ~
+  ~ OpenVPN-Settings is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ OpenVPN-Settings is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with OpenVPN-Settings.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~ Report bugs or new features at: http://code.google.com/p/android-openvpn-settings/
+  ~ Contact the author at:          android.openvpn@schaeuffelhut.de
+  -->
+
+<html><body>
+
+<u><b>0.4.14</b></u><br/>
+- Fix a possible NullPointerException in EnterUserPassword.<br/>
+- Add VIBRATE permission because app fails on some android 2.3.7 and 4.0.4 devices.<br/>
+- Fix VerifyError on Android 1.5.<br/>
+
+<u><b>0.4.13</b></u><br/>
+- Major refactoring of code base to prepare for a public service API, Android 4.0, alternative GUIs, etc.<br/>
+- Now opens password dialog right away, when OpenVPN Settings is in front<br/>
+- <a href=http://code.google.com/p/android-openvpn-settings/issues/detail?id=150> issue #150</a> Drop feature 'Run multiple daemons at a time' in favor for a simpler service API.<br/>
+- <a href=http://code.google.com/p/android-openvpn-settings/issues/detail?id=10> issue #10</a> Remember password in the prompt.<br/>
+
+<u><b>0.4.12</b></u><br/>
+- <a href="http://code.google.com/p/android-openvpn-settings/issues/detail?id=135"> issue #135</a> /sbin/busybox is not detected<br/>
+
+<u><b>0.4.11</b></u><br/>
+- Check prerequisites and tell user what is missing.<br/>
+- Change license to GPLv3.<br/>
+
+<u><b>0.4.10</b></u><br/>
+- <a href="http://code.google.com/p/android-openvpn-settings/issues/detail?id=108"> issue #108</a> Username and password input fields are multi-line enabled.<br/>
+- <a href="http://code.google.com/p/android-openvpn-settings/issues/detail?id=115"> issue #115</a> Crash when more than 2GB data has been transfered.<br/>
+- <a href="http://code.google.com/p/android-openvpn-settings/issues/detail?id=70"> issue #70</a> Repeating notifications when connecting / connected.<br/>
+- <a href="http://code.google.com/p/android-openvpn-settings/issues/detail?id=112"> issue #112</a> 	NPE in Shell.joinLoggers.<br/>
+
+<u><b>0.4.9</b></u><br/>
+- <a href="http://code.google.com/p/android-openvpn-settings/issues/detail?id=4"> issue #4</a> Display logging to user.<br/>
+- <a href="http://code.google.com/p/android-openvpn-settings/issues/detail?id=105"> issue #105</a> Add "--verb 3" to command line when launching a connection<br/>
+- <a href="http://code.google.com/p/android-openvpn-settings/issues/detail?id=41"> issue #41</a> Add a function to collect tun.ko modules<br/>
+- <a href="http://code.google.com/p/android-openvpn-settings/issues/detail?id=106"> issue #106</a> Add android.permission.WRITE_EXTERNAL_STORAGE permission to edit config files<br/>
+
+<u><b>0.4.8</b></u><br/>
+- Make OpenVPN Settings available to more devices.<br/>
+- Update launcher icon.<br/>
+- <a href="http://code.google.com/p/android-openvpn-settings/issues/detail?id=47"> issue #47</a> Tunnel typo in config description on main screen<br/>
+- <a href="http://code.google.com/p/android-openvpn-settings/issues/detail?id=103"> issue #103</a> 	Enable small and large screen sizes<br/>
+- Revert background to black. Change was unintentional.<br/>
+
+<u><b>0.4.7</b></u><br/>
+- Display ads to support development. Ads may be turned of in advanced menu.<br/>
+- <a href="http://code.google.com/p/android-openvpn-settings/issues/detail?id=42"> issue #42</a> UnknownHostException: InetAddress.getLocalHost()<br/>
+- <a href="http://code.google.com/p/android-openvpn-settings/issues/detail?id=19">issue #19</a>: Allow configs to be stored in subdirectories.<br/>
+- Show a 'restart required' dialog, after changes to config file or properties.<br/>
+- Make the config name customizeable.  
+- <a href="http://code.google.com/p/android-openvpn-settings/issues/detail?id=35">issue #35</a>: Option to fix routing on new HTC Roms (Froyo).
+  If this bug applys to you then choose Menu -> Advanced -> Fix HTC Routes.<br/>
+- Fixed a force close when a tunnel was started before the first network connection was established (crash report via market).<br/>
+
+<u><b>0.4.6</b></u><br/>
+- Spawn openvpn process in a different way to support more android mods<br/>
+
+<u><b>0.4.5</b></u><br/>
+- <a href="http://code.google.com/p/android-openvpn-settings/issues/detail?id=5">issue #5</a>: auth-user-pass with multiple tunnels fails randomly<br/>
+- Fixed a 'Force close' when su is not available (crash report via market).<br/>
+- Fixed a 'Force close' when openvpn binary is not installed (crash report via market).<br/>
+
+<u><b>0.4.4</b></u><br/>
+- <a href="http://code.google.com/p/android-openvpn-settings/issues/detail?id=17">issue #17</a>: Make path to tun.ko a configuration parameter<br/>
+- <a href="http://code.google.com/p/android-openvpn-settings/issues/detail?id=18">issue #18</a>: Fixed cannot allocate TUN/TAP dev dynamically<br/>
+- <a href="http://code.google.com/p/android-openvpn-settings/issues/detail?id=16">issue #16</a>: Fixed Occasional Force Close when saving client config file<br/>
+- VPN DNS now defaults to 'No DNS server'<br/>
+- Fixed an issue where a command sent to the shell could get lost<br/> 
+- Display change log when update is detected<br/>
+
+<u><b>0.4.3</b></u><br/>
+Please view <a href="http://code.google.com/p/android-openvpn-settings/source/list">change sets</a> in repository for this and earlier versions.<br/> 
+</body></html>

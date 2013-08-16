@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ This file is part of OpenVPN-Settings.
+  ~
+  ~ Copyright © 2009-2012  Friedrich Schäuffelhut
+  ~
+  ~ OpenVPN-Settings is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ OpenVPN-Settings is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with OpenVPN-Settings.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~ Report bugs or new features at: http://code.google.com/p/android-openvpn-settings/
+  ~ Contact the author at:          android.openvpn@schaeuffelhut.de
+  -->
+<manifest
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	package="de.schaeuffelhut.android.openvpn"
+	android:versionCode="40"
+	android:versionName="0.4.15test1"
+    >
+
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+	<uses-permission android:name="android.permission.INTERNET"/>
+	<uses-permission android:name="android.permission.BROADCAST_STICKY"/>
+    <!-- App fails on android 2.3.7 and 4.0.4 without vibrate permission -->
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
+    <uses-sdk android:minSdkVersion="3" android:targetSdkVersion="4"/>
+
+	<supports-screens
+ 		android:smallScreens="true"
+ 		android:normalScreens="true"
+ 		android:largeScreens="true"
+ 		/>
+		
+	<application
+		android:icon="@drawable/logo"
+		android:label="@string/app_name">
+
+		<activity
+			android:name="OpenVpnSettings"
+			android:label="@string/openvpn_settings_category">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+
+		<activity
+			android:name="AdvancedSettings" 
+			android:label="@string/advanced_settings_category"
+			/>
+		<activity
+			android:name="EditConfig" 
+			android:label="@string/edit_config_category"
+			/>
+		<activity
+			android:name="EditConfigPreferences" 
+			android:label="@string/edit_config_preferences_category"
+			/>
+		<activity
+			android:name="EnterPassphrase" 
+			android:label="@string/enter_passphrase_category"
+            android:launchMode="singleTask"
+			/>
+		<activity
+			android:name="EnterUserPassword"
+			android:label="@string/enter_user_password_category"
+            android:launchMode="singleTask"
+			/>
+
+		<activity
+			android:name="ImportFiles" 
+			android:label="Import Files"
+			/>
+		
+		<activity
+			android:name=".tun.ShareTunActivity" 
+			android:label="Share TUN Module"
+			/>
+
+		<activity
+			android:name="ViewLogFile" 
+			android:label="@string/view_log_file_category"
+			/>
+
+		<activity
+			android:name=".setup.prerequisites.PrerequisitesActivity"
+			android:label="Prerequisites"
+			/>
+
+        <service
+			android:name="de.schaeuffelhut.android.openvpn.services.OpenVpnService"
+			android:label="@string/services_openvpn_service"
+			android:exported="true"
+			android:enabled="true"
+			>
+            <!--
+            <intent-filter>
+                <action android:name="de.schaeuffelhut.android.openvpn.services.OpenVpnService"/>
+                <action android:name="de.schaeuffelhut.android.openvpn.Intents.START_DAEMON"/>
+                <action android:name="de.schaeuffelhut.android.openvpn.Intents.STOP_DAEMON"/>
+            </intent-filter>
+            -->
+        </service>
+
+        <!--
+        <service
+                android:name="de.schaeuffelhut.android.openvpn.lib.openvpn4.VpnServiceImpl"
+                android:label="@string/services_vpn_service"
+                android:exported="true"
+                android:enabled="true"
+                android:permission="android.permission.BIND_VPN_SERVICE"
+                >
+        </service>
+         -->
+
+        <receiver
+			android:name="de.schaeuffelhut.android.openvpn.util.BootCompletedReceiver"
+			android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+			<intent-filter>
+				<action android:name="android.intent.action.BOOT_COMPLETED"/>
+			</intent-filter>
+		</receiver>
+
+	</application>
+
+</manifest> 

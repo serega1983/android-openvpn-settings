@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ This file is part of OpenVPN-Settings.
+  ~
+  ~ Copyright © 2009-2012  Friedrich Schäuffelhut
+  ~
+  ~ OpenVPN-Settings is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ OpenVPN-Settings is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with OpenVPN-Settings.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~ Report bugs or new features at: http://code.google.com/p/android-openvpn-settings/
+  ~ Contact the author at:          android.openvpn@schaeuffelhut.de
+  -->
+
+<!-- package name must be unique so suffix with "tests" so package loader doesn't ignore us -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="de.schaeuffelhut.android.openvpn.tests14"
+          android:versionCode="1"
+          android:versionName="1.0"
+          >
+    <!-- We add an application tag here just so that we can indicate that
+         this package needs to link against the android.test library,
+         which is needed when building test cases. -->
+    <application>
+        <uses-library android:name="android.test.runner" />
+    </application>
+    <!--
+    This declares that this application uses the instrumentation test runner targeting
+    the package of de.schaeuffelhut.android.openvpn.  To run the tests use the command:
+    "adb shell am instrument -w de.schaeuffelhut.android.openvpn.tests/android.test.InstrumentationTestRunner"
+    -->
+    <instrumentation android:name="android.test.InstrumentationTestRunner"
+                     android:targetPackage="de.schaeuffelhut.android.openvpn"
+                     android:label="Tests for de.schaeuffelhut.android.openvpn"/>
+</manifest>

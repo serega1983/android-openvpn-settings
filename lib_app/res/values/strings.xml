@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ This file is part of OpenVPN-Settings.
+  ~
+  ~ Copyright © 2009-2012  Friedrich Schäuffelhut
+  ~
+  ~ OpenVPN-Settings is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ OpenVPN-Settings is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with OpenVPN-Settings.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~ Report bugs or new features at: http://code.google.com/p/android-openvpn-settings/
+  ~ Contact the author at:          android.openvpn@schaeuffelhut.de
+  -->
+
+<resources>
+    <string name="app_name">OpenVPN Settings</string>
+
+	<string name="openvpn_settings_category">OpenVPN Settings</string>
+	<string name="openvpn">OpenVPN</string>
+	<string name="openvpn_quick_toggle_summary">Turn on OpenVPN</string>
+	<string name="openvpn_configurations">OpenVPN configurations</string>
+	<string name="openvpn_"></string>
+
+	<string name="services_openvpn_service">OpenVPN service</string>
+
+	<string name="settings_menu_add_config">Add</string>
+	<string name="settings_menu_refresh">Refresh</string>
+	<string name="settings_menu_advanced">Advanced</string>
+	<string name="settings_menu_fix_dns">Fix DNS</string>
+	<string name="settings_menu_contact_author">Contact Author</string>
+	<string name="settings_menu_share_tun">Share TUN Module</string>
+	<string name="settings_menu_help">Help</string>
+    <string name="settings_menu_prerequisites">Prerequisites</string>
+
+	<string name="fix_dns_dialog_title">Fix DNS Server</string>
+	<string name="fix_dns_dialog_message">Setup DNS to use Googles public DNS server (8.8.8.8). The next network connectivity change will reset the DNS to your ISPs server. If this does not fix your problem try to force a network connectivity change, e.g. by switching to airplane mode and back. Your current DNS server is %1$s.</string>
+
+	<string name="help_dialog_title">OpenVPN Help</string>
+
+	<string name="changelog_dialog_title">OpenVPN Change Log</string>
+
+	<string name="advanced_settings_category">Advanced</string>
+	<string name="advanced_settings_do_modprobe_tun">Issue %s before starting openvpn.</string>
+
+	<string name="edit_config_category">Edit OpenVPN Configuration</string>
+	<string name="edit_config_name">Configuration name</string>
+	<string name="edit_config_content">Write your configuration here.</string>
+
+	<string name="edit_config_preferences_category">Edit OpenVPN Preferences</string>
+
+	<string name="enter_passphrase_category">Enter Passphrase</string>
+	<string name="enter_passphrase_passphrase">Passphrase</string>
+	<string name="enter_user_password_category">Enter Username/Password</string>
+	<string name="enter_user_password_user">Username</string>
+	<string name="enter_user_password_password">Password</string>
+
+	<string name="monitor_title">OpenVPN Monitor %s</string>
+
+	<string name="share_tun_module_title">Share TUN Module</string>
+	<string name="share_tun_module_into">Thank you for considering to share your TUN kernel module and technical data about your device. Sharing the TUN module will improve the user experience. Sharing technical data will provide developers the necessary insight to handle subtile differences between the many android devices out there.</string>
+	<string name="share_tun_module_yes_i_share">Yes, I want to share my TUN module</string>
+	<string name="share_tun_module_kernel_version">Kernel:</string>
+	<string name="share_tun_module_file">File:</string>
+	<string name="share_tun_moudule_include_details">Include technical details about device</string>
+	<string name="share_tun_moudule_cancel">Cancel</string>
+	<string name="share_tun_moudule_share">Share</string>
+
+	<string name="view_log_file_category">View OpenVPN Log File</string>
+	<string name="view_logfile_name">Log File Name</string>
+	<string name="view_logfile_content">Log file is empty!</string>
+	<string name="view_logfile_refresh">Refresh</string>
+
+	<string name="prerequisites_item_title_getTunInstaller">→ <u>Try: TUN Installer</u></string>
+	<string name="prerequisites_item_title_getOpenVpn">→ <u>Try: OpenVPN Installer</u></string>
+	<string name="prerequisites_item_title_getBusyBox">→ <u>Try: BusyBox Installer</u></string>
+
+    <!--
+     <string name="start">Start</string>
+     <string name="restart">Restart</string>
+     <string name="restartall">Restart All</string>
+     <string name="stop">Stop</string>
+
+     <string name="options_import">Import</string>
+     <string name="options_refresh">Refresh</string>
+     <string name="options_startall">Start All</string>
+     <string name="options_restartall">Restart All</string>
+     <string name="options_stopall">Stop All</string>
+     <string name="options_settings">Settings</string>
+
+     <string name="context_start">Start</string>
+     <string name="context_restart">Restart</string>
+     <string name="context_stop">Stop</string>
+     <string name="context_monitor">Monitor</string>
+     <string name="context_edit">Edit</string>
+
+      -->
+		
+</resources>
