@@ -22,11 +22,13 @@
 
 package de.schaeuffelhut.android.openvpn.service.api;
 
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.net.Uri;
+import android.widget.Toast;
 
 /**
  * Support plugin registration with OpenVPN Settings.
@@ -67,8 +69,40 @@ public class OpenVpnSettingsPlugin
 
     public void showOpenVpnSettingsInMarket()
     {
+        try
+        {
+            tryToOpenMarket();
+            return;
+        }
+        catch (ActivityNotFoundException e)
+        {
+
+        }
+
+        try
+        {
+            tryToOpenBrowser();
+            return;
+        }
+        catch (ActivityNotFoundException e)
+        {
+
+        }
+
+        Toast.makeText( context, "Neither market nor the browser could be launched! Please get OpenVPN Settings from the internet: code.google.com/p/android-openvpn-settings", Toast.LENGTH_LONG ).show();
+    }
+
+    private void tryToOpenMarket() throws ActivityNotFoundException
+    {
         Intent intent = new Intent( Intent.ACTION_VIEW );
         intent.setData( Uri.parse( "market://details?id=de.schaeuffelhut.android.openvpn" ) );
+        context.startActivity( intent );
+    }
+
+    private void tryToOpenBrowser() throws ActivityNotFoundException
+    {
+        Intent intent = new Intent( Intent.ACTION_VIEW );
+        intent.setData( Uri.parse( "https://code.google.com/p/android-openvpn-settings/" ) );
         context.startActivity( intent );
     }
 }
