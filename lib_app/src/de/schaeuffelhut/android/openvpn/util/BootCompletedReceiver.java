@@ -27,9 +27,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import de.schaeuffelhut.android.openvpn.Preferences;
-import de.schaeuffelhut.android.openvpn.lib.service.impl.OpenVpnServiceImpl;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnServiceWrapper;
-import de.schaeuffelhut.android.openvpn.services.OpenVpnService;
 
 public class BootCompletedReceiver extends BroadcastReceiver
 {
