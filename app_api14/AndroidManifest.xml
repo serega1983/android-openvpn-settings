@@ -33,7 +33,7 @@
     <!-- App fails on android 2.3.7 and 4.0.4 without vibrate permission -->
     <uses-permission android:name="android.permission.VIBRATE"/>
 
-    <uses-sdk android:minSdkVersion="3" android:targetSdkVersion="4"/>
+    <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="14"/>
 
     <supports-screens
             android:smallScreens="true"
@@ -99,29 +99,13 @@
 
         <service
                 android:name="de.schaeuffelhut.android.openvpn.services.OpenVpnService"
-                android:label="@string/services_openvpn_service"
-                android:exported="true"
-                android:enabled="true"
-                >
-            <!--
-            <intent-filter>
-                <action android:name="de.schaeuffelhut.android.openvpn.services.OpenVpnService"/>
-                <action android:name="de.schaeuffelhut.android.openvpn.Intents.START_DAEMON"/>
-                <action android:name="de.schaeuffelhut.android.openvpn.Intents.STOP_DAEMON"/>
-            </intent-filter>
-            -->
-        </service>
-
-        <!--
-        <service
-                android:name="de.schaeuffelhut.android.openvpn.lib.openvpn4.VpnServiceImpl"
-                android:label="@string/services_vpn_service"
-                android:exported="true"
-                android:enabled="true"
+                android:label="OpenVPN Service"
                 android:permission="android.permission.BIND_VPN_SERVICE"
                 >
+            <intent-filter>
+                <action android:name="android.net.VpnService"/>
+            </intent-filter>
         </service>
-         -->
 
         <receiver
                 android:name="de.schaeuffelhut.android.openvpn.util.BootCompletedReceiver"
