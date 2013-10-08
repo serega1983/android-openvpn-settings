@@ -45,7 +45,7 @@ final class DaemonMonitorImpl implements DaemonMonitor
 {
 	private final Context mContext;
 	private final File mConfigFile;
-    private final Notification2 mNotification2;
+    private final Notification mNotification2;
     private final Preferences2 mPreferences2;
 
 	private final LogFile mLog;
@@ -59,7 +59,7 @@ final class DaemonMonitorImpl implements DaemonMonitor
     private final ShareTun mShareTun = new NullShareTun();//TODO: to enable TUN sharing again, inject ShareTunImpl.
     private CmdLineBuilder mCmdLineBuilder;
 
-    DaemonMonitorImpl(Context context, File configFile, Notification2 notification2, Preferences2 preferences2, CmdLineBuilder cmdLineBuilder, IfConfigFactory ifConfigFactory)
+    DaemonMonitorImpl(Context context, File configFile, Notification notification2, Preferences2 preferences2, CmdLineBuilder cmdLineBuilder, IfConfigFactory ifConfigFactory)
 	{
 		mContext = context;
 		mConfigFile = configFile;

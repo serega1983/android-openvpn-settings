@@ -22,7 +22,6 @@
 
 package de.schaeuffelhut.android.openvpn.lib.service.impl;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -44,7 +43,7 @@ import java.io.File;
  * @author Friedrich Schäuffelhut
  * @since 2012-11-01
  */
-public class Notification2
+public class Notification
 {
     public static final ComponentName DEFAULT_ACTIVITY_FOR_PASSPHRASE_REQUEST = new ComponentName( "de.schaeuffelhut.android.openvpn", "de.schaeuffelhut.android.openvpn.EnterPassphrase" );
     public static final ComponentName DEFAULT_ACTIVITY_FOR_CREDENTIALS_REQUEST = new ComponentName( "de.schaeuffelhut.android.openvpn", "de.schaeuffelhut.android.openvpn.EnterUserPassword" );
@@ -59,7 +58,7 @@ public class Notification2
     private final ComponentName activityForCredentialsRequest;
     private final ComponentName activityForOngoingNotification;
 
-    public Notification2(
+    public Notification(
             Context context, File configFile, int notificationId,
             OpenVpnStateListenerDispatcher listenerDispatcher
     ) {
@@ -111,13 +110,13 @@ public class Notification2
 
     void sendPassphraseRequired()
     {
-        Notification notification = new Notification(
+        android.app.Notification notification = new android.app.Notification(
                 R.drawable.vpn_disconnected_attention,
                 "Passphrase required",
                 System.currentTimeMillis()
         );
-        notification.flags |= Notification.FLAG_NO_CLEAR;
-        notification.flags |= Notification.FLAG_ONGOING_EVENT;
+        notification.flags |= android.app.Notification.FLAG_NO_CLEAR;
+        notification.flags |= android.app.Notification.FLAG_ONGOING_EVENT;
 
 
         Intent intent = new Intent(null, Uri.fromFile( mConfigFile )).setComponent( activityForPassphraseRequest );
@@ -142,13 +141,13 @@ public class Notification2
 
     void sendUsernamePasswordRequired()
     {
-        Notification notification = new Notification(
+        android.app.Notification notification = new android.app.Notification(
                 R.drawable.vpn_disconnected_attention,
                 "Username/Password required",
                 System.currentTimeMillis()
         );
-        notification.flags |= Notification.FLAG_NO_CLEAR;
-        notification.flags |= Notification.FLAG_ONGOING_EVENT;
+        notification.flags |= android.app.Notification.FLAG_NO_CLEAR;
+        notification.flags |= android.app.Notification.FLAG_ONGOING_EVENT;
 
         Intent intent = new Intent(null, Uri.fromFile( mConfigFile )). setComponent( activityForCredentialsRequest );
 
@@ -186,14 +185,14 @@ public class Notification2
 
     private void notifyConnected(String msg)
     {
-        Notification notification = new Notification(
+        android.app.Notification notification = new android.app.Notification(
                 R.drawable.vpn_connected,
                 Preferences.getConfigName( mContext, mConfigFile ) + ": Connected",
                 System.currentTimeMillis()
         );
-        notification.flags |= Notification.FLAG_NO_CLEAR;
-        notification.flags |= Notification.FLAG_ONGOING_EVENT;
-        notification.flags |= Notification.FLAG_ONLY_ALERT_ONCE;
+        notification.flags |= android.app.Notification.FLAG_NO_CLEAR;
+        notification.flags |= android.app.Notification.FLAG_ONGOING_EVENT;
+        notification.flags |= android.app.Notification.FLAG_ONLY_ALERT_ONCE;
 
         Intent intent = new Intent().setComponent( activityForOngoingNotification );
 
@@ -214,13 +213,13 @@ public class Notification2
 
     void notifyDisconnected()
     {
-        Notification notification = new Notification(
+        android.app.Notification notification = new android.app.Notification(
                 R.drawable.vpn_disconnected,
                 Preferences.getConfigName( mContext, mConfigFile ) +": " + "Connecting",
                 System.currentTimeMillis()
         );
-        notification.flags |= Notification.FLAG_NO_CLEAR;
-        notification.flags |= Notification.FLAG_ONGOING_EVENT;
+        notification.flags |= android.app.Notification.FLAG_NO_CLEAR;
+        notification.flags |= android.app.Notification.FLAG_ONGOING_EVENT;
 
         Intent intent = new Intent().setComponent( activityForOngoingNotification );
 //		intent.putExtra( EnterPassphrase.EXTRA_FILENAME, configFile.getAbsolutePath() );
