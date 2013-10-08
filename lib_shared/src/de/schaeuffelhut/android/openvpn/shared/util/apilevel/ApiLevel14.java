@@ -50,7 +50,7 @@ public class ApiLevel14 extends ApiLevel3
         if ( prepare != null )
         {
             activity.startActivityForResult( prepare, requestCode );
-            return false; // VpnService is nor prepared and the user will receive a dialog.
+            return false; // VpnService is not prepared and the user will receive a dialog.
         }
         else
         {
