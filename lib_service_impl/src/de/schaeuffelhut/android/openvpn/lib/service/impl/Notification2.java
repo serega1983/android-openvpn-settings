@@ -22,13 +22,18 @@
 
 package de.schaeuffelhut.android.openvpn.lib.service.impl;
 
+import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.widget.Toast;
 import de.schaeuffelhut.android.openvpn.Intents;
+import de.schaeuffelhut.android.openvpn.Preferences;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnDaemonState;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnNetworkState;
 import de.schaeuffelhut.android.openvpn.shared.util.NotificationUtil;
@@ -43,6 +48,7 @@ public class Notification2
 {
     public static final ComponentName DEFAULT_ACTIVITY_FOR_PASSPHRASE_REQUEST = new ComponentName( "de.schaeuffelhut.android.openvpn", "de.schaeuffelhut.android.openvpn.EnterPassphrase" );
     public static final ComponentName DEFAULT_ACTIVITY_FOR_CREDENTIALS_REQUEST = new ComponentName( "de.schaeuffelhut.android.openvpn", "de.schaeuffelhut.android.openvpn.EnterUserPassword" );
+    private static final String NO_MESSAGE = null;
     private final Context mContext;
     private final File mConfigFile;
     private final int mNotificationId;
@@ -69,7 +75,6 @@ public class Notification2
         this.activityForCredentialsRequest  = pluginPreferences.getActivityHandlingCredentialsRequest();
         this.activityForOngoingNotification = pluginPreferences.getActivityHandlingOngoingNotification();
     }
-
 
     public void daemonStateChangedToStartUp()
     {
@@ -106,29 +111,141 @@ public class Notification2
 
     void sendPassphraseRequired()
     {
-        Notifications.sendPassphraseRequired( mNotificationId, mContext, mNotificationManager, mConfigFile, activityForPassphraseRequest );
+        Notification notification = new Notification(
+                R.drawable.vpn_disconnected_attention,
+                "Passphrase required",
+                System.currentTimeMillis()
+        );
+        notification.flags |= Notification.FLAG_NO_CLEAR;
+        notification.flags |= Notification.FLAG_ONGOING_EVENT;
+
+
+        Intent intent = new Intent(null, Uri.fromFile( mConfigFile )).setComponent( activityForPassphraseRequest );
+
+        notification.setLatestEventInfo(
+                mContext,
+                "Passphrase required",
+                String.format( "for configuration %s", Preferences.getConfigName( mContext, mConfigFile ) ),
+                PendingIntent.getActivity(
+                        mContext,
+                        0,
+                        intent,
+                        0
+                )
+        );
+
+        mNotificationManager.notify( mNotificationId, notification );
+
+        sendNeedPassword( intent );
         listenerDispatcher.onRequestPassphrase();
     }
 
     void sendUsernamePasswordRequired()
     {
-        Notifications.sendUsernamePasswordRequired( mNotificationId, mContext, mConfigFile, mNotificationManager, activityForCredentialsRequest );
+        Notification notification = new Notification(
+                R.drawable.vpn_disconnected_attention,
+                "Username/Password required",
+                System.currentTimeMillis()
+        );
+        notification.flags |= Notification.FLAG_NO_CLEAR;
+        notification.flags |= Notification.FLAG_ONGOING_EVENT;
+
+        Intent intent = new Intent(null, Uri.fromFile( mConfigFile )). setComponent( activityForCredentialsRequest );
+
+        notification.setLatestEventInfo(
+                mContext,
+                "Username/Password required",
+                String.format( "for configuration %s", Preferences.getConfigName( mContext, mConfigFile ) ),
+                PendingIntent.getActivity(
+                        mContext,
+                        0,
+                        intent,
+                        0
+                )
+        );
+
+        mNotificationManager.notify( mNotificationId, notification );
+
+        sendNeedPassword( intent );
         listenerDispatcher.onRequestCredentials();
     }
 
+    private void sendNeedPassword(Intent intent)
+    {
+        Intent needPassword = new Intent( Intents.BROADCAST_NEED_PASSWORD );
+        //needPassword.setPackage( Intents.NS ); //TODO: uncomment once minSdkVersion > 3
+        needPassword.putExtra( "ACTION", intent );
+        mContext.sendBroadcast( needPassword );
+    }
+
+
     void notifyConnected()
     {
-        Notifications.notifyConnected( mNotificationId, mContext, mNotificationManager, mConfigFile, activityForOngoingNotification );
+        notifyConnected( NO_MESSAGE );
+    }
+
+    private void notifyConnected(String msg)
+    {
+        Notification notification = new Notification(
+                R.drawable.vpn_connected,
+                Preferences.getConfigName( mContext, mConfigFile ) + ": Connected",
+                System.currentTimeMillis()
+        );
+        notification.flags |= Notification.FLAG_NO_CLEAR;
+        notification.flags |= Notification.FLAG_ONGOING_EVENT;
+        notification.flags |= Notification.FLAG_ONLY_ALERT_ONCE;
+
+        Intent intent = new Intent().setComponent( activityForOngoingNotification );
+
+        notification.setLatestEventInfo(
+                mContext,
+                "OpenVPN, " + Preferences.getConfigName( mContext, mConfigFile ),
+                TextUtils.isEmpty( msg ) ? "Connected" : msg,
+                PendingIntent.getActivity(
+                        mContext,
+                        0,
+                        intent,
+                        0
+                )
+        );
+
+        mNotificationManager.notify( mNotificationId, notification );
     }
 
     void notifyDisconnected()
     {
-        Notifications.notifyDisconnected( mNotificationId, mContext, mNotificationManager, mConfigFile, "Connecting", activityForOngoingNotification );
+        Notification notification = new Notification(
+                R.drawable.vpn_disconnected,
+                Preferences.getConfigName( mContext, mConfigFile ) +": " + "Connecting",
+                System.currentTimeMillis()
+        );
+        notification.flags |= Notification.FLAG_NO_CLEAR;
+        notification.flags |= Notification.FLAG_ONGOING_EVENT;
+
+        Intent intent = new Intent().setComponent( activityForOngoingNotification );
+//		intent.putExtra( EnterPassphrase.EXTRA_FILENAME, configFile.getAbsolutePath() );
+
+        notification.setLatestEventInfo(
+                mContext,
+                "OpenVPN, " + Preferences.getConfigName( mContext, mConfigFile ),
+                "Connecting",
+                PendingIntent.getActivity(
+                        mContext,
+                        0,
+                        intent,
+                        0
+                )
+        );
+
+        mNotificationManager.notify( mNotificationId, notification );
     }
 
     void notifyBytes(String smallInOutPerSecString, long received, long sent)
     {
-        Notifications.notifyBytes( mNotificationId, mContext, mNotificationManager, mConfigFile, smallInOutPerSecString, activityForOngoingNotification );
+        // To update latestEventInfo only, exactly the same notification type must be used.
+        // Otherwise the user will get permanent notifications in his title-bar
+        notifyConnected( smallInOutPerSecString );
+
         listenerDispatcher.onByteCountChanged( received, sent ); //TODO: insert real byte count
     }
 
