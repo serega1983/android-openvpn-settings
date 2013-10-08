@@ -405,9 +405,9 @@ public class OpenVpnServiceImpl implements ServiceDelegate
         return NullDaemonMonitor.getInstance();
     }
 
-    private Notification2 newNotification2(File config)
+    private Notification newNotification2(File config)
     {
-        return new Notification2( getContext(), config, new Preferences2( getContext(), config ).getNotificationId(), listenerDispatcher );
+        return new Notification( getContext(), config, new Preferences2( getContext(), config ).getNotificationId(), listenerDispatcher );
     }
 
 

@@ -48,7 +48,7 @@ class DaemonMonitorImplFactory implements DaemonMonitorFactory
     public DaemonMonitor createDaemonMonitorFor(File configFile)
     {
         Preferences2 preferences2 = new Preferences2( context, configFile );
-        Notification2 notification2 = new Notification2(
+        Notification notification2 = new Notification(
                 context,
                 configFile,
                 preferences2.getNotificationId(),

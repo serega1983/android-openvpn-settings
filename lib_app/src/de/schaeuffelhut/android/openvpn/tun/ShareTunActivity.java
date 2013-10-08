@@ -30,7 +30,6 @@ import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import de.schaeuffelhut.android.openvpn.lib.service.impl.Notification2;
 import de.schaeuffelhut.android.openvpn.util.tun.TunPreferences;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;

@@ -41,14 +41,14 @@ import de.schaeuffelhut.android.openvpn.util.TrafficStats;
 final class ManagementThread extends Thread
 {
 	private final DaemonMonitor mDaemonMonitor;
-    private final Notification2 mNotification2;
+    private final Notification mNotification2;
     private final LocalSocketAddress mMgmtSocket;
     private final Preferences2  mPreferences2;
 	private final String mTAG_MT;
     private final IfConfigFactory mIfConfigFactory;
     private IfConfig ifConfig;
 
-    ManagementThread(DaemonMonitorImpl daemonMonitor, Notification2 notification2, Preferences2 preferences2, LocalSocketAddress mgmtSocket, IfConfigFactory ifConfigFactory)
+    ManagementThread(DaemonMonitorImpl daemonMonitor, Notification notification2, Preferences2 preferences2, LocalSocketAddress mgmtSocket, IfConfigFactory ifConfigFactory)
 	{
 		mDaemonMonitor = daemonMonitor;
         mNotification2 = notification2;
