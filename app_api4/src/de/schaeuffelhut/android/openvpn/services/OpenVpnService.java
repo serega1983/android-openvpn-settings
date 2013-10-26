@@ -22,6 +22,7 @@
 
 package de.schaeuffelhut.android.openvpn.services;
 
+import de.schaeuffelhut.android.openvpn.lib.openvpn.Installer;
 import de.schaeuffelhut.android.openvpn.lib.service.impl.*;
 import de.schaeuffelhut.android.openvpn.shared.util.service.DelegatingService;
 
@@ -40,6 +41,17 @@ public class OpenVpnService extends DelegatingService<OpenVpnServiceImpl>
     public OpenVpnService()
     {
         super();
+
+        try
+        {
+            Installer installer = new Installer( this );
+            installer.installOpenVpn();
+            installer.installBusyBox();
+        }
+        catch (de.schaeuffelhut.android.openvpn.lib.openvpn.InstallFailed installFailed)
+        {
+            throw new RuntimeException( installFailed ); //TODO: handle exception
+        }
     }
 
     @Override

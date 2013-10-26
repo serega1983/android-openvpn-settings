@@ -23,6 +23,7 @@
 package de.schaeuffelhut.android.openvpn.services;
 
 import android.os.ParcelFileDescriptor;
+import de.schaeuffelhut.android.openvpn.lib.openvpn4.InstallFailed;
 import de.schaeuffelhut.android.openvpn.lib.service.impl.CmdLineBuilder14;
 import de.schaeuffelhut.android.openvpn.lib.service.impl.IfConfig;
 import de.schaeuffelhut.android.openvpn.lib.service.impl.IfConfigFactory;
@@ -40,6 +41,18 @@ import java.util.List;
  */
 public class OpenVpnService extends DelegatingVpnService<OpenVpnServiceImpl>
 {
+    OpenVpnService()
+    {
+        try
+        {
+            de.schaeuffelhut.android.openvpn.lib.openvpn4.Installer.install( this );
+        }
+        catch (InstallFailed installFailed)
+        {
+            throw new RuntimeException( installFailed ); //TODO: handle exception
+        }
+    }
+
     @Override
     protected OpenVpnServiceImpl createServiceDelegate()
     {

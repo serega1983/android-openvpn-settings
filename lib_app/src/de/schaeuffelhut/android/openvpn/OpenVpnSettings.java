@@ -35,7 +35,6 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import com.bugsense.trace.BugSenseHandler;
 import de.schaeuffelhut.android.openvpn.lib.app.R;
 import de.schaeuffelhut.android.openvpn.lib.openvpn.Installer;
-import de.schaeuffelhut.android.openvpn.lib.openvpn4.InstallFailed;
 import de.schaeuffelhut.android.openvpn.lib.service.impl.OpenVpnServiceImpl;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnConfig;
 import de.schaeuffelhut.android.openvpn.service.api.OpenVpnServiceWrapper;
@@ -112,29 +111,6 @@ public class OpenVpnSettings extends PreferenceActivity
     		BugSenseHandler.initAndStartSession( this, Configuration.BUG_SENSE_API_KEY );
 
     	addPreferencesFromResource( R.xml.openvpn_settings );
-
-        if ( ApiLevel.get().hasVpnService() )
-        {
-            try
-            {
-                de.schaeuffelhut.android.openvpn.lib.openvpn4.Installer.install( this );
-            }
-            catch (InstallFailed installFailed)
-            {
-                throw new RuntimeException( installFailed ); //TODO: handle exception
-            }
-        }
-        //TODO: if has root
-        try
-        {
-            Installer installer = new Installer( this );
-            installer.installOpenVpn();
-            installer.installBusyBox();
-        }
-        catch (de.schaeuffelhut.android.openvpn.lib.openvpn.InstallFailed installFailed)
-        {
-            throw new RuntimeException( installFailed ); //TODO: handle exception
-        }
 
 
         //TODO: write OpenVpnEnabled, see WifiEnabler => start stop OpenVpnService
