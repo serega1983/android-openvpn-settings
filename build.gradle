@@ -9,13 +9,91 @@ buildscript {
     }
 }
 
+project(":app_api14") {
+    apply plugin: 'android'
+    android {
+        compileSdkVersion 14
+    }
+    dependencies {
+	compile project (':lib_app')
+	compile project (':lib_openvpn4')
+    }
+}
 
+project(":app_api4") {
+    apply plugin: 'android'
+    android {
+        compileSdkVersion 4
+    }
+    dependencies {
+	compile project (':lib_app')
+    }
+}
+
+//TODO: rename to lib_app_api4
+project(":lib_app") {
+    apply plugin: 'android-library'
+    android {
+        compileSdkVersion 4
+    }
+    dependencies {
+	compile project (':lib_openvpn')
+	compile project (':lib_shared')
+	compile project (':lib_service_impl')
+	compile files( 'libs/android-support-v4.jar', 'libs/httpmime-4.1.2.jar')
+    }
+}
+
+project(":lib_service_impl") {
+    apply plugin: 'android-library'
+    android {
+        compileSdkVersion 14
+    }
+    dependencies {
+	compile project (':lib_service_api')
+	compile project (':lib_shared')
+    }
+}
 
 project(":lib_shared") {
     apply plugin: 'android-library'
     android {
-        buildToolsVersion "18.0"
         compileSdkVersion 14
+    }
+    dependencies {
+        compile files('libs/bugsense3.2.2.jar')
+    }
+}
+
+project(":lib_service_api") {
+    apply plugin: 'android-library'
+    android {
+        compileSdkVersion 4
+    }
+}
+
+//TODO: rename to lib_openvpn_api14
+project(":lib_openvpn4") {
+    apply plugin: 'android-library'
+    android {
+        compileSdkVersion 14
+    }
+}
+
+//TODO: rename to lib_openvpn_api4
+project(":lib_openvpn") {
+    apply plugin: 'android-library'
+    android {
+        compileSdkVersion 4
+    }
+}
+
+subprojects {
+    android {
+        buildToolsVersion "18.0"
+
+        // Setup legacy project structure.
+        // TODO: switch to new project structure one build is working
         sourceSets {
             main {
                 manifest.srcFile 'AndroidManifest.xml'
@@ -29,9 +107,6 @@ project(":lib_shared") {
 
             instrumentTest.setRoot('tests')
         }
-    }
-    dependencies {
-        compile files('libs/bugsense3.2.2.jar')
     }
 }
 

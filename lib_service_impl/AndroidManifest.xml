@@ -3,4 +3,10 @@
           package="de.schaeuffelhut.android.openvpn.lib.service.impl"
           android:versionCode="1"
           android:versionName="1.0">
+
+	<uses-sdk android:minSdkVersion="3" android:targetSdkVersion="4"/>
+
+	<application>
+	</application>
+
 </manifest>
