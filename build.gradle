@@ -88,6 +88,20 @@ project(":lib_openvpn") {
     }
 }
 
+project(":lib_test") {
+    apply plugin: 'android-library'
+    android {
+        compileSdkVersion 4
+    }
+    dependencies {
+	compile project (':lib_app')
+	compile project (':lib_openvpn')
+	compile project (':lib_service_api')
+	compile project (':lib_shared')
+	compile files('libs/dexmaker-1.0.jar', 'libs/dexmaker-mockito-1.0.jar', 'libs/mockito-all-1.9.5.jar');
+    }
+}
+
 subprojects {
     android {
         buildToolsVersion "18.0"
