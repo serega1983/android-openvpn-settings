@@ -15,8 +15,9 @@ project(":app_api14") {
         compileSdkVersion 14
     }
     dependencies {
-	compile project (':lib_app')
-	compile project (':lib_openvpn4')
+        compile project(':lib_app')
+        compile project(':lib_openvpn4')
+        instrumentTestCompile project(':lib_test')
     }
 }
 
@@ -26,7 +27,8 @@ project(":app_api4") {
         compileSdkVersion 4
     }
     dependencies {
-	compile project (':lib_app')
+        compile project(':lib_app')
+        instrumentTestCompile project(':lib_test')
     }
 }
 
@@ -94,9 +96,6 @@ project(":lib_test") {
         compileSdkVersion 4
     }
     dependencies {
-	compile project (':lib_app')
-	compile project (':lib_openvpn')
-	compile project (':lib_service_api')
 	compile project (':lib_shared')
 	compile files('libs/dexmaker-1.0.jar', 'libs/dexmaker-mockito-1.0.jar', 'libs/mockito-all-1.9.5.jar');
     }
@@ -119,7 +118,14 @@ subprojects {
                 assets.srcDirs = ['assets']
             }
 
-            instrumentTest.setRoot('tests')
+            instrumentTest {
+                java.srcDirs = ['test/src']
+                resources.srcDirs = ['test/src']
+                aidl.srcDirs = ['test/src']
+                renderscript.srcDirs = ['test/src']
+                res.srcDirs = ['test/res']
+                assets.srcDirs = ['test/assets']
+            }
         }
     }
 }
